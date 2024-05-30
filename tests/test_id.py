@@ -6,6 +6,24 @@ import testgen
 import unittest
 
 
+class GetId(unittest.TestCase):
+    """Unit tests for the get_id() function."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_single_depth_increment(self):
+        """Confirm single-level IDs are properly incremented."""
+        for i in range(1, 4):
+            self.assertEqual((i,), testgen.id.get_id())
+
+    def test_multi_depth_increment(self):
+        """Confirm multi-level IDs are properly incremented."""
+        testgen.id.set_id_depth(3)
+        for i in range(1, 4):
+            self.assertEqual((1, 1, i), testgen.id.get_id())
+
+
 class SetIdDepth(unittest.TestCase):
     """Unit tests for the set_id_depth() function."""
 

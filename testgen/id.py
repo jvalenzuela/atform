@@ -5,6 +5,14 @@
 next_id = [1]
 
 
+def get_id():
+    """Returns the identifier to be used for the next test."""
+    global next_id
+    id = tuple(next_id)
+    next_id[-1] = next_id[-1] + 1 # Increment next ID.
+    return id
+
+
 ################################################################################
 # Public API
 #
