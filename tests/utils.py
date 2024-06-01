@@ -12,4 +12,4 @@ def reset():
     while unit test cases require this initial condition many times
     after a single import.
     """
-    testgen.id.next_id = [1]
+    testgen.id.current_id = [0]

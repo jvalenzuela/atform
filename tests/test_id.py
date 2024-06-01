@@ -23,6 +23,12 @@ class GetId(unittest.TestCase):
         for i in range(1, 4):
             self.assertEqual((1, 1, i), testgen.id.get_id())
 
+    def test_level_initialization(self):
+        """Confirm levels that have been reset are initialized to 1."""
+        testgen.id.set_id_depth(3)
+        testgen.id.current_id = [2, 0, 0] # Simulate a level 0 increment.
+        self.assertEqual((2, 1, 1), testgen.id.get_id())
+
 
 class SetIdDepth(unittest.TestCase):
     """Unit tests for the set_id_depth() function."""
@@ -43,11 +49,11 @@ class SetIdDepth(unittest.TestCase):
 
     def test_after_test_created(self):
         """Confirm an exception is raised if called after creating tests."""
-        testgen.id.next_id = [2] # Simulate a generated test.
+        testgen.id.current_id = [2] # Simulate a generated test.
         with self.assertRaises(RuntimeError):
             testgen.set_id_depth(2)
 
-    def test_set_next_id(self):
-        """Confirm the next ID is correctly updated."""
+    def test_set_current_id(self):
+        """Confirm the current ID is correctly updated."""
         testgen.set_id_depth(3)
-        self.assertEqual([1] * 3, testgen.id.next_id)
+        self.assertEqual([0] * 3, testgen.id.current_id)
