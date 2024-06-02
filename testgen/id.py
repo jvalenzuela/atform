@@ -128,3 +128,52 @@ def set_id_depth(levels):
             'Identifer depth cannot be altered after creating tests or sections.')
 
     current_id = [0] * levels
+
+
+def skip_test(id=None):
+    """
+    Omits one or more tests. This function can only skip tests within the
+    current section, i.e., it will only affect the last identifier field.
+    Typical usage, as shown below, is to reserve a range of IDs or
+    maintain numbering if a test is removed.
+
+    ::
+
+        testgen.set_id_depth(2) # Configure IDs as x.y.
+
+        # Create tests, assume up to 1.10.
+
+        testgen.skip_test() # Omit 1.11.
+
+        # Next test will be 1.12.
+
+        testgen.skip_test(100)
+
+        # Next test will be 1.100.
+
+    :param int id: Optional ID of the next test. If omitted, one test
+                   will be skipped.
+    :raises ValueError: If id does not yield a skip forward. This includes
+                        setting id to what would normally be the next test,
+                        i.e., skipping zero tests.
+    :raises TypeError: If id is not an integer.
+    """
+    global current_id
+
+    # Advance the test number normally without creating a test. This call
+    # also supports the skip-forward validation below by initializing
+    # any zero IDs to one.
+    get_id()
+
+    if id is not None:
+        if not isinstance(id, int):
+            raise TypeError('id must be an integer.')
+        if id <= current_id[-1]:
+            raise ValueError("id must be greater than {0}.".format(
+                current_id[-1]))
+
+        # The current ID is set to one previous because the get_id() call
+        # above already increments the ID. The next test will then be assigned
+        # the given id value because get_id() increments before returning
+        # the assigned ID.
+        current_id[-1] = id - 1
