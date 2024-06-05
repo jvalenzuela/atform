@@ -1,7 +1,7 @@
 # Units tests for the PDF module.
 
 
-import testgen
+import testgen.pdf
 import unittest
 
 
