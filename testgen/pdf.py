@@ -1,6 +1,10 @@
 # This module implements generating PDF output.
 
 
+from . import id
+import os
+
+
 def split_paragraphs(s):
     """Separates a string into a list of paragraphs.
 
@@ -29,3 +33,29 @@ def split_paragraphs(s):
 
     # Assemble each non-empty inner list into a paragraph.
     return [' '.join(lines) for lines in plines if lines]
+
+
+def build_path(tid, root):
+    """Constructs a path where a test's output PDF will be written.
+
+    The path will consist of the root, followed by a folder per
+    section number, e.g., <root>/<x>/<y> for an ID x.y.z. The final
+    number in an ID is not translated to a folder.
+    """
+    folders = [root]
+
+    # Append a folder for each section level.
+    for i in range(len(tid) - 1):
+
+        # Include the section number and title if the section has a title.
+        try:
+            section = id.section_titles[tid[:i + 1]]
+            section_folder = "{0} {1}".format(tid[i], section)
+
+        # Use only the section number if the section has no title.
+        except KeyError:
+            section_folder = str(tid[i])
+
+        folders.append(section_folder)
+
+    return os.path.join(*folders)
