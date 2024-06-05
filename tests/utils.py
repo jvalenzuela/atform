@@ -12,4 +12,6 @@ def reset():
     while unit test cases require this initial condition many times
     after a single import.
     """
+    testgen.content.tests = []
     testgen.id.current_id = [0]
+    testgen.id.section_titles = {}
