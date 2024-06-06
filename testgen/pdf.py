@@ -2,7 +2,10 @@
 
 
 from . import id
+import itertools
 import os
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph, SimpleDocTemplate
 
 
 def split_paragraphs(s):
@@ -59,3 +62,59 @@ def build_path(tid, root):
         folders.append(section_folder)
 
     return os.path.join(*folders)
+
+
+class TestDocument(object):
+    """This class creates a PDF for a single Test instance."""
+
+    def __init__(self, test, root):
+        self.test = test
+
+        # The full name is the combination of the test's numeric
+        # identifer and title.
+        self.full_name = ' '.join((id.to_string(test.id), test.title))
+
+        self._setup_styles()
+        doc = self._get_doc(root)
+        doc.build(self._build_body())
+
+    def _setup_styles(self):
+        """Configures the style sheet."""
+        self.style = getSampleStyleSheet()
+
+    def _get_doc(self, root):
+        """Creates the document template."""
+        filename = self.full_name + '.pdf'
+        path = build_path(self.test.id, root)
+        os.makedirs(path, exist_ok=True)
+        return SimpleDocTemplate(os.path.join(path, filename))
+
+    def _build_body(self):
+        """
+        Assembles the list of flowables representing all content other
+        than the header and footer.
+        """
+        # The body is assembled from this list of methods, each
+        # returning a list of flowables containing their respective
+        # content.
+        return list(itertools.chain(
+            self._title(),
+            self._objective(),
+        ))
+
+    def _title(self):
+        """Generates the title flowables."""
+        return [self._heading(1, self.full_name)]
+
+    def _objective(self):
+        """Generates Objective section flowables."""
+        flowables = []
+        if self.test.objective:
+            flowables.append(self._heading(2, 'Objective'))
+            [flowables.append(Paragraph(p))
+             for p in split_paragraphs(self.test.objective)]
+        return flowables
+
+    def _heading(self, level, text):
+        """Creates a flowable containing a section heading."""
+        return Paragraph(text, style=self.style['Heading' + str(level)])

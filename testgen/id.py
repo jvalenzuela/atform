@@ -22,6 +22,11 @@ def get_id():
     return tuple(current_id)
 
 
+def to_string(id):
+    """Generates a presentation string for a given ID tuple."""
+    return '.'.join([str(x) for x in id])
+
+
 ################################################################################
 # Public API
 #
