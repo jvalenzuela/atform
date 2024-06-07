@@ -86,6 +86,12 @@ class TestDocument(object):
         """Configures the style sheet."""
         self.style = getSampleStyleSheet()
 
+        # Avoid page breaks between headings and the first flowable in the
+        # section.
+        for name in self.style.byName:
+            if name.startswith('Heading'):
+                self.style[name].keepWithNext = 1
+
     def _get_doc(self, root):
         """Creates the document template."""
         filename = self.full_name + '.pdf'
