@@ -5,10 +5,12 @@ from . import id
 import itertools
 import os
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.platypus import (
     ListFlowable,
     Paragraph,
     SimpleDocTemplate,
+    Spacer,
 )
 
 
@@ -71,6 +73,9 @@ def build_path(tid, root):
 class TestDocument(object):
     """This class creates a PDF for a single Test instance."""
 
+    # Vertical space allotted for the Notes section.
+    NOTES_AREA_SIZE = 4 * inch
+
     def __init__(self, test, root):
         self.test = test
 
@@ -111,6 +116,7 @@ class TestDocument(object):
             self._title(),
             self._objective(),
             self._preconditions(),
+            self._notes(),
         ))
 
     def _title(self):
@@ -142,6 +148,13 @@ class TestDocument(object):
             flowables.append(ListFlowable(bullet_list_items,
                                           bulletType='bullet'))
         return flowables
+
+    def _notes(self):
+        """Generates the Notes section flowables."""
+        return [
+            self._heading(1, 'Notes'),
+            Spacer(0, self.NOTES_AREA_SIZE),
+        ]
 
     def _heading(self, level, text):
         """Creates a flowable containing a section heading."""
