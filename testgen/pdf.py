@@ -5,7 +5,11 @@ from . import id
 import itertools
 import os
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, SimpleDocTemplate
+from reportlab.platypus import (
+    ListFlowable,
+    Paragraph,
+    SimpleDocTemplate,
+)
 
 
 def split_paragraphs(s):
@@ -100,6 +104,7 @@ class TestDocument(object):
         return list(itertools.chain(
             self._title(),
             self._objective(),
+            self._preconditions(),
         ))
 
     def _title(self):
@@ -113,6 +118,23 @@ class TestDocument(object):
             flowables.append(self._heading(2, 'Objective'))
             [flowables.append(Paragraph(p))
              for p in split_paragraphs(self.test.objective)]
+        return flowables
+
+    def _preconditions(self):
+        """Generates Preconditions section flowables."""
+        flowables = []
+        if self.test.preconditions:
+            flowables.append(self._heading(2, 'Preconditions'))
+
+            bullet_list_items = []
+
+            # Create a list of paragraphs for each precondition item.
+            for pc in self.test.preconditions:
+                bullet_list_items.append([Paragraph(p)
+                                          for p in split_paragraphs(pc)])
+
+            flowables.append(ListFlowable(bullet_list_items,
+                                          bulletType='bullet'))
         return flowables
 
     def _heading(self, level, text):
