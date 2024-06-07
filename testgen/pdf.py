@@ -109,13 +109,13 @@ class TestDocument(object):
 
     def _title(self):
         """Generates the title flowables."""
-        return [self._heading(1, self.full_name)]
+        return [Paragraph(self.full_name, self.style['Title'])]
 
     def _objective(self):
         """Generates Objective section flowables."""
         flowables = []
         if self.test.objective:
-            flowables.append(self._heading(2, 'Objective'))
+            flowables.append(self._heading(1, 'Objective'))
             [flowables.append(Paragraph(p))
              for p in split_paragraphs(self.test.objective)]
         return flowables
@@ -124,7 +124,7 @@ class TestDocument(object):
         """Generates Preconditions section flowables."""
         flowables = []
         if self.test.preconditions:
-            flowables.append(self._heading(2, 'Preconditions'))
+            flowables.append(self._heading(1, 'Preconditions'))
 
             bullet_list_items = []
 
