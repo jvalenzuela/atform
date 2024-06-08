@@ -11,6 +11,7 @@ from reportlab.platypus import (
     Paragraph,
     SimpleDocTemplate,
     Spacer,
+    Table,
 )
 from reportlab.platypus.flowables import Flowable
 
@@ -117,6 +118,7 @@ class TestDocument(object):
             self._title(),
             self._objective(),
             self._preconditions(),
+            self._procedure(),
             self._notes(),
         ))
 
@@ -148,6 +150,26 @@ class TestDocument(object):
 
             flowables.append(ListFlowable(bullet_list_items,
                                           bulletType='bullet'))
+        return flowables
+
+    def _procedure(self):
+        """Creates the Procedure section flowables."""
+        flowables = []
+        if self.test.procedure:
+            flowables.append(self._heading(1, 'Procedure'))
+            rows = []
+
+            # Add header row.
+            rows.append(['Step #', 'Description', 'Pass'])
+
+            # Add rows for each procedure step.
+            for i in range(len(self.test.procedure)):
+                text = [Paragraph(s)
+                        for s in split_paragraphs(self.test.procedure[i])]
+                rows.append([i + 1, text, Checkbox()])
+
+            flowables.append(Table(rows))
+
         return flowables
 
     def _notes(self):
