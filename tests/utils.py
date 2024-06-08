@@ -15,3 +15,4 @@ def reset():
     testgen.content.tests = []
     testgen.id.current_id = [0]
     testgen.id.section_titles = {}
+    testgen.sig.titles = []
