@@ -130,3 +130,12 @@ class Procedure(unittest.TestCase):
                                     + 'Foo'
                                     + string.whitespace])
         self.assertEqual('Foo', t.procedure[0])
+
+
+class Generate(unittest.TestCase):
+    """Unit tests for the generate() function."""
+
+    def test_path_type(self):
+        """Confirm exception if path is not a string."""
+        with self.assertRaises(TypeError):
+            testgen.generate(42)

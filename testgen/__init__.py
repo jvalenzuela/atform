@@ -1,4 +1,5 @@
 from testgen.content import (
+    generate,
     Test,
 )
 

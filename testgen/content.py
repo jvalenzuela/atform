@@ -3,6 +3,7 @@
 
 
 from . import id
+from . import pdf
 
 
 # All Test() instances in the order they were created.
@@ -99,3 +100,17 @@ class Test(object):
         if not stripped:
             raise ValueError("{0} cannot be empty.".format(name))
         return stripped
+
+
+def generate(path='pdf'):
+    """
+    Builds PDF output files for all defined tests. Should be called once
+    near the end of the script after tests have been created with
+    :py:class:`Test(...)<Test>`.
+
+    :param str path: Optional path to an output directory.
+    :raises TypeError: If path is not a string.
+    """
+    if not isinstance(path, str):
+        raise TypeError('Output path must be a string.')
+    [pdf.TestDocument(t, path) for t in tests]
