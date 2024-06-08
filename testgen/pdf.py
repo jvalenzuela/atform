@@ -12,6 +12,7 @@ from reportlab.platypus import (
     SimpleDocTemplate,
     Spacer,
 )
+from reportlab.platypus.flowables import Flowable
 
 
 def split_paragraphs(s):
@@ -159,3 +160,20 @@ class TestDocument(object):
     def _heading(self, level, text):
         """Creates a flowable containing a section heading."""
         return Paragraph(text, style=self.style['Heading' + str(level)])
+
+
+class Checkbox(Flowable):
+    """A custom flowable that generates an empty checkbox.
+
+    This is used instead of a existing text symbol, such as U+2610,
+    because those glyphs are not present in the default PDF fonts.
+    """
+
+    # Height and width of the box.
+    SIZE = 0.15 * inch
+
+    def wrap(self, *args):
+        return (self.SIZE, self.SIZE)
+
+    def draw(self):
+        self.canv.rect(0, 0, self.SIZE, self.SIZE)
