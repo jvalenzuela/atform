@@ -1,6 +1,9 @@
 # This module manages the numeric identifiers assigned to each test.
 
 
+from . import misc
+
+
 # Fields assigned to the most recent test.
 current_id = [0]
 
@@ -110,6 +113,7 @@ def section(level, id=None, title=None):
             section_titles[section] = stripped
 
 
+@misc.setup_only
 def set_id_depth(levels):
     """
     Configures the number of fields for the identifier assigned to each test.
@@ -128,10 +132,6 @@ def set_id_depth(levels):
         raise TypeError('Identifier depth must be an integer.')
     if levels < 1:
         raise ValueError('Identifier depth must be greater than zero.')
-    if current_id.count(0) != len(current_id):
-        raise RuntimeError(
-            'Identifer depth cannot be altered after creating tests or sections.')
-
     current_id = [0] * levels
 
 
