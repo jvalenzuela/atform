@@ -4,14 +4,17 @@
 from . import id
 import itertools
 import os
+from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
     ListFlowable,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
     Table,
+    TableStyle,
 )
 from reportlab.platypus.flowables import Flowable
 
@@ -168,9 +171,52 @@ class TestDocument(object):
                         for s in split_paragraphs(self.test.procedure[i])]
                 rows.append([i + 1, text, Checkbox()])
 
-            flowables.append(Table(rows))
+            column_widths = self._procedure_column_widths(rows[0])
+            style = self._procedure_style()
+            flowables.append(Table(
+                rows,
+                colWidths=column_widths,
+                style=style,
+                repeatRows=1,
+            ))
 
         return flowables
+
+    def _procedure_column_widths(self, header):
+        """Computes column widths for the procedure table.
+
+        The widths are derived from the width needed to contain header
+        text of the step number and checkbox columns; The description
+        column consumes all remaining width.
+        """
+        style = self.style['Normal']
+        widths = [stringWidth(s, style.fontName, style.fontSize)
+                  for s in header]
+
+        # Leave the description coulumn undefined as it will be
+        # dynamically sized by ReportLab.
+        widths[1] = None
+
+        return widths
+
+    def _procedure_style(self):
+        """Defines the style applied to the procedure table."""
+        return TableStyle([
+            # Header row
+            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.black),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+
+            # Step rows
+            ('LINEBELOW', (0, 1), (-1, -1), .2, colors.black),
+
+            # Step number column
+            ('VALIGN', (0, 1), (0, -1), 'MIDDLE'),
+
+            # Checkbox column
+            ('ALIGN', (2, 1), (2, -1), 'CENTER'),
+            ('VALIGN', (2, 1), (2, -1), 'MIDDLE'),
+        ])
 
     def _notes(self):
         """Generates the Notes section flowables."""
