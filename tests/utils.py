@@ -2,6 +2,7 @@
 
 
 import testgen
+import collections
 
 
 def reset():
@@ -16,3 +17,4 @@ def reset():
     testgen.id.current_id = [0]
     testgen.id.section_titles = {}
     testgen.sig.titles = []
+    testgen.field.lengths = collections.OrderedDict()
