@@ -1,7 +1,10 @@
 # This module implements generating PDF output.
 
 
-from . import id
+from . import (
+    id,
+    sig,
+)
 import itertools
 import os
 from reportlab.lib import colors
@@ -11,6 +14,7 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
     ListFlowable,
     Paragraph,
+    Preformatted,
     SimpleDocTemplate,
     Spacer,
     Table,
@@ -81,6 +85,21 @@ class TestDocument(object):
     # Vertical space allotted for the Notes section.
     NOTES_AREA_SIZE = 4 * inch
 
+    # Thickness of the signature block field underlining.
+    SIG_RULE_WEIGHT = 0.2
+
+    # Distance between signature block columns. This spacing is implemented
+    # with blank columns of this width instead of left/right padding because
+    # padding does not break rules drawn by LINEBELOW, which is how
+    # the underlines are created.
+    SIG_COL_SEP = 0.2 * inch
+
+    # Width of the signature block Date column.
+    SIG_DATE_WIDTH = 0.5 * inch
+
+    # Height of the signature block rows to allow handwritten entries.
+    SIG_ROW_HEIGHT = 0.5 * inch
+
     def __init__(self, test, root):
         self.test = test
 
@@ -123,6 +142,7 @@ class TestDocument(object):
             self._preconditions(),
             self._procedure(),
             self._notes(),
+            self._approval(),
         ))
 
     def _title(self):
@@ -224,6 +244,73 @@ class TestDocument(object):
             self._heading(1, 'Notes'),
             Spacer(0, self.NOTES_AREA_SIZE),
         ]
+
+    def _approval(self):
+        """Generates the Approval section flowables."""
+        flowables = []
+        if sig.titles:
+            style = self.style['Normal']
+            flowables.append(self._heading(1, 'Approval'))
+            table_data = []
+
+            # Start with header row.
+            table_data.append(
+                [Preformatted(s, style=style) for s in [
+                    '', '', 'Name', '', 'Signature', '', 'Date']])
+
+            # Append rows for each title.
+            [table_data.append([Preformatted(s, style=style)])
+             for s in sig.titles]
+
+            style = TableStyle([
+                # Add underlines for entry fields.
+                self._sig_rule(2),
+                self._sig_rule(4),
+                self._sig_rule(6),
+
+                # Remove all padding around cell content.
+                ('LEFTPADDING', (0 ,0), (-1, -1), 0),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ('TOPPADDING', (0, 0), (-1, -1), 0),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+            ])
+
+            row_heights = [None] # Default height for header row.
+            row_heights.extend([self.SIG_ROW_HEIGHT] * len(sig.titles))
+
+            flowables.append(Table(
+                table_data,
+                style=style,
+                colWidths = self._sig_col_widths(),
+                rowHeights = row_heights,
+            ))
+        return flowables
+
+    def _sig_col_widths(self):
+        """Computes the column widths of the signature block table."""
+        style = self.style['Normal']
+
+        return [
+            # Width of the first column is set to accommodate the
+            # longest title.
+            max([stringWidth(s, style.fontName, style.fontSize)
+                 for s in sig.titles]),
+
+            self.SIG_COL_SEP,
+
+            # Remaining area is split between the Name and Signature fields.
+            None,
+            self.SIG_COL_SEP,
+            None,
+
+            self.SIG_COL_SEP,
+            self.SIG_DATE_WIDTH
+        ]
+
+    def _sig_rule(self, col):
+        """Creates an underline for a signature block column."""
+        return ('LINEBELOW', (col, 1), (col, -1), self.SIG_RULE_WEIGHT,
+                colors.black)
 
     def _heading(self, level, text):
         """Creates a flowable containing a section heading."""
