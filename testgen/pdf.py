@@ -332,3 +332,38 @@ class Checkbox(Flowable):
 
     def draw(self):
         self.canv.rect(0, 0, self.SIZE, self.SIZE)
+
+
+class TextEntryField(Flowable):
+    """Creates an Acroform for entering a single line of text."""
+
+    # Border thickness in points.
+    BORDER_WEIGHT = 0.5
+
+    # Coefficient applied to the font size to calculate box height.
+    HEIGHT_FACTOR = 2
+
+    def __init__(self, max_chars, style):
+        self.style = style
+
+        # Width is calculated to hold the given maximum string length.
+        self.width = stringWidth(
+            'X' * max_chars,
+            style.fontName,
+            style.fontSize,
+        )
+
+        self.height = style.fontSize * self.HEIGHT_FACTOR
+
+    def wrap(self, *args):
+        return (self.width, self.height)
+
+    def draw(self):
+        self.canv.acroForm.textfield(
+            width = self.width,
+            height = self.height,
+            fontName = self.style.fontName,
+            fontSize = self.style.fontSize,
+            borderWidth = self.BORDER_WEIGHT,
+            relative=True,
+        )
