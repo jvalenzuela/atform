@@ -2,6 +2,7 @@
 
 
 from . import (
+    field,
     id,
     sig,
 )
@@ -139,6 +140,7 @@ class TestDocument(object):
         return list(itertools.chain(
             self._title(),
             self._objective(),
+            self._environment(),
             self._preconditions(),
             self._procedure(),
             self._notes(),
@@ -244,6 +246,43 @@ class TestDocument(object):
             self._heading(1, 'Notes'),
             Spacer(0, self.NOTES_AREA_SIZE),
         ]
+
+    def _environment(self):
+        """Generates the Environment section flowables.
+
+        This section is structured as a table with a row per field.
+        """
+        flowables = []
+        if field.lengths:
+            flowables.append(self._heading(1, 'Environment'))
+
+            style = self.style['Normal']
+            rows = [[Preformatted(t, style),
+                     TextEntryField(field.lengths[t], style)]
+                    for t in field.lengths]
+
+            # Field title widths for column 0.
+            widths = [[stringWidth(t, style.fontName, style.fontSize)
+                       for t in field.lengths]]
+
+            # Form field widths for column 1.
+            widths.append([row[1].wrap()[0] for row in rows])
+
+            # Column widths are set to the widest entry in each column.
+            col_widths = [max(x) for x in widths]
+
+            table_style = TableStyle([
+                # Remove unnecessary left padding from title column.
+                ('LEFTPADDING', (0 ,0), (0, -1), 0),
+            ])
+
+            flowables.append(Table(
+                rows,
+                colWidths=col_widths,
+                style=table_style,
+                hAlign='LEFT',
+            ))
+        return flowables
 
     def _approval(self):
         """Generates the Approval section flowables."""
