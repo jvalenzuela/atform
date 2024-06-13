@@ -18,3 +18,4 @@ def reset():
     testgen.id.section_titles = {}
     testgen.sig.titles = []
     testgen.field.lengths = collections.OrderedDict()
+    testgen.ref.titles = {}

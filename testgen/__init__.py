@@ -13,6 +13,10 @@ from testgen.id import (
     skip_test,
 )
 
+from testgen.ref import (
+    add_reference_category,
+)
+
 from testgen.sig import (
     add_signature,
 )
