@@ -4,6 +4,7 @@
 
 from . import id
 from . import pdf
+from . import ref
 
 
 # All Test() instances in the order they were created.
@@ -35,6 +36,14 @@ class Test(object):
             To provide one's pet with exercise and an opportunity to
             relieve itself.
             \""",
+
+            # These references assume 'sf' and 'fmea' have been configured
+            # as reference categories.
+            references={
+                'sf':['SF1', 'SF2'],
+                'fmea':['FM-1', 'FM-2'],
+            },
+
             preconditions=[
                 "Own a dog.",
                 "Two or more hours have elapsed since the last walk."
@@ -51,6 +60,11 @@ class Test(object):
     :param str objective: An optional, longer narrative, possibly spanning
                           several sentences or paragraphs, describing the
                           intent of the test procedure.
+    :param dict references: References associated with this test. Dictionary
+                            keys must be a category label defined with
+                            :any:`testgen.add_reference_category`; dictionary
+                            values are a list of strings containing references
+                            for that category.
     :param list[str] preconditions: An optional list of conditions that must
                                     be met before the procedure can commence.
     :param list[str] procedure: An optional list of procedure steps to be
@@ -62,13 +76,23 @@ class Test(object):
     :raises TypeError: If the title or objective is not a string. Also if
                        preconditions or procedure is not a list, or any
                        item within those lists is not a string.
+    :raises TypeError: If references is not a dictionary.
+    :raises TypeError: If a references key(category label) is not a string.
+    :raises TypeError: If a reference item in a category is not a string.
     :raises ValueError: If any strings provided to title, objective,
                         preconditions, or procedure are empty.
+    :raises ValueError: If references contains an empty key(category label).
+    :raises Valueerror: If references contains a key(category label) that
+                        has not been defined by
+                        :any:`testgen.add_reference_category`.
+    :raises ValueError: If a reference category contains duplicate
+                        references.
     """
 
     def __init__(self,
                  title,
                  objective=None,
+                 references={},
                  preconditions=[],
                  procedure=[],
                  ):
@@ -76,6 +100,7 @@ class Test(object):
         self.id = id.get_id()
         self.title = self._nonempty_string('Title', title)
         self.objective = self._validate_objective(objective)
+        self.references = self._validate_refs(references)
         self.preconditions = self._validate_string_list('Preconditions',
                                                         preconditions)
         self.procedure = self._validate_string_list('Procedure', procedure)
@@ -85,6 +110,48 @@ class Test(object):
         """Validates the objective parameter."""
         if obj is not None:
             return self._nonempty_string('Objective', obj)
+
+    def _validate_refs(self, refs):
+        """Validates the references parameter."""
+        if not isinstance(refs, dict):
+            raise TypeError('References must be a dictionary.')
+
+        validated = {}
+        [validated.update(self._validate_ref_category(label, refs[label]))
+         for label in refs]
+        return validated
+
+    def _validate_ref_category(self, label, refs):
+        """Validates a single reference category and associated references."""
+        label = self._nonempty_string('Reference label', label)
+
+        # Ensure the label has been defined by add_reference_category().
+        try:
+            ref.titles[label]
+        except KeyError:
+            raise ValueError("Invalid reference label: {0}.".format(
+                label))
+
+        # Check the list of references for this category.
+        validated_refs = []
+        for reference in refs:
+            if not isinstance(reference, str):
+                raise TypeError(
+                    "References for '{0}' category must be strings.".format(
+                        label))
+            reference = reference.strip()
+
+            # Reject duplicate references.
+            if reference in validated_refs:
+                raise ValueError("Duplicate '{0}' reference: {1}".format(
+                    label, reference))
+
+            # Ignore blank/empty references.
+            if reference:
+                validated_refs.append(reference)
+
+
+        return {label: validated_refs}
 
     def _validate_string_list(self, name, lst):
         """Checks a list to ensure it contains only non-empty/blank strings."""
