@@ -4,6 +4,7 @@
 from . import (
     field,
     id,
+    ref,
     sig,
 )
 import itertools
@@ -140,6 +141,7 @@ class TestDocument(object):
         return list(itertools.chain(
             self._title(),
             self._objective(),
+            self._references(),
             self._environment(),
             self._preconditions(),
             self._procedure(),
@@ -158,6 +160,48 @@ class TestDocument(object):
             flowables.append(self._heading(1, 'Objective'))
             [flowables.append(Paragraph(p))
              for p in split_paragraphs(self.test.objective)]
+        return flowables
+
+    def _references(self):
+        """Generates References flowables."""
+        flowables = []
+        if self.test.references:
+            flowables.append(self._heading(1, 'References'))
+
+            style = self.style['Normal']
+
+            # Generate a row for each reference category.
+            rows = [
+                [Preformatted(ref.titles[label], style),
+                 Paragraph(', '.join(self.test.references[label]), style)]
+                for label in self.test.references
+            ]
+
+            column_widths = [
+                # First column is sized to fit the longest category title.
+                max([stringWidth(
+                    ref.titles[label],
+                    style.fontName,
+                    style.fontSize)
+                     for label in self.test.references]),
+
+                # Second column gets all remaining space.
+                None,
+            ]
+
+            # Include LEFTPADDING and RIGHTPADDING.
+            column_widths[0] = column_widths[0] + 12
+
+            table_style = TableStyle([
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+            ])
+
+            flowables.append(Table(
+                rows,
+                colWidths=column_widths,
+                style=table_style,
+            ))
+
         return flowables
 
     def _preconditions(self):
