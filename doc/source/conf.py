@@ -8,6 +8,7 @@ import sys
 
 # Update import path to locate testgen modules.
 sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
+import testgen
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
