@@ -51,3 +51,61 @@ procedure:
      pip install -U testgen-0.0.0-py3-none-any.whl
 
 #. Delete the .whl file; it is not required after installation.
+
+
+Getting Started
+---------------
+
+Writing tests involves creating a set of Python scripts containing
+procedure content, e.g., title, procedure steps, etc. These scripts are
+then executed with Python to generate the output PDFs.
+
+An important concept to note is these scripts are plain text files and do
+not contain formatting, such as font selection or table configuration.
+The testgen package will handle formatting the output PDFs; the author need
+only provide content and structure, i.e., what is in the tests and how
+they are organized.
+
+As Python scripts are regular text files, they can be created and edited
+with any text editor, however, it is highly-recommended to use an editor
+with integrated Python support. Many such editors are freely-available;
+Notepad++, Visual Studio Code, and PyCharm to name a few. The Python
+installation also includes a suitable editor, IDLE. One note about IDLE is
+it starts in an interactive window, showing something like this::
+
+  Python 3.10.0 (tags/v3.10.0:b494f59, Oct  4 2021, 19:00:18) [MSC v.1929 64 bit (AMD64)] on win32
+  Type "help", "copyright", "credits" or "license()" for more information.
+  >>>
+
+The interactive window is for running Python commands one at a time as they
+are entered, not editing scripts saved to files. Use the File->New menu
+to open a new editor window for creating a script that will be saved to disk.
+
+Below is a minimal example to illustrate the basic layout of a testgen
+Python script. All examples in this manual are fully-functional, attached
+to the PDF in the same way as the testgen package, and can be
+used as initial templates for writing actual test procedures.
+
+.. literalinclude:: examples/minimal.py
+
+This example contains three, rather spartan tests, containing only a
+title and automatically-assigned number, yet is sufficient to demonstrate
+the entire workflow from source script to output PDF. Simple tests without
+much content are also common when creating an initial outline.
+Obviously, test procedures will require much more detail,
+which can be provided by additional parameters to the
+``testgen.Test()`` class; refer to the :py:class:`testgen.Test` reference
+documentation for further details.
+
+Executing this script with Python will yield the output files, one PDF per
+test procedure. Most Python editors or integrated development
+environments(IDEs) have features to run scripts from within the editor.
+If integrated execution is not an option, running Python from the command line
+is always available regardless of how the scripts are created and edited.
+Open a command prompt, navigate to the folder where
+the script is stored, then execute the following command::
+
+  python minimal.py
+
+If the requisite software was installed successfully, the output PDFs will
+be created in the pdf folder within the same location as the source script.
