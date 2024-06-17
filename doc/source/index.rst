@@ -11,6 +11,7 @@ Welcome to testgen's documentation!
    :caption: Contents:
 
    intro
+   org
 
 
 Indices and tables
