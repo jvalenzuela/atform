@@ -62,7 +62,8 @@ class Test(object):
                           intent of the test procedure.
     :param dict references: References associated with this test. Dictionary
                             keys must be a category label defined with
-                            :any:`testgen.add_reference_category`; dictionary
+                            :py:func:`testgen.add_reference_category`;
+                            dictionary
                             values are a list of strings containing references
                             for that category.
     :param list[str] preconditions: An optional list of conditions that must
@@ -84,7 +85,7 @@ class Test(object):
     :raises ValueError: If references contains an empty key(category label).
     :raises Valueerror: If references contains a key(category label) that
                         has not been defined by
-                        :any:`testgen.add_reference_category`.
+                        :py:func:`testgen.add_reference_category`.
     :raises ValueError: If a reference category contains duplicate
                         references.
     """
