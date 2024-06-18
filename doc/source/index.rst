@@ -12,6 +12,7 @@ Welcome to testgen's documentation!
 
    intro
    org
+   api
 
 
 Indices and tables
