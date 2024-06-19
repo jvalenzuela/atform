@@ -1,6 +1,9 @@
 Organization
 ============
 
+Sectioning
+----------
+
 By default, testgen will automatically number tests with increasing integers,
 a simple approach that may be insufficient. Most projects will need
 additional organizational levels to separate related test procedures into
@@ -21,3 +24,44 @@ The following example shows the two, primary commands for sectioning:
 :py:func:`testgen.section`:
 
 .. literalinclude:: examples/section.py
+
+
+Source Files
+------------
+
+Another tactic for organizing test procedures is to split them into separate
+scripts. Dividing large constructs into smaller components, each within their
+own file is common in many domains, including documentation. This approach
+makes it easier to locate content and for multiple authors to work on tests
+simultaneously. Separating tests into multiple scripts, however, does not
+affect the output; tests are numbered in the order they are encountered
+regardless of how many source files are involved.
+
+Organizing tests into multiple scripts utilizes Python's import keyword.
+The examples so far use import to load the testgen package with the
+following statement near the top of the script::
+
+  import testgen
+
+Separate scripts, each containing their own set of tests, e.g., one script
+per section, can be imported in a similar fashion. The recommended way to
+do this is to arrange scripts heirarchically, with one script at the top-level
+containing the setup and output areas, and the actual test content
+imported from one or more lower-level scripts. The example below shows
+a top-level script that imports content from two, separate files:
+
+.. literalinclude:: examples/main.py
+
+Next are the scripts imported from the main script, illustrating how
+content can be distributed into the lower-level scripts:
+
+.. literalinclude:: examples/button.py
+
+.. literalinclude:: examples/switch.py
+
+When generating PDF output for tests in multiple files, execute the top-level
+script only, which will automatically incorporate any imported scripts.
+All tests in the example above would be generated with the following
+command::
+
+   python main.py
