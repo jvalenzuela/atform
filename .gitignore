@@ -6,3 +6,6 @@ doc/source/generated
 
 # Packaging output.
 dist/
+
+# Unit test PDF output.
+pdf/
