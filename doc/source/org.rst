@@ -26,6 +26,19 @@ The following example shows the two, primary commands for sectioning:
 .. literalinclude:: examples/section.py
 
 
+Skipping Tests
+--------------
+
+Having tests automatically numbered is generally helpful, alleviating the
+task of manually enumerating tests and sections. However, there are
+some circumstances where the author must intervene. The most common
+cases are reserving a range of numbers for future use, or removing a
+defunct test without affecting later ones. The following example illustrates
+some different methods of skipping numbers:
+
+.. literalinclude:: examples/skip.py
+
+
 Source Files
 ------------
 
