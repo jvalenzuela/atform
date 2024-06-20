@@ -3,3 +3,6 @@ doc/build/
 
 # Sphinx autosummary generated content.
 doc/source/generated
+
+# Packaging output.
+dist/
