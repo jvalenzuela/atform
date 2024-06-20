@@ -12,6 +12,7 @@ Welcome to testgen's documentation!
 
    intro
    org
+   setup
    ref
    api
 
