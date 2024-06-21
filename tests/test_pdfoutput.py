@@ -104,3 +104,13 @@ The second paragraph. Laoreet suspendisse interdum consectetur libero id faucibu
 
 This is the second paragraph. Dolor sit amet consectetur adipiscing elit pellentesque habitant. Vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam. Vitae proin sagittis nisl rhoncus mattis rhoncus. Nulla at volutpat diam ut venenatis tellus. Nisi porta lorem mollis aliquam."""
         ])
+
+    def test_page_count_single(self):
+        """Verify correct footer page count for a single-page document."""
+        self.make_test()
+
+    def test_page_count_multi(self):
+        """Verify correct footer page count for a multi-page document."""
+        self.make_test(
+            procedure=['Lots of steps'] * 60
+        )

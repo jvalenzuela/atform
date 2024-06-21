@@ -7,6 +7,7 @@ from . import (
     ref,
     sig,
 )
+import io
 import itertools
 import os
 from reportlab.lib import colors
@@ -125,12 +126,20 @@ class TestDocument(object):
         self.full_name = ' '.join((id.to_string(test.id), test.title))
 
         self._setup_styles()
-        doc = self._get_doc(root)
-        doc.build(
-            self._build_body(),
-            onFirstPage=self._draw_header_footer,
-            onLaterPages=self._draw_header_footer,
-        )
+
+        # The document is built twice; the first time to a dummy memory
+        # buffer in order to determine the total page count, and the
+        # second time to the output PDF file.
+        for dst in [None, root]:
+            doc = self._get_doc(dst)
+            doc.build(
+                self._build_body(),
+                onFirstPage=self._draw_header_footer,
+                onLaterPages=self._draw_header_footer,
+            )
+
+            # Capture the final page count for the next build.
+            self.total_pages = doc.page
 
     def _setup_styles(self):
         """Configures the style sheet."""
@@ -144,10 +153,18 @@ class TestDocument(object):
 
     def _get_doc(self, root):
         """Creates the document template."""
-        filename = self.full_name + '.pdf'
-        path = build_path(self.test.id, root)
-        os.makedirs(path, exist_ok=True)
-        return SimpleDocTemplate(os.path.join(path, filename))
+        # Output a PDF if root is a string containing a directory.
+        if isinstance(root, str):
+            pdfname = self.full_name + '.pdf'
+            path = build_path(self.test.id, root)
+            os.makedirs(path, exist_ok=True)
+            filename = os.path.join(path, pdfname)
+
+        # Target a dummy buffer if no directory was provided.
+        else:
+            filename = io.BytesIO()
+
+        return SimpleDocTemplate(filename)
 
     def _draw_header_footer(self, canvas, doc):
         """Draws the header and footer."""
@@ -170,7 +187,20 @@ class TestDocument(object):
     def _footer(self, canvas, doc):
         """Draws the page footer."""
         self._set_canvas_text_style(canvas, self.FOOTER_TEXT_STYLE)
-        self._draw_head_foot_rule(canvas, doc, self.FOOTER_HEIGHT)
+        baseline = self.FOOTER_HEIGHT
+        self._draw_head_foot_rule(canvas, doc, baseline)
+
+        # Offset text below the rule relative to the font size.
+        baseline -= self.style[self.FOOTER_TEXT_STYLE].fontSize * 1.2
+
+        # See if a total page count is available.
+        try:
+            total_pages = self.total_pages
+        except AttributeError:
+            total_pages = '?'
+
+        pages = "Page {0} of {1}".format(doc.page, total_pages)
+        canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
 
     def _set_canvas_text_style(self, canvas, style):
         """Sets the current canvas font to a given style."""
