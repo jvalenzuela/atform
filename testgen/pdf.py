@@ -84,6 +84,21 @@ def build_path(tid, root):
 class TestDocument(object):
     """This class creates a PDF for a single Test instance."""
 
+    HEADER_TEXT_STYLE = 'Heading2'
+    FOOTER_TEXT_STYLE = 'Normal'
+
+    # Vertical distance between the header rule and the top of the page.
+    HEADER_HEIGHT = 0.75 * inch
+
+    # Vertical distance between the footer rule and the bottom of the page.
+    FOOTER_HEIGHT = 0.5 * inch
+
+    # Left and right margin for header and footer.
+    HEADER_FOOTER_SIDE_MARGIN = 0.75 * inch
+
+    # Thickness of the horizontal rules separating the header and footer.
+    HEADER_RULE_WEIGHT = 0.5
+
     # Vertical space allotted for the Notes section.
     NOTES_AREA_SIZE = 4 * inch
 
@@ -111,7 +126,11 @@ class TestDocument(object):
 
         self._setup_styles()
         doc = self._get_doc(root)
-        doc.build(self._build_body())
+        doc.build(
+            self._build_body(),
+            onFirstPage=self._draw_header_footer,
+            onLaterPages=self._draw_header_footer,
+        )
 
     def _setup_styles(self):
         """Configures the style sheet."""
@@ -130,6 +149,42 @@ class TestDocument(object):
         os.makedirs(path, exist_ok=True)
         return SimpleDocTemplate(os.path.join(path, filename))
 
+    def _draw_header_footer(self, canvas, doc):
+        """Draws the header and footer."""
+        self._header(canvas, doc)
+        self._footer(canvas, doc)
+
+    def _header(self, canvas, doc):
+        """Draws the page header."""
+        self._set_canvas_text_style(canvas, self.HEADER_TEXT_STYLE)
+        baseline = doc.pagesize[1] - self.HEADER_HEIGHT
+        self._draw_head_foot_rule(canvas, doc, baseline)
+
+        # Offset the text above the rule relative to the font size.
+        baseline += self.style[self.HEADER_TEXT_STYLE].fontSize * 0.25
+
+        canvas.drawString(self.HEADER_FOOTER_SIDE_MARGIN,
+                          baseline,
+                          self.full_name)
+
+    def _footer(self, canvas, doc):
+        """Draws the page footer."""
+        self._set_canvas_text_style(canvas, self.FOOTER_TEXT_STYLE)
+        self._draw_head_foot_rule(canvas, doc, self.FOOTER_HEIGHT)
+
+    def _set_canvas_text_style(self, canvas, style):
+        """Sets the current canvas font to a given style."""
+        style = self.style[style]
+        canvas.setFont(style.fontName, style.fontSize)
+
+    def _draw_head_foot_rule(self, canvas, doc, y):
+        """Draws the horizontal rule for the header and footer."""
+        canvas.setLineWidth(self.HEADER_RULE_WEIGHT)
+        canvas.line(self.HEADER_FOOTER_SIDE_MARGIN,
+                    y,
+                    doc.pagesize[0] - self.HEADER_FOOTER_SIDE_MARGIN,
+                    y)
+
     def _build_body(self):
         """
         Assembles the list of flowables representing all content other
@@ -139,7 +194,6 @@ class TestDocument(object):
         # returning a list of flowables containing their respective
         # content.
         return list(itertools.chain(
-            self._title(),
             self._objective(),
             self._references(),
             self._environment(),
@@ -148,10 +202,6 @@ class TestDocument(object):
             self._notes(),
             self._approval(),
         ))
-
-    def _title(self):
-        """Generates the title flowables."""
-        return [Paragraph(self.full_name, self.style['Title'])]
 
     def _objective(self):
         """Generates Objective section flowables."""
