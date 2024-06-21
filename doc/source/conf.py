@@ -36,3 +36,10 @@ exclude_patterns = []
 
 html_theme = 'alabaster'
 html_static_path = ['_static']
+
+
+# -- Options for LaTeX output ------------------------------------------------
+
+latex_elements = {
+    'extraclassoptions': 'oneside',
+}
