@@ -26,6 +26,13 @@ from reportlab.platypus import (
 from reportlab.platypus.flowables import Flowable
 
 
+# Constant denoting the point unit of measure(1/72 inch). The unity value
+# is because points are the default unit for ReportLab, so a conversion
+# constant is not strictly necessary, however, this provides an explicit
+# notation consistent with other units imported from reportlab.lib.units.
+point = 1
+
+
 def split_paragraphs(s):
     """Separates a string into a list of paragraphs.
 
@@ -98,13 +105,13 @@ class TestDocument(object):
     HEADER_FOOTER_SIDE_MARGIN = 0.75 * inch
 
     # Thickness of the horizontal rules separating the header and footer.
-    HEADER_RULE_WEIGHT = 0.5
+    HEADER_RULE_WEIGHT = 0.5 * point
 
     # Vertical space allotted for the Notes section.
     NOTES_AREA_SIZE = 4 * inch
 
     # Thickness of the signature block field underlining.
-    SIG_RULE_WEIGHT = 0.2
+    SIG_RULE_WEIGHT = 0.2 * point
 
     # Distance between signature block columns. This spacing is implemented
     # with blank columns of this width instead of left/right padding because
@@ -270,10 +277,10 @@ class TestDocument(object):
             ]
 
             # Include LEFTPADDING and RIGHTPADDING.
-            column_widths[0] = column_widths[0] + 12
+            column_widths[0] = column_widths[0] + (12 * point)
 
             table_style = TableStyle([
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+                ('GRID', (0, 0), (-1, -1), 0.5 * point, colors.black),
             ])
 
             flowables.append(Table(
@@ -349,12 +356,12 @@ class TestDocument(object):
         """Defines the style applied to the procedure table."""
         return TableStyle([
             # Header row
-            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.black),
+            ('LINEBELOW', (0, 0), (-1, 0), 2 * point, colors.black),
             ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
 
             # Step rows
-            ('LINEBELOW', (0, 1), (-1, -1), .2, colors.black),
+            ('LINEBELOW', (0, 1), (-1, -1), .2 * point, colors.black),
 
             # Step number column
             ('VALIGN', (0, 1), (0, -1), 'MIDDLE'),
@@ -397,7 +404,7 @@ class TestDocument(object):
 
             table_style = TableStyle([
                 # Remove unnecessary left padding from title column.
-                ('LEFTPADDING', (0 ,0), (0, -1), 0),
+                ('LEFTPADDING', (0 ,0), (0, -1), 0 * point),
             ])
 
             flowables.append(Table(
@@ -432,10 +439,10 @@ class TestDocument(object):
                 self._sig_rule(6),
 
                 # Remove all padding around cell content.
-                ('LEFTPADDING', (0 ,0), (-1, -1), 0),
-                ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-                ('TOPPADDING', (0, 0), (-1, -1), 0),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+                ('LEFTPADDING', (0 ,0), (-1, -1), 0 * point),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 0 * point),
+                ('TOPPADDING', (0, 0), (-1, -1), 0 * point),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 0 * point),
             ])
 
             row_heights = [None] # Default height for header row.
@@ -500,8 +507,8 @@ class Checkbox(Flowable):
 class TextEntryField(Flowable):
     """Creates an Acroform for entering a single line of text."""
 
-    # Border thickness in points.
-    BORDER_WEIGHT = 0.5
+    # Border thickness.
+    BORDER_WEIGHT = 0.5 * point
 
     # Coefficient applied to the font size to calculate box height.
     HEIGHT_FACTOR = 2
