@@ -3,8 +3,10 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
 import pathlib
 import sys
+import tomli
 
 # Update import path to locate testgen modules.
 sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
@@ -13,10 +15,14 @@ import testgen
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'testgen'
+# Load the top-level project configuration.
+with open(os.path.join('..', '..', 'pyproject.toml'), 'rb') as f:
+    config = tomli.load(f)
+
+project = config['project']['name']
 copyright = '2024, Jason Valenzuela'
 author = ''
-release = '0'
+release = config['project']['version']
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
