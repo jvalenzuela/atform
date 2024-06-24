@@ -42,4 +42,5 @@ html_static_path = ['_static']
 
 latex_elements = {
     'extraclassoptions': 'oneside',
+    'pointsize': '12pt',
 }
