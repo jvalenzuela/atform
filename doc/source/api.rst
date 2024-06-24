@@ -1,11 +1,13 @@
-API
-===
+API Reference
+=============
+
+This chapter is a comprehensive listing of the testgen application
+programming interface, organized by the script section where each item
+is intended to be used.
 
 
 Setup
 -----
-
-Commands available in the setup area:
 
 .. autosummary::
    :toctree: generated
@@ -19,8 +21,6 @@ Commands available in the setup area:
 Content
 -------
 
-Commands available in the content area:
-
 .. autosummary::
    :toctree: generated
 
@@ -31,8 +31,6 @@ Commands available in the content area:
 
 Output
 ------
-
-Commands available in the output area:
 
 .. autosummary::
    :toctree: generated
