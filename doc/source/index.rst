@@ -14,6 +14,7 @@ Welcome to testgen's documentation!
    org
    setup
    ref
+   auto
    api
 
 
