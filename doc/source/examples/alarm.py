@@ -25,8 +25,7 @@ def verify_alarm(num):
     a specific alarm based on the alarm number, which is used to
     construct a string containing the full message text.
     """
-    return "Verify the following alarm:\n\n{0}: {1}".format(
-        num, alarms[num])
+    return f"Verify the following alarm:\n\n{num}: {alarms[num]}"
 
 
 ######################################################################

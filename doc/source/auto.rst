@@ -74,7 +74,7 @@ in multiple scripts, move the following content from alarm.py
 into a separate file called :file:`common.py`:
 
 .. literalinclude:: examples/alarm.py
-   :lines: 6-29
+   :lines: 6-28
 
 Every script needing alarm content would then import it in addition
 to testgen at the top.

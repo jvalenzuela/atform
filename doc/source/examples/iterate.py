@@ -14,10 +14,10 @@ def button_test(button):
     customizing the test content for the button provided in the
     argument.
     """
-    testgen.Test("{0} Button Test".format(button),
+    testgen.Test(f"{button} Button Test",
              procedure=[
-                 "Press the {0} button.".format(button),
-                 "Release the {0} button.".format(button)
+                 f"Press the {button} button.",
+                 f"Release the {button} button."
              ])
 
 
