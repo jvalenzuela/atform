@@ -41,14 +41,18 @@ procedure:
 
 #. The Python package manager, pip, is used to install the testgen package,
    and requires a functional Internet connection. Use the following
-   command executed in the command prompt::
+   command executed in the command prompt:
 
-     pip install testgen-0.0.0-py3-none-any.whl
+   .. code-block:: text
+
+      pip install testgen-0.0.0-py3-none-any.whl
 
    If testgen is already installed, use the ``-U`` option to upgrade to a
-   newer version::
+   newer version:
 
-     pip install -U testgen-0.0.0-py3-none-any.whl
+   .. code-block:: text
+
+      pip install -U testgen-0.0.0-py3-none-any.whl
 
 #. Delete the :file:`.whl` file; it is not required after installation.
 
@@ -71,11 +75,13 @@ with any text editor, however, it is highly-recommended to use an editor
 with integrated Python support. Many such editors are freely-available;
 Notepad++, Visual Studio Code, and PyCharm to name a few. The Python
 installation also includes a suitable editor, IDLE. One note about IDLE is
-it starts in an interactive window, showing something like this::
+it starts in an interactive window, showing something like this:
 
-  Python 3.10.0 (tags/v3.10.0:b494f59, Oct  4 2021, 19:00:18) [MSC v.1929 64 bit (AMD64)] on win32
-  Type "help", "copyright", "credits" or "license()" for more information.
-  >>>
+.. code-block:: text
+
+   Python 3.10.0 (tags/v3.10.0:b494f59, Oct  4 2021, 19:00:18) [MSC v.1929 64 bit (AMD64)] on win32
+   Type "help", "copyright", "credits" or "license()" for more information.
+   >>>
 
 The interactive window is for running Python commands one at a time as they
 are entered, not editing scripts saved to files. Use the
@@ -104,9 +110,11 @@ environments(IDEs) have features to run scripts from within the editor.
 If integrated execution is not an option, running Python from the command line
 is always available regardless of how the scripts are created and edited.
 Open a command prompt, navigate to the folder where
-the script is stored, then execute the following command::
+the script is stored, then execute the following command:
 
-  python minimal.py
+.. code-block:: text
+
+   python minimal.py
 
 If the requisite software was installed successfully, the output PDFs will
 be created in the :file:`pdf` folder within the same location as the

@@ -75,6 +75,8 @@ content can be distributed into the lower-level scripts:
 When generating PDF output for tests in multiple files, execute the top-level
 script only, which will automatically incorporate any imported scripts.
 All tests in the example above would be generated with the following
-command::
+command:
+
+.. code-block:: text
 
    python main.py
