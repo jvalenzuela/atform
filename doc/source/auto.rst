@@ -51,7 +51,7 @@ just about any type of structured file format, making custom import
 functionality in testgen unnecessary; external content can be imported
 using existing Python features.
 
-The alarms.csv file attached to this PDF is a sample export containing
+The :file:`alarms.csv` file attached to this PDF is a sample export containing
 alarm messages. The example script below reads the csv file and creates
 some tests including alarm messages from the csv file. The script and csv
 file need to reside in the same folder to work properly.
@@ -71,7 +71,7 @@ the testgen module.
 
 Using the alarm example above, if that feature was needed for tests
 in multiple scripts, move the following content from alarm.py
-into a separate file called common.py:
+into a separate file called :file:`common.py`:
 
 .. literalinclude:: examples/alarm.py
    :lines: 6-28

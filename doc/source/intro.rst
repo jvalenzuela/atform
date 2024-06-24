@@ -33,10 +33,10 @@ The testgen package can be installed after Python using the following
 procedure:
 
 #. The testgen package is distributed as an attachment embedded into this
-   PDF manual. Save the .whl file to a convenient location on
+   PDF manual. Save the :file:`.whl` file to a convenient location on
    your computer.
 
-#. Open a command prompt and navigate to the directory where the .whl
+#. Open a command prompt and navigate to the directory where the :file:`.whl`
    file was saved.
 
 #. The Python package manager, pip, is used to install the testgen package,
@@ -50,7 +50,7 @@ procedure:
 
      pip install -U testgen-0.0.0-py3-none-any.whl
 
-#. Delete the .whl file; it is not required after installation.
+#. Delete the :file:`.whl` file; it is not required after installation.
 
 
 Getting Started
@@ -78,7 +78,8 @@ it starts in an interactive window, showing something like this::
   >>>
 
 The interactive window is for running Python commands one at a time as they
-are entered, not editing scripts saved to files. Use the File->New menu
+are entered, not editing scripts saved to files. Use the
+:menuselection:`File --> New` menu
 to open a new editor window for creating a script that will be saved to disk.
 
 Below is a minimal example to illustrate the basic layout of a testgen
@@ -108,4 +109,5 @@ the script is stored, then execute the following command::
   python minimal.py
 
 If the requisite software was installed successfully, the output PDFs will
-be created in the pdf folder within the same location as the source script.
+be created in the :file:`pdf` folder within the same location as the
+source script.
