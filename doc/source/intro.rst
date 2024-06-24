@@ -2,7 +2,7 @@ Introduction
 ============
 
 The testgen software is intended for writing test procedures, which often
-requires significant repitition, iteration, or other similar
+requires significant repetition, iteration, or other similar
 time-consuming and error-prone tasks where computers excel.
 This software employs the Python programming language to help alleviate
 these burdens, such as formatting and
