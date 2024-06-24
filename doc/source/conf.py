@@ -15,7 +15,7 @@ import testgen
 
 project = 'testgen'
 copyright = '2024, Jason Valenzuela'
-author = 'Jason Valenzuela'
+author = ''
 release = '0'
 
 # -- General configuration ---------------------------------------------------
