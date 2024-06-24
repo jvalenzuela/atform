@@ -176,7 +176,7 @@ def generate(path='pdf'):
 
     Should be called once
     near the end of the script after tests have been created with
-    :py:class:`Test(...)<Test>`.
+    :py:class:`testgen.Test`.
 
     :param str path: Optional path to an output directory.
     :raises TypeError: If path is not a string.
