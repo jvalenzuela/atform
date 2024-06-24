@@ -3,16 +3,16 @@
 import testgen
 
 
-################################################################################
+######################################################################
 # Setup
-################################################################################
+######################################################################
 
 testgen.set_id_depth(2)
 
 
-################################################################################
+######################################################################
 # Content
-################################################################################
+######################################################################
 
 testgen.section(0, title='The First Section')
 
@@ -26,9 +26,10 @@ testgen.section(0, id=5, title='A Later Section')
 
 testgen.Test('An Important Test') # This will be 5.1.
 
-# The testgen.skip_test() function can advance the last field in a test
-# number. Without any arguments it will skip a single number, which
-# can be useful when removing a test. This example will skip 5.2.
+# The testgen.skip_test() function can advance the last field in a
+# test number. Without any arguments it will skip a single number,
+# which can be useful when removing a test. This example will
+# skip 5.2.
 testgen.skip_test()
 
 testgen.Test('Verify Something') # This will be 5.3.
@@ -40,8 +41,8 @@ testgen.skip_test(10)
 testgen.Test('Verify Another') # This will be 5.10.
 
 
-################################################################################
+######################################################################
 # Output
-################################################################################
+######################################################################
 
 testgen.generate()

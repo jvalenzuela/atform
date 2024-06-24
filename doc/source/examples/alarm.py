@@ -7,13 +7,13 @@ import testgen
 import csv
 
 
-################################################################################
+######################################################################
 # Alarms
-################################################################################
+######################################################################
 
-# Load alarms.csv using the Python csv module, creating a dictionary mapping
-# alarm number to its respective message, so the text for any alarm can be
-# acquired by alarms[num].
+# Load alarms.csv using the Python csv module, creating a dictionary
+# mapping alarm number to its respective message, so the text for
+# any alarm can be acquired by alarms[num].
 with open('alarms.csv', newline='') as f:
     reader = csv.reader(f)
     alarms = dict([(int(row[0]), row[1]) for row in reader])
@@ -22,19 +22,20 @@ with open('alarms.csv', newline='') as f:
 def verify_alarm(num):
     """
     This function will generate a procedure step(a string) verifying
-    a specific alarm based on the alarm number, which is used to construct
-    a string containing the full message text.
+    a specific alarm based on the alarm number, which is used to
+    construct a string containing the full message text.
     """
-    return "Verify the following alarm:\n\n{0}: {1}".format(num, alarms[num])
+    return "Verify the following alarm:\n\n{0}: {1}".format(
+        num, alarms[num])
 
 
-################################################################################
+######################################################################
 # Content
-################################################################################
+######################################################################
 
-# Tests use the verify_alarm() function within their procedure argument to
-# include a step verifying an alarm with the message text acquired from the
-# external CSV file.
+# Tests use the verify_alarm() function within their procedure
+# argument to include a step verifying an alarm with the message
+# text acquired from the external CSV file.
 
 testgen.Test('Test Alarm 42',
              procedure=[
@@ -60,8 +61,8 @@ testgen.Test('Test Alarm 99',
              ])
 
 
-################################################################################
+######################################################################
 # Output
-################################################################################
+######################################################################
 
 testgen.generate()
