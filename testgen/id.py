@@ -38,10 +38,11 @@ def to_string(id):
 
 
 def section(level, id=None, title=None):
-    """
-    Creates a new section or subsection, incrementing the identifier, and
-    optionally assigning a section title. All subsections after the
-    target level and individual test numbers will be reset.
+    """Creates a new section or subsection.
+
+    The target section level is incremented, and the new section can be given
+    an optional title. All subsections after the target level and individual
+    test numbers will be reset.
 
     Below is an example to help illustrate usage:
 
@@ -115,8 +116,8 @@ def section(level, id=None, title=None):
 
 @misc.setup_only
 def set_id_depth(levels):
-    """
-    Configures the number of fields for the identifier assigned to each test.
+    """Configures the number of fields in test numeric identifiers.
+
     For example, setting the depth to three will generate identifiers with
     three numeric fields, like 2.1.1 or 4.2.3. This should be called once
     before any tests or sections are created.
@@ -136,8 +137,9 @@ def set_id_depth(levels):
 
 
 def skip_test(id=None):
-    """
-    Omits one or more tests. This function can only skip tests within the
+    """Omits one or more tests.
+
+    This function can only skip tests within the
     current section, i.e., it will only affect the last identifier field.
     Typical usage, as shown below, is to reserve a range of IDs or
     maintain numbering if a test is removed.

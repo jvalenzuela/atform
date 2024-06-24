@@ -18,8 +18,9 @@ lengths = collections.OrderedDict()
 
 @misc.setup_only
 def add_field(title, length):
-    """
-    Creates a form field for entering a single line of text at the beginning
+    """Adds a user entry field to capture test execution information.
+
+    Form fields are suitable for entering a single line of text at the beginning
     of each test; fields will be listed in the order they were added.
     This function can only be used in the setup area of the script,
     before any tests or sections are created.

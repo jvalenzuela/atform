@@ -17,9 +17,9 @@ titles = {}
 
 @misc.setup_only
 def add_reference_category(title, label):
-    """
-    Creates a topic for listing external references. This
-    function does not create any actual references; they must be
+    """Creates a topic for listing external references.
+
+    This function does not create any actual references; they must be
     added to each test individually with the references argument of
     :py:class:`testgen.Test`. This function is only available in the setup
     area of the script before any tests or sections are created.

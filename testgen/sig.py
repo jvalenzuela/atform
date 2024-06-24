@@ -17,8 +17,9 @@ titles = []
 
 @misc.setup_only
 def add_signature(title):
-    """
-    Defines a signature entry containing title, name, signature, and date
+    """Adds an approval signature line.
+
+    The signature entry contains title, name, signature, and date
     fields that will appear at the conclusion of every test. Signatures
     will be presented in the order they are defined.
 

@@ -19,8 +19,9 @@ tests = []
 
 
 class Test(object):
-    """
-    Creates a single test procedure. Numeric identifiers will be incrementally
+    """Creates a single test procedure.
+
+    Numeric identifiers will be incrementally
     assigned to each test in the order they appear. Only the title parameter
     is required, allowing tests to be initially outlined, then filled in with
     more detail at a later time. The listing below contains a complete example:
@@ -171,8 +172,9 @@ class Test(object):
 
 
 def generate(path='pdf'):
-    """
-    Builds PDF output files for all defined tests. Should be called once
+    """Builds PDF output files for all defined tests.
+
+    Should be called once
     near the end of the script after tests have been created with
     :py:class:`Test(...)<Test>`.
 
