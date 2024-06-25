@@ -490,7 +490,7 @@ class TestDocument(object):
 
     def _heading(self, text):
         """Creates a flowable containing a section heading."""
-        return Paragraph(text, style=self.style[self.HEADING_STYLE])
+        return Preformatted(text, style=self.style[self.HEADING_STYLE])
 
 
 class Checkbox(Flowable):
