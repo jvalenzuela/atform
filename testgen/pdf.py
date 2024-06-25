@@ -125,6 +125,12 @@ class TestDocument(object):
     # Height of the signature block rows to allow handwritten entries.
     SIG_ROW_HEIGHT = 0.5 * inch
 
+    # Name of the text style used for section headers.
+    HEADING_STYLE = 'Heading1'
+
+    # Vertical space above section headers.
+    HEADING_SPACE_ABOVE = 24 * point
+
     def __init__(self, test, root):
         self.test = test
 
@@ -154,9 +160,9 @@ class TestDocument(object):
 
         # Avoid page breaks between headings and the first flowable in the
         # section.
-        for name in self.style.byName:
-            if name.startswith('Heading'):
-                self.style[name].keepWithNext = 1
+        self.style[self.HEADING_STYLE].keepWithNext = 1
+
+        self.style[self.HEADING_STYLE].spaceBefore = self.HEADING_SPACE_ABOVE
 
     def _get_doc(self, root):
         """Creates the document template."""
@@ -244,7 +250,7 @@ class TestDocument(object):
         """Generates Objective section flowables."""
         flowables = []
         if self.test.objective:
-            flowables.append(self._heading(1, 'Objective'))
+            flowables.append(self._heading('Objective'))
             [flowables.append(Paragraph(p))
              for p in split_paragraphs(self.test.objective)]
         return flowables
@@ -253,7 +259,7 @@ class TestDocument(object):
         """Generates References flowables."""
         flowables = []
         if self.test.references:
-            flowables.append(self._heading(1, 'References'))
+            flowables.append(self._heading('References'))
 
             style = self.style['Normal']
 
@@ -295,7 +301,7 @@ class TestDocument(object):
         """Generates Preconditions section flowables."""
         flowables = []
         if self.test.preconditions:
-            flowables.append(self._heading(1, 'Preconditions'))
+            flowables.append(self._heading('Preconditions'))
 
             bullet_list_items = []
 
@@ -312,7 +318,7 @@ class TestDocument(object):
         """Creates the Procedure section flowables."""
         flowables = []
         if self.test.procedure:
-            flowables.append(self._heading(1, 'Procedure'))
+            flowables.append(self._heading('Procedure'))
             rows = []
 
             # Add header row.
@@ -374,7 +380,7 @@ class TestDocument(object):
     def _notes(self):
         """Generates the Notes section flowables."""
         return [
-            self._heading(1, 'Notes'),
+            self._heading('Notes'),
             Spacer(0, self.NOTES_AREA_SIZE),
         ]
 
@@ -385,7 +391,7 @@ class TestDocument(object):
         """
         flowables = []
         if field.lengths:
-            flowables.append(self._heading(1, 'Environment'))
+            flowables.append(self._heading('Environment'))
 
             style = self.style['Normal']
             rows = [[Preformatted(t, style),
@@ -420,7 +426,7 @@ class TestDocument(object):
         flowables = []
         if sig.titles:
             style = self.style['Normal']
-            flowables.append(self._heading(1, 'Approval'))
+            flowables.append(self._heading('Approval'))
             table_data = []
 
             # Start with header row.
@@ -482,9 +488,9 @@ class TestDocument(object):
         return ('LINEBELOW', (col, 1), (col, -1), self.SIG_RULE_WEIGHT,
                 colors.black)
 
-    def _heading(self, level, text):
+    def _heading(self, text):
         """Creates a flowable containing a section heading."""
-        return Paragraph(text, style=self.style['Heading' + str(level)])
+        return Paragraph(text, style=self.style[self.HEADING_STYLE])
 
 
 class Checkbox(Flowable):
