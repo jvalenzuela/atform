@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 name = "testgen"
 version = "0.0.0"
 description = "Test procedure generator."
-requires-python = ">= 3.6" # Based on ReportLab's requirement.
+requires-python = ">= 3.11"
 dependencies = [
     "reportlab>=4.2.0",
 ]
