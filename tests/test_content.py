@@ -34,6 +34,41 @@ class Title(unittest.TestCase):
         self.assertEqual('Spam', t.title)
 
 
+class Label(unittest.TestCase):
+    """Unit tests for label replacement."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_objective_placeholder(self):
+        """Confirm placeholders are replaced in the objective."""
+        testgen.Test('target', label='TheLabel')
+        t = testgen.Test('title', objective='$TheLabel')
+        t._pregenerate()
+        self.assertEqual('1', t.objective)
+
+    def test_precondition_placeholder(self):
+        """Confirm placeholders are replaced in preconditions."""
+        testgen.Test('target', label='TheLabel')
+        t = testgen.Test('title', preconditions=['$TheLabel'])
+        t._pregenerate()
+        self.assertEqual('1', t.preconditions[0])
+
+    def test_procedure_placeholder(self):
+        """Confirm placeholders are replaced in procedure steps."""
+        testgen.Test('target', label='TheLabel')
+        t = testgen.Test('title', procedure=['$TheLabel'])
+        t._pregenerate()
+        self.assertEqual('1', t.procedure[0])
+
+    def test_forward_reference(self):
+        """Confirm a placeholder for a label defined in a later test."""
+        t = testgen.Test('title', objective='$TheLabel')
+        testgen.Test('target', label='TheLabel')
+        t._pregenerate()
+        self.assertEqual('2', t.objective)
+
+
 class Objective(unittest.TestCase):
     """Unit tests for test objectives."""
 

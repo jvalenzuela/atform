@@ -3,6 +3,7 @@
 
 
 from . import id
+from . import label
 from . import pdf
 from . import ref
 
@@ -93,6 +94,7 @@ class Test(object):
 
     def __init__(self,
                  title,
+                 label=None,
                  objective=None,
                  references={},
                  preconditions=[],
@@ -101,12 +103,24 @@ class Test(object):
         global tests
         self.id = id.get_id()
         self.title = self._nonempty_string('Title', title)
+        self._store_label(label)
         self.objective = self._validate_objective(objective)
         self.references = self._validate_refs(references)
         self.preconditions = self._validate_string_list('Preconditions',
                                                         preconditions)
         self.procedure = self._validate_string_list('Procedure', procedure)
         tests.append(self)
+
+    def _store_label(self, lbl):
+        """Assigns this test to a given label."""
+        if lbl is not None:
+            id_string = id.to_string(self.id)
+            try:
+                label.add(lbl, id_string)
+            except Exception as e:
+                e.add_note("Invalid label assigned to test {0} {1}.".format(
+                    id_string, self.title))
+                raise e
 
     def _validate_objective(self, obj):
         """Validates the objective parameter."""
@@ -170,6 +184,20 @@ class Test(object):
             raise ValueError("{0} cannot be empty.".format(name))
         return stripped
 
+    def _pregenerate(self):
+        """
+        Performs tasks that need to occur after all tests have been defined,
+        but before actual output is generated.
+        """
+        self._resolve_labels()
+
+    def _resolve_labels(self):
+        """Replaces label placeholders with their target IDs."""
+        if self.objective:
+            self.objective = label.resolve(self.objective)
+        self.preconditions = [label.resolve(pc) for pc in self.preconditions]
+        self.procedure = [label.resolve(ps) for ps in self.procedure]
+
 
 def generate(path='pdf'):
     """Builds PDF output files for all defined tests.
@@ -183,4 +211,5 @@ def generate(path='pdf'):
     """
     if not isinstance(path, str):
         raise TypeError('Output path must be a string.')
+    [t._pregenerate() for t in tests]
     [pdf.TestDocument(t, path) for t in tests]
