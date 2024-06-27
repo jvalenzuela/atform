@@ -2,6 +2,7 @@
 
 
 import testgen
+from testgen import label
 import collections
 
 
@@ -19,3 +20,4 @@ def reset():
     testgen.sig.titles = []
     testgen.field.lengths = collections.OrderedDict()
     testgen.ref.titles = {}
+    label.labels = {}
