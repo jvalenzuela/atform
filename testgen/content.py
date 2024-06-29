@@ -59,6 +59,8 @@ class Test(object):
     :param str title: A short phrase describing the test procedure, that
                       is combined with the automatically-assigned numeric
                       ID to identify this specific test.
+    :param str label: An optional identifier for use in content
+                      strings to refer back to this test. See :ref:`labels`.
     :param str objective: An optional, longer narrative, possibly spanning
                           several sentences or paragraphs, describing the
                           intent of the test procedure.
@@ -76,14 +78,17 @@ class Test(object):
                                 ``'1. The first step...'``; steps will be
                                 automatically numbered based on their
                                 list order.
-    :raises TypeError: If the title or objective is not a string. Also if
-                       preconditions or procedure is not a list, or any
+    :raises TypeError: If the title, objective, or label is not a string.
+                       Also if preconditions or procedure is not a list, or any
                        item within those lists is not a string.
     :raises TypeError: If references is not a dictionary.
     :raises TypeError: If a references key(category label) is not a string.
     :raises TypeError: If a reference item in a category is not a string.
     :raises ValueError: If any strings provided to title, objective,
                         preconditions, or procedure are empty.
+    :raises ValueError: If label is not a valid identifier, i.e., only
+                        alphanumeric and underscore characters, or is a
+                        duplicate of a label defined elsewhere.
     :raises ValueError: If references contains an empty key(category label).
     :raises Valueerror: If references contains a key(category label) that
                         has not been defined by
@@ -208,6 +213,10 @@ def generate(path='pdf'):
 
     :param str path: Optional path to an output directory.
     :raises TypeError: If path is not a string.
+    :raises KeyError: If any test contains a string with a placeholder
+                      for an undefined label.
+    :raises ValueError: If any test contains a string with an invalid
+                        label syntax.
     """
     if not isinstance(path, str):
         raise TypeError('Output path must be a string.')

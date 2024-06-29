@@ -13,6 +13,7 @@ Welcome to testgen's documentation!
    intro
    org
    setup
+   write
    ref
    auto
    api
