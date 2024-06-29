@@ -23,7 +23,8 @@ limit the language in any way.
 Installation
 ------------
 
-The Python programming language, version 3.6 or later, must be installed,
+The Python programming language, version |requires_python| or later,
+must be installed,
 and is available from `<https://python.org>`_. Make sure to select the
 add Python to the path option from the installation dialog:
 

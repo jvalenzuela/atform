@@ -5,6 +5,7 @@
 
 import os
 import pathlib
+import re
 import sys
 import tomli
 
@@ -18,6 +19,11 @@ import testgen
 # Load the top-level project configuration.
 with open(os.path.join('..', '..', 'pyproject.toml'), 'rb') as f:
     config = tomli.load(f)
+
+# Extract the minimum required Python version from the project configuration.
+requires_python = re.search(
+    r"\d+(\.\d+)*",
+    config['project']['requires-python']).group()
 
 project = config['project']['name']
 copyright = '2024, Jason Valenzuela'
@@ -35,7 +41,9 @@ extensions = [
 templates_path = ['_templates']
 exclude_patterns = []
 
-
+rst_prolog = f"""
+.. |requires_python| replace:: {requires_python}
+"""
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

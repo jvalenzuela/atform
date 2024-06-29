@@ -7,7 +7,12 @@ build-backend = "hatchling.build"
 name = "testgen"
 version = "0.0.0"
 description = "Test procedure generator."
+
+# This version number is automatically inserted into the user manual, however,
+# the '>=' is not, so the manual language needs to be updated separately
+# if the comparison operator changes.
 requires-python = ">= 3.11"
+
 dependencies = [
     "reportlab>=4.2.0",
 ]
