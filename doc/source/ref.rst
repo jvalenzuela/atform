@@ -11,3 +11,34 @@ to specify references for each test procedure. The sample below shows
 test procedures with two reference categories:
 
 .. literalinclude:: examples/ref.py
+
+
+.. _xref:
+
+Cross-References
+----------------
+
+References applied to test procedures can be collated by testgen into
+a cross-reference, listing every test assigned a given reference.
+Such a cross-reference is often needed for tasks related to the test
+procedures; having this information automatically generated
+removes the need to manually duplicate it, and helps ensure
+consistency with the actual tests.
+
+Projects vary widely in the type of references and in the desired
+cross-reference format, therefore, testgen itself does *not* create any
+type of cross-reference file, but rather presents the infomation as a
+standard Python data structure: a dictionary. Exporting that data into
+any standard file format, such as CSV, is easily accomplished with regular
+Python utilities.
+
+The cross-reference dictionary is acquired by calling the
+:py:func:`testgen.get_xref` function in the output section of the script.
+It may be called before or after :py:func:`testgen.generate`, but
+must appear after all tests are defined with
+:py:class:`testgen.Test`.
+
+The following :file:`xref.py` listing illustrates a simple example
+where cross-references are written to a CSV file:
+
+.. literalinclude:: examples/xref.py

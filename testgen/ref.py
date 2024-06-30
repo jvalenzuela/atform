@@ -75,6 +75,8 @@ def get_xref():
     For use in the output section of a script, after all tests have
     been defined.
 
+    .. seealso:: :ref:`xref`
+
     :return: A cross-reference between tests and references represented as a
              nested dictionary. The top-level dictionary is keyed by
              category labels defined with
