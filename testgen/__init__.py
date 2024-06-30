@@ -15,6 +15,7 @@ from testgen.id import (
 
 from testgen.ref import (
     add_reference_category,
+    get_xref,
 )
 
 from testgen.sig import (

@@ -1,6 +1,8 @@
 # This module contains the implementation for listing external references.
 
 
+from . import content
+from . import id
 from . import misc
 
 
@@ -65,3 +67,38 @@ def add_reference_category(title, label):
             label_stripped))
 
     titles[label_stripped] = title_stripped
+
+
+def get_xref():
+    """Builds a cross-reference of tests assigned to each reference.
+
+    For use in the output section of a script, after all tests have
+    been defined.
+
+    :return: A cross-reference between tests and references represented as a
+             nested dictionary. The top-level dictionary is keyed by
+             category labels defined with
+             :py:func:`testgen.add_reference_category`; second-level
+             dictionaries are keyed by references in that category, i.e.,
+             items passed to the `references` argument of
+             :py:class:`testgen.Test`.
+             Final values of the inner dictionary are lists of
+             test identifiers, formatted as strings, assigned to that
+             reference. As an example,
+             all tests assigned ``'SF42'`` in the ``'sf'`` category would
+             be listed by ``xref['sf']['SF42']``.
+    """
+    global titles
+
+    # Initialize all categories with empty dictionaries, i.e., no references.
+    xref = {label: {} for label in titles}
+
+    # Iterate through all Test instances to populate second-level
+    # reference dictionaries and test lists.
+    for test in content.tests:
+        test_id = id.to_string(test.id)
+        for cat in test.references:
+            for ref in test.references[cat]:
+                xref[cat].setdefault(ref, []).append(test_id)
+
+    return xref

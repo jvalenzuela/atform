@@ -73,3 +73,61 @@ class TestAddReferenceCategory(unittest.TestCase):
         testgen.id.current_id = [2] # Simulate a generated test.
         with self.assertRaises(RuntimeError):
             testgen.add_reference_category('foo', 'bar')
+
+
+class GetXRef(unittest.TestCase):
+    """Unit tests for the get_xref() function."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_no_categories(self):
+        """Confirm an empty dictionary if no categories are defined."""
+        self.assertEqual({}, testgen.get_xref())
+
+    def test_no_refs(self):
+        """Confirm a category with no references yields an empty dictionary."""
+        testgen.add_reference_category('References', 'refs')
+        self.assertEqual({'refs': {}}, testgen.get_xref())
+
+    def test_id_sorted(self):
+        """Confirm tests are listed in sorted order."""
+        testgen.add_reference_category('References', 'refs')
+        for i in range(10):
+            testgen.Test('Test X', references={'refs':['A']})
+        self.assertEqual({'refs': {'A': [str(i + 1) for i in range(10)]}},
+                         testgen.get_xref())
+
+    def test_multi_categories(self):
+        """Confirm correct cross-reference with multiple categories."""
+        testgen.add_reference_category('Numbers', 'num')
+        testgen.add_reference_category('Letters', 'alpha')
+
+        testgen.Test('only numbers',
+                     references={
+                         'num': ['1', '2'],
+                     })
+
+        testgen.Test('numbers & letters',
+                     references={
+                         'num': ['2', '3'],
+                         'alpha': ['a', 'b'],
+                     })
+
+        testgen.Test('only letters',
+                     references={
+                         'alpha': ['b', 'c'],
+                     })
+
+        self.assertEqual({
+            'num': {
+                '1': ['1'],
+                '2': ['1', '2'],
+                '3': ['2'],
+                },
+            'alpha': {
+                'a': ['2'],
+                'b': ['2', '3'],
+                'c': ['3'],
+                }
+            }, testgen.get_xref())

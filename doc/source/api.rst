@@ -36,3 +36,4 @@ Output
    :toctree: generated
 
    testgen.generate
+   testgen.get_xref
