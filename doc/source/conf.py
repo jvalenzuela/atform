@@ -7,7 +7,7 @@ import os
 import pathlib
 import re
 import sys
-import tomli
+import tomllib
 
 # Update import path to locate testgen modules.
 sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
@@ -18,7 +18,7 @@ import testgen
 
 # Load the top-level project configuration.
 with open(os.path.join('..', '..', 'pyproject.toml'), 'rb') as f:
-    config = tomli.load(f)
+    config = tomllib.load(f)
 
 # Extract the minimum required Python version from the project configuration.
 requires_python = re.search(
