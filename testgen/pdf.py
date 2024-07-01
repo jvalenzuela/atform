@@ -11,7 +11,10 @@ import io
 import itertools
 import os
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import (
+    getSampleStyleSheet,
+    ParagraphStyle,
+)
 from reportlab.lib.units import inch
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
@@ -131,6 +134,12 @@ class TestDocument(object):
     # Vertical space above section headers.
     HEADING_SPACE_ABOVE = 24 * point
 
+    # Left indent for the first line of every paragraph after the first.
+    PARAGRAPH_INDENT = 0.25 * inch
+
+    # Vertical space between paragraphs.
+    PARAGRAPH_SKIP = 4 * point
+
     def __init__(self, test, root):
         self.test = test
 
@@ -163,6 +172,20 @@ class TestDocument(object):
         self.style[self.HEADING_STYLE].keepWithNext = 1
 
         self.style[self.HEADING_STYLE].spaceBefore = self.HEADING_SPACE_ABOVE
+
+        # Style for the leading paragraph in a body of text.
+        self.style.add(ParagraphStyle(
+            name='FirstParagraph',
+            parent=self.style['Normal'],
+        ))
+
+        # Style for any additional paragraphs in a body of text.
+        self.style.add(ParagraphStyle(
+            name='NextParagraph',
+            parent=self.style['FirstParagraph'],
+            spaceBefore=self.PARAGRAPH_SKIP,
+            firstLineIndent=self.PARAGRAPH_INDENT,
+        ))
 
     def _get_doc(self, root):
         """Creates the document template."""
@@ -251,8 +274,7 @@ class TestDocument(object):
         flowables = []
         if self.test.objective:
             flowables.append(self._heading('Objective'))
-            [flowables.append(Paragraph(p))
-             for p in split_paragraphs(self.test.objective)]
+            flowables.extend(self._make_paragraphs(self.test.objective))
         return flowables
 
     def _references(self):
@@ -307,8 +329,7 @@ class TestDocument(object):
 
             # Create a list of paragraphs for each precondition item.
             for pc in self.test.preconditions:
-                bullet_list_items.append([Paragraph(p)
-                                          for p in split_paragraphs(pc)])
+                bullet_list_items.append(self._make_paragraphs(pc))
 
             flowables.append(ListFlowable(bullet_list_items,
                                           bulletType='bullet'))
@@ -326,8 +347,7 @@ class TestDocument(object):
 
             # Add rows for each procedure step.
             for i in range(len(self.test.procedure)):
-                text = [Paragraph(s)
-                        for s in split_paragraphs(self.test.procedure[i])]
+                text = self._make_paragraphs(self.test.procedure[i])
                 rows.append([i + 1, text, Checkbox()])
 
             column_widths = self._procedure_column_widths(rows[0])
@@ -491,6 +511,24 @@ class TestDocument(object):
     def _heading(self, text):
         """Creates a flowable containing a section heading."""
         return Preformatted(text, style=self.style[self.HEADING_STYLE])
+
+    def _make_paragraphs(self, text):
+        """
+        Creates a set of flowables from a string containing one or
+        more paragraphs.
+        """
+        flowables = []
+
+        # Set style for the leading paragraph.
+        style = self.style['FirstParagraph']
+
+        for ptext in split_paragraphs(text):
+            flowables.append(Paragraph(ptext, style=style))
+
+            # Set style for all paragraphs after the first.
+            style = self.style['NextParagraph']
+
+        return flowables
 
 
 class Checkbox(Flowable):
