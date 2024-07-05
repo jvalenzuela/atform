@@ -263,6 +263,7 @@ class TestDocument(object):
             self._objective(),
             self._references(),
             self._environment(),
+            self._equipment(),
             self._preconditions(),
             self._procedure(),
             self._notes(),
@@ -319,20 +320,20 @@ class TestDocument(object):
 
         return flowables
 
+    def _equipment(self):
+        """Generates the Required Equipment section flowables."""
+        flowables = []
+        if self.test.equipment:
+            flowables.append(self._heading('Required Equipment'))
+            flowables.append(self._bullet_list(self.test.equipment))
+        return flowables
+
     def _preconditions(self):
         """Generates Preconditions section flowables."""
         flowables = []
         if self.test.preconditions:
             flowables.append(self._heading('Preconditions'))
-
-            bullet_list_items = []
-
-            # Create a list of paragraphs for each precondition item.
-            for pc in self.test.preconditions:
-                bullet_list_items.append(self._make_paragraphs(pc))
-
-            flowables.append(ListFlowable(bullet_list_items,
-                                          bulletType='bullet'))
+            flowables.append(self._bullet_list(self.test.preconditions))
         return flowables
 
     def _procedure(self):
@@ -529,6 +530,17 @@ class TestDocument(object):
             style = self.style['NextParagraph']
 
         return flowables
+
+    def _bullet_list(self, items):
+        """Create a bullet list flowable."""
+        return ListFlowable(
+
+            # Each item may contain multiple paragraphs, which are
+            # expanded to a list of strings.
+            [self._make_paragraphs(i) for i in items],
+
+            bulletType='bullet',
+        )
 
 
 class Checkbox(Flowable):

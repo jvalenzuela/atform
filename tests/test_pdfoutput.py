@@ -63,6 +63,34 @@ This is the second paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing
                 'refb':['foo', 'bar']
         })
 
+    def test_equip_single(self):
+        """Verify layout of a single required equipment."""
+        self.make_test(
+            equipment=['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.']
+        )
+
+    def test_equip_multi(self):
+        """Verify layout of multiple required equipment."""
+        self.make_test(
+            equipment=[
+                'The first equipment.',
+                'The second equipment.',
+                'The last equipment.'
+        ])
+
+
+    def test_equip_multi_paragraph(self):
+        """Verify layout of equipment items with multiple paragraphs."""
+        self.make_test(
+            equipment=[
+                'The first equipment.',
+                """The first paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eros in cursus turpis massa tincidunt dui ut ornare lectus. Fringilla urna porttitor rhoncus dolor purus. Enim blandit volutpat maecenas volutpat.
+
+The second paragraph. Laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt. Donec et odio pellentesque diam. Posuere sollicitudin aliquam ultrices sagittis orci a scelerisque purus semper. Volutpat blandit aliquam etiam erat. Sed faucibus turpis in eu mi bibendum neque. At risus viverra adipiscing at. Amet consectetur adipiscing elit ut aliquam purus. Magna sit amet purus gravida.
+                """,
+                'The last equipment.'
+            ])
+
     def test_precond_single(self):
         """Verify layout of a single precondition."""
         self.make_test(

@@ -46,6 +46,11 @@ class Test(object):
                 'fmea':['FM-1', 'FM-2'],
             },
 
+            equipment=[
+                "Leash",
+                "Treats",
+            ],
+
             preconditions=[
                 "Own a dog.",
                 "Two or more hours have elapsed since the last walk."
@@ -70,6 +75,10 @@ class Test(object):
                             dictionary
                             values are a list of strings containing references
                             for that category.
+    :param list[str] equipment: An optional list of equipment required to
+                                perform the procedure; will be rendered as
+                                a bullet list under a dedicated section
+                                heading.
     :param list[str] preconditions: An optional list of conditions that must
                                     be met before the procedure can commence.
     :param list[str] procedure: An optional list of procedure steps to be
@@ -102,6 +111,7 @@ class Test(object):
                  label=None,
                  objective=None,
                  references={},
+                 equipment=[],
                  preconditions=[],
                  procedure=[],
                  ):
@@ -111,6 +121,7 @@ class Test(object):
         self._store_label(label)
         self.objective = self._validate_objective(objective)
         self.references = self._validate_refs(references)
+        self.equipment = self._validate_equipment(equipment)
         self.preconditions = self._validate_string_list('Preconditions',
                                                         preconditions)
         self.procedure = self._validate_string_list('Procedure', procedure)
@@ -173,6 +184,10 @@ class Test(object):
 
 
         return {label: validated_refs}
+
+    def _validate_equipment(self, equip):
+        """Validates the equipment parameter."""
+        return self._validate_string_list('Equipment', equip)
 
     def _validate_string_list(self, name, lst):
         """Checks a list to ensure it contains only non-empty/blank strings."""

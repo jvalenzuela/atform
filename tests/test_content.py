@@ -185,74 +185,56 @@ class References(unittest.TestCase):
         self.assertEqual(['a', 'b', 'c'], t.references['alpha'])
 
 
-class Preconditions(unittest.TestCase):
+class StringList(object):
+    """Base class for testing a parameter that accepts a list of strings."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_type(self):
+        """Confirm exception for a non-list.."""
+        with self.assertRaises(TypeError):
+            self.call('spam')
+
+    def test_item_type(self):
+        """Confirm exception for a non-string list item."""
+        with self.assertRaises(TypeError):
+            self.call([42])
+
+    def test_empty(self):
+        """Confirm exception for an empty item."""
+        with self.assertRaises(ValueError):
+            self.call([''])
+
+    def test_blank(self):
+        """Confirm exception for an item containing only whitespace."""
+        with self.assertRaises(ValueError):
+            self.call([string.whitespace])
+
+    def test_strip(self):
+        """Confirm surrounding whitespace is removed from list items."""
+        t = self.call([string.whitespace + 'Foo' + string.whitespace])
+        self.assertEqual('Foo', getattr(t, self.parameter_name)[0])
+
+    def call(self, value):
+        """Calls Test() with a given parameter value."""
+        args = {self.parameter_name: value}
+        return testgen.Test('title', **args)
+
+
+class Equipment(StringList, unittest.TestCase):
+    """Unit tests for test equipment."""
+    parameter_name = 'equipment'
+
+
+class Preconditions(StringList, unittest.TestCase):
     """Unit tests for test preconditions."""
-
-    def setUp(self):
-        utils.reset()
-
-    def test_type(self):
-        """Confirm exception for non-list preconditions."""
-        with self.assertRaises(TypeError):
-            testgen.Test('title', preconditions='spam')
-
-    def test_item_type(self):
-        """Confirm exception for a non-string list item."""
-        with self.assertRaises(TypeError):
-            testgen.Test('title', preconditions=[42])
-
-    def test_empty(self):
-        """Confirm exception for an empty item."""
-        with self.assertRaises(ValueError):
-            testgen.Test('title', preconditions=[''])
-
-    def test_blank(self):
-        """Confirm exception for an item containing only whitespace."""
-        with self.assertRaises(ValueError):
-            testgen.Test('title', preconditions=[string.whitespace])
-
-    def test_strip(self):
-        """Confirm surrounding whitespace is removed from list items."""
-        t = testgen.Test('title',
-                         preconditions=[string.whitespace
-                                        + 'Foo'
-                                        + string.whitespace])
-        self.assertEqual('Foo', t.preconditions[0])
+    parameter_name = 'preconditions'
 
 
-class Procedure(unittest.TestCase):
+class Procedure(StringList, unittest.TestCase):
     """Unit tests for the procedure parameter."""
-
-    def setUp(self):
-        utils.reset()
-
-    def test_type(self):
-        """Confirm exception for non-list procedure."""
-        with self.assertRaises(TypeError):
-            testgen.Test('title', procedure='spam')
-
-    def test_item_type(self):
-        """Confirm exception for a non-string list item."""
-        with self.assertRaises(TypeError):
-            testgen.Test('title', procedure=[42])
-
-    def test_empty(self):
-        """Confirm exception for an empty item."""
-        with self.assertRaises(ValueError):
-            testgen.Test('title', procedure=[''])
-
-    def test_blank(self):
-        """Confirm exception for an item containing only whitespace."""
-        with self.assertRaises(ValueError):
-            testgen.Test('title', procedure=[string.whitespace])
-
-    def test_strip(self):
-        """Confirm surrounding whitespace is removed from list items."""
-        t = testgen.Test('title',
-                         procedure=[string.whitespace
-                                    + 'Foo'
-                                    + string.whitespace])
-        self.assertEqual('Foo', t.procedure[0])
+    parameter_name = 'procedure'
 
 
 class Generate(unittest.TestCase):
