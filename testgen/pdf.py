@@ -19,6 +19,7 @@ from reportlab.lib.units import inch
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
     ListFlowable,
+    ListItem,
     Paragraph,
     Preformatted,
     SimpleDocTemplate,
@@ -139,6 +140,9 @@ class TestDocument(object):
 
     # Vertical space between paragraphs.
     PARAGRAPH_SKIP = 4 * point
+
+    # Vertical space between bullet list items.
+    BULLET_LIST_SKIP = 12 * point
 
     def __init__(self, test, root):
         self.test = test
@@ -537,7 +541,11 @@ class TestDocument(object):
 
             # Each item may contain multiple paragraphs, which are
             # expanded to a list of strings.
-            [self._make_paragraphs(i) for i in items],
+            [ListItem(
+                self._make_paragraphs(i),
+                spaceBefore=self.BULLET_LIST_SKIP,
+                )
+             for i in items],
 
             bulletType='bullet',
         )
