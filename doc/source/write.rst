@@ -1,6 +1,46 @@
 Writing Tests
 =============
 
+Formatting
+----------
+
+Unlike many document systems, testgen does not have features
+to significantly alter the docment format, such as typeface or font size.
+This omission is intentional, relieving the test author from selecting and
+maintaining consistent typography; testgen will handle the task of
+formatting content in a uniform manner.
+
+The Python strings passed to testgen serve as the source for output PDF
+content, however, they do not dictate how that content is formatted.
+Part of the PDF creation process handled by testgen involves flowing
+the source text onto the available page area, i.e., adjusting spacing between
+letters and words, and breaking long lines into shorter ones.
+The result will contain the same words as the original string, yet will
+likely differ in appearance. This means source strings can be created
+without regard as to how they will be formatted in the output;
+strings may be broken into separate lines, typically with Python's
+triple-quote syntax, without causing unwanted impact to the output.
+
+One area where the author must include some formatting information is
+paragraph separation. Content for each procedure topic,
+such as the Objective, is provided with a single string, therefore,
+a mechanism is required to delimit multiple paragraphs.
+To start a new paragraph simply insert one or more blank lines in the
+same string, then begin the next paragraph; testgen automatically
+implements indentation, so any additional spaces or tabs at the start
+of a paragraph do not affect the output. The following strings may contain
+multiple paragraphs:
+
+* Objective
+* Equipment list items
+* Preconditions list items
+* Procedure list items
+
+This following sample script demonstrates these formatting concepts:
+
+.. literalinclude:: examples/format.py
+
+
 .. _labels:
 
 Labels
