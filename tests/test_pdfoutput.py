@@ -124,14 +124,85 @@ The second paragraph. Laoreet suspendisse interdum consectetur libero id faucibu
             procedure=['Another procedure step'] * 40
         )
 
-    def test_proc_multi_paragraph(self):
-        """Verify layout of procedure steps containing multiple paragraphs."""
+    def test_procedure_steps(self):
+        """Verify layout of various procedure steps."""
         self.make_test(
             procedure=[
-                """This is the first paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Viverra aliquet eget sit amet tellus. Pharetra vel turpis nunc eget lorem dolor sed viverra ipsum. Libero justo laoreet sit amet cursus sit amet dictum sit. In dictum non consectetur a.
+                """
+                This is a procedure step with a single paragraph created
+                as a simple string. Lorem ipsum dolor sit amet,
+                consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Viverra
+                aliquet eget sit amet tellus. Pharetra vel turpis nunc eget
+                lorem dolor sed viverra ipsum. Libero justo laoreet sit
+                amet cursus sit amet dictum sit. In dictum non consectetur a.
+                """,
 
-This is the second paragraph. Dolor sit amet consectetur adipiscing elit pellentesque habitant. Vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam. Vitae proin sagittis nisl rhoncus mattis rhoncus. Nulla at volutpat diam ut venenatis tellus. Nisi porta lorem mollis aliquam."""
-        ])
+                """
+                This is a procedure step with multiple paragraphs created
+                as a simple string. Lorem ipsum dolor sit amet,
+                consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Viverra
+                aliquet eget sit amet tellus. Pharetra vel turpis nunc eget
+                lorem dolor sed viverra ipsum. Libero justo laoreet sit
+                amet cursus sit amet dictum sit. In dictum non consectetur a.
+
+                This is the second paragraph. Dolor sit amet consectetur
+                adipiscing elit pellentesque habitant. Vel fringilla est
+                ullamcorper eget nulla facilisi etiam dignissim diam.
+                Vitae proin sagittis nisl rhoncus mattis rhoncus. Nulla
+                at volutpat diam ut venenatis tellus. Nisi porta lorem
+                mollis aliquam.
+                """,
+
+                {
+                    'text':"""
+                    This is a procedure step with a single paragraph created
+                    as a dictionary. Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Viverra
+                    aliquet eget sit amet tellus.
+                    """
+                },
+
+                {
+                    'text':"""
+                    This is a procedure step with multiple paragraphs created
+                    as a dictionary. Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Viverra
+                    aliquet eget sit amet tellus.
+
+                    This is the second paragraph. Dolor sit amet consectetur
+                    adipiscing elit pellentesque habitant. Vel fringilla est
+                    ullamcorper eget nulla facilisi etiam dignissim diam.
+                    Vitae proin sagittis nisl rhoncus mattis rhoncus.
+                    Nulla at volutpat diam ut venenatis tellus. Nisi porta
+                    lorem mollis aliquam.
+                    """
+                },
+
+                {
+                    'text':"""
+                    This is a procedure step with a single data entry field
+                    with no suffix.
+                    """,
+                    'fields':[
+                        ('A Field', 10),
+                    ]
+                },
+
+                {
+                    'text':"""
+                    This is a procedure step with multiple data entry fields,
+                    all with suffixes.
+                    """,
+                    'fields':[
+                        ('Spam', 10, 'Eggs'),
+                        ('Foo', 3, 'Bar'),
+                    ]
+                },
+            ])
 
     def test_page_count_single(self):
         """Verify correct footer page count for a single-page document."""

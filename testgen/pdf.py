@@ -67,6 +67,25 @@ def split_paragraphs(s):
     return [' '.join(lines) for lines in plines if lines]
 
 
+def make_paragraphs(text, style_sheet):
+    """
+    Creates a set of flowables from a string containing one or
+    more paragraphs.
+    """
+    flowables = []
+
+    # Set style for the leading paragraph.
+    style = style_sheet['FirstParagraph']
+
+    for ptext in split_paragraphs(text):
+        flowables.append(Paragraph(ptext, style=style))
+
+        # Set style for all paragraphs after the first.
+        style = style_sheet['NextParagraph']
+
+    return flowables
+
+
 def build_path(tid, root):
     """Constructs a path where a test's output PDF will be written.
 
@@ -279,7 +298,7 @@ class TestDocument(object):
         flowables = []
         if self.test.objective:
             flowables.append(self._heading('Objective'))
-            flowables.extend(self._make_paragraphs(self.test.objective))
+            flowables.extend(make_paragraphs(self.test.objective, self.style))
         return flowables
 
     def _references(self):
@@ -345,62 +364,11 @@ class TestDocument(object):
         flowables = []
         if self.test.procedure:
             flowables.append(self._heading('Procedure'))
-            rows = []
 
-            # Add header row.
-            rows.append(['Step #', 'Description', 'Pass'])
-
-            # Add rows for each procedure step.
-            for i in range(len(self.test.procedure)):
-                text = self._make_paragraphs(self.test.procedure[i])
-                rows.append([i + 1, text, Checkbox()])
-
-            column_widths = self._procedure_column_widths(rows[0])
-            style = self._procedure_style()
-            flowables.append(Table(
-                rows,
-                colWidths=column_widths,
-                style=style,
-                repeatRows=1,
-            ))
+            proc = ProcedureList(self.test.procedure, self.style)
+            flowables.append(proc.flowable)
 
         return flowables
-
-    def _procedure_column_widths(self, header):
-        """Computes column widths for the procedure table.
-
-        The widths are derived from the width needed to contain header
-        text of the step number and checkbox columns; The description
-        column consumes all remaining width.
-        """
-        style = self.style['Normal']
-        widths = [stringWidth(s, style.fontName, style.fontSize)
-                  for s in header]
-
-        # Leave the description coulumn undefined as it will be
-        # dynamically sized by ReportLab.
-        widths[1] = None
-
-        return widths
-
-    def _procedure_style(self):
-        """Defines the style applied to the procedure table."""
-        return TableStyle([
-            # Header row
-            ('LINEBELOW', (0, 0), (-1, 0), 2 * point, colors.black),
-            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-
-            # Step rows
-            ('LINEBELOW', (0, 1), (-1, -1), .2 * point, colors.black),
-
-            # Step number column
-            ('VALIGN', (0, 1), (0, -1), 'MIDDLE'),
-
-            # Checkbox column
-            ('ALIGN', (2, 1), (2, -1), 'CENTER'),
-            ('VALIGN', (2, 1), (2, -1), 'MIDDLE'),
-        ])
 
     def _notes(self):
         """Generates the Notes section flowables."""
@@ -517,24 +485,6 @@ class TestDocument(object):
         """Creates a flowable containing a section heading."""
         return Preformatted(text, style=self.style[self.HEADING_STYLE])
 
-    def _make_paragraphs(self, text):
-        """
-        Creates a set of flowables from a string containing one or
-        more paragraphs.
-        """
-        flowables = []
-
-        # Set style for the leading paragraph.
-        style = self.style['FirstParagraph']
-
-        for ptext in split_paragraphs(text):
-            flowables.append(Paragraph(ptext, style=style))
-
-            # Set style for all paragraphs after the first.
-            style = self.style['NextParagraph']
-
-        return flowables
-
     def _bullet_list(self, items):
         """Create a bullet list flowable."""
         return ListFlowable(
@@ -542,13 +492,172 @@ class TestDocument(object):
             # Each item may contain multiple paragraphs, which are
             # expanded to a list of strings.
             [ListItem(
-                self._make_paragraphs(i),
+                make_paragraphs(i, self.style),
                 spaceBefore=self.BULLET_LIST_SKIP,
                 )
              for i in items],
 
             bulletType='bullet',
         )
+
+
+class ProcedureList(object):
+    """Constructs the flowable containing the entire procedure list.
+
+    The procedure list is built as a table, with one row per step.
+    """
+
+    # Thickness of the horizontal rule under the header row.
+    HEADER_RULE_WEIGHT = 2 * point
+
+    # Thickness of the horizontal rules between each step.
+    STEP_RULE_WEIGHT = 0.2 * point
+
+    # Vertical space between the text and data entry fields in a
+    # single procedure step.
+    FIELD_TABLE_SEP = 12 * point
+
+    # Horizontal space between columns in table containing the
+    # data entry fields for a step.
+    FIELD_TABLE_HORIZ_PAD = 6 * point
+
+    def __init__(self, steps, style_sheet):
+        self.steps = steps
+        self.style_sheet = style_sheet
+        self.rows = []
+        self._add_header()
+        self._add_steps()
+
+    def _add_header(self):
+        """Generates the header row."""
+        self.rows.append(['Step #', 'Description', 'Pass'])
+
+    def _add_steps(self):
+        """Adds rows for all steps."""
+        for i in range(len(self.steps)):
+            desc = self._step_body(self.steps[i])
+            self.rows.append([i + 1, desc, Checkbox()])
+
+    def _step_body(self, step):
+        """
+        Creates flowables containing all user-defined content for a single
+        step, i.e., everything that goes in the Description column.
+        """
+        # Begin with the step instruction text.
+        flowables = make_paragraphs(step['text'], self.style_sheet)
+
+        try:
+            fields = step['fields']
+
+        except KeyError:
+            pass # Fields are optional.
+
+        else:
+            if fields:
+                flowables.append(Spacer(0, self.FIELD_TABLE_SEP))
+                flowables.append(self._make_fields(fields))
+
+        return flowables
+
+    def _make_fields(self, fields):
+        """Makes a flowable with all data entry fields for a single step.
+
+        Fields are arranged into a table, with one row per field.
+        """
+        style = self.style_sheet['Normal']
+        rows = []
+        for field in fields:
+            row = [
+                Preformatted(field.title, style),
+                TextEntryField(field.length, style),
+            ]
+
+            # Add the optional suffix if it exists.
+            if field.suffix:
+                row.append(Preformatted(field.suffix, style))
+
+            rows.append(row)
+
+        return Table(
+            rows,
+            colWidths=self._field_table_widths(rows),
+            style=self._field_table_style,
+        )
+
+    def _field_table_widths(self, rows):
+        """
+        Computes the column widths for a table containing data entry
+        fields in a single step.
+        """
+        widths = []
+
+        widths.append([row[0].minWidth() for row in rows])
+        widths.append([row[1].minWidth() for row in rows])
+
+        max_widths = [max(l) + self.FIELD_TABLE_HORIZ_PAD for l in widths]
+
+        # The last column for the suffix takes up all remaining space.
+        max_widths.append(None)
+
+        return max_widths
+
+    @property
+    def _field_table_style(self):
+        """
+        Creates the style for table containing data entry fields in a
+        single step.
+        """
+        return TableStyle([
+            ('LEFTPADDING', (0, 0), (-1, -1), 0 * point),
+        ])
+
+    @property
+    def flowable(self):
+        """Generates the flowable representing the entire procedure list."""
+        return Table(
+            self.rows,
+            colWidths=self._column_widths,
+            style=self._table_style,
+            repeatRows=1,
+        )
+
+    @property
+    def _column_widths(self):
+        """Computes column widths for the overall table.
+
+        The widths are derived from the width needed to contain header
+        text of the step number and checkbox columns; the description
+        column consumes all remaining width.
+        """
+        style = self.style_sheet['Normal']
+        widths = [stringWidth(s, style.fontName, style.fontSize)
+                  for s in self.rows[0]]
+
+        # Leave the description column undefined as it will be
+        # dynamically sized by ReportLab.
+        widths[1] = None
+
+        return widths
+
+    @property
+    def _table_style(self):
+        """Style applied to the entire procedure list table."""
+        return TableStyle([
+            # Header row
+            ('LINEBELOW', (0, 0), (-1, 0), self.HEADER_RULE_WEIGHT, colors.black),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+
+            # Step rows
+            ('LINEBELOW', (0, 1), (-1, -1), self.STEP_RULE_WEIGHT, colors.black),
+
+            # Step number column
+            ('VALIGN', (0, 1), (0, -1), 'MIDDLE'),
+
+            # Checkbox column
+            ('ALIGN', (2, 1), (2, -1), 'CENTER'),
+            ('VALIGN', (2, 1), (2, -1), 'MIDDLE'),
+        ])
 
 
 class Checkbox(Flowable):
