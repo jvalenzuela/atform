@@ -42,9 +42,4 @@ def add_signature(title):
     :param str title: A short description of the person signing.
     :raises: RuntimeError, TypeError, ValueError
     """
-    if not isinstance(title, str):
-        raise TypeError('Signature title must be a string.')
-    stripped = title.strip()
-    if not stripped:
-        raise ValueError('Signature title must not be blank.')
-    titles.append(stripped)
+    titles.append(misc.nonempty_string('Signature title', title))
