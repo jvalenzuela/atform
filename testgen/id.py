@@ -69,9 +69,7 @@ def section(level, id=None, title=None):
                    permitted.
     :param str title: Optional title. Must only contain characters allowed
                       in file system folder names.
-    :raises ValueError: If level is not a valid section level, or id is not
-                        greater than the current section.
-    :raises TypeError: If level or id are not integers, or name is not a string.
+    :raises: TypeError, ValueError
     """
     global current_id
     global section_titles
@@ -123,10 +121,7 @@ def set_id_depth(levels):
     before any tests or sections are created.
 
     :param int levels: Number of identifier levels.
-    :raises ValueError: If levels is less than one.
-    :raises TypeError: If levels is not an integer.
-    :raises RuntimeError: If this function is called after any tests or
-                          sections have been created.
+    :raises: RuntimeError, TypeError, ValueError
     """
     global current_id
     if not isinstance(levels, int):
@@ -160,10 +155,7 @@ def skip_test(id=None):
 
     :param int id: Optional ID of the next test. If omitted, one test
                    will be skipped.
-    :raises ValueError: If id does not yield a skip forward. This includes
-                        setting id to what would normally be the next test,
-                        i.e., skipping zero tests.
-    :raises TypeError: If id is not an integer.
+    :raises: TypeError, ValueError
     """
     global current_id
 

@@ -36,11 +36,7 @@ def add_field(title, length):
     :param str title: Text to serve as the field's prompt; must not be blank.
     :param int length: Maximum number of characters the field should be
                        sized to accommodate; must be greater than zero.
-    :raises TypeError: If the title is not a string or length is not an
-                       integer.
-    :raises ValueError: If length is less than one.
-    :raises RuntimeError: If this function is called after any tests or
-                          sections have been created.
+    :raises: RuntimeError, TypeError, ValueError
     """
     global lengths
     if not isinstance(title, str):

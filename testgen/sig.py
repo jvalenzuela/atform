@@ -40,10 +40,7 @@ def add_signature(title):
     ======== ==== ========= ====
 
     :param str title: A short description of the person signing.
-    :raises TypeError: If title is not a string.
-    :raises ValueError: If title is blank.
-    :raises RuntimeError: If called after any tests or sections have been
-                          created.
+    :raises: RuntimeError, TypeError, ValueError
     """
     if not isinstance(title, str):
         raise TypeError('Signature title must be a string.')

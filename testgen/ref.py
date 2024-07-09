@@ -41,11 +41,7 @@ def add_reference_category(title, label):
     :param str label: A shorthand abbreviation to identify this category
                       when adding references to individual tests. Must be
                       unique across all reference categories.
-    :raises TypeError: If title or label is not a string.
-    :raises ValueError: If the title or label is blank, or the label is
-                        already used by another category.
-    :raises RuntimeError: If this function is called after any tests or
-                          sections have been created.
+    :raises: RuntimeError, TypeError, ValueError
     """
     global titles
 

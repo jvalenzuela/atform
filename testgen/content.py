@@ -300,11 +300,7 @@ def generate(path='pdf'):
     :py:class:`testgen.Test`.
 
     :param str path: Optional path to an output directory.
-    :raises TypeError: If path is not a string.
-    :raises KeyError: If any test contains a string with a placeholder
-                      for an undefined label.
-    :raises ValueError: If any test contains a string with an invalid
-                        label syntax.
+    :raises: KeyError, TypeError, ValueError
     """
     if not isinstance(path, str):
         raise TypeError('Output path must be a string.')
