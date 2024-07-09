@@ -84,3 +84,35 @@ content:
 This next example demonstrates use of labels and placeholders.
 
 .. literalinclude:: examples/label.py
+
+
+.. _procedure:
+
+Procedure
+---------
+
+The ``procedure`` parameter of :py:class:`testgen.Test` contains the
+main content of a test: the actions that must be performed and validated.
+These actions are organized into a list which will be automatically
+enumerated in the output; do not incorporate step numbers into
+the action text.
+
+Each item in the procedure list is a single step, and may be given in
+one of two different forms: string or dictionary. A string is suitable
+if the step only needs instructional text whereas a dictionary
+allows additional information to be included along with the main text.
+A procedure step dictionary must have a ``'text'`` key holding a string
+with the instructional text; all other keys are optional.
+
+The ``'fields'`` key in a step dictionary will add data entry fields
+to record information as part of the step, such as a measurement result,
+and must be a list where each item is a tuple in the form
+``(title, length, suffix)`` defining a single field. *title* is a string
+describing data to be recorded; *length* is the maximum number of
+characters the field should accommodate. *suffix* is an optional
+string to place after the field, typically used to denote units.
+
+The procedure list may contain both string and dictionary items as the
+following example illustrates:
+
+.. literalinclude:: examples/procedure.py

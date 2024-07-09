@@ -22,3 +22,22 @@ def setup_only(func):
         func(*args, *kwargs)
 
     return wrapper
+
+
+def nonempty_string(name, s):
+    """Checks a string to ensure it is not empty or blank."""
+    if not isinstance(s, str):
+        raise TypeError("{0} must be a string.".format(name))
+    stripped = s.strip()
+    if not stripped:
+        raise ValueError("{0} cannot be empty.".format(name))
+    return stripped
+
+
+def validate_field_length(length):
+    """Validates a data entry field length."""
+    if not isinstance(length, int):
+        raise TypeError('Field length must be an integer.')
+    if length < 1:
+        raise ValueError('Field length must be greater than zero.')
+    return length

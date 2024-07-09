@@ -4,12 +4,23 @@
 
 from . import id
 from . import label
+from . import misc
 from . import pdf
 from . import ref
+import collections
 
 
 # All Test() instances in the order they were created.
 tests = []
+
+
+# Container to hold normalized procedure step field definitions. This is
+# not part of the public API as fields are defined via normal tuples, which
+# are then validated to create instances of this named tuple.
+ProcedureStepField = collections.namedtuple(
+    'ProcedureStepField',
+    ['title', 'length', 'suffix'],
+)
 
 
 ################################################################################
@@ -81,29 +92,10 @@ class Test(object):
                                 heading.
     :param list[str] preconditions: An optional list of conditions that must
                                     be met before the procedure can commence.
-    :param list[str] procedure: An optional list of procedure steps to be
-                                output as an enumerated list. Do not include
-                                the step number in each item, e.g.,
-                                ``'1. The first step...'``; steps will be
-                                automatically numbered based on their
-                                list order.
-    :raises TypeError: If the title, objective, or label is not a string.
-                       Also if preconditions or procedure is not a list, or any
-                       item within those lists is not a string.
-    :raises TypeError: If references is not a dictionary.
-    :raises TypeError: If a references key(category label) is not a string.
-    :raises TypeError: If a reference item in a category is not a string.
-    :raises ValueError: If any strings provided to title, objective,
-                        preconditions, or procedure are empty.
-    :raises ValueError: If label is not a valid identifier, i.e., only
-                        alphanumeric and underscore characters, or is a
-                        duplicate of a label defined elsewhere.
-    :raises ValueError: If references contains an empty key(category label).
-    :raises Valueerror: If references contains a key(category label) that
-                        has not been defined by
-                        :py:func:`testgen.add_reference_category`.
-    :raises ValueError: If a reference category contains duplicate
-                        references.
+    :param list[str or dict] procedure: An optional list of procedure steps to
+                                        be output as an enumerated list.
+                                        See :ref:`procedure`.
+    :raises: KeyError, TypeError, ValueError
     """
 
     def __init__(self,
@@ -117,14 +109,14 @@ class Test(object):
                  ):
         global tests
         self.id = id.get_id()
-        self.title = self._nonempty_string('Title', title)
+        self.title = misc.nonempty_string('Title', title)
         self._store_label(label)
         self.objective = self._validate_objective(objective)
         self.references = self._validate_refs(references)
         self.equipment = self._validate_equipment(equipment)
         self.preconditions = self._validate_string_list('Preconditions',
                                                         preconditions)
-        self.procedure = self._validate_string_list('Procedure', procedure)
+        self.procedure = self._validate_procedure(procedure)
         tests.append(self)
 
     def _store_label(self, lbl):
@@ -141,7 +133,7 @@ class Test(object):
     def _validate_objective(self, obj):
         """Validates the objective parameter."""
         if obj is not None:
-            return self._nonempty_string('Objective', obj)
+            return misc.nonempty_string('Objective', obj)
 
     def _validate_refs(self, refs):
         """Validates the references parameter."""
@@ -155,7 +147,7 @@ class Test(object):
 
     def _validate_ref_category(self, label, refs):
         """Validates a single reference category and associated references."""
-        label = self._nonempty_string('Reference label', label)
+        label = misc.nonempty_string('Reference label', label)
 
         # Ensure the label has been defined by add_reference_category().
         try:
@@ -189,20 +181,100 @@ class Test(object):
         """Validates the equipment parameter."""
         return self._validate_string_list('Equipment', equip)
 
+    def _validate_procedure(self, lst):
+        """Validates the procedure parameter."""
+        if not isinstance(lst, list):
+            raise TypeError('Procedure must be a list.')
+        return [self._validate_procedure_step(step) for step in lst]
+
+    def _validate_procedure_step(self, step):
+        """Validates a dictionary defining a single procedure step."""
+        # Convert a string to a dict with text key.
+        if isinstance(step, str):
+            step = {'text': step}
+
+        elif not isinstance(step, dict):
+            raise TypeError(
+                'A procedure step must be either a string or dictionary.')
+
+        try:
+            text = step['text']
+        except KeyError:
+            raise KeyError(
+                "A procedure step dictionary must have a 'text' key.")
+        step['text'] = misc.nonempty_string("Procedure step text", text)
+
+        try:
+            fields = step['fields']
+        except KeyError:
+            pass
+        else:
+            step['fields'] = self._validate_procedure_step_fields(fields)
+
+        self._check_procedure_step_keys(step)
+        return step
+
+    def _check_procedure_step_keys(self, step):
+        """Checks a procedure step dictionary for undefined keys."""
+        allowed = {
+            'text',
+            'fields',
+        }
+        undefined = set(step.keys()).difference(allowed)
+        if undefined:
+            raise KeyError(
+                "Procedure step dictionary contains undefined key(s): "
+                "{0}".format(', '.join([str(i) for i in undefined])))
+
+    def _validate_procedure_step_fields(self, fields):
+        """Validates the list of field definitions."""
+        if not isinstance(fields, list):
+            raise TypeError('Procedure step fields must be a list.')
+        return [self._create_procedure_step_field(f) for f in fields]
+
+    def _create_procedure_step_field(self, tpl):
+        """
+        Converts a raw procedure step field definition tuple into a
+        named tuple.
+        """
+        if not isinstance(tpl, tuple):
+            raise TypeError('Procedure step fields list items must be tuples.')
+
+        # Validate the required items: title and length.
+        try:
+            raw_title = tpl[0]
+            raw_length = tpl[1]
+        except IndexError:
+            raise ValueError(
+                'Procedure step field tuples must have at least two members: '
+                'title and length.')
+        else:
+            title = misc.nonempty_string(
+                'Procedure step field title',
+                raw_title
+            )
+            length = misc.validate_field_length(raw_length)
+
+        # Validate suffix, providing a default vaule if omitted.
+        try:
+            raw = tpl[2]
+        except IndexError:
+            suffix = ''
+        else:
+            suffix = misc.nonempty_string('Procedure step field suffix', raw)
+
+        if len(tpl) > 3:
+            raise ValueError(
+                'Procedure step field tuples may not exceed three members: '
+                'title, length, and suffix.')
+
+        return ProcedureStepField(title, length, suffix)
+
     def _validate_string_list(self, name, lst):
         """Checks a list to ensure it contains only non-empty/blank strings."""
         if not isinstance(lst, list):
             raise TypeError("{0} must be a list of strings.".format(name))
-        return [self._nonempty_string("{0} item".format(name), s) for s in lst]
-
-    def _nonempty_string(self, name, s):
-        """Checks a string to ensure it is not empty or blank."""
-        if not isinstance(s, str):
-            raise TypeError("{0} must be a string.".format(name))
-        stripped = s.strip()
-        if not stripped:
-            raise ValueError("{0} cannot be empty.".format(name))
-        return stripped
+        return [misc.nonempty_string("{0} item".format(name), s) for s in lst]
 
     def _pregenerate(self):
         """
@@ -216,7 +288,8 @@ class Test(object):
         if self.objective:
             self.objective = label.resolve(self.objective)
         self.preconditions = [label.resolve(pc) for pc in self.preconditions]
-        self.procedure = [label.resolve(ps) for ps in self.procedure]
+        [step.update({'text': label.resolve(step['text'])})
+         for step in self.procedure]
 
 
 def generate(path='pdf'):

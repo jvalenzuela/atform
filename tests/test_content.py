@@ -54,12 +54,19 @@ class Label(unittest.TestCase):
         t._pregenerate()
         self.assertEqual('1', t.preconditions[0])
 
-    def test_procedure_placeholder(self):
-        """Confirm placeholders are replaced in procedure steps."""
+    def test_procedure_step_string_placeholder(self):
+        """Confirm placeholders are replaced in string procedure steps."""
         testgen.Test('target', label='TheLabel')
         t = testgen.Test('title', procedure=['$TheLabel'])
         t._pregenerate()
-        self.assertEqual('1', t.procedure[0])
+        self.assertEqual('1', t.procedure[0]['text'])
+
+    def test_procedure_step_dict_placeholder(self):
+        """Confirm placeholders are replaced in dict procedure steps."""
+        testgen.Test('target', label='TheLabel')
+        t = testgen.Test('title', procedure=[{'text':'$TheLabel'}])
+        t._pregenerate()
+        self.assertEqual('1', t.procedure[0]['text'])
 
     def test_forward_reference(self):
         """Confirm a placeholder for a label defined in a later test."""
@@ -232,9 +239,191 @@ class Preconditions(StringList, unittest.TestCase):
     parameter_name = 'preconditions'
 
 
-class Procedure(StringList, unittest.TestCase):
-    """Unit tests for the procedure parameter."""
-    parameter_name = 'procedure'
+class ProcedureList(unittest.TestCase):
+    """Unit tests for the procedure list."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_type(self):
+        """Confirm exception for a non-list.."""
+        with self.assertRaises(TypeError):
+            testgen.Test('test', procedure='spam')
+
+
+class ProcedureStepBase(object):
+    """Base class for procedure step tests."""
+
+    def setUp(self):
+        utils.reset()
+
+    def make_step(self, step):
+        """Creates a test with a given procedure step."""
+        return testgen.Test('test', procedure=[step])
+
+    def make_field(self, field):
+        """Creates a test with a given procedure step field."""
+        return self.make_step({
+            'text':'text',
+            'fields':[field],
+        })
+
+
+class ProcedureStepString(ProcedureStepBase, unittest.TestCase):
+    """Unit tests for string procedure steps."""
+
+    def test_type(self):
+        """Confirm exception for a non-string."""
+        with self.assertRaises(TypeError):
+            self.make_step(42)
+
+    def test_empty(self):
+        """Confirm exception for an empty string."""
+        with self.assertRaises(ValueError):
+            self.make_step('')
+
+    def test_blank(self):
+        """Confirm exception for a string containing only whitespace."""
+        with self.assertRaises(ValueError):
+            self.make_step(string.whitespace)
+
+    def test_strip(self):
+        """Confirm surrounding whitespace is removed from the string."""
+        t = self.make_step(string.whitespace + 'Foo' + string.whitespace)
+        self.assertEqual('Foo', t.procedure[0]['text'])
+
+
+class ProcedureStepDict(ProcedureStepBase, unittest.TestCase):
+    """Unit tests for dictionary procedure steps."""
+
+    def test_unknown_key(self):
+        """Confirm exception for an undefined key."""
+        with self.assertRaises(KeyError):
+            self.make_step({'text':'spam', 'foo':'bar'})
+
+
+class ProcedureStepDictText(ProcedureStepBase, unittest.TestCase):
+    """Unit tests for procedure step dict text key."""
+
+    def test_missing(self):
+        """Confirm exception if text key is missing."""
+        with self.assertRaises(KeyError):
+            self.make_step({})
+
+    def test_type(self):
+        """Confirm exception if text is not a string."""
+        with self.assertRaises(TypeError):
+            self.make_step({'text':99})
+
+    def test_empty(self):
+        """Confirm exception if text is empty."""
+        with self.assertRaises(ValueError):
+            self.make_step({'text':''})
+
+    def test_blank(self):
+        """Confirm exception if text contains only whitespace."""
+        with self.assertRaises(ValueError):
+            self.make_step({'text':string.whitespace})
+
+    def test_strip(self):
+        """Confirm surrounding whitespace is removed."""
+        test = self.make_step({
+            'text':string.whitespace + 'foo' + string.whitespace
+        })
+        self.assertEqual('foo', test.procedure[0]['text'])
+
+
+class ProcedureStepFields(ProcedureStepBase, unittest.TestCase):
+    """Unit tests for procedure step field definitions."""
+
+    def test_type(self):
+        """Confirm exception for a non-list fields key."""
+        with self.assertRaises(TypeError):
+            self.make_step({'text':'text', 'fields':'not a list'})
+
+    def test_item_type(self):
+        """Confirm exception for a non-tuple list item."""
+        with self.assertRaises(TypeError):
+            self.make_field('not a tuple')
+
+    def test_empty_item(self):
+        """Confirm exception for an empty field tuple."""
+        with self.assertRaises(ValueError):
+            self.make_field(())
+
+    def test_too_long(self):
+        """Confirm exception for a field definition with too many items."""
+        with self.assertRaises(ValueError):
+            self.make_field(('field', 1, 'suffix', 42))
+
+
+class ProcedureStepFieldTitle(ProcedureStepBase, unittest.TestCase):
+    """Unit tests for procedure step field title."""
+
+    def test_type(self):
+        """Confirm exception for a non-string field title."""
+        with self.assertRaises(TypeError):
+            self.make_field((None, 1))
+
+    def test_empty(self):
+        """Confirm exception for an empty field title."""
+        with self.assertRaises(ValueError):
+            self.make_field(('', 1))
+
+    def test_blank(self):
+        """Confirm exception for a field title containing only whitespace."""
+        with self.assertRaises(ValueError):
+            self.make_field((string.whitespace, 1))
+
+    def test_strip(self):
+        """Confirm surrounding whitespace is removed from field titles."""
+        t = self.make_field((string.whitespace + 'foo' + string.whitespace, 1))
+        self.assertEqual('foo', t.procedure[0]['fields'][0].title)
+
+
+class ProcedureStepFieldLength(ProcedureStepBase, unittest.TestCase):
+    """Unit tests for procedure step field length."""
+
+    def test_type(self):
+        """Confirm exception for a non-integer length."""
+        with self.assertRaises(TypeError):
+            self.make_field(('field', '42'))
+
+    def test_missing(self):
+        """Confirm exception for a missing length."""
+        with self.assertRaises(ValueError):
+            self.make_field(('field',))
+
+    def test_invalid_length(self):
+        """Confirm exception for a length less than one."""
+        for i in [-1, 0]:
+            with self.assertRaises(ValueError):
+                self.make_field(('field', i))
+
+
+class ProcedureStepFieldSuffix(ProcedureStepBase, unittest.TestCase):
+    """Unit tests for procedure step field suffix."""
+
+    def test_type(self):
+        """Confirm exception for a non-string suffix."""
+        with self.assertRaises(TypeError):
+            self.make_field(('field', 1, 42))
+
+    def test_empty(self):
+        """Confirm exception for an empty suffix."""
+        with self.assertRaises(ValueError):
+            self.make_field(('field', 1, ''))
+
+    def test_blank(self):
+        """Confirm exception for a suffix containing only whitespace."""
+        with self.assertRaises(ValueError):
+            self.make_field(('field', 1, string.whitespace))
+
+    def test_strip(self):
+        """Confirm surrounding whitespace is removed from the suffix."""
+        t = self.make_field(
+            ('field', 1, string.whitespace + 'foo' + string.whitespace))
+        self.assertEqual('foo', t.procedure[0]['fields'][0].suffix)
 
 
 class Generate(unittest.TestCase):

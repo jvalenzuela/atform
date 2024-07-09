@@ -48,8 +48,4 @@ def add_field(title, length):
     stripped = title.strip()
     if not stripped:
         raise ValueError('Field title cannot be blank.')
-    if not isinstance(length, int):
-        raise TypeError('Field length must be an integer.')
-    if length < 1:
-        raise ValueError('Field length must be greater than zero.')
-    lengths[stripped] = length
+    lengths[stripped] = misc.validate_field_length(length)
