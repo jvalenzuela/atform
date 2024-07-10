@@ -11,6 +11,7 @@ import io
 import itertools
 import os
 from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import (
     getSampleStyleSheet,
     ParagraphStyle,
@@ -223,7 +224,7 @@ class TestDocument(object):
         else:
             filename = io.BytesIO()
 
-        return SimpleDocTemplate(filename)
+        return SimpleDocTemplate(filename, pagesize=letter)
 
     def _draw_header_footer(self, canvas, doc):
         """Draws the header and footer."""
