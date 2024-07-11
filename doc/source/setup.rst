@@ -19,3 +19,24 @@ in the Approval section where the person performing that role
 can provide their name, signature, etc.
 
 .. literalinclude:: examples/setup.py
+
+
+.. _project_info:
+
+Project Information
+-------------------
+
+Metadata describing the scope of the test procedures, such as the
+project name, can be defined with :py:func:`testgen.set_project_info`,
+and is typically used in the setup area. It can also be used
+repeatedly throughout the content area to change information
+among test procedures. In other words, project information is applied
+to tests until the next time the function is called.
+
+The example below demonstrates a series of test procedures for
+multiple systems within a single project, where the tests for each
+system occupy a dedicated section. The start of each section
+includes a call to :py:func:`testgen.set_project_info`
+to update the system name.
+
+.. literalinclude:: examples/project_info.py

@@ -13,6 +13,10 @@ from testgen.id import (
     skip_test,
 )
 
+from testgen.misc import (
+    set_project_info,
+)
+
 from testgen.ref import (
     add_reference_category,
     get_xref,

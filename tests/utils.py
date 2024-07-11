@@ -17,6 +17,7 @@ def reset():
     testgen.content.tests = []
     testgen.id.current_id = [0]
     testgen.id.section_titles = {}
+    testgen.misc.project_info = {}
     testgen.sig.titles = []
     testgen.field.lengths = collections.OrderedDict()
     testgen.ref.titles = {}

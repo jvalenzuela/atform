@@ -426,6 +426,31 @@ class ProcedureStepFieldSuffix(ProcedureStepBase, unittest.TestCase):
         self.assertEqual('foo', t.procedure[0]['fields'][0].suffix)
 
 
+class TestProjectInfo(unittest.TestCase):
+    """Unit tests for project information stored in a Test() instance."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_capture(self):
+        """Confirm accurate information is captured when instantiated."""
+        info = {'project':'foo', 'system':'spam'}
+        testgen.set_project_info(**info)
+        t = testgen.Test('A test')
+        self.assertEqual(info, t.project_info)
+
+    def test_update_between_tests(self):
+        """Confirm system information changes do not affect existing tests."""
+        testgen.set_project_info(project='foo', system='bar')
+        t1 = testgen.Test('Test 1')
+
+        testgen.set_project_info(project='spam', system='eggs')
+        t2 = testgen.Test('Test 2')
+
+        self.assertEqual({'project':'foo', 'system':'bar'}, t1.project_info)
+        self.assertEqual({'project':'spam', 'system':'eggs'}, t2.project_info)
+
+
 class Generate(unittest.TestCase):
     """Unit tests for the generate() function."""
 

@@ -16,6 +16,7 @@ Setup
    testgen.add_reference_category
    testgen.add_signature
    testgen.set_id_depth
+   testgen.set_project_info
 
 
 Content

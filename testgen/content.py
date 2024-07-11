@@ -117,6 +117,12 @@ class Test(object):
         self.preconditions = self._validate_string_list('Preconditions',
                                                         preconditions)
         self.procedure = self._validate_procedure(procedure)
+
+        # The current project information is captured using copy() because
+        # the project information dictionary may change for later tests;
+        # copy() ensures this instance's values are unaffected.
+        self.project_info = misc.project_info.copy()
+
         tests.append(self)
 
     def _store_label(self, lbl):
