@@ -213,3 +213,21 @@ The second paragraph. Laoreet suspendisse interdum consectetur libero id faucibu
         self.make_test(
             procedure=['Lots of steps'] * 60
         )
+
+    def test_project_name(self):
+        """Verify header project information with only a project name in the header."""
+        testgen.misc.project_info = {'project':'The Project Name'}
+        self.make_test()
+
+    def test_system_name(self):
+        """Verify header project information with only a system name in the header."""
+        testgen.misc.project_info = {'system':'The System Name'}
+        self.make_test()
+
+    def test_project_system_name(self):
+        """Verify header project information with project and system names in the header."""
+        testgen.misc.project_info = {
+            'project':'The Project Name',
+            'system':'The System Name',
+        }
+        self.make_test()
