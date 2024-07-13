@@ -113,11 +113,50 @@ def build_path(tid, root):
     return os.path.join(*folders)
 
 
+def create_text_style():
+    """Generates a style sheet for all text styles."""
+    style = getSampleStyleSheet()
+
+    style.add(ParagraphStyle(
+        name='SectionHeading',
+        parent=style['Heading1'],
+
+        # Avoid page breaks between the heading and the first flowable in
+        # the section.
+        keepWithNext=1,
+
+        spaceBefore=24 * point,
+    ))
+
+    # Leading paragraph in a body of text.
+    style.add(ParagraphStyle(
+        name='FirstParagraph',
+        parent=style['Normal'],
+    ))
+
+    # Any additional paragraphs in a body of text.
+    style.add(ParagraphStyle(
+        name='NextParagraph',
+        parent=style['FirstParagraph'],
+        spaceBefore=4 * point,
+        firstLineIndent=0.25 * inch,
+    ))
+
+    style.add(ParagraphStyle(
+        name='Header',
+        parent=style['Heading2'],
+    ))
+
+    style.add(ParagraphStyle(
+        name='Footer',
+        parent=style['Normal'],
+    ))
+
+    return style
+
+
 class TestDocument(object):
     """This class creates a PDF for a single Test instance."""
-
-    HEADER_TEXT_STYLE = 'Heading2'
-    FOOTER_TEXT_STYLE = 'Normal'
 
     # Vertical distance between the header rule and the top of the page.
     HEADER_HEIGHT = 0.75 * inch
@@ -149,20 +188,10 @@ class TestDocument(object):
     # Height of the signature block rows to allow handwritten entries.
     SIG_ROW_HEIGHT = 0.5 * inch
 
-    # Name of the text style used for section headers.
-    HEADING_STYLE = 'Heading1'
-
-    # Vertical space above section headers.
-    HEADING_SPACE_ABOVE = 24 * point
-
-    # Left indent for the first line of every paragraph after the first.
-    PARAGRAPH_INDENT = 0.25 * inch
-
-    # Vertical space between paragraphs.
-    PARAGRAPH_SKIP = 4 * point
-
     # Vertical space between bullet list items.
     BULLET_LIST_SKIP = 12 * point
+
+    style = create_text_style()
 
     def __init__(self, test, root):
         self.test = test
@@ -170,8 +199,6 @@ class TestDocument(object):
         # The full name is the combination of the test's numeric
         # identifer and title.
         self.full_name = ' '.join((id.to_string(test.id), test.title))
-
-        self._setup_styles()
 
         # The document is built twice; the first time to a dummy memory
         # buffer in order to determine the total page count, and the
@@ -186,30 +213,6 @@ class TestDocument(object):
 
             # Capture the final page count for the next build.
             self.total_pages = doc.page
-
-    def _setup_styles(self):
-        """Configures the style sheet."""
-        self.style = getSampleStyleSheet()
-
-        # Avoid page breaks between headings and the first flowable in the
-        # section.
-        self.style[self.HEADING_STYLE].keepWithNext = 1
-
-        self.style[self.HEADING_STYLE].spaceBefore = self.HEADING_SPACE_ABOVE
-
-        # Style for the leading paragraph in a body of text.
-        self.style.add(ParagraphStyle(
-            name='FirstParagraph',
-            parent=self.style['Normal'],
-        ))
-
-        # Style for any additional paragraphs in a body of text.
-        self.style.add(ParagraphStyle(
-            name='NextParagraph',
-            parent=self.style['FirstParagraph'],
-            spaceBefore=self.PARAGRAPH_SKIP,
-            firstLineIndent=self.PARAGRAPH_INDENT,
-        ))
 
     def _get_doc(self, root):
         """Creates the document template."""
@@ -233,12 +236,12 @@ class TestDocument(object):
 
     def _header(self, canvas, doc):
         """Draws the page header."""
-        self._set_canvas_text_style(canvas, self.HEADER_TEXT_STYLE)
+        self._set_canvas_text_style(canvas, 'Header')
         baseline = doc.pagesize[1] - self.HEADER_HEIGHT
         self._draw_head_foot_rule(canvas, doc, baseline)
 
         # Offset the text above the rule relative to the font size.
-        baseline += self.style[self.HEADER_TEXT_STYLE].fontSize * 0.25
+        baseline += self.style['Header'].fontSize * 0.25
 
         canvas.drawString(self.HEADER_FOOTER_SIDE_MARGIN,
                           baseline,
@@ -270,16 +273,16 @@ class TestDocument(object):
         for line in lines:
             if line:
                 canvas.drawRightString(right_margin, baseline, line)
-                baseline += self.style[self.HEADER_TEXT_STYLE].fontSize * 1.2
+                baseline += self.style['Header'].fontSize * 1.2
 
     def _footer(self, canvas, doc):
         """Draws the page footer."""
-        self._set_canvas_text_style(canvas, self.FOOTER_TEXT_STYLE)
+        self._set_canvas_text_style(canvas, 'Footer')
         baseline = self.FOOTER_HEIGHT
         self._draw_head_foot_rule(canvas, doc, baseline)
 
         # Offset text below the rule relative to the font size.
-        baseline -= self.style[self.FOOTER_TEXT_STYLE].fontSize * 1.2
+        baseline -= self.style['Footer'].fontSize * 1.2
 
         # See if a total page count is available.
         try:
@@ -512,7 +515,7 @@ class TestDocument(object):
 
     def _heading(self, text):
         """Creates a flowable containing a section heading."""
-        return Preformatted(text, style=self.style[self.HEADING_STYLE])
+        return Preformatted(text, style=self.style['SectionHeading'])
 
     def _bullet_list(self, items):
         """Create a bullet list flowable."""
