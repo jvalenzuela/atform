@@ -173,21 +173,6 @@ class TestDocument(object):
     # Vertical space allotted for the Notes section.
     NOTES_AREA_SIZE = 4 * inch
 
-    # Thickness of the signature block field underlining.
-    SIG_RULE_WEIGHT = 0.2 * point
-
-    # Distance between signature block columns. This spacing is implemented
-    # with blank columns of this width instead of left/right padding because
-    # padding does not break rules drawn by LINEBELOW, which is how
-    # the underlines are created.
-    SIG_COL_SEP = 0.2 * inch
-
-    # Width of the signature block Date column.
-    SIG_DATE_WIDTH = 0.5 * inch
-
-    # Height of the signature block rows to allow handwritten entries.
-    SIG_ROW_HEIGHT = 0.5 * inch
-
     # Vertical space between bullet list items.
     BULLET_LIST_SKIP = 12 * point
 
@@ -452,66 +437,8 @@ class TestDocument(object):
         if sig.titles:
             style = self.style['Normal']
             flowables.append(self._heading('Approval'))
-            table_data = []
-
-            # Start with header row.
-            table_data.append(
-                [Preformatted(s, style=style) for s in [
-                    '', '', 'Name', '', 'Signature', '', 'Date']])
-
-            # Append rows for each title.
-            [table_data.append([Preformatted(s, style=style)])
-             for s in sig.titles]
-
-            style = TableStyle([
-                # Add underlines for entry fields.
-                self._sig_rule(2),
-                self._sig_rule(4),
-                self._sig_rule(6),
-
-                # Remove all padding around cell content.
-                ('LEFTPADDING', (0 ,0), (-1, -1), 0 * point),
-                ('RIGHTPADDING', (0, 0), (-1, -1), 0 * point),
-                ('TOPPADDING', (0, 0), (-1, -1), 0 * point),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 0 * point),
-            ])
-
-            row_heights = [None] # Default height for header row.
-            row_heights.extend([self.SIG_ROW_HEIGHT] * len(sig.titles))
-
-            flowables.append(Table(
-                table_data,
-                style=style,
-                colWidths = self._sig_col_widths(),
-                rowHeights = row_heights,
-            ))
+            flowables.append(Approval(style).flowable)
         return flowables
-
-    def _sig_col_widths(self):
-        """Computes the column widths of the signature block table."""
-        style = self.style['Normal']
-
-        return [
-            # Width of the first column is set to accommodate the
-            # longest title.
-            max([stringWidth(s, style.fontName, style.fontSize)
-                 for s in sig.titles]),
-
-            self.SIG_COL_SEP,
-
-            # Remaining area is split between the Name and Signature fields.
-            None,
-            self.SIG_COL_SEP,
-            None,
-
-            self.SIG_COL_SEP,
-            self.SIG_DATE_WIDTH
-        ]
-
-    def _sig_rule(self, col):
-        """Creates an underline for a signature block column."""
-        return ('LINEBELOW', (col, 1), (col, -1), self.SIG_RULE_WEIGHT,
-                colors.black)
 
     def _heading(self, text):
         """Creates a flowable containing a section heading."""
@@ -690,6 +617,116 @@ class ProcedureList(object):
             ('ALIGN', (2, 1), (2, -1), 'CENTER'),
             ('VALIGN', (2, 1), (2, -1), 'MIDDLE'),
         ])
+
+
+class Approval(object):
+    """Creates a flowable implementing approval signatures.
+
+    This is implemented as a table with one row per signature.
+    """
+
+    # Thickness of the signature underline.
+    RULE_WEIGHT = 0.2 * point
+
+    # Distance between table columns. This spacing is implemented
+    # with blank columns of this width instead of left/right padding because
+    # padding does not break rules drawn by LINEBELOW, which is how
+    # the underlines are created.
+    COL_SEP = 0.2 * inch
+
+    # Number of characters the name text entry fields should be sized to
+    # accommodate.
+    NAME_WIDTH = 15
+
+    # Height of the table rows to allow handwritten entries.
+    ROW_HEIGHT = 0.5 * inch
+
+    def __init__(self, style):
+        self.style = style
+        self.rows = []
+
+        # Start with header row.
+        self.rows.append(
+            [Preformatted(s, style=style) for s in [
+                '', '', 'Name', '', 'Signature', '', 'Date']])
+
+        # Append rows for each title.
+        [self.rows.append(self._make_row(title)) for title in sig.titles]
+
+    def _make_row(self, title):
+        """Generates a row for a given signature entry."""
+        return [
+            Preformatted(title, style=self.style),
+            None,
+            TextEntryField(self.NAME_WIDTH, self.style),
+            None,
+            None,
+            None,
+            TextEntryField(len('YYYY/MM/DD'), self.style),
+        ]
+
+    @property
+    def _table_style(self):
+        """Generates the table style."""
+        return TableStyle([
+            # Signature column underline.
+            ('LINEBELOW', (4, 1), (4, -1), self.RULE_WEIGHT, colors.black),
+
+            # Remove all padding around cell content.
+            ('LEFTPADDING', (0 ,0), (-1, -1), 0 * point),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 0 * point),
+            ('TOPPADDING', (0, 0), (-1, -1), 0 * point),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0 * point),
+        ])
+
+    @property
+    def _col_widths(self):
+        """Computes the column widths of the signature block table."""
+        return [
+            # Width of the first column is set to accommodate the
+            # longest title.
+            max([stringWidth(s, self.style.fontName, self.style.fontSize)
+                 for s in sig.titles]),
+
+            self.COL_SEP,
+
+            # Name column is sized based on the text entry field.
+            self._get_text_entry_field_width(2),
+
+            self.COL_SEP,
+
+            None, # Remaining area given to the Signature field.
+
+            self.COL_SEP,
+
+            # Date column is sized based on the text entry field.
+            self._get_text_entry_field_width(6),
+        ]
+
+    def _get_text_entry_field_width(self, column):
+        """Acquires the width of a text entry field from a given column."""
+        # Use the first row after the header as the text entry
+        # fields are the same in every column.
+        row = self.rows[1]
+
+        return row[column].wrap()[0]
+
+    @property
+    def _row_heights(self):
+        """Computes the height of all table rows."""
+        heights = [None] # Default height for header row.
+        heights.extend([self.ROW_HEIGHT] * len(sig.titles))
+        return heights
+
+    @property
+    def flowable(self):
+        """Generates the flowable containing the entire approval block."""
+        return Table(
+            self.rows,
+            style=self._table_style,
+            colWidths=self._col_widths,
+            rowHeights=self._row_heights,
+        )
 
 
 class Checkbox(Flowable):
