@@ -503,6 +503,9 @@ class ProcedureList(object):
     # data entry fields for a step.
     FIELD_TABLE_HORIZ_PAD = 6 * point
 
+    # Header row text.
+    HEADER_FIELDS = ['Step #', 'Description', 'Pass']
+
     def __init__(self, steps, style_sheet):
         self.steps = steps
         self.style_sheet = style_sheet
@@ -513,7 +516,9 @@ class ProcedureList(object):
 
     def _add_header(self):
         """Generates the header row."""
-        self.rows.append(['Step #', 'Description', 'Pass'])
+        style = self.style_sheet['ProcedureTableHeading']
+        row = [Paragraph(s, style) for s in self.HEADER_FIELDS]
+        self.rows.append(row)
 
     def _add_steps(self):
         """Adds rows for all steps."""
@@ -620,9 +625,9 @@ class ProcedureList(object):
         text of the step number and checkbox columns; the description
         column consumes all remaining width.
         """
-        style = self.style_sheet['Normal']
+        style = self.style_sheet['ProcedureTableHeading']
         widths = [stringWidth(s, style.fontName, style.fontSize)
-                  for s in self.rows[0]]
+                  for s in self.HEADER_FIELDS]
 
         # Leave the description column undefined as it will be
         # dynamically sized by ReportLab.
@@ -636,7 +641,6 @@ class ProcedureList(object):
         return TableStyle([
             # Header row
             ('LINEBELOW', (0, 0), (-1, 0), self.HEADER_RULE_WEIGHT, colors.black),
-            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
 
             # Step rows
@@ -653,6 +657,10 @@ class ProcedureList(object):
             ('LINEABOVE', (0, -1), (-1, -1), self.HEADER_RULE_WEIGHT,
              colors.black),
             ('BACKGROUND', (0, -1), (-1, -1), colors.lightgrey),
+
+            # Remove padding between all columns.
+            ('LEFTPADDING', (0 ,0), (-1, -1), 0 * point),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 0 * point),
         ])
 
 
