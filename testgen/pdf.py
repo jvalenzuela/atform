@@ -114,12 +114,26 @@ def build_path(tid, root):
 
 
 def create_text_style():
-    """Generates a style sheet for all text styles."""
+    """Generates a style sheet for all text styles.
+
+    All fonts are chosen from the 14 standard PDF fonts to ensure
+    maximum compatibility with PDF readers, without embedding font
+    encodings. Reference PDF 1.7, Adobe Systems, First Edition 2008-7-1,
+    section 9.6.2.2.
+
+    Use of a serifed typeface, Times Roman, as the default is per
+    typographical convention, and leaves sans-serif available
+    for use with setting verbatim text.
+    """
     style = getSampleStyleSheet()
+
+    style['Normal'].fontName = 'Times-Roman'
+    style['Normal'].fontSize = 12
 
     style.add(ParagraphStyle(
         name='SectionHeading',
         parent=style['Heading1'],
+        fontName='Times-Bold',
 
         # Avoid page breaks between the heading and the first flowable in
         # the section.
@@ -145,6 +159,7 @@ def create_text_style():
     style.add(ParagraphStyle(
         name='Header',
         parent=style['Heading2'],
+        fontName='Times-Bold',
     ))
 
     style.add(ParagraphStyle(
