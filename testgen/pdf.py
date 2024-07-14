@@ -11,6 +11,7 @@ import io
 import itertools
 import os
 from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import (
     getSampleStyleSheet,
@@ -165,6 +166,13 @@ def create_text_style():
     style.add(ParagraphStyle(
         name='Footer',
         parent=style['Normal'],
+    ))
+
+    style.add(ParagraphStyle(
+        name='ProcedureTableHeading',
+        parent=style['Normal'],
+        fontName='Times-Bold',
+        alignment=TA_CENTER,
     ))
 
     return style
@@ -501,6 +509,7 @@ class ProcedureList(object):
         self.rows = []
         self._add_header()
         self._add_steps()
+        self._add_last_row()
 
     def _add_header(self):
         """Generates the header row."""
@@ -577,6 +586,12 @@ class ProcedureList(object):
 
         return max_widths
 
+    def _add_last_row(self):
+        """Creates the final row indicating the end of the procedure."""
+        style = self.style_sheet['ProcedureTableHeading']
+        text = Paragraph('End Procedure', style)
+        self.rows.append([None, text, None])
+
     @property
     def _field_table_style(self):
         """
@@ -625,14 +640,19 @@ class ProcedureList(object):
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
 
             # Step rows
-            ('LINEBELOW', (0, 1), (-1, -1), self.STEP_RULE_WEIGHT, colors.black),
+            ('LINEBELOW', (0, 1), (-1, -3), self.STEP_RULE_WEIGHT, colors.black),
 
             # Step number column
-            ('VALIGN', (0, 1), (0, -1), 'MIDDLE'),
+            ('VALIGN', (0, 1), (0, -2), 'MIDDLE'),
 
             # Checkbox column
-            ('ALIGN', (2, 1), (2, -1), 'CENTER'),
-            ('VALIGN', (2, 1), (2, -1), 'MIDDLE'),
+            ('ALIGN', (2, 1), (2, -2), 'CENTER'),
+            ('VALIGN', (2, 1), (2, -2), 'MIDDLE'),
+
+            # Last row
+            ('LINEABOVE', (0, -1), (-1, -1), self.HEADER_RULE_WEIGHT,
+             colors.black),
+            ('BACKGROUND', (0, -1), (-1, -1), colors.lightgrey),
         ])
 
 
