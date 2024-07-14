@@ -508,9 +508,11 @@ class ProcedureList(object):
 
     def _add_steps(self):
         """Adds rows for all steps."""
+        style = self.style_sheet['Normal']
         for i in range(len(self.steps)):
             desc = self._step_body(self.steps[i])
-            self.rows.append([i + 1, desc, Checkbox()])
+            step_num = Preformatted(str(i + 1), style)
+            self.rows.append([step_num, desc, Checkbox()])
 
     def _step_body(self, step):
         """
