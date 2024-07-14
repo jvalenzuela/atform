@@ -769,7 +769,7 @@ class TextEntryField(Flowable):
     BORDER_WEIGHT = 0.5 * point
 
     # Coefficient applied to the font size to calculate box height.
-    HEIGHT_FACTOR = 2
+    HEIGHT_FACTOR = 1.2
 
     def __init__(self, max_chars, style):
         self.style = style
