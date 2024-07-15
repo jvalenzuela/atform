@@ -9,3 +9,4 @@ dist/
 
 # Unit test PDF output.
 pdf/
+example_output/
