@@ -132,6 +132,12 @@ def create_text_style():
     style['Normal'].fontSize = 12
 
     style.add(ParagraphStyle(
+        name='NormalCentered',
+        parent=style['Normal'],
+        alignment=TA_CENTER,
+    ))
+
+    style.add(ParagraphStyle(
         name='SectionHeading',
         parent=style['Heading1'],
         fontName='Times-Bold',
@@ -522,10 +528,10 @@ class ProcedureList(object):
 
     def _add_steps(self):
         """Adds rows for all steps."""
-        style = self.style_sheet['Normal']
+        style = self.style_sheet['NormalCentered']
         for i in range(len(self.steps)):
             desc = self._step_body(self.steps[i])
-            step_num = Preformatted(str(i + 1), style)
+            step_num = Paragraph(str(i + 1), style)
             self.rows.append([step_num, desc, Checkbox()])
 
     def _step_body(self, step):
