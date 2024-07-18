@@ -4,16 +4,16 @@ Organization
 Sectioning
 ----------
 
-By default, testgen will automatically number tests with increasing integers,
+By default, |project_name| will automatically number tests with increasing integers,
 a simple approach that may be insufficient. Most projects will need
 additional organizational levels to separate related test procedures into
-sections, and testgen can be configured to use multiple integer fields for
+sections, and |project_name| can be configured to use multiple integer fields for
 numbering tests, e.g., 5.1 or 1.8.9. Any quantity of fields can be used,
 although practical values are between two and four. The only stipulation
 regarding numbering is all test procedures must use the same format,
 i.e., *every* test will be numbered with the same quantity of fields.
 
-When using two or more numbering fields, testgen refers to each field as a
+When using two or more numbering fields, |project_name| refers to each field as a
 level, with the first, or highest level, as level zero, increasing up to
 the number of configured levels minus one. For example, configuring
 three levels, tests will be numbered *x.y.z*; where *x* is level zero, *y* is
@@ -51,7 +51,7 @@ affect the output; tests are numbered in the order they are encountered
 regardless of how many source files are involved.
 
 Organizing tests into multiple scripts utilizes Python's import keyword.
-The examples so far use import to load the testgen package with the
+The examples so far use import to load the |project_name| package with the
 following statement near the top of the script::
 
   import testgen

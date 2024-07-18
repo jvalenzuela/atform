@@ -42,6 +42,7 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 rst_prolog = f"""
+.. |project_name| replace:: {project}
 .. |requires_python| replace:: {requires_python}
 """
 

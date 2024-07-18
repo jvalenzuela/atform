@@ -1,7 +1,7 @@
 Introduction
 ============
 
-The testgen software is intended for writing test procedures, which often
+The |project_name| software is intended for writing test procedures, which often
 requires significant repetition, iteration, or other similar
 time-consuming and error-prone tasks where computers excel.
 This software employs the Python programming language to help alleviate
@@ -12,11 +12,11 @@ on content.
 While the test author will need to write what are in fact small Python
 programs to use this system, no previous experience with Python or
 other programming language is required.
-Only elementary Python knowledge is needed to use the testgen package,
+Only elementary Python knowledge is needed to use the |project_name| package,
 much of which can be gleaned from the examples in this guide.
 Furthermore, Python's popularity means a wealth of information is
 available online, all of which will be directly
-applicable as testgen is a normal Python package, and does not alter or
+applicable as |project_name| is a normal Python package, and does not alter or
 limit the language in any way.
 
 
@@ -30,17 +30,17 @@ add Python to the path option from the installation dialog:
 
 .. image:: images/python_install.png
 
-The testgen package can be installed after Python using the following
+The |project_name| package can be installed after Python using the following
 procedure:
 
-#. The testgen package is distributed as an attachment embedded into this
+#. The |project_name| package is distributed as an attachment embedded into this
    PDF manual. Save the :file:`.whl` file to a convenient location on
    your computer.
 
 #. Open a command prompt and navigate to the directory where the :file:`.whl`
    file was saved.
 
-#. The Python package manager, pip, is used to install the testgen package,
+#. The Python package manager, pip, is used to install the |project_name| package,
    and requires a functional Internet connection. Use the following
    command executed in the command prompt:
 
@@ -48,7 +48,7 @@ procedure:
 
       pip install testgen-0.0.0-py3-none-any.whl
 
-   If testgen is already installed, use the ``-U`` option to upgrade to a
+   If |project_name| is already installed, use the ``-U`` option to upgrade to a
    newer version:
 
    .. code-block:: text
@@ -67,7 +67,7 @@ then executed with Python to generate the output PDFs.
 
 An important concept to note is these scripts are plain text files and do
 not contain formatting, such as font selection or table configuration.
-The testgen package will handle formatting the output PDFs; the author need
+The |project_name| package will handle formatting the output PDFs; the author need
 only provide content and structure, i.e., what is in the tests and how
 they are organized.
 
@@ -89,9 +89,9 @@ are entered, not editing scripts saved to files. Use the
 :menuselection:`File --> New` menu
 to open a new editor window for creating a script that will be saved to disk.
 
-Below is a minimal example to illustrate the basic layout of a testgen
+Below is a minimal example to illustrate the basic layout of a |project_name|
 Python script. All examples in this manual are fully-functional, attached
-to the PDF in the same way as the testgen package, and can be
+to the PDF in the same way as the |project_name| package, and can be
 used as initial templates for writing actual test procedures.
 
 .. literalinclude:: examples/minimal.py

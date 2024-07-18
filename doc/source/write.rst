@@ -7,15 +7,15 @@ Writing Tests
 Formatting
 ----------
 
-Unlike many document systems, testgen does not have features
+Unlike many document systems, |project_name| does not have features
 to significantly alter the docment format, such as typeface or font size.
 This omission is intentional, relieving the test author from selecting and
-maintaining consistent typography; testgen will handle the task of
+maintaining consistent typography; |project_name| will handle the task of
 formatting content in a uniform manner.
 
-The Python strings passed to testgen serve as the source for output PDF
+The Python strings passed to |project_name| serve as the source for output PDF
 content, however, they do not dictate how that content is formatted.
-Part of the PDF creation process handled by testgen involves flowing
+Part of the PDF creation process handled by |project_name| involves flowing
 the source text onto the available page area, i.e., adjusting spacing between
 letters and words, and breaking long lines into shorter ones.
 The result will contain the same words as the original string, yet will
@@ -29,7 +29,7 @@ paragraph separation. Content for each procedure topic,
 such as the Objective, is provided with a single string, therefore,
 a mechanism is required to delimit multiple paragraphs.
 To start a new paragraph simply insert one or more blank lines in the
-same string, then begin the next paragraph; testgen automatically
+same string, then begin the next paragraph; |project_name| automatically
 implements indentation, so any additional spaces or tabs at the start
 of a paragraph do not affect the output. The following strings may contain
 multiple paragraphs:
@@ -95,7 +95,7 @@ be unique.
 Once assigned to a test, a label can be used in content strings by
 inserting a placeholder where the labeled test's assigned number
 should appear. Placeholders use the format :samp:`${label}` where
-*label* is the label assigned to the target test. testgen will
+*label* is the label assigned to the target test. |project_name| will
 automatically replace placeholders with their respective test number
 when generating output. Placeholders can be used in any of the following
 content:

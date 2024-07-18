@@ -8,8 +8,8 @@ is often sufficient, however, the Python environment offers
 many options that become especially powerful when tasked with
 duplicate or iterative material. This chapter contains examples for
 handling common cases easily automated with simple idioms.
-The key concept is testgen scripts are regular Python, so any valid
-Python construct can be used to call testgen functions or create the
+The key concept is |project_name| scripts are regular Python, so any valid
+Python construct can be used to call |project_name| functions or create the
 content passed to those functions.
 
 The next example addresses a common procedure step widely used in many
@@ -26,7 +26,7 @@ Another case for automation is a system containing several
 instances of a common component, each of which needs to be tested separately.
 The test procedures would be largely identical, varying only slightly
 to accommodate the unique parameters of each component.
-Python and testgen can be used to compose a single template that
+Python and |project_name| can be used to compose a single template that
 automatically outputs tests tailored for each component. To accomplish this,
 a function is defined with parameters for items that differ in each
 instance, with the call to :py:class:`testgen.Test` contained inside
@@ -41,14 +41,14 @@ source. A common example is alarm messages, where messages are defined
 in some other system, but also need to appear in the test procedures.
 If the alarm messages can be stored or exported into a
 structured format, such as CSV or XML, then
-importing that content for use with testgen is a simple affair.
+importing that content for use with |project_name| is a simple affair.
 
-One important note is testgen itself does *not* implement any type of
+One important note is |project_name| itself does *not* implement any type of
 data import functionality. A general purpose data import system
-within testgen would be impractical as the type of data and format
+within |project_name| would be impractical as the type of data and format
 varies greatly among projects. Python, however, is capable of accessing
 just about any type of structured file format, making custom import
-functionality in testgen unnecessary; external content can be imported
+functionality in |project_name| unnecessary; external content can be imported
 using existing Python features.
 
 The :file:`alarms.csv` file attached to this PDF is a sample export containing
@@ -67,7 +67,7 @@ file are not available in lower-level, imported scripts for the same
 reason every script needs an ``import testgen`` statement at the beginning.
 The solution to this is to locate any user-defined functionality in a
 separate file, which is then imported into every script in addition to
-the testgen module.
+the |project_name| module.
 
 Using the alarm example above, if that feature was needed for tests
 in multiple scripts, move the following content from alarm.py
@@ -77,7 +77,7 @@ into a separate file called :file:`common.py`:
    :lines: 6-28
 
 Every script needing alarm content would then import it in addition
-to testgen at the top.
+to |project_name| at the top.
 
 ::
 
