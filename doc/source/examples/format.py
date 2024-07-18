@@ -5,6 +5,19 @@ import testgen
 
 
 ######################################################################
+# Setup
+######################################################################
+
+# Define a function to format a specific type of text, a program
+# tag name in this case, which will then be used in tests
+# anywhere a program tag name is needed.
+def tagname(name):
+    return testgen.format_text(name,
+                               typeface='sansserif',
+                               font='bold')
+
+
+######################################################################
 # Content
 ######################################################################
 
@@ -34,6 +47,11 @@ testgen.Test('Formatting',
 
                  """The quick brown fox
                  jumps over the lazy dog."""
+             ],
+
+             # Incorporate a formatted tag name in a procedure step.
+             procedure=[
+                 'Confirm ' + tagname('someTag') + ' is equal to 0.'
              ])
 
 

@@ -1,6 +1,9 @@
 Writing Tests
 =============
 
+
+.. _format:
+
 Formatting
 ----------
 
@@ -35,6 +38,26 @@ multiple paragraphs:
 * Equipment list items
 * Preconditions list items
 * Procedure list items
+
+The :py:func:`testgen.format_text` provides a method to adjust the
+way text is formatted. This function is *not* intended to make significant
+alterations to the document layout, but rather to format short words
+or phrases within normal text that are semantically distinct enough to merit
+visual differentiation.
+A common case is presenting a variable name or output message that
+needs to be matched verbatim.
+
+While using :py:func:`testgen.format_text` is an effective way to denote
+significant text, it is not recommended to use that function directly
+in test content. The best approach for formatting special terms is to
+define a function for a specific type of content, with a name
+reflecting the type of content for which it is intended. The new function
+can then use :py:func:`testgen.format_text` internally to apply the
+desired formatting. The benefits to this approach are twofold. First,
+a function with a semantically significant name, such as ``tagName()``,
+is much clearer than ``testgen.format_text()``. Second, it is easy
+to ensure similar content is presented in a uniform manner because
+the format for a given type of content is defined in a single place.
 
 This following sample script demonstrates these formatting concepts:
 

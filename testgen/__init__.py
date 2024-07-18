@@ -7,6 +7,10 @@ from testgen.field import (
     add_field,
 )
 
+from testgen.format import (
+    format_text,
+)
+
 from testgen.id import (
     section,
     set_id_depth,

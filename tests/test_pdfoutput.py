@@ -231,3 +231,30 @@ The second paragraph. Laoreet suspendisse interdum consectetur libero id faucibu
             'system':'The System Name',
         }
         self.make_test()
+
+    def test_text_formats(self):
+        """Verify text formatting appearance."""
+        # List of lines for all format combinations.
+        cases = [
+            'Leading text. '
+            + testgen.format_text("This is {0} {1}.".format(typeface, font),
+                                  typeface, font)
+            + ' Trailing text. X'
+            + testgen.format_text('X', typeface, font)
+            for typeface, font in testgen.format.FONTS.keys()]
+
+        self.make_test(
+            objective="""
+            Verify appearance of special text formats in the Objective,
+            Equipment, Preconditions, and Procedure areas. Each line contains
+            normal text surrounding the formatted text, with a pair of
+            adjacent 'X' characters, one formatted and one normal, to verify
+            relative vertical height.
+            \n
+            """
+            + '\n\n'.join(cases),
+
+            preconditions=cases,
+            equipment=cases,
+            procedure=cases,
+        )
