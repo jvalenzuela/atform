@@ -4,6 +4,7 @@
 
 from tests import utils
 import testgen
+import string
 import unittest
 
 
@@ -257,4 +258,31 @@ The second paragraph. Laoreet suspendisse interdum consectetur libero id faucibu
             preconditions=cases,
             equipment=cases,
             procedure=cases,
+        )
+
+    def test_bullet_list(self):
+        """Verify bullet lists created by bullet_list()."""
+        single = "This is a single-item list:" + testgen.bullet_list(
+            'The only item.')
+        multi = "A multi-item list with formatted items:" + testgen.bullet_list(
+            'First item',
+
+            'An ' + testgen.format_text('italic', font='italic') + ' item',
+
+            string.whitespace
+            + 'Item surrounded by whitespace.'
+            + string.whitespace,
+
+            'Last item')
+
+        self.make_test(
+            objective="""
+            Verify appearance of bullet lists created by the bullet_list()
+            function in various contexts.
+            """
+            + single + multi,
+
+            equipment=[single, multi],
+            preconditions=[single, multi],
+            procedure=[single, multi],
         )

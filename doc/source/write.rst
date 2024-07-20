@@ -59,6 +59,14 @@ is much clearer than ``testgen.format_text()``. Second, it is easy
 to ensure similar content is presented in a uniform manner because
 the format for a given type of content is defined in a single place.
 
+Item lists can be created with :py:func:`testgen.bullet_list`.
+This function is not needed to arrange items normally presented as bullet
+lists, such as the those passed to the ``preconditions`` or ``equipment``
+parameters of :py:class:`testgen.Test`; |project_name| automatically
+formats that content in an appropriate list.
+The :py:func:`testgen.bullet_list` function should only be used where a
+secondary list is necessary.
+
 This following sample script demonstrates these formatting concepts:
 
 .. literalinclude:: examples/format.py

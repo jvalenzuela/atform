@@ -8,6 +8,7 @@ from testgen.field import (
 )
 
 from testgen.format import (
+    bullet_list,
     format_text,
 )
 

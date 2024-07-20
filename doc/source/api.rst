@@ -25,6 +25,7 @@ Content
 .. autosummary::
    :toctree: generated
 
+   testgen.bullet_list
    testgen.format_text
    testgen.Test
    testgen.section

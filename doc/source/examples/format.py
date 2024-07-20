@@ -46,12 +46,13 @@ testgen.Test('Formatting',
                     over    the       lazy      dog.""",
 
                  """The quick brown fox
-                 jumps over the lazy dog."""
-             ],
+                 jumps over the lazy dog.""",
 
-             # Incorporate a formatted tag name in a procedure step.
-             procedure=[
-                 'Confirm ' + tagname('someTag') + ' is equal to 0.'
+                 "Prepare a watch list for the following tags:"
+                 + testgen.bullet_list(
+                     tagname('Tag1'),
+                     tagname('Tag2'),
+                     tagname('Tag3'))
              ])
 
 

@@ -6,6 +6,15 @@ import unittest
 import xml.etree.ElementTree as ElementTree
 
 
+class BulletList(unittest.TestCase):
+    """Unit tests for the bullet_list() function."""
+
+    def test_item_type(self):
+        """Confirm exception for non-string arguments."""
+        with self.assertRaises(TypeError):
+            testgen.bullet_list(['foo', 'bar'])
+
+
 class FormatText(unittest.TestCase):
     """Unit tests for the format_text() text argument."""
 

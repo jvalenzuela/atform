@@ -28,6 +28,51 @@ FONTS = {
 ################################################################################
 
 
+def bullet_list(*items):
+    """Creates a list of items.
+
+    Items will be presented as an unnumbered list, in the same order they
+    appear in the function's parameters.
+    This function may not be nested to create nested lists.
+
+    .. seealso:: :ref:`format`
+
+    :param str *items: The bullet list items. This is *not* a Python list of
+                       items, but rather each item passed as a separate
+                       parameter. E.g., ``'Item 1', 'Item 2'``, not
+                       ``['Item 1', 'Item 2']``.
+    :return str: The entire list with embedded formatting that can be
+                 incorporated into strings passed to the ``objective``,
+                 ``equipment``, ``preconditions``, and ``procedure``
+                 parameters of :py:func:`testgen.Test`.
+    :raises: TypeError
+    """
+    indent = 12 # Horizontal indentation in points applied to each item.
+
+    # The character used at the beginning of each item. Chosen to be distinct
+    # from the bullet used by ReportLab ListItem().
+    symbol = '&diams;'
+
+    try:
+        stripped = [i.strip() for i in items]
+    except AttributeError:
+        raise TypeError('Bullet list items must be strings.')
+
+    bullet_items = ["<bullet indent='{0}'>{1}</bullet>{2}".format(
+        indent,
+        symbol,
+        i,
+    ) for i in stripped]
+
+    # Add empty leading and trailing strings so items get surrounded by double
+    # newlines by the final join(), ensuring the list is separated from
+    # adjacent paragraphs.
+    bullet_items.insert(0, '')
+    bullet_items.append('')
+
+    return '\n\n'.join(bullet_items)
+
+
 def format_text(text, typeface='normal', font='normal'):
     """Applies special formatting attributes to text.
 
