@@ -181,6 +181,14 @@ def create_text_style():
         alignment=TA_CENTER,
     ))
 
+    # textColor is not set here because it is ignored by the canvas methods
+    # used to draw the draft mark.
+    style.add(ParagraphStyle(
+        name='Draftmark',
+        fontName='Helvetica-Bold',
+        fontSize=200,
+    ))
+
     return style
 
 
@@ -204,6 +212,9 @@ class TestDocument(object):
 
     # Vertical space between bullet list items.
     BULLET_LIST_SKIP = 12 * point
+
+    # Text color for the draft watermark.
+    DRAFTMARK_COLOR = colors.Color(0, 0, 0, 0.3)
 
     style = create_text_style()
 
@@ -487,6 +498,24 @@ class TestDocument(object):
 
             bulletType='bullet',
         )
+
+    def _draftmark(self, canvas, doc):
+        """Creates a draft watermark."""
+        canvas.saveState()
+        self._set_canvas_text_style(canvas, 'Draftmark')
+
+        # Translate origin to center of page.
+        canvas.translate(doc.pagesize[0] / 2, doc.pagesize[1] / 2)
+
+        canvas.rotate(45)
+        canvas.setFillColor(self.DRAFTMARK_COLOR)
+
+        # Offset y coordinate by half the font size because the text
+        # is anchored at its baseline, not the midpoint.
+        y = self.style['Draftmark'].fontSize / -2
+
+        canvas.drawCentredString(0, y, 'DRAFT')
+        canvas.restoreState()
 
 
 class ProcedureList(object):
