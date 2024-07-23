@@ -6,6 +6,7 @@ from tests import utils
 import testgen
 import string
 import unittest
+from unittest.mock import patch
 
 
 class PdfOutput(unittest.TestCase):
@@ -286,3 +287,34 @@ The second paragraph. Laoreet suspendisse interdum consectetur libero id faucibu
             preconditions=[single, multi],
             procedure=[single, multi],
         )
+
+
+class VersionControl(unittest.TestCase):
+    """Generate PDFs under various version control conditions."""
+
+    def setUp(self):
+        utils.reset()
+
+    def make_test(self, objective):
+        """Generates a test document with a given objective."""
+        title = self.id().split('.')[-1] # Remove module & class names.
+        testgen.Test(title, objective=objective)
+        testgen.generate()
+
+    @patch('testgen.vcs.Git')
+    def test_no_version_control(self, mock):
+        """Verify appearance if no version control is available."""
+        mock.side_effect = testgen.vcs.NoVersionControlError
+        self.make_test('Verify no draft mark or version in footer.')
+
+    @patch.object(testgen.vcs.Git, 'clean', new=False)
+    @patch.object(testgen.vcs.Git, 'version', new='foo')
+    def test_draft(self):
+        """Verify draft appearance."""
+        self.make_test('Verify draft mark and no version in the footer.')
+
+    @patch.object(testgen.vcs.Git, 'clean', new=True)
+    @patch.object(testgen.vcs.Git, 'version', new='spam')
+    def test_clean(self):
+        """Verify appearance with a clean working directory."""
+        self.make_test('Verify version in the footer and no draft mark.')

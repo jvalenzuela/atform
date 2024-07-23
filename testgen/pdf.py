@@ -218,8 +218,10 @@ class TestDocument(object):
 
     style = create_text_style()
 
-    def __init__(self, test, root):
+    def __init__(self, test, root, draft, version):
         self.test = test
+        self.draft = draft
+        self.version = version
 
         # The full name is the combination of the test's numeric
         # identifer and title.
@@ -232,8 +234,8 @@ class TestDocument(object):
             doc = self._get_doc(dst)
             doc.build(
                 self._build_body(),
-                onFirstPage=self._draw_header_footer,
-                onLaterPages=self._draw_header_footer,
+                onFirstPage=self._on_every_page,
+                onLaterPages=self._on_every_page,
             )
 
             # Capture the final page count for the next build.
@@ -254,8 +256,11 @@ class TestDocument(object):
 
         return SimpleDocTemplate(filename, pagesize=letter)
 
-    def _draw_header_footer(self, canvas, doc):
-        """Draws the header and footer."""
+    def _on_every_page(self, canvas, doc):
+        """Document template callback applied to all pages."""
+        if self.draft:
+            self._draftmark(canvas, doc)
+
         self._header(canvas, doc)
         self._footer(canvas, doc)
 
@@ -317,6 +322,12 @@ class TestDocument(object):
 
         pages = "Page {0} of {1}".format(doc.page, total_pages)
         canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
+
+        # Add version information if available.
+        if not self.draft and self.version:
+            x = doc.pagesize[0] - self.HEADER_FOOTER_SIDE_MARGIN
+            version_text = "Document Version: {0}".format(self.version)
+            canvas.drawRightString(x, baseline, version_text)
 
     def _set_canvas_text_style(self, canvas, style):
         """Sets the current canvas font to a given style."""

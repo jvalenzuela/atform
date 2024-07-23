@@ -7,6 +7,7 @@ from . import label
 from . import misc
 from . import pdf
 from . import ref
+from . import vcs
 import collections
 
 
@@ -311,4 +312,14 @@ def generate(path='pdf'):
     if not isinstance(path, str):
         raise TypeError('Output path must be a string.')
     [t._pregenerate() for t in tests]
-    [pdf.TestDocument(t, path) for t in tests]
+
+    try:
+        git = vcs.Git()
+    except vcs.NoVersionControlError:
+        draft = False
+        version = None
+    else:
+        draft = not git.clean
+        version = git.version
+
+    [pdf.TestDocument(t, path, draft, version) for t in tests]
