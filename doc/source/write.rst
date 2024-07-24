@@ -54,14 +54,15 @@ define a function for a specific type of content, with a name
 reflecting the type of content for which it is intended. The new function
 can then use :py:func:`testgen.format_text` internally to apply the
 desired formatting. The benefits to this approach are twofold. First,
-a function with a semantically significant name, such as ``tagName()``,
-is much clearer than ``testgen.format_text()``. Second, it is easy
+a function with a semantically significant name, such as :code:`tagName()`,
+is much clearer than :code:`testgen.format_text()`. Second, it is easy
 to ensure similar content is presented in a uniform manner because
 the format for a given type of content is defined in a single place.
 
 Item lists can be created with :py:func:`testgen.bullet_list`.
 This function is not needed to arrange items normally presented as bullet
-lists, such as the those passed to the ``preconditions`` or ``equipment``
+lists, such as the those passed to the :code:`preconditions` or
+:code:`equipment`
 parameters of :py:class:`testgen.Test`; |project_name| automatically
 formats that content in an appropriate list.
 The :py:func:`testgen.bullet_list` function should only be used where a
@@ -92,7 +93,7 @@ therefore using a label always yields a correct reference,
 even if the labeled test is reassigned a different number.
 
 The first step in this approach is to assign a label to a test with
-the ``label`` parameter of :py:class:`testgen.Test`.
+the :code:`label` parameter of :py:class:`testgen.Test`.
 Labels are simple strings, typically an abbreviated description of the test.
 As an example, for a test titled "Zone 42 Contactor",
 a suitable label would be ``z42ctr``. Labels may only contain letters,
@@ -122,7 +123,7 @@ This next example demonstrates use of labels and placeholders.
 Procedure
 ---------
 
-The ``procedure`` parameter of :py:class:`testgen.Test` contains the
+The :code:`procedure` parameter of :py:class:`testgen.Test` contains the
 main content of a test: the actions that must be performed and validated.
 These actions are organized into a list which will be automatically
 enumerated in the output; do not incorporate step numbers into
@@ -132,13 +133,14 @@ Each item in the procedure list is a single step, and may be given in
 one of two different forms: string or dictionary. A string is suitable
 if the step only needs instructional text whereas a dictionary
 allows additional information to be included along with the main text.
-A procedure step dictionary must have a ``'text'`` key holding a string
+A procedure step dictionary must have a :code:`'text'` key holding a string
 with the instructional text; all other keys are optional.
 
-The ``'fields'`` key in a step dictionary will add data entry fields
+The :code:`'fields'` key in a step dictionary will add data entry fields
 to record information as part of the step, such as a measurement result,
 and must be a list where each item is a tuple in the form
-``(title, length, suffix)`` defining a single field. *title* is a string
+:samp:`({title}, {length}, {suffix})` defining a single field.
+*title* is a string
 describing data to be recorded; *length* is the maximum number of
 characters the field should accommodate. *suffix* is an optional
 string to place after the field, typically used to denote units.
