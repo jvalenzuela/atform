@@ -16,4 +16,5 @@ Welcome to testgen's documentation!
    write
    ref
    auto
+   vcs
    api

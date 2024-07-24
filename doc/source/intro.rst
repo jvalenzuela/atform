@@ -20,6 +20,8 @@ applicable as |project_name| is a normal Python package, and does not alter or
 limit the language in any way.
 
 
+.. _install:
+
 Installation
 ------------
 
@@ -56,6 +58,20 @@ procedure:
       pip install -U testgen-0.0.0-py3-none-any.whl
 
 #. Delete the :file:`.whl` file; it is not required after installation.
+
+The git version control system is optional, needed only to use the
+features described in :ref:`vcs`. Any 2.x git release is acceptable,
+but *must* be the standard git command line interface, or CLI, available
+from `<https://git-scm.com>`_.
+Furthermore, git must be installed into the system path. The image
+below shows the Windows installation dialog selecting the requisite
+path option:
+
+.. image:: images/git_path.png
+
+Testing to ensure git is properly installed can be done by running
+:command:`git --version` in a command prompt, which should yield
+something like :samp:`git version {x.y.z}`.
 
 
 Getting Started

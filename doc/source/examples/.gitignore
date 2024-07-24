@@ -1,0 +1,5 @@
+# Temporary Python bytecode.
+__pycache__/
+
+# Default PDF output directory.
+pdf/
