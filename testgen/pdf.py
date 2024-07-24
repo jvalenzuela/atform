@@ -149,6 +149,21 @@ def create_text_style():
         spaceBefore=24 * point,
     ))
 
+    # Style applied only to the Procedure section heading to address
+    # undesirable page breaks before the Procedure section. Using
+    # the normal SectionHeading style often causes large areas of unused
+    # vertical space before the Procedure section because keepWithNext
+    # seems to overrule splitting tables in trying to keep the section
+    # header attached to the next flowable, the procedure table in this
+    # case, instead of splitting the table. This does open the possibility
+    # of an orphaned procedure section heading, but that corner case
+    # is acceptable given the better layout of more common cases.
+    style.add(ParagraphStyle(
+        name='ProcedureHeading',
+        parent=style['SectionHeading'],
+        keepWithNext=0,
+    ))
+
     # Leading paragraph in a body of text.
     style.add(ParagraphStyle(
         name='FirstParagraph',
@@ -431,7 +446,7 @@ class TestDocument(object):
         """Creates the Procedure section flowables."""
         flowables = []
         if self.test.procedure:
-            flowables.append(self._heading('Procedure'))
+            flowables.append(self._heading('Procedure', 'ProcedureHeading'))
 
             proc = ProcedureList(self.test.procedure, self.style)
             flowables.append(proc.flowable)
@@ -491,9 +506,9 @@ class TestDocument(object):
             flowables.append(Approval(style).flowable)
         return flowables
 
-    def _heading(self, text):
+    def _heading(self, text, style='SectionHeading'):
         """Creates a flowable containing a section heading."""
-        return Preformatted(text, style=self.style['SectionHeading'])
+        return Preformatted(text, style=self.style[style])
 
     def _bullet_list(self, items):
         """Create a bullet list flowable."""
