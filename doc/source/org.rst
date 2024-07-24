@@ -19,7 +19,8 @@ the number of configured levels minus one. For example, configuring
 three levels, tests will be numbered *x.y.z*; where *x* is level zero, *y* is
 level one, and *z* is level two.
 
-The following example shows the two, primary commands for sectioning:
+The following example shows the two commands for organizing tests
+into sections:
 :py:func:`testgen.set_id_depth` and
 :py:func:`testgen.section`:
 

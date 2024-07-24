@@ -81,10 +81,9 @@ class Test(object):
     :param str objective: An optional, longer narrative, possibly spanning
                           several sentences or paragraphs, describing the
                           intent of the test procedure.
-    :param dict references: References associated with this test. Dictionary
-                            keys must be a category label defined with
+    :param dict references: References associated with this test.
+                            Keys must be labels defined with
                             :py:func:`testgen.add_reference_category`;
-                            dictionary
                             values are a list of strings containing references
                             for that category.
     :param list[str] equipment: An optional list of equipment required to
