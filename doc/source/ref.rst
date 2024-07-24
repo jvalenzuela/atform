@@ -28,7 +28,7 @@ consistency with the actual tests.
 Projects vary widely in the type of references and in the desired
 cross-reference format, therefore, |project_name| itself does *not* create any
 type of cross-reference file, but rather presents the infomation as a
-standard Python data structure: a dictionary. Exporting that data into
+standard Python dictionary. Exporting that data into
 any standard file format, such as CSV, is easily accomplished with regular
 Python utilities.
 
@@ -37,6 +37,20 @@ The cross-reference dictionary is acquired by calling the
 It may be called before or after :py:func:`testgen.generate`, but
 must appear after all tests are defined with
 :py:class:`testgen.Test`.
+
+Cross-references are structured into two levels. Keys for the top-level
+dictionary returned by :py:func:`testgen.get_xref` are labels identifying
+each reference type which have been defined with
+:py:func:`testgen.add_reference_category`. Values are second-level
+dictionaries keyed by references applied via the
+:code:`references` parameteter of :py:class:`testgen.Test`.
+Values of the final dictionary are lists of test ID numbers given that
+reference. Here is an example of querying the cross-reference dictionary::
+
+   xref = testgen.get_xref()
+
+   # Test IDs assigned 'fm42' in the 'fmea' reference category.
+   test_list = xref['fmea']['fm42']
 
 The following :file:`xref.py` listing illustrates a simple example
 where cross-references are written to a CSV file:
