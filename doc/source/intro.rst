@@ -25,6 +25,10 @@ limit the language in any way.
 Installation
 ------------
 
+|project_name| is compatible with any operating system on which the
+requisite Python version listed below is available, including
+Windows, Linux, and macOS.
+
 The Python programming language, version |requires_python| or later,
 must be installed,
 and is available from `<https://python.org>`_. Make sure to select the
