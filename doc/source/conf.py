@@ -59,4 +59,8 @@ latex_elements = {
     'extraclassoptions': 'oneside',
     'pointsize': '12pt',
     'printindex': '', # Exclude index in PDF output.
+
+    'preamble': r"""
+    \setlength{\headheight}{15pt}
+    """,
 }
