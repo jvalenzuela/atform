@@ -34,68 +34,34 @@ ProcedureStepField = collections.namedtuple(
 class Test(object):
     """Creates a single test procedure.
 
-    Numeric identifiers will be incrementally
-    assigned to each test in the order they appear. Only the title parameter
-    is required, allowing tests to be initially outlined, then filled in with
-    more detail at a later time. The listing below contains a complete example:
+    Numeric identifiers will be incrementally assigned to each test in the
+    order they appear.
 
-    ::
+    Args:
+        title (str): A short phrase describing the test procedure, that is
+            combined with the automatically-assigned numeric ID to identify
+            this specific test.
+        label (str, optional): An identifier for use in content strings to
+            refer back to this test. See :ref:`labels`.
+        objective (str, optional): A longer narrative, possibly spanning
+            several sentences or paragraphs, describing the intent of the
+            test procedure.
+        references (dict, optional): References associated with this test.
+            Keys must be labels defined with
+            :py:func:`testgen.add_reference_category`; values are a list of
+            strings containing references for that category.
+        equipment (list[str], optional): A list of equipment required to
+            perform the procedure; will be rendered as a bullet list under
+            a dedicated section heading.
+        preconditions (list[str], optional): A list of conditions that must be
+            met before the procedure can commence.
+        procedure (list[str or dict], optional): A list of procedure steps to
+            be output as an enumerated list. See :ref:`procedure`.
 
-        # A test with title only.
-        testgen.Test('A Preliminary Test')
-
-        # The next test with more detail.
-        testgen.Test('Walking The Dog',
-            objective=\"""
-            To provide one's pet with exercise and an opportunity to
-            relieve itself.
-            \""",
-
-            # These references assume 'sf' and 'fmea' have been configured
-            # as reference categories.
-            references={
-                'sf':['SF1', 'SF2'],
-                'fmea':['FM-1', 'FM-2'],
-            },
-
-            equipment=[
-                "Leash",
-                "Treats",
-            ],
-
-            preconditions=[
-                "Own a dog.",
-                "Two or more hours have elapsed since the last walk."
-            ],
-            procedure=[
-                "Secure leash to collar.",
-                "Open door."
-            ]
-        )
-
-    :param str title: A short phrase describing the test procedure, that
-                      is combined with the automatically-assigned numeric
-                      ID to identify this specific test.
-    :param str label: An optional identifier for use in content
-                      strings to refer back to this test. See :ref:`labels`.
-    :param str objective: An optional, longer narrative, possibly spanning
-                          several sentences or paragraphs, describing the
-                          intent of the test procedure.
-    :param dict references: References associated with this test.
-                            Keys must be labels defined with
-                            :py:func:`testgen.add_reference_category`;
-                            values are a list of strings containing references
-                            for that category.
-    :param list[str] equipment: An optional list of equipment required to
-                                perform the procedure; will be rendered as
-                                a bullet list under a dedicated section
-                                heading.
-    :param list[str] preconditions: An optional list of conditions that must
-                                    be met before the procedure can commence.
-    :param list[str or dict] procedure: An optional list of procedure steps to
-                                        be output as an enumerated list.
-                                        See :ref:`procedure`.
-    :raises: KeyError, TypeError, ValueError
+    Raises:
+        KeyError
+        TypeError
+        ValueError
     """
 
     def __init__(self,
@@ -301,12 +267,16 @@ class Test(object):
 def generate(path='pdf'):
     """Builds PDF output files for all defined tests.
 
-    Should be called once
-    near the end of the script after tests have been created with
-    :py:class:`testgen.Test`.
+    Should be called once near the end of the script after tests have been
+    created with :py:class:`testgen.Test`.
 
-    :param str path: Optional path to an output directory.
-    :raises: KeyError, TypeError, ValueError
+    Args:
+        path (str, optional): Output directory where PDFs will be saved.
+
+    Raises:
+        KeyError
+        TypeError
+        ValueError
     """
     if not isinstance(path, str):
         raise TypeError('Output path must be a string.')

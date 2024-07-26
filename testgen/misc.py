@@ -63,9 +63,13 @@ def set_project_info(project=None, system=None):
 
     .. seealso:: :ref:`project_info`
 
-    :param str project: Name or description of the project.
-    :param str system: Name or description of the system being tested.
-    :raises: TypeError, ValueError
+    Args:
+        project (str, optional): Name or description of the project.
+        system (str, optional): Name or description of the system being tested.
+
+    Raises:
+        TypeError
+        ValueError
     """
     global project_info
     params = locals()

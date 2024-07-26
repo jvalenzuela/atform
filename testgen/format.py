@@ -32,20 +32,24 @@ def bullet_list(*items):
     """Creates a list of items.
 
     Items will be presented as an unnumbered list, in the same order they
-    appear in the function's parameters.
-    This function may not be nested to create nested lists.
+    appear in the function's parameters. This function may not be nested to
+    create nested lists.
 
     .. seealso:: :ref:`format`
 
-    :param str *items: The bullet list items. This is *not* a Python list of
-                       items, but rather each item passed as a separate
-                       parameter. E.g., ``'Item 1', 'Item 2'``, not
-                       ``['Item 1', 'Item 2']``.
-    :return str: The entire list with embedded formatting that can be
-                 incorporated into strings passed to the ``objective``,
-                 ``equipment``, ``preconditions``, and ``procedure``
-                 parameters of :py:func:`testgen.Test`.
-    :raises: TypeError
+    Args:
+        *items (str): The bullet list items. This is *not* a Python list of
+            items, but rather each item passed as a separate parameter.
+            E.g., `'Item 1', 'Item 2'`, not `['Item 1', 'Item 2']`.
+
+    Returns:
+        str: The entire list with embedded formatting that can be incorporated
+        into strings passed to the ``objective``, ``equipment``,
+        ``preconditions``, and ``procedure`` parameters of
+        :py:func:`testgen.Test`.
+
+    Raises:
+        TypeError
     """
     indent = 12 # Horizontal indentation in points applied to each item.
 
@@ -82,13 +86,18 @@ def format_text(text, typeface='normal', font='normal'):
 
     .. seealso:: :ref:`format`
 
-    :param str text: The content to format.
-    :param str typeface: Optional typeface name: ``'monospace'`` or
-                         ``'sansserif'``.
-    :param str font: Optional font style: ``'bold'`` or ``'italic'``.
-    :return str: A string containing the original text with embedded formatting
-                 information.
-    :raises: KeyError, TypeError
+    Args:
+        text (str): The content to format.
+        typeface (str, optional): Typeface name: ``'monospace'`` or
+            ``'sansserif'``.
+        font (str, optional): Font style: ``'bold'`` or ``'italic'``.
+
+    Returns:
+        str: The original text with embedded formatting information.
+
+    Raises:
+        KeyError
+        TypeError
     """
     if not isinstance(text, str):
         raise TypeError('text must be a string.')

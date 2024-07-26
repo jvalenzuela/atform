@@ -22,26 +22,21 @@ def add_reference_category(title, label):
     """Creates a topic for listing external references.
 
     This function does not create any actual references; they must be
-    added to each test individually with the references argument of
+    added to each test individually with the ``references`` argument of
     :py:class:`testgen.Test`. This function is only available in the setup
     area of the script before any tests or sections are created.
 
-    ::
+    Args:
+        title (str): The full name of the category that will be displayed
+            on the test documents.
+        label (str): A shorthand abbreviation to identify this category
+            when adding references to individual tests. Must be unique across
+            all reference categories.
 
-        # This will create references titled 'Safety Functions' that can
-        # be added to tests via the 'sf' label.
-        testgen.add_reference_category('Safety Functions', 'sf')
-
-        # Create a test listing safety functions SF1 and SF2.
-        testgen.Test('A Test With References',
-            references={'sf':['SF1', 'SF2']})
-
-    :param str title: The full name of the category that will be displayed
-                      on the test documents.
-    :param str label: A shorthand abbreviation to identify this category
-                      when adding references to individual tests. Must be
-                      unique across all reference categories.
-    :raises: RuntimeError, TypeError, ValueError
+    Raises:
+        RuntimeError
+        TypeError
+        ValueError
     """
     global titles
 
@@ -73,18 +68,16 @@ def get_xref():
 
     .. seealso:: :ref:`xref`
 
-    :return: A cross-reference between tests and references represented as a
-             nested dictionary. The top-level dictionary is keyed by
-             category labels defined with
-             :py:func:`testgen.add_reference_category`; second-level
-             dictionaries are keyed by references in that category, i.e.,
-             items passed to the `references` argument of
-             :py:class:`testgen.Test`.
-             Final values of the inner dictionary are lists of
-             test identifiers, formatted as strings, assigned to that
-             reference. As an example,
-             all tests assigned ``'SF42'`` in the ``'sf'`` category would
-             be listed by ``xref['sf']['SF42']``.
+    Returns:
+        dict: A cross-reference between tests and references represented as a
+        nested dictionary. The top-level dictionary is keyed by category labels
+        defined with :py:func:`testgen.add_reference_category`; second-level
+        dictionaries are keyed by references in that category, i.e., items
+        passed to the ``references`` argument of :py:class:`testgen.Test`.
+        Final values of the inner dictionary are lists of test identifiers,
+        formatted as strings, assigned to that reference. As an example,
+        the keys for all tests assigned ``'SF42'`` in the ``'sf'`` category
+        would be by ``['sf']['SF42']``.
     """
     global titles
 

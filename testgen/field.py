@@ -25,18 +25,15 @@ def add_field(title, length):
     This function can only be used in the setup area of the script,
     before any tests or sections are created.
 
-    ::
+    Args:
+        title (str): Text to serve as the field's prompt; must not be blank.
+        length (int): Maximum number of characters the field should be sized
+            to accommodate; must be greater than zero.
 
-        # Add a field to capture the software version, such as a git SHA1.
-        testgen.add_field('Software Version', 10)
-
-        # Add a field to record the a two-digit vehicle number.
-        testgen.add_field('Vehicle', 2)
-
-    :param str title: Text to serve as the field's prompt; must not be blank.
-    :param int length: Maximum number of characters the field should be
-                       sized to accommodate; must be greater than zero.
-    :raises: RuntimeError, TypeError, ValueError
+    Raises:
+        RuntimeError
+        TypeError
+        ValueError
     """
     global lengths
     if not isinstance(title, str):

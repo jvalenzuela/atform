@@ -23,23 +23,12 @@ def add_signature(title):
     fields that will appear at the conclusion of every test. Signatures
     will be presented in the order they are defined.
 
-    To illustrate, these statements will generate the following
-    signature fields; the actual format may vary from what is shown here.
+    Args:
+        title (str): A short description of the person signing.
 
-    ::
-
-        testgen.add_signature('Executor')
-        testgen.add_signature('Witness')
-
-
-    ======== ==== ========= ====
-    Title    Name Signature Date
-    ======== ==== ========= ====
-    Executor
-    Witness
-    ======== ==== ========= ====
-
-    :param str title: A short description of the person signing.
-    :raises: RuntimeError, TypeError, ValueError
+    Raises:
+        RuntimeError
+        TypeError
+        ValueError
     """
     titles.append(misc.nonempty_string('Signature title', title))

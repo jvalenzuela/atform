@@ -44,32 +44,19 @@ def section(level, id=None, title=None):
     an optional title. All subsections after the target level and individual
     test numbers will be reset.
 
-    Below is an example to help illustrate usage:
+    Args:
+        level (int): Zero-based index of the target identifier level in which
+            to start a new section.
+        id (int, optional): Target section value; target section is incremented
+            by one if omitted. If specified, it must result in a jump
+            forward relative to the current section, i.e., jumping backwards,
+            or even to the current section, is not permitted.
+        title (str, optional): Section title. Must only contain characters
+            allowed in file system folder names.
 
-    ::
-
-        testgen.set_id_depth(3) # Configure IDs as x.y.z.
-
-        # Create tests; assume last test created was 1.1.5.
-
-        testgen.section(0, title='Important Tests') # Increment to 2.y.z.
-
-        # Tests here will begin at 2.1.1.
-
-        testgen.section(1, id=10, title='Another Subsection') # Jump to x.10.z.
-
-        # Tests here will begin at 2.10.1.
-
-    :param int level: Zero-based index of the target identifier level in
-                      which to start a new section.
-    :param int id: Optional section value; target section is incremented
-                   by one if omitted. If specified, it must result in a jump
-                   forward relative to the current section, i.e., jumping
-                   backwards, or even to the current section, is not
-                   permitted.
-    :param str title: Optional title. Must only contain characters allowed
-                      in file system folder names.
-    :raises: TypeError, ValueError
+    Raises:
+        TypeError
+        ValueError
     """
     global current_id
     global section_titles
@@ -120,8 +107,13 @@ def set_id_depth(levels):
     three numeric fields, like 2.1.1 or 4.2.3. This should be called once
     before any tests or sections are created.
 
-    :param int levels: Number of identifier levels.
-    :raises: RuntimeError, TypeError, ValueError
+    Args:
+        levels (int): Number of identifier levels.
+
+    Raises:
+        RuntimeError
+        TypeError
+        ValueError
     """
     global current_id
     if not isinstance(levels, int):
@@ -134,28 +126,17 @@ def set_id_depth(levels):
 def skip_test(id=None):
     """Omits one or more tests.
 
-    This function can only skip tests within the
-    current section, i.e., it will only affect the last identifier field.
-    Typical usage, as shown below, is to reserve a range of IDs or
-    maintain numbering if a test is removed.
+    This function can only skip tests within the current section, i.e.,
+    it will only affect the last identifier field. Typical usage is to
+    reserve a range of IDs or maintain numbering if a test is removed.
 
-    ::
+    Args:
+        id (int, optional): ID of the next test. If omitted, one test will
+            be skipped.
 
-        testgen.set_id_depth(2) # Configure IDs as x.y.
-
-        # Create tests, assume up to 1.10.
-
-        testgen.skip_test() # Omit 1.11.
-
-        # Next test will be 1.12.
-
-        testgen.skip_test(100)
-
-        # Next test will be 1.100.
-
-    :param int id: Optional ID of the next test. If omitted, one test
-                   will be skipped.
-    :raises: TypeError, ValueError
+    Raises:
+        TypeError
+        ValueError
     """
     global current_id
 
