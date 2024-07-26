@@ -92,10 +92,25 @@ only provide content and structure, i.e., what is in the tests and how
 they are organized.
 
 As Python scripts are regular text files, they can be created and edited
-with any text editor, however, it is highly-recommended to use an editor
-with integrated Python support. Many such editors are freely-available;
-Notepad++, Visual Studio Code, and PyCharm to name a few. The Python
-installation also includes a suitable editor, IDLE. One note about IDLE is
+with any text editor, however, it is *highly* recommended to use an editor
+with integrated Python support. A significant feature when selecting an
+editor is the ability to provide contextual help, which will display the
+same documentation presented in the :ref:`api` section of this manual
+directly in the editor window when each command is used. Having
+the necessary documentation immediately and automatically available
+while writing tests is quite convenient.
+Many suitable editors are freely-available; some popular ones are listed below:
+
+.. csv-table::
+   :header: Name, URL, "Context Help"
+
+   Notepad++, `<https://notepad-plus-plus.org/>`_, No
+   Sublime Text, `<https://www.sublimetext.com/>`_, Yes
+   Visual Studio Code, `<https://code.visualstudio.com/>`_, Yes
+   PyCharm, `<https://www.jetbrains.com/pycharm/>`_, Yes
+
+The Python installation also includes a simple, yet functional editor, IDLE,
+although it does not feature context help. One note about IDLE is
 it starts in an interactive window, showing something like this:
 
 .. code-block:: text
