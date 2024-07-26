@@ -270,6 +270,12 @@ def generate(path='pdf'):
     Should be called once near the end of the script after tests have been
     created with :py:class:`testgen.Test`.
 
+    .. warning::
+
+        The generated tests will *overwrite* files in the output directory.
+        Any content in the output directory that needs to be preserved
+        must be copied elsewhere before generating output documents.
+
     Args:
         path (str, optional): Output directory where PDFs will be saved.
 
