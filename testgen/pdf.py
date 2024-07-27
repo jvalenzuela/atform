@@ -761,7 +761,7 @@ class Approval(object):
             None,
             None,
             None,
-            TextEntryField(len('YYYY/MM/DD'), self.style),
+            TextEntryField(len('YYYY/MM/DD'), self.style, 'YYYY/MM/DD'),
         ]
 
     @property
@@ -853,8 +853,9 @@ class TextEntryField(Flowable):
     # Coefficient applied to the font size to calculate box height.
     HEIGHT_FACTOR = 1.2
 
-    def __init__(self, max_chars, style):
+    def __init__(self, max_chars, style, tooltip=None):
         self.style = style
+        self.tooltip = tooltip
 
         # Width is calculated to hold the given maximum string length.
         self.width = stringWidth(
@@ -876,4 +877,5 @@ class TextEntryField(Flowable):
             fontSize = self.style.fontSize,
             borderWidth = self.BORDER_WEIGHT,
             relative=True,
+            tooltip=self.tooltip,
         )

@@ -9,6 +9,23 @@ import unittest
 from unittest.mock import patch
 
 
+class Base(object):
+    """Base class for tests which generate PDFs."""
+
+    def setUp(self):
+        utils.reset()
+
+    def make_test(self, **kwargs):
+        """testgen.Test() wrapper to assign a title and default objective."""
+        # Generate a title that is class_name.method_name.
+        title = '.'.join(self.id().split('.')[-2:])
+
+        # Use the test's docstring as the default objective.
+        kwargs.setdefault('objective', self.shortDescription())
+
+        testgen.Test(title, **kwargs)
+
+
 class PdfOutput(unittest.TestCase):
 
     def setUpClass():
@@ -19,9 +36,6 @@ class PdfOutput(unittest.TestCase):
 
         testgen.add_field('System (20 chars)', 20)
         testgen.add_field('Version (10 chars)', 10)
-
-        testgen.add_signature('First Signature')
-        testgen.add_signature('Second Signature')
 
     def tearDownClass():
         testgen.generate()
@@ -318,3 +332,21 @@ class VersionControl(unittest.TestCase):
     def test_clean(self):
         """Verify appearance with a clean working directory."""
         self.make_test('Verify version in the footer and no draft mark.')
+
+
+class Approval(Base, unittest.TestCase):
+    """Tests for the Approval section."""
+
+    def test_single(self):
+        """Verify layout with a single signature entry and date tooltip."""
+        testgen.add_signature('Only Signature')
+        self.make_test()
+        testgen.generate()
+
+    def test_multiple(self):
+        """Verify layout with multiple signature entries."""
+        testgen.add_signature('First Signature')
+        testgen.add_signature('Second Signature')
+        testgen.add_signature('Third Signature')
+        self.make_test()
+        testgen.generate()
