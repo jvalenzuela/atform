@@ -59,14 +59,14 @@ class Label(unittest.TestCase):
         testgen.Test('target', label='TheLabel')
         t = testgen.Test('title', procedure=['$TheLabel'])
         t._pregenerate()
-        self.assertEqual('1', t.procedure[0]['text'])
+        self.assertEqual('1', t.procedure[0].text)
 
     def test_procedure_step_dict_placeholder(self):
         """Confirm placeholders are replaced in dict procedure steps."""
         testgen.Test('target', label='TheLabel')
         t = testgen.Test('title', procedure=[{'text':'$TheLabel'}])
         t._pregenerate()
-        self.assertEqual('1', t.procedure[0]['text'])
+        self.assertEqual('1', t.procedure[0].text)
 
     def test_forward_reference(self):
         """Confirm a placeholder for a label defined in a later test."""
@@ -290,7 +290,7 @@ class ProcedureStepString(ProcedureStepBase, unittest.TestCase):
     def test_strip(self):
         """Confirm surrounding whitespace is removed from the string."""
         t = self.make_step(string.whitespace + 'Foo' + string.whitespace)
-        self.assertEqual('Foo', t.procedure[0]['text'])
+        self.assertEqual('Foo', t.procedure[0].text)
 
 
 class ProcedureStepDict(ProcedureStepBase, unittest.TestCase):
@@ -330,7 +330,7 @@ class ProcedureStepDictText(ProcedureStepBase, unittest.TestCase):
         test = self.make_step({
             'text':string.whitespace + 'foo' + string.whitespace
         })
-        self.assertEqual('foo', test.procedure[0]['text'])
+        self.assertEqual('foo', test.procedure[0].text)
 
 
 class ProcedureStepFields(ProcedureStepBase, unittest.TestCase):
@@ -378,7 +378,7 @@ class ProcedureStepFieldTitle(ProcedureStepBase, unittest.TestCase):
     def test_strip(self):
         """Confirm surrounding whitespace is removed from field titles."""
         t = self.make_field((string.whitespace + 'foo' + string.whitespace, 1))
-        self.assertEqual('foo', t.procedure[0]['fields'][0].title)
+        self.assertEqual('foo', t.procedure[0].fields[0].title)
 
 
 class ProcedureStepFieldLength(ProcedureStepBase, unittest.TestCase):
@@ -423,7 +423,7 @@ class ProcedureStepFieldSuffix(ProcedureStepBase, unittest.TestCase):
         """Confirm surrounding whitespace is removed from the suffix."""
         t = self.make_field(
             ('field', 1, string.whitespace + 'foo' + string.whitespace))
-        self.assertEqual('foo', t.procedure[0]['fields'][0].suffix)
+        self.assertEqual('foo', t.procedure[0].fields[0].suffix)
 
 
 class TestProjectInfo(unittest.TestCase):

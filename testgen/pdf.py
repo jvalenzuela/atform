@@ -595,18 +595,11 @@ class ProcedureList(object):
         step, i.e., everything that goes in the Description column.
         """
         # Begin with the step instruction text.
-        flowables = make_paragraphs(step['text'], self.style_sheet)
+        flowables = make_paragraphs(step.text, self.style_sheet)
 
-        try:
-            fields = step['fields']
-
-        except KeyError:
-            pass # Fields are optional.
-
-        else:
-            if fields:
+        if step.fields:
                 flowables.append(Spacer(0, self.FIELD_TABLE_SEP))
-                flowables.append(self._make_fields(fields))
+                flowables.append(self._make_fields(step.fields))
 
         return flowables
 

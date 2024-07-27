@@ -15,6 +15,101 @@ import collections
 tests = []
 
 
+class ProcedureStep(object):
+    """Object containing all user-provided content for a single procedure step.
+
+    This is not created directly by the user, but is instantiated using a
+    an item, string or dict, from the procedure parameter list of Test.
+    """
+
+    def __init__(self, raw):
+        data = self._normalize_type(raw)
+        self.text = self._validate_text(data)
+        self.fields = self._validate_fields(data)
+        self._check_undefined_keys(data)
+
+    def _normalize_type(self, raw):
+        """Normalizes the raw data into a dict."""
+        # Convert a string to a dict with text key.
+        if isinstance(raw, str):
+            normalized = {'text': raw}
+
+        elif isinstance(raw, dict):
+            normalized = raw
+
+        else:
+            raise TypeError('A procedure step must be a string or dictionary.')
+
+        return normalized
+
+    def _check_undefined_keys(self, data):
+        """Raises an exception for any unconsumed keys."""
+        if data:
+            keys = [str(k) for k in data.keys()]
+            raise KeyError(
+                "Undefined procedure step dictionary key(s): {0}".format(
+                    ', '.join(keys)
+                ))
+
+    def _validate_text(self, data):
+        """Validates the text key."""
+        try:
+            text = data.pop('text')
+        except KeyError:
+            raise KeyError(
+                "A procedure step dictionary must have a 'text' key.")
+        return misc.nonempty_string("Procedure step text", text)
+
+    def _validate_fields(self, data):
+        """Validates the fields key."""
+        tpls = data.pop('fields', [])
+        if not isinstance(tpls, list):
+            raise TypeError('Procedure step fields must be a list.')
+        return [self._create_field(t) for t in tpls]
+
+    def _create_field(self, tpl):
+        """
+        Converts a raw procedure step field definition tuple into a
+        named tuple.
+        """
+        if not isinstance(tpl, tuple):
+            raise TypeError('Procedure step fields list items must be tuples.')
+
+        # Validate the required items: title and length.
+        try:
+            raw_title = tpl[0]
+            raw_length = tpl[1]
+        except IndexError:
+            raise ValueError(
+                'Procedure step field tuples must have at least two members: '
+                'title and length.')
+        else:
+            title = misc.nonempty_string(
+                'Procedure step field title',
+                raw_title
+            )
+            length = misc.validate_field_length(raw_length)
+
+        # Validate suffix, providing a default value if omitted.
+        try:
+            raw = tpl[2]
+        except IndexError:
+            suffix = ''
+        else:
+            suffix = misc.nonempty_string('Procedure step field suffix', raw)
+
+        if len(tpl) > 3:
+            raise ValueError(
+                'Procedure step field tuples may not exceed three members: '
+                'title, length, and suffix.')
+
+        return ProcedureStepField(title, length, suffix)
+
+    def resolve_labels(self):
+        """Replaces label placeholders with their target IDs."""
+        self.text = label.resolve(self.text)
+
+
 # Container to hold normalized procedure step field definitions. This is
 # not part of the public API as fields are defined via normal tuples, which
 # are then validated to create instances of this named tuple.
@@ -157,90 +252,7 @@ class Test(object):
         """Validates the procedure parameter."""
         if not isinstance(lst, list):
             raise TypeError('Procedure must be a list.')
-        return [self._validate_procedure_step(step) for step in lst]
-
-    def _validate_procedure_step(self, step):
-        """Validates a dictionary defining a single procedure step."""
-        # Convert a string to a dict with text key.
-        if isinstance(step, str):
-            step = {'text': step}
-
-        elif not isinstance(step, dict):
-            raise TypeError(
-                'A procedure step must be either a string or dictionary.')
-
-        try:
-            text = step['text']
-        except KeyError:
-            raise KeyError(
-                "A procedure step dictionary must have a 'text' key.")
-        step['text'] = misc.nonempty_string("Procedure step text", text)
-
-        try:
-            fields = step['fields']
-        except KeyError:
-            pass
-        else:
-            step['fields'] = self._validate_procedure_step_fields(fields)
-
-        self._check_procedure_step_keys(step)
-        return step
-
-    def _check_procedure_step_keys(self, step):
-        """Checks a procedure step dictionary for undefined keys."""
-        allowed = {
-            'text',
-            'fields',
-        }
-        undefined = set(step.keys()).difference(allowed)
-        if undefined:
-            raise KeyError(
-                "Procedure step dictionary contains undefined key(s): "
-                "{0}".format(', '.join([str(i) for i in undefined])))
-
-    def _validate_procedure_step_fields(self, fields):
-        """Validates the list of field definitions."""
-        if not isinstance(fields, list):
-            raise TypeError('Procedure step fields must be a list.')
-        return [self._create_procedure_step_field(f) for f in fields]
-
-    def _create_procedure_step_field(self, tpl):
-        """
-        Converts a raw procedure step field definition tuple into a
-        named tuple.
-        """
-        if not isinstance(tpl, tuple):
-            raise TypeError('Procedure step fields list items must be tuples.')
-
-        # Validate the required items: title and length.
-        try:
-            raw_title = tpl[0]
-            raw_length = tpl[1]
-        except IndexError:
-            raise ValueError(
-                'Procedure step field tuples must have at least two members: '
-                'title and length.')
-        else:
-            title = misc.nonempty_string(
-                'Procedure step field title',
-                raw_title
-            )
-            length = misc.validate_field_length(raw_length)
-
-        # Validate suffix, providing a default vaule if omitted.
-        try:
-            raw = tpl[2]
-        except IndexError:
-            suffix = ''
-        else:
-            suffix = misc.nonempty_string('Procedure step field suffix', raw)
-
-        if len(tpl) > 3:
-            raise ValueError(
-                'Procedure step field tuples may not exceed three members: '
-                'title, length, and suffix.')
-
-        return ProcedureStepField(title, length, suffix)
+        return [ProcedureStep(step) for step in lst]
 
     def _validate_string_list(self, name, lst):
         """Checks a list to ensure it contains only non-empty/blank strings."""
@@ -260,8 +272,7 @@ class Test(object):
         if self.objective:
             self.objective = label.resolve(self.objective)
         self.preconditions = [label.resolve(pc) for pc in self.preconditions]
-        [step.update({'text': label.resolve(step['text'])})
-         for step in self.procedure]
+        [step.resolve_labels() for step in self.procedure]
 
 
 def generate(path='pdf'):
