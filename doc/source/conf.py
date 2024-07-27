@@ -6,6 +6,7 @@
 import os
 import pathlib
 import re
+import shutil
 import sys
 import tomllib
 
@@ -62,6 +63,45 @@ latex_elements = {
     'printindex': '', # Exclude index in PDF output.
 
     'preamble': r"""
+    \usepackage{embedfile} % For attaching examples.
     \setlength{\headheight}{15pt}
     """,
 }
+
+
+def add_example_embeds(app, config):
+    """Adds commands to latex_elements to embed example files.
+
+    Generating these commands requires listing the source directory,
+    which requires the Sphinx application object, hence the reason
+    these are added via an event callback instead of directly in the
+    latex_elements definition.
+    """
+    global latex_elements
+    path = os.path.join(app.srcdir, 'examples')
+    files = [e.name for e in os.scandir(path) if e.is_file()]
+    cmds = ["\\embedfile[filespec={0}]{{examples/{0}}}".format(f)
+            for f in files]
+    latex_elements['atendofbody'] = '\n'.join(cmds)
+
+
+def copy_examples(app, exception):
+    """
+    Copies all example files to the LaTeX output path so they can be
+    embedded into the output PDF.
+    """
+    src = os.path.join(app.srcdir, 'examples')
+    dst = os.path.join(app.outdir, 'examples')
+    shutil.rmtree(dst, ignore_errors=True)
+    shutil.copytree(src, dst)
+
+
+def setup(app):
+    app.connect('config-inited', add_example_embeds)
+
+    # Copying examples into the build folder after the build is finshed
+    # works because the Sphinx build only generates the LaTeX source files;
+    # running LaTeX, which reads these copies, to construct the PDF is
+    # actually part of the make process that runs after Sphinx is
+    # completely finished.
+    app.connect('build-finished', copy_examples)
