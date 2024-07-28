@@ -35,6 +35,7 @@ and is available from `<https://python.org>`_. Make sure to select the
 add Python to the path option from the installation dialog:
 
 .. image:: images/python_install.png
+   :align: center
 
 The |project_name| package can be installed after Python using the following
 procedure:
@@ -72,6 +73,7 @@ below shows the Windows installation dialog selecting the requisite
 path option:
 
 .. image:: images/git_path.png
+   :align: center
 
 Testing to ensure git is properly installed can be done by running
 :command:`git --version` in a command prompt, which should yield
