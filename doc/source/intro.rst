@@ -136,9 +136,7 @@ title and automatically-assigned number, yet is sufficient to demonstrate
 the entire workflow from source script to output PDF. Simple tests without
 much content are also common when creating an initial outline.
 Obviously, test procedures will require much more detail,
-which can be provided by additional parameters to the
-``testgen.Test()`` class; refer to the :py:class:`testgen.Test` reference
-documentation for further details.
+which can be provided by additional parameters to :py:class:`testgen.Test`.
 
 Executing this script with Python will yield the output files, one PDF per
 test procedure. Most Python editors or integrated development
