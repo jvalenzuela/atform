@@ -45,12 +45,11 @@ each reference type which have been defined with
 dictionaries keyed by references applied via the
 :code:`references` parameteter of :py:class:`testgen.Test`.
 Values of the final dictionary are lists of test ID numbers given that
-reference. Here is an example of querying the cross-reference dictionary::
+reference. Here is an example of querying the cross-reference dictionary:
 
-   xref = testgen.get_xref()
-
-   # Test IDs assigned 'fm42' in the 'fmea' reference category.
-   test_list = xref['fmea']['fm42']
+.. literalinclude:: examples/snip.py
+   :start-after: xref_dict_start
+   :end-before: xref_dict_end
 
 The following :file:`xref.py` listing illustrates a simple example
 where cross-references are written to a CSV file:

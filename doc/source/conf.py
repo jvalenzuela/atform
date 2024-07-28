@@ -69,6 +69,12 @@ latex_elements = {
 }
 
 
+# Example files that will not be embedded in the output PDF.
+EXCLUDE_FROM_EMBED = [
+    'snip.py',
+]
+
+
 def add_example_embeds(app, config):
     """Adds commands to latex_elements to embed example files.
 
@@ -79,7 +85,8 @@ def add_example_embeds(app, config):
     """
     global latex_elements
     path = os.path.join(app.srcdir, 'examples')
-    files = [e.name for e in os.scandir(path) if e.is_file()]
+    files = set([e.name for e in os.scandir(path) if e.is_file()])
+    files.difference_update(EXCLUDE_FROM_EMBED)
     cmds = ["\\embedfile[filespec={0}]{{examples/{0}}}".format(f)
             for f in files]
     latex_elements['atendofbody'] = '\n'.join(cmds)
