@@ -761,7 +761,7 @@ class Approval(object):
             None,
             None,
             None,
-            TextEntryField(len('YYYY/MM/DD'), self.style, 'YYYY/MM/DD'),
+            TextEntryField('0000/00/00', self.style, 'YYYY/MM/DD'),
         ]
 
     @property
@@ -853,18 +853,32 @@ class TextEntryField(Flowable):
     # Coefficient applied to the font size to calculate box height.
     HEIGHT_FACTOR = 1.2
 
-    def __init__(self, max_chars, style, tooltip=None):
+    def __init__(self, width, style, tooltip=None):
         self.style = style
         self.tooltip = tooltip
-
-        # Width is calculated to hold the given maximum string length.
-        self.width = stringWidth(
-            'X' * max_chars,
-            style.fontName,
-            style.fontSize,
-        )
-
+        self.width = self._calc_width(width)
         self.height = style.fontSize * self.HEIGHT_FACTOR
+
+    def _calc_width(self, width):
+        """Computes the horiontal size from the width argument.
+
+        The width argument can be provided in two ways:
+         - If an integer, width will the sized to hold the same character
+           repeated that many times.
+         - If a string, width will be sized to hold it.
+        """
+
+        # Build the template string from which width will be computed.
+        try:
+            template = width * 'X' # Integer width argument.
+        except TypeError:
+            template = width # String width argument.
+
+        return stringWidth(
+            template,
+            self.style.fontName,
+            self.style.fontSize,
+        )
 
     def wrap(self, *args):
         return (self.width, self.height)
