@@ -5,8 +5,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "testgen"
-version = "0.0.0"
 description = "Test procedure generator."
+dynamic = ["version"]
 
 # This version number is automatically inserted into the user manual, however,
 # the '>=' is not, so the manual language needs to be updated separately
@@ -16,3 +16,7 @@ requires-python = ">= 3.11"
 dependencies = [
     "reportlab>=4.2.0",
 ]
+
+
+[tool.hatch.version]
+path = "testgen/version.py"

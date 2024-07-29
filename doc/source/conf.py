@@ -13,6 +13,7 @@ import tomllib
 # Update import path to locate testgen modules.
 sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 import testgen
+import testgen.version
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -29,7 +30,7 @@ requires_python = re.search(
 project = config['project']['name']
 copyright = '2024, Jason Valenzuela'
 author = ''
-release = config['project']['version']
+release = testgen.version.VERSION
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
