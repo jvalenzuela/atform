@@ -30,3 +30,7 @@ from testgen.ref import (
 from testgen.sig import (
     add_signature,
 )
+
+from testgen.version import (
+    require_version,
+)
