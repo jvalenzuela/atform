@@ -2,7 +2,7 @@ Automation
 ==========
 
 The examples thus far have been written so each appearance of
-:py:class:`testgen.Test` yields a single test procedure populated with
+:py:class:`atform.Test` yields a single test procedure populated with
 the content of literal strings given as arguments, which
 is often sufficient, however, the Python environment offers
 many options that become especially powerful when tasked with
@@ -29,7 +29,7 @@ to accommodate the unique parameters of each component.
 Python and |project_name| can be used to compose a single template that
 automatically outputs tests tailored for each component. To accomplish this,
 a function is defined with parameters for items that differ in each
-instance, with the call to :py:class:`testgen.Test` contained inside
+instance, with the call to :py:class:`atform.Test` contained inside
 the function using content created by using the parameters. The function
 is then called in the content area to generate a uniform test for each
 component.
@@ -64,7 +64,7 @@ creating tests in the content area. An additional consideration is
 necessary when organzing tests into multiple files as described in
 the :doc:`Organization<org>` chapter. Items defined in the top-level
 file are not available in lower-level, imported scripts for the same
-reason every script needs an ``import testgen`` statement at the beginning.
+reason every script needs an ``import atform`` statement at the beginning.
 The solution to this is to locate any user-defined functionality in a
 separate file, which is then imported into every script in addition to
 the |project_name| module.
@@ -81,7 +81,7 @@ to |project_name| at the top.
 
 ::
 
-   import testgen
+   import atform
    from common import *
 
 The different import statement form, ``from common import *``

@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 
 [project]
-name = "testgen"
-description = "Test procedure generator."
+name = "atform"
+description = "Acceptance test procedure form generator."
 license = {file = "LICENSE.txt"}
 dynamic = ["version"]
 

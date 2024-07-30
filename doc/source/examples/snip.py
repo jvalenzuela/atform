@@ -11,15 +11,15 @@
 # and :end-before: options to the literalinclude directive.
 
 
-import testgen
+import atform
 
 
 # Setup for the xref dictionary listing.
-testgen.add_reference_category('fmea', 'fmea')
-testgen.Test('xref', references={'fmea':['fm42']})
+atform.add_reference_category('fmea', 'fmea')
+atform.Test('xref', references={'fmea':['fm42']})
 
 # xref_dict_start
-xref = testgen.get_xref()
+xref = atform.get_xref()
 
 # Test IDs assigned 'fm42' in the 'fmea' reference category.
 test_list = xref['fmea']['fm42']

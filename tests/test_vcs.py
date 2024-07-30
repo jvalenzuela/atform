@@ -1,7 +1,7 @@
 # Unit tests for the version control interface module.
 
 
-import testgen.vcs
+import atform.vcs
 import subprocess
 import unittest
 from unittest.mock import patch
@@ -10,38 +10,38 @@ from unittest.mock import patch
 class NoVersionControl(unittest.TestCase):
     """Unit tests for cases where no version control is available."""
 
-    @patch.object(testgen.vcs.Git, 'GIT_CMD', new='this_is_not_git')
+    @patch.object(atform.vcs.Git, 'GIT_CMD', new='this_is_not_git')
     def test_no_git(self):
         """Confirm exception if git is not installed."""
-        with self.assertRaises(testgen.vcs.NoVersionControlError):
-            testgen.vcs.Git()
+        with self.assertRaises(atform.vcs.NoVersionControlError):
+            atform.vcs.Git()
 
-    @patch.object(testgen.vcs.Git, '_run_git')
+    @patch.object(atform.vcs.Git, '_run_git')
     def test_no_repository(self, mock):
         """Confirm exception if not running in a repository."""
         # Simulate git running outside a repo, which results in a non-zero
         # exit code, and then a CalledProcessError exception.
         mock.side_effect = subprocess.CalledProcessError(-1, 'git')
 
-        with self.assertRaises(testgen.vcs.NoVersionControlError):
-            testgen.vcs.Git()
+        with self.assertRaises(atform.vcs.NoVersionControlError):
+            atform.vcs.Git()
 
 
 class Clean(unittest.TestCase):
     """Unit tests for the clean property."""
 
-    @patch.object(testgen.vcs.Git, '_run_git')
+    @patch.object(atform.vcs.Git, '_run_git')
     def test_uncommitted_changes(self, mock):
         """Confirm clean returns False if uncommitted changes exist."""
         mock.return_value = ' M foo\0?? bar\0' # Non-empty result of git status.
-        git = testgen.vcs.Git()
+        git = atform.vcs.Git()
         self.assertFalse(git.clean)
 
-    @patch.object(testgen.vcs.Git, '_run_git')
+    @patch.object(atform.vcs.Git, '_run_git')
     def test_no_uncommitted_changes(self, mock):
         """Confirm clean returns True if no uncommitted changes exist."""
         mock.return_value = '' # Empty result of git status.
-        git = testgen.vcs.Git()
+        git = atform.vcs.Git()
         self.assertTrue(git.clean)
 
 
@@ -49,15 +49,15 @@ class Version(unittest.TestCase):
     """Unit tests for the version property."""
 
     def setUp(self):
-        self.git = testgen.vcs.Git()
+        self.git = atform.vcs.Git()
 
-    @patch.object(testgen.vcs.Git, '_run_git')
+    @patch.object(atform.vcs.Git, '_run_git')
     def test_version(self, mock):
         """Confirm version returns a string containing the HEAD SHA1."""
         mock.return_value = 'spam' # Simulate result of git log.
         self.assertEqual('spam', self.git.version)
 
-    @patch.object(testgen.vcs.Git, '_run_git')
+    @patch.object(atform.vcs.Git, '_run_git')
     def test_no_commits(self, mock):
         """Confirm version returns None in a repository with no commits.
 
@@ -79,7 +79,7 @@ class Commands(unittest.TestCase):
     """
 
     def setUp(self):
-        self.git = testgen.vcs.Git()
+        self.git = atform.vcs.Git()
 
     def test_clean(self):
         """Confirm clean returns a boolean."""

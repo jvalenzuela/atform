@@ -39,7 +39,7 @@ multiple paragraphs:
 * Preconditions list items
 * Procedure list items
 
-The :py:func:`testgen.format_text` provides a method to adjust the
+The :py:func:`atform.format_text` provides a method to adjust the
 way text is formatted. This function is *not* intended to make significant
 alterations to the document layout, but rather to format short words
 or phrases within normal text that are semantically distinct enough to merit
@@ -47,25 +47,25 @@ visual differentiation.
 A common case is presenting a variable name or output message that
 needs to be matched verbatim.
 
-While using :py:func:`testgen.format_text` is an effective way to denote
+While using :py:func:`atform.format_text` is an effective way to denote
 significant text, it is not recommended to use that function directly
 in test content. The best approach for formatting special terms is to
 define a function for a specific type of content, with a name
 reflecting the type of content for which it is intended. The new function
-can then use :py:func:`testgen.format_text` internally to apply the
+can then use :py:func:`atform.format_text` internally to apply the
 desired formatting. The benefits to this approach are twofold. First,
 a function with a semantically significant name, such as :code:`tagName()`,
-is much clearer than :code:`testgen.format_text()`. Second, it is easy
+is much clearer than :code:`atform.format_text()`. Second, it is easy
 to ensure similar content is presented in a uniform manner because
 the format for a given type of content is defined in a single place.
 
-Item lists can be created with :py:func:`testgen.bullet_list`.
+Item lists can be created with :py:func:`atform.bullet_list`.
 This function is not needed to arrange items normally presented as bullet
 lists, such as the those passed to the :code:`preconditions` or
 :code:`equipment`
-parameters of :py:class:`testgen.Test`; |project_name| automatically
+parameters of :py:class:`atform.Test`; |project_name| automatically
 formats that content in an appropriate list.
-The :py:func:`testgen.bullet_list` function should only be used where a
+The :py:func:`atform.bullet_list` function should only be used where a
 secondary list is necessary.
 
 This following sample script demonstrates these formatting concepts:
@@ -93,7 +93,7 @@ therefore using a label always yields a correct reference,
 even if the labeled test is reassigned a different number.
 
 The first step in this approach is to assign a label to a test with
-the :code:`label` parameter of :py:class:`testgen.Test`.
+the :code:`label` parameter of :py:class:`atform.Test`.
 Labels are simple strings, typically an abbreviated description of the test.
 As an example, for a test titled "Zone 42 Contactor",
 a suitable label would be ``z42ctr``. Labels may only contain letters,
@@ -123,7 +123,7 @@ This next example demonstrates use of labels and placeholders.
 Procedure
 ---------
 
-The :code:`procedure` parameter of :py:class:`testgen.Test` contains the
+The :code:`procedure` parameter of :py:class:`atform.Test` contains the
 main content of a test: the actions that must be performed and validated.
 These actions are organized into a list which will be automatically
 enumerated in the output; do not incorporate step numbers into

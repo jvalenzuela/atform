@@ -143,7 +143,7 @@ class Test(object):
             test procedure.
         references (dict, optional): References associated with this test.
             Keys must be labels defined with
-            :py:func:`testgen.add_reference_category`; values are a list of
+            :py:func:`atform.add_reference_category`; values are a list of
             strings containing references for that category.
         equipment (list[str], optional): A list of equipment required to
             perform the procedure; will be rendered as a bullet list under
@@ -279,7 +279,7 @@ def generate(path='pdf'):
     """Builds PDF output files for all defined tests.
 
     Should be called once near the end of the script after tests have been
-    created with :py:class:`testgen.Test`.
+    created with :py:class:`atform.Test`.
 
     .. warning::
 

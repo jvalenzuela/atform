@@ -46,7 +46,7 @@ def bullet_list(*items):
         str: The entire list with embedded formatting that can be incorporated
         into strings passed to the ``objective``, ``equipment``,
         ``preconditions``, and ``procedure`` parameters of
-        :py:func:`testgen.Test`.
+        :py:func:`atform.Test`.
 
     Raises:
         TypeError
@@ -82,7 +82,7 @@ def format_text(text, typeface='normal', font='normal'):
 
     The returned string can be incorporated into strings passed to the
     ``objective``, ``equipment``, ``preconditions``, and ``procedure``
-    parameters of :py:func:`testgen.Test`.
+    parameters of :py:func:`atform.Test`.
 
     .. seealso:: :ref:`format`
 

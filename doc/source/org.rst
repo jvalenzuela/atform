@@ -21,8 +21,8 @@ level one, and *z* is level two.
 
 The following example shows the two commands for organizing tests
 into sections:
-:py:func:`testgen.set_id_depth` and
-:py:func:`testgen.section`:
+:py:func:`atform.set_id_depth` and
+:py:func:`atform.section`:
 
 .. literalinclude:: examples/section.py
 
@@ -52,7 +52,7 @@ affect the output; tests are numbered in the order they are encountered
 regardless of how many source files are involved.
 
 Organizing tests into multiple scripts utilizes Python's :code:`import` keyword.
-The examples so far use :code:`import testgen` to load |project_name|;
+The examples so far use :code:`import atform` to load |project_name|;
 separate scripts, each containing their own set of tests, e.g., one script
 per section, can be imported in a similar fashion. The recommended way to
 do this is to arrange scripts heirarchically, with one script at the top-level

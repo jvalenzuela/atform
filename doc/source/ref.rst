@@ -5,8 +5,8 @@ Many tests are associated with external documentation, such as analyses
 or drawings, and should bear some identifying link
 to these related resources. Adding references to tests is a two-step
 process, starting with defining the reference categories using
-:py:func:`testgen.add_reference_category` in the setup area. With categories
-defined, the references argument of :py:class:`testgen.Test` is then available
+:py:func:`atform.add_reference_category` in the setup area. With categories
+defined, the references argument of :py:class:`atform.Test` is then available
 to specify references for each test procedure. The sample below shows
 test procedures with two reference categories:
 
@@ -33,17 +33,17 @@ any standard file format, such as CSV, is easily accomplished with regular
 Python utilities.
 
 The cross-reference dictionary is acquired by calling the
-:py:func:`testgen.get_xref` function in the output section of the script.
-It may be called before or after :py:func:`testgen.generate`, but
+:py:func:`atform.get_xref` function in the output section of the script.
+It may be called before or after :py:func:`atform.generate`, but
 must appear after all tests are defined with
-:py:class:`testgen.Test`.
+:py:class:`atform.Test`.
 
 Cross-references are structured into two levels. Keys for the top-level
-dictionary returned by :py:func:`testgen.get_xref` are labels identifying
+dictionary returned by :py:func:`atform.get_xref` are labels identifying
 each reference type which have been defined with
-:py:func:`testgen.add_reference_category`. Values are second-level
+:py:func:`atform.add_reference_category`. Values are second-level
 dictionaries keyed by references applied via the
-:code:`references` parameteter of :py:class:`testgen.Test`.
+:code:`references` parameteter of :py:class:`atform.Test`.
 Values of the final dictionary are lists of test ID numbers given that
 reference. Here is an example of querying the cross-reference dictionary:
 

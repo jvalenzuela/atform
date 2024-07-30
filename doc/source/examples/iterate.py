@@ -1,7 +1,7 @@
 # iterate.py
 
 
-import testgen
+import atform
 
 
 ######################################################################
@@ -14,11 +14,11 @@ def button_test(button):
     customizing the test content for the button provided in the
     argument.
     """
-    testgen.Test(f"{button} Button Test",
-             procedure=[
-                 f"Press the {button} button.",
-                 f"Release the {button} button."
-             ])
+    atform.Test(f"{button} Button Test",
+                procedure=[
+                    f"Press the {button} button.",
+                    f"Release the {button} button."
+                ])
 
 
 ######################################################################
@@ -35,4 +35,4 @@ button_test('Right')
 # Output
 ######################################################################
 
-testgen.generate()
+atform.generate()

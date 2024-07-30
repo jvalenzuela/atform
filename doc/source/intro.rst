@@ -53,14 +53,14 @@ procedure:
 
    .. code-block:: text
 
-      pip install testgen-0.0.0-py3-none-any.whl
+      pip install atform-0.0.0-py3-none-any.whl
 
    If |project_name| is already installed, use the ``-U`` option to upgrade to a
    newer version:
 
    .. code-block:: text
 
-      pip install -U testgen-0.0.0-py3-none-any.whl
+      pip install -U atform-0.0.0-py3-none-any.whl
 
 #. Delete the :file:`.whl` file; it is not required after installation.
 
@@ -138,7 +138,7 @@ title and automatically-assigned number, yet is sufficient to demonstrate
 the entire workflow from source script to output PDF. Simple tests without
 much content are also common when creating an initial outline.
 Obviously, test procedures will require much more detail,
-which can be provided by additional parameters to :py:class:`testgen.Test`.
+which can be provided by additional parameters to :py:class:`atform.Test`.
 
 Executing this script with Python will yield the output files, one PDF per
 test procedure. Most Python editors or integrated development

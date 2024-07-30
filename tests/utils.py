@@ -1,24 +1,24 @@
 # Miscellaneous unit test utilities.
 
 
-import testgen
-from testgen import label
+import atform
+from atform import label
 import collections
 
 
 def reset():
-    """Resets the testgen package back to its initial state.
+    """Resets the atform package back to its initial state.
 
-    This is used because many testgen modules store configuration state
+    This is used because many atform modules store configuration state
     in global variables, which are only initialized when first imported,
     while unit test cases require this initial condition many times
     after a single import.
     """
-    testgen.content.tests = []
-    testgen.id.current_id = [0]
-    testgen.id.section_titles = {}
-    testgen.misc.project_info = {}
-    testgen.sig.titles = []
-    testgen.field.lengths = collections.OrderedDict()
-    testgen.ref.titles = {}
+    atform.content.tests = []
+    atform.id.current_id = [0]
+    atform.id.section_titles = {}
+    atform.misc.project_info = {}
+    atform.sig.titles = []
+    atform.field.lengths = collections.OrderedDict()
+    atform.ref.titles = {}
     label.labels = {}

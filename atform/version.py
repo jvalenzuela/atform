@@ -14,7 +14,7 @@ VERSION = '0.0'
 
 
 def require_version(major, minor=0):
-    """Verifies the installed version of testgen.
+    """Verifies the installed version of atform.
 
     Aborts the script if the installed version does not match the major
     version, or is less than the minor version.

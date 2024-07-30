@@ -5,7 +5,7 @@
 # cross-reference file.
 import csv
 
-import testgen
+import atform
 
 
 ######################################################################
@@ -13,7 +13,7 @@ import testgen
 ######################################################################
 
 # Define a safety function reference category.
-testgen.add_reference_category('Safety Functions', 'sf')
+atform.add_reference_category('Safety Functions', 'sf')
 
 
 ######################################################################
@@ -21,30 +21,30 @@ testgen.add_reference_category('Safety Functions', 'sf')
 ######################################################################
 
 # Test 1 with several 'sf' references.
-testgen.Test('Button 3',
-             references={
-                 'sf': ['SF7', 'SF42', 'SF99']
-             })
+atform.Test('Button 3',
+            references={
+                'sf': ['SF7', 'SF42', 'SF99']
+            })
 
 
 # Test 2 with no references.
-testgen.Test('Relay 66')
+atform.Test('Relay 66')
 
 # Test 3 with a single 'sf' reference.
-testgen.Test('Zone 4',
-             references={
-                 'sf': ['SF42']
-             })
+atform.Test('Zone 4',
+            references={
+                'sf': ['SF42']
+            })
 
 
 ######################################################################
 # Output
 ######################################################################
 
-testgen.generate()
+atform.generate()
 
 # Acquire all cross-references.
-xrefs = testgen.get_xref()
+xrefs = atform.get_xref()
 
 # Export safety function cross-reference to a CSV file.
 sf_refs = xrefs['sf'] # Get all references in the 'sf' category.

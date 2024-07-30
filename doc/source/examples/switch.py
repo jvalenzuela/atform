@@ -1,9 +1,9 @@
 # switch.py
 
-import testgen
+import atform
 
 
-testgen.section(0, title='Switches') # Begin section 2.x Switches.
+atform.section(0, title='Switches') # Begin section 2.x Switches.
 
 
-testgen.Test('The First Switch Test') # This will be 2.1.
+atform.Test('The First Switch Test') # This will be 2.1.

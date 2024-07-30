@@ -2,8 +2,8 @@
 
 
 from tests import utils
-import testgen.id
-import testgen.pdf
+import atform.id
+import atform.pdf
 import os
 import unittest
 
@@ -64,7 +64,7 @@ class SplitParagraphs(unittest.TestCase):
 
     def assert_result(self, raw, expected):
         """Asserts a given string is split into expected paragraphs."""
-        paras = testgen.pdf.split_paragraphs(raw)
+        paras = atform.pdf.split_paragraphs(raw)
         self.assertEqual(expected, paras)
 
 
@@ -76,33 +76,33 @@ class BuildPath(unittest.TestCase):
 
     def test_no_section(self):
         """Confirm path created for a single-level ID."""
-        self.assertEqual('root', testgen.pdf.build_path((42,), 'root'))
+        self.assertEqual('root', atform.pdf.build_path((42,), 'root'))
 
     def test_single_section_no_title(self):
         """Confirm path created for an ID with one section and no title."""
         self.assertEqual(os.path.join('root', '42'),
-                         testgen.pdf.build_path((42, 1), 'root'))
+                         atform.pdf.build_path((42, 1), 'root'))
 
     def test_single_section_title(self):
         """Confirm path created for an ID with one section with a title."""
-        testgen.id.section_titles[(42,)] = 'Spam'
+        atform.id.section_titles[(42,)] = 'Spam'
         self.assertEqual(os.path.join('root', '42 Spam'),
-                         testgen.pdf.build_path((42, 1), 'root'))
+                         atform.pdf.build_path((42, 1), 'root'))
 
     def test_multi_section_no_title(self):
         """Confirm path created for an ID with multiple sections with titles."""
         self.assertEqual(os.path.join('root', '42', '99'),
-                         testgen.pdf.build_path((42, 99, 1), 'root'))
+                         atform.pdf.build_path((42, 99, 1), 'root'))
 
     def test_multi_section_some_titles(self):
         """Confirm path created for an ID with multiple sections, some with titles."""
-        testgen.id.section_titles[(42, 99)] = 'Spam'
+        atform.id.section_titles[(42, 99)] = 'Spam'
         self.assertEqual(os.path.join('root', '42', '99 Spam'),
-                         testgen.pdf.build_path((42, 99, 1), 'root'))
+                         atform.pdf.build_path((42, 99, 1), 'root'))
 
     def test_multi_section_all_titles(self):
         """Confirm path created for an ID with multiple sections, all with titles."""
-        testgen.id.section_titles[(42,)] = 'Foo'
-        testgen.id.section_titles[(42, 99)] = 'Bar'
+        atform.id.section_titles[(42,)] = 'Foo'
+        atform.id.section_titles[(42, 99)] = 'Bar'
         self.assertEqual(os.path.join('root', '42 Foo', '99 Bar'),
-                         testgen.pdf.build_path((42, 99, 1), 'root'))
+                         atform.pdf.build_path((42, 99, 1), 'root'))

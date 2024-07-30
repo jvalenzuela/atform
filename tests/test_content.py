@@ -3,7 +3,7 @@
 
 from tests import utils
 import string
-import testgen
+import atform
 import unittest
 
 
@@ -16,21 +16,21 @@ class Title(unittest.TestCase):
     def test_type(self):
         """Confirm exception for non-string title."""
         with self.assertRaises(TypeError):
-            testgen.Test(99)
+            atform.Test(99)
 
     def test_empty(self):
         """Confirm exception for an empty title."""
         with self.assertRaises(ValueError):
-            testgen.Test('')
+            atform.Test('')
 
     def test_blank(self):
         """Confirm exception for a title containing only whitespace."""
         with self.assertRaises(ValueError):
-            testgen.Test(string.whitespace)
+            atform.Test(string.whitespace)
 
     def test_strip(self):
         """Confirm surrounding whitespace is removed."""
-        t = testgen.Test(string.whitespace + 'Spam' + string.whitespace)
+        t = atform.Test(string.whitespace + 'Spam' + string.whitespace)
         self.assertEqual('Spam', t.title)
 
 
@@ -42,36 +42,36 @@ class Label(unittest.TestCase):
 
     def test_objective_placeholder(self):
         """Confirm placeholders are replaced in the objective."""
-        testgen.Test('target', label='TheLabel')
-        t = testgen.Test('title', objective='$TheLabel')
+        atform.Test('target', label='TheLabel')
+        t = atform.Test('title', objective='$TheLabel')
         t._pregenerate()
         self.assertEqual('1', t.objective)
 
     def test_precondition_placeholder(self):
         """Confirm placeholders are replaced in preconditions."""
-        testgen.Test('target', label='TheLabel')
-        t = testgen.Test('title', preconditions=['$TheLabel'])
+        atform.Test('target', label='TheLabel')
+        t = atform.Test('title', preconditions=['$TheLabel'])
         t._pregenerate()
         self.assertEqual('1', t.preconditions[0])
 
     def test_procedure_step_string_placeholder(self):
         """Confirm placeholders are replaced in string procedure steps."""
-        testgen.Test('target', label='TheLabel')
-        t = testgen.Test('title', procedure=['$TheLabel'])
+        atform.Test('target', label='TheLabel')
+        t = atform.Test('title', procedure=['$TheLabel'])
         t._pregenerate()
         self.assertEqual('1', t.procedure[0].text)
 
     def test_procedure_step_dict_placeholder(self):
         """Confirm placeholders are replaced in dict procedure steps."""
-        testgen.Test('target', label='TheLabel')
-        t = testgen.Test('title', procedure=[{'text':'$TheLabel'}])
+        atform.Test('target', label='TheLabel')
+        t = atform.Test('title', procedure=[{'text':'$TheLabel'}])
         t._pregenerate()
         self.assertEqual('1', t.procedure[0].text)
 
     def test_forward_reference(self):
         """Confirm a placeholder for a label defined in a later test."""
-        t = testgen.Test('title', objective='$TheLabel')
-        testgen.Test('target', label='TheLabel')
+        t = atform.Test('title', objective='$TheLabel')
+        atform.Test('target', label='TheLabel')
         t._pregenerate()
         self.assertEqual('2', t.objective)
 
@@ -85,22 +85,22 @@ class Objective(unittest.TestCase):
     def test_type(self):
         """Confirm exception for non-string objective."""
         with self.assertRaises(TypeError):
-            testgen.Test('title', objective=42)
+            atform.Test('title', objective=42)
 
     def test_empty(self):
         """Confirm exception for an empty objective."""
         with self.assertRaises(ValueError):
-            testgen.Test('title', objective='')
+            atform.Test('title', objective='')
 
     def test_blank(self):
         """Confirm exception for an objective containing only whitespace."""
         with self.assertRaises(ValueError):
-            testgen.Test('title', objective=string.whitespace)
+            atform.Test('title', objective=string.whitespace)
 
     def test_strip(self):
         """Confirm surrounding whitespace is removed."""
-        t = testgen.Test('title',
-                         objective=string.whitespace + 'Spam' + string.whitespace)
+        t = atform.Test('title',
+                        objective=string.whitespace + 'Spam' + string.whitespace)
         self.assertEqual('Spam', t.objective)
 
 
@@ -113,79 +113,79 @@ class References(unittest.TestCase):
     def test_type(self):
         """Confirm exception for non-dict preconditions."""
         with self.assertRaises(TypeError):
-            testgen.Test('title', references=[])
+            atform.Test('title', references=[])
 
     def test_label_type(self):
         """Confirm exception for non-string labels."""
         with self.assertRaises(TypeError):
-            testgen.Test('title', references={42: ['a']})
+            atform.Test('title', references={42: ['a']})
 
     def test_empty_label(self):
         """Confirm exception for an empty label."""
         with self.assertRaises(ValueError):
-            testgen.Test('title', references={'': ['a']})
+            atform.Test('title', references={'': ['a']})
 
     def test_blank_label(self):
         """Confirm exception for a label containing only whitespace."""
         with self.assertRaises(ValueError):
-            testgen.Test('title', references={string.whitespace: ['a']})
+            atform.Test('title', references={string.whitespace: ['a']})
 
     def test_label_strip(self):
         """Confirm surrounding whitespace is removed from labels."""
-        testgen.add_reference_category('refs', 'refs')
-        t = testgen.Test('title', references={
+        atform.add_reference_category('refs', 'refs')
+        t = atform.Test('title', references={
             string.whitespace + 'refs' + string.whitespace: ['a']})
         self.assertIn('refs', t.references)
 
     def test_undefined_label(self):
         """Confirm exception for an unknown label."""
         with self.assertRaises(ValueError):
-            testgen.Test('title', references={'foo': ['a']})
+            atform.Test('title', references={'foo': ['a']})
 
     def test_ref_type(self):
         """Confirm exception for a non-string reference."""
-        testgen.add_reference_category('refs', 'refs')
+        atform.add_reference_category('refs', 'refs')
         with self.assertRaises(TypeError):
-            testgen.Test('title', references={'refs': [42]})
+            atform.Test('title', references={'refs': [42]})
 
     def test_duplicate_ref(self):
         """Confirm exception for duplicate references."""
-        testgen.add_reference_category('refs', 'refs')
+        atform.add_reference_category('refs', 'refs')
         with self.assertRaises(ValueError):
-            testgen.Test('title', references={'refs': ['a', 'a']})
+            atform.Test('title', references={'refs': ['a', 'a']})
 
     def test_ignore_empty_ref(self):
         """Confirm empty references are ignored."""
-        testgen.add_reference_category('refs', 'refs')
-        t = testgen.Test('title', references={'refs': ['a', '', '']})
+        atform.add_reference_category('refs', 'refs')
+        t = atform.Test('title', references={'refs': ['a', '', '']})
         self.assertEqual(['a'], t.references['refs'])
 
     def test_ignore_blank_ref(self):
         """Confirm references containing only whitespace are ignored."""
-        testgen.add_reference_category('refs', 'refs')
-        t = testgen.Test('title', references={
+        atform.add_reference_category('refs', 'refs')
+        t = atform.Test('title', references={
             'refs': [string.whitespace, 'spam', string.whitespace]})
         self.assertEqual(['spam'], t.references['refs'])
 
     def test_strip_ref(self):
         """Confirm surrounding whitespace is removed from references."""
-        testgen.add_reference_category('refs', 'refs')
-        t = testgen.Test('title', references={
+        atform.add_reference_category('refs', 'refs')
+        t = atform.Test('title', references={
             'refs': [string.whitespace + 'foo' + string.whitespace]})
         self.assertEqual(['foo'], t.references['refs'])
 
     def test_ref_order(self):
         """Confirm references are stored in original order."""
-        testgen.add_reference_category('refs', 'refs')
-        t = testgen.Test('title', references={
+        atform.add_reference_category('refs', 'refs')
+        t = atform.Test('title', references={
             'refs': ['a', 'b', 'c']})
         self.assertEqual(['a', 'b', 'c'], t.references['refs'])
 
     def test_multiple_categories(self):
         """Confirm storage of multiple reference categories."""
-        testgen.add_reference_category('Numbers', 'num')
-        testgen.add_reference_category('Letters', 'alpha')
-        t = testgen.Test('title', references={
+        atform.add_reference_category('Numbers', 'num')
+        atform.add_reference_category('Letters', 'alpha')
+        t = atform.Test('title', references={
             'num': ['1', '2', '3'],
             'alpha': ['a', 'b', 'c']})
         self.assertEqual(['1', '2', '3'], t.references['num'])
@@ -226,7 +226,7 @@ class StringList(object):
     def call(self, value):
         """Calls Test() with a given parameter value."""
         args = {self.parameter_name: value}
-        return testgen.Test('title', **args)
+        return atform.Test('title', **args)
 
 
 class Equipment(StringList, unittest.TestCase):
@@ -248,7 +248,7 @@ class ProcedureList(unittest.TestCase):
     def test_type(self):
         """Confirm exception for a non-list.."""
         with self.assertRaises(TypeError):
-            testgen.Test('test', procedure='spam')
+            atform.Test('test', procedure='spam')
 
 
 class ProcedureStepBase(object):
@@ -259,7 +259,7 @@ class ProcedureStepBase(object):
 
     def make_step(self, step):
         """Creates a test with a given procedure step."""
-        return testgen.Test('test', procedure=[step])
+        return atform.Test('test', procedure=[step])
 
     def make_field(self, field):
         """Creates a test with a given procedure step field."""
@@ -435,17 +435,17 @@ class TestProjectInfo(unittest.TestCase):
     def test_capture(self):
         """Confirm accurate information is captured when instantiated."""
         info = {'project':'foo', 'system':'spam'}
-        testgen.set_project_info(**info)
-        t = testgen.Test('A test')
+        atform.set_project_info(**info)
+        t = atform.Test('A test')
         self.assertEqual(info, t.project_info)
 
     def test_update_between_tests(self):
         """Confirm system information changes do not affect existing tests."""
-        testgen.set_project_info(project='foo', system='bar')
-        t1 = testgen.Test('Test 1')
+        atform.set_project_info(project='foo', system='bar')
+        t1 = atform.Test('Test 1')
 
-        testgen.set_project_info(project='spam', system='eggs')
-        t2 = testgen.Test('Test 2')
+        atform.set_project_info(project='spam', system='eggs')
+        t2 = atform.Test('Test 2')
 
         self.assertEqual({'project':'foo', 'system':'bar'}, t1.project_info)
         self.assertEqual({'project':'spam', 'system':'eggs'}, t2.project_info)
@@ -457,4 +457,4 @@ class Generate(unittest.TestCase):
     def test_path_type(self):
         """Confirm exception if path is not a string."""
         with self.assertRaises(TypeError):
-            testgen.generate(42)
+            atform.generate(42)

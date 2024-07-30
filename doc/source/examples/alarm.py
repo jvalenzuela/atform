@@ -1,7 +1,7 @@
 # alarm.py
 
 
-import testgen
+import atform
 
 # Import Python's built-in CSV module to read the external alarm file.
 import csv
@@ -36,32 +36,32 @@ def verify_alarm(num):
 # argument to include a step verifying an alarm with the message
 # text acquired from the external CSV file.
 
-testgen.Test('Test Alarm 42',
-             procedure=[
-                 "Verify normal operation.",
-                 "Introduce some fault condition.",
-                 verify_alarm(42)
-             ])
+atform.Test('Test Alarm 42',
+            procedure=[
+                "Verify normal operation.",
+                "Introduce some fault condition.",
+                verify_alarm(42)
+            ])
 
 
-testgen.Test('Test Alarm 15',
-             procedure=[
-                 "Verify normal operation.",
-                 "Introduce some fault condition.",
-                 verify_alarm(15)
-             ])
+atform.Test('Test Alarm 15',
+            procedure=[
+                "Verify normal operation.",
+                "Introduce some fault condition.",
+                verify_alarm(15)
+            ])
 
 
-testgen.Test('Test Alarm 99',
-             procedure=[
-                 "Verify normal operation.",
-                 "Introduce some fault condition.",
-                 verify_alarm(99)
-             ])
+atform.Test('Test Alarm 99',
+            procedure=[
+                "Verify normal operation.",
+                "Introduce some fault condition.",
+                verify_alarm(99)
+            ])
 
 
 ######################################################################
 # Output
 ######################################################################
 
-testgen.generate()
+atform.generate()

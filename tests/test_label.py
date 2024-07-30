@@ -2,7 +2,7 @@
 
 
 from tests import utils
-from testgen import label
+from atform import label
 import string
 import unittest
 

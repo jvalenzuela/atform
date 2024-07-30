@@ -1,36 +1,36 @@
-from testgen.content import (
+from atform.content import (
     generate,
     Test,
 )
 
-from testgen.field import (
+from atform.field import (
     add_field,
 )
 
-from testgen.format import (
+from atform.format import (
     bullet_list,
     format_text,
 )
 
-from testgen.id import (
+from atform.id import (
     section,
     set_id_depth,
     skip_test,
 )
 
-from testgen.misc import (
+from atform.misc import (
     set_project_info,
 )
 
-from testgen.ref import (
+from atform.ref import (
     add_reference_category,
     get_xref,
 )
 
-from testgen.sig import (
+from atform.sig import (
     add_signature,
 )
 
-from testgen.version import (
+from atform.version import (
     require_version,
 )

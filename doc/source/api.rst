@@ -3,7 +3,7 @@
 API Reference
 =============
 
-This chapter is a comprehensive listing of the testgen application
+This chapter is a comprehensive listing of the atform application
 programming interface, organized by the script section where each item
 is intended to be used.
 
@@ -14,12 +14,12 @@ Setup
 .. autosummary::
    :toctree: generated
 
-   testgen.add_field
-   testgen.add_reference_category
-   testgen.add_signature
-   testgen.require_version
-   testgen.set_id_depth
-   testgen.set_project_info
+   atform.add_field
+   atform.add_reference_category
+   atform.add_signature
+   atform.require_version
+   atform.set_id_depth
+   atform.set_project_info
 
 
 Content
@@ -28,11 +28,11 @@ Content
 .. autosummary::
    :toctree: generated
 
-   testgen.bullet_list
-   testgen.format_text
-   testgen.Test
-   testgen.section
-   testgen.skip_test
+   atform.bullet_list
+   atform.format_text
+   atform.Test
+   atform.section
+   atform.skip_test
 
 
 Output
@@ -41,5 +41,5 @@ Output
 .. autosummary::
    :toctree: generated
 
-   testgen.generate
-   testgen.get_xref
+   atform.generate
+   atform.get_xref

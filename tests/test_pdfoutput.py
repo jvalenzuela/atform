@@ -3,7 +3,7 @@
 # actual PDF files which must be visually verified.
 
 from tests import utils
-import testgen
+import atform
 import string
 import unittest
 from unittest.mock import patch
@@ -16,35 +16,35 @@ class Base(object):
         utils.reset()
 
     def make_test(self, generate=True, **kwargs):
-        """testgen.Test() wrapper to assign a title and default objective."""
+        """atform.Test() wrapper to assign a title and default objective."""
         # Generate a title that is class_name.method_name.
         title = '.'.join(self.id().split('.')[-2:])
 
         # Use the test's docstring as the default objective.
         kwargs.setdefault('objective', self.shortDescription())
 
-        testgen.Test(title, **kwargs)
+        atform.Test(title, **kwargs)
         if generate:
-            testgen.generate()
+            atform.generate()
 
 
 class VersionControl(Base, unittest.TestCase):
     """Generate PDFs under various version control conditions."""
 
-    @patch('testgen.vcs.Git')
+    @patch('atform.vcs.Git')
     def test_no_version_control(self, mock):
         """Verify no draft mark or version in footer."""
-        mock.side_effect = testgen.vcs.NoVersionControlError
+        mock.side_effect = atform.vcs.NoVersionControlError
         self.make_test()
 
-    @patch.object(testgen.vcs.Git, 'clean', new=False)
-    @patch.object(testgen.vcs.Git, 'version', new='foo')
+    @patch.object(atform.vcs.Git, 'clean', new=False)
+    @patch.object(atform.vcs.Git, 'version', new='foo')
     def test_draft(self):
         """Verify draft mark and no version in the footer."""
         self.make_test()
 
-    @patch.object(testgen.vcs.Git, 'clean', new=True)
-    @patch.object(testgen.vcs.Git, 'version', new='spam')
+    @patch.object(atform.vcs.Git, 'clean', new=True)
+    @patch.object(atform.vcs.Git, 'version', new='spam')
     def test_clean(self):
         """Verify version in the footer and no draft mark."""
         self.make_test()
@@ -88,16 +88,16 @@ class References(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify table layout with a single reference category."""
-        testgen.add_reference_category('Single Reference', 'single')
+        atform.add_reference_category('Single Reference', 'single')
         self.make_test(
             references={'single':['spam']}
         )
 
     def test_multiple(self):
         """Verify table layout with multiple reference categories."""
-        testgen.add_reference_category('Single Reference', 'single')
-        testgen.add_reference_category('Multiple References', 'multi')
-        testgen.add_reference_category('Long List', 'long')
+        atform.add_reference_category('Single Reference', 'single')
+        atform.add_reference_category('Multiple References', 'multi')
+        atform.add_reference_category('Long List', 'long')
         self.make_test(
             references={
                 'single':['spam'],
@@ -149,12 +149,12 @@ class Fields(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify layout of a single field."""
-        testgen.add_field('Only Field (10 chars)', 10)
+        atform.add_field('Only Field (10 chars)', 10)
         self.make_test()
 
     def test_multiple(self):
-        testgen.add_field('First Field (5 chars)', 5)
-        testgen.add_field('Second Field (10 chars)', 10)
+        atform.add_field('First Field (5 chars)', 5)
+        atform.add_field('Second Field (10 chars)', 10)
         self.make_test()
 
 
@@ -285,14 +285,14 @@ class Approval(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify layout with a single signature entry and date tooltip."""
-        testgen.add_signature('Only Signature')
+        atform.add_signature('Only Signature')
         self.make_test()
 
     def test_multiple(self):
         """Verify layout with multiple signature entries."""
-        testgen.add_signature('First Signature')
-        testgen.add_signature('Second Signature')
-        testgen.add_signature('Third Signature')
+        atform.add_signature('First Signature')
+        atform.add_signature('Second Signature')
+        atform.add_signature('Third Signature')
         self.make_test()
 
 
@@ -301,17 +301,17 @@ class ProjectInfo(Base, unittest.TestCase):
 
     def test_project(self):
         """Verify only project name in the header."""
-        testgen.set_project_info(project='The Project Name')
+        atform.set_project_info(project='The Project Name')
         self.make_test()
 
     def test_system(self):
         """Verify only system name in the header."""
-        testgen.set_project_info(system='The System Name')
+        atform.set_project_info(system='The System Name')
         self.make_test()
 
     def test_project_and_system(self):
         """Verify project and system names in the header."""
-        testgen.set_project_info(
+        atform.set_project_info(
             project='The Project Name',
             system='The System Name',
         )
@@ -326,11 +326,11 @@ class Format(Base, unittest.TestCase):
         # List of lines for all format combinations.
         cases = [
             'Leading text. '
-            + testgen.format_text("This is {0} {1}.".format(typeface, font),
-                                  typeface, font)
+            + atform.format_text("This is {0} {1}.".format(typeface, font),
+                                 typeface, font)
             + ' Trailing text. X'
-            + testgen.format_text('X', typeface, font)
-            for typeface, font in testgen.format.FONTS.keys()]
+            + atform.format_text('X', typeface, font)
+            for typeface, font in atform.format.FONTS.keys()]
 
         self.make_test(
             objective="""
@@ -349,12 +349,12 @@ class Format(Base, unittest.TestCase):
 
     def test_bullet_list(self):
         """Verify bullet list appearance."""
-        single = "This is a single-item list:" + testgen.bullet_list(
+        single = "This is a single-item list:" + atform.bullet_list(
             'The only item.')
-        multi = "A multi-item list with formatted items:" + testgen.bullet_list(
+        multi = "A multi-item list with formatted items:" + atform.bullet_list(
             'First item',
 
-            'An ' + testgen.format_text('italic', font='italic') + ' item',
+            'An ' + atform.format_text('italic', font='italic') + ' item',
 
             string.whitespace
             + 'Item surrounded by whitespace.'

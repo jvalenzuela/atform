@@ -1,8 +1,8 @@
 # minimal.py
 
 
-# Import testgen package.
-import testgen
+# Import atform package.
+import atform
 
 
 ######################################################################
@@ -23,13 +23,13 @@ import testgen
 ######################################################################
 
 # This will be test 1.
-testgen.Test('The First Test')
+atform.Test('The First Test')
 
 # This will be test 2.
-testgen.Test('The Second Test')
+atform.Test('The Second Test')
 
 # This will be test 3.
-testgen.Test('The Third Test')
+atform.Test('The Third Test')
 
 
 ######################################################################
@@ -39,4 +39,4 @@ testgen.Test('The Third Test')
 # to generate the output PDFs.
 ######################################################################
 
-testgen.generate()
+atform.generate()
