@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 [project]
 name = "testgen"
 description = "Test procedure generator."
+license = {file = "LICENSE.txt"}
 dynamic = ["version"]
 
 # This version number is automatically inserted into the user manual, however,
@@ -15,6 +16,10 @@ requires-python = ">= 3.11"
 
 dependencies = [
     "reportlab>=4.2.0",
+]
+
+classifiers = [
+    "License :: OSI Approved :: BSD License",
 ]
 
 
