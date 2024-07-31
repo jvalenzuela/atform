@@ -37,32 +37,14 @@ add Python to the path option from the installation dialog:
 .. image:: images/python_install.png
    :align: center
 
-The |project_name| package can be installed after Python using the following
-procedure:
+The |project_name| package can be installed after Python by opening a
+command prompt and executing the following command. A functioning Internet
+connection is required as this will automatically download the package in
+addition to installing it.
 
-#. The |project_name| package is distributed as an attachment embedded into this
-   PDF manual. Save the :file:`.whl` file to a convenient location on
-   your computer.
+.. code-block:: text
 
-#. Open a command prompt and navigate to the directory where the :file:`.whl`
-   file was saved.
-
-#. The Python package manager, pip, is used to install the |project_name| package,
-   and requires a functional Internet connection. Use the following
-   command executed in the command prompt:
-
-   .. code-block:: text
-
-      pip install atform-0.0.0-py3-none-any.whl
-
-   If |project_name| is already installed, use the ``-U`` option to upgrade to a
-   newer version:
-
-   .. code-block:: text
-
-      pip install -U atform-0.0.0-py3-none-any.whl
-
-#. Delete the :file:`.whl` file; it is not required after installation.
+   pip install atform
 
 The git version control system is optional, needed only to use the
 features described in :ref:`vcs`. Any 2.x git release is acceptable,
