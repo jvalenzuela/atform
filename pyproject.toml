@@ -1,5 +1,8 @@
 [build-system]
-requires = ["hatchling"]
+requires = [
+    "hatchling",
+    "hatch-build-scripts",
+]
 build-backend = "hatchling.build"
 
 
@@ -30,3 +33,13 @@ classifiers = [
 
 [tool.hatch.version]
 path = "atform/version.py"
+
+
+# Generate PDF manual.
+[[tool.hatch.build.hooks.build-scripts.scripts]]
+work_dir = "doc"
+commands = [
+    "make clean",
+    "make latexpdf",
+]
+artifacts = ["atform.pdf"]
