@@ -62,6 +62,41 @@ Testing to ensure git is properly installed can be done by running
 something like :samp:`git version {x.y.z}`.
 
 
+Upgrading
+---------
+
+The version numbers assigned to |project_name| releases are
+constructed to help convey what type of changes can be expected.
+Versions take the form of two integers separated
+by a period, :samp:`{major}.{minor}`. The major version is incremented
+for changes that are not backwards compatible, i.e., upgrading to a different
+major version *may* require modifying existing scripts. The minor version is
+incremented for changes that are backwards compatible within the same
+major version; scripts will not need to be altered to work with a newer
+minor version. However, a minor version may introduce new features
+that do not affect existing functionality, but require script changes to
+use the new features. New minor versions may also introduce changes altering
+the output format.
+
+The following commands can be used to manage, upgrade, or revert
+|project_name| installations:
+
+.. code-block:: console
+
+   # Display the currently installed version.
+   pip show atform
+
+   # Upgrading an existing installation to the latest version.
+   pip install -U atform
+
+   # Install a specific version, overwriting any existing installation;
+   # replace major and minor with the desired version.
+   pip install -I atform==major.minor
+
+The :py:func:`atform.require_version` function is available
+to document which version of |project_name| should be used in a project.
+
+
 Getting Started
 ---------------
 
