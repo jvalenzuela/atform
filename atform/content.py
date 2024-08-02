@@ -225,6 +225,12 @@ class Test(object):
 
         # Check the list of references for this category.
         validated_refs = []
+
+        if not isinstance(refs, list):
+            raise TypeError(
+                f"Reference items for '{label}' category must be contained "
+                "in a list")
+
         for reference in refs:
             if not isinstance(reference, str):
                 raise TypeError(

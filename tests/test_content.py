@@ -143,7 +143,13 @@ class References(unittest.TestCase):
             atform.Test('title', references={'foo': ['a']})
 
     def test_ref_type(self):
-        """Confirm exception for a non-string reference."""
+        """Confirm exception for a non-list reference value."""
+        atform.add_reference_category('refs', 'refs')
+        with self.assertRaises(TypeError):
+            atform.Test('title', references={'refs': 'spam'})
+
+    def test_ref_item_type(self):
+        """Confirm exception for a non-string reference items."""
         atform.add_reference_category('refs', 'refs')
         with self.assertRaises(TypeError):
             atform.Test('title', references={'refs': [42]})
