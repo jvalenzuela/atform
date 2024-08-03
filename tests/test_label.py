@@ -3,6 +3,7 @@
 
 from tests import utils
 from atform import label
+from atform.error import UserScriptError
 import string
 import unittest
 
@@ -15,32 +16,32 @@ class Add(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-string label."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(UserScriptError):
             label.add(42, 'id')
 
     def test_empty(self):
         """Confirm exception for an empty label."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(UserScriptError):
             label.add('', 'id')
 
     def test_blank(self):
         """Confirm exception for a label containing only whitespace."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(UserScriptError):
             label.add(string.whitespace, 'id')
 
     def test_leading_whitespace(self):
         """Confirm exception for a label containing leading whitespace."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(UserScriptError):
             label.add(string.whitespace + 'foo', 'id')
 
     def test_trailing_whitespace(self):
         """Confirm exception for a label containing trailing whitespace."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(UserScriptError):
             label.add('foo' + string.whitespace, 'id')
 
     def test_middle_whitespace(self):
         """Confirm exception for a label with whitespace in the middle."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(UserScriptError):
             label.add('foo' + string.whitespace + 'bar', 'id')
 
     def test_punctuation(self):
@@ -49,7 +50,7 @@ class Add(unittest.TestCase):
         punc.remove('_')
         for p in punc:
             with self.assertRaises(
-                    ValueError,
+                    UserScriptError,
                     msg="Failed for '{0}'".format(p)
             ):
                 label.add('foo' + p, 'id')
@@ -57,7 +58,7 @@ class Add(unittest.TestCase):
     def test_duplicate(self):
         """Confirm exception for duplicate labels."""
         label.add('foo', 'id')
-        with self.assertRaises(ValueError):
+        with self.assertRaises(UserScriptError):
             label.add('foo', 'id')
 
 
@@ -69,12 +70,12 @@ class Resolve(unittest.TestCase):
 
     def test_undefined_label(self):
         """Confirm exception for a string with an undefined label."""
-        with self.assertRaises(KeyError):
+        with self.assertRaises(UserScriptError):
             label.resolve('$foo')
 
     def test_invalid_identifier(self):
         """Confirm exception for a string with an invalid identifier."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(UserScriptError):
             label.resolve('$ foo')
 
     def test_no_identifiers(self):

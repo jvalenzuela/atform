@@ -1,3 +1,4 @@
+from . import error
 from . import id
 import functools
 
@@ -19,9 +20,9 @@ def setup_only(func):
         in_setup = id.current_id.count(0) == len(id.current_id)
 
         if not in_setup:
-            raise RuntimeError(
-                func.__name__
-                + " can only be called before creating tests or sections."
+            raise error.UserScriptError(
+                f"atform.{func.__name__} can only be used in the setup area.",
+                "Call this function before any tests or sections are created."
             )
 
         func(*args, *kwargs)
@@ -32,19 +33,22 @@ def setup_only(func):
 def nonempty_string(name, s):
     """Checks a string to ensure it is not empty or blank."""
     if not isinstance(s, str):
-        raise TypeError("{0} must be a string.".format(name))
+        raise error.UserScriptError(f"{name} must be a string.")
     stripped = s.strip()
     if not stripped:
-        raise ValueError("{0} cannot be empty.".format(name))
+        raise error.UserScriptError(
+            f"{name} cannot be empty.",
+            f"Add content to the {name} string, or remove it altogether."
+        )
     return stripped
 
 
 def validate_field_length(length):
     """Validates a data entry field length."""
     if not isinstance(length, int):
-        raise TypeError('Field length must be an integer.')
+        raise error.UserScriptError('Field length must be an integer.')
     if length < 1:
-        raise ValueError('Field length must be greater than zero.')
+        raise error.UserScriptError('Field length must be greater than zero.')
     return length
 
 
@@ -55,6 +59,7 @@ def validate_field_length(length):
 ################################################################################
 
 
+@error.exit_on_script_error
 def set_project_info(project=None, system=None):
     """Assigns project metadata.
 
@@ -66,10 +71,6 @@ def set_project_info(project=None, system=None):
     Args:
         project (str, optional): Name or description of the project.
         system (str, optional): Name or description of the system being tested.
-
-    Raises:
-        TypeError
-        ValueError
     """
     global project_info
     params = locals()

@@ -1,6 +1,7 @@
 # This module maintains user-defined form field configuration.
 
 
+from . import error
 from . import misc
 import collections
 
@@ -16,6 +17,7 @@ lengths = collections.OrderedDict()
 ################################################################################
 
 
+@error.exit_on_script_error
 @misc.setup_only
 def add_field(title, length):
     """Adds a user entry field to capture test execution information.
@@ -29,16 +31,14 @@ def add_field(title, length):
         title (str): Text to serve as the field's prompt; must not be blank.
         length (int): Maximum number of characters the field should be sized
             to accommodate; must be greater than zero.
-
-    Raises:
-        RuntimeError
-        TypeError
-        ValueError
     """
     global lengths
     if not isinstance(title, str):
-        raise TypeError('Field title must be a string.')
+        raise error.UserScriptError('Field title must be a string.')
     stripped = title.strip()
     if not stripped:
-        raise ValueError('Field title cannot be blank.')
+        raise error.UserScriptError(
+            'Field title cannot be blank.',
+            'Add printable characters to the title, or remove the field.',
+        )
     lengths[stripped] = misc.validate_field_length(length)

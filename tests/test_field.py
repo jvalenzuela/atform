@@ -15,17 +15,17 @@ class AddField(unittest.TestCase):
 
     def test_title_type(self):
         """Confirm exception if title is not a string."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(SystemExit):
             atform.add_field(100, 1)
 
     def test_empty_title(self):
         """Confirm exception if title is empty."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SystemExit):
             atform.add_field('', 1)
 
     def test_blank_title(self):
         """Confirm exception if title contains only whitespace."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SystemExit):
             atform.add_field(string.whitespace, 1)
 
     def test_title_strip(self):
@@ -35,12 +35,12 @@ class AddField(unittest.TestCase):
 
     def test_length_type(self):
         """Confirm exception if length is not an integer."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(SystemExit):
             atform.add_field('foo', '1')
 
     def test_length_out_of_range(self):
         """Confirm exception for lengths less than one."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SystemExit):
             atform.add_field('foo', 0)
 
     def test_storage(self):
@@ -54,5 +54,5 @@ class AddField(unittest.TestCase):
     def test_after_test_created(self):
         """Confirm exception if called after creating tests."""
         atform.id.current_id = [2] # Simulate a generated test.
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(SystemExit):
             atform.add_field('foo', 1)

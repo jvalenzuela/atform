@@ -1,6 +1,7 @@
 # This module manages the numeric identifiers assigned to each test.
 
 
+from . import error
 from . import misc
 
 
@@ -37,6 +38,7 @@ def to_string(id):
 ################################################################################
 
 
+@error.exit_on_script_error
 def section(level, id=None, title=None):
     """Creates a new section or subsection.
 
@@ -53,23 +55,28 @@ def section(level, id=None, title=None):
             or even to the current section, is not permitted.
         title (str, optional): Section title. Must only contain characters
             allowed in file system folder names.
-
-    Raises:
-        TypeError
-        ValueError
     """
     global current_id
     global section_titles
+
+    if len(current_id) == 1:
+        raise error.UserScriptError(
+            'No section levels available',
+            """This function cannot be used unless the test ID depth is
+            first increased with atform.set_id_depth to allow tests to be
+            divided into sections."""
+        )
+
     if not isinstance(level, int):
-        raise TypeError('Section level must be an integer.')
+        raise error.UserScriptError('Section level must be an integer.')
 
     section_levels = range(0, len(current_id) - 1)
     if not level in section_levels:
-        msg = "{0} is not a valid section level.".format(level)
-        if len(current_id) > 1:
-            msg = msg + " Valid sections are 0-{0} inclusive.".format(
-                section_levels[-1])
-        raise ValueError(msg)
+        raise error.UserScriptError(
+            f"Invalid section level: {level}",
+            f"Use a section level between 0 and {section_levels[-1]}, "
+            "inclusive."
+        )
 
     # Increment the target ID level.
     if id is None:
@@ -78,12 +85,12 @@ def section(level, id=None, title=None):
     # Jump to a specific number.
     else:
         if not isinstance(id, int):
-            raise TypeError('id must be an integer.')
+            raise error.UserScriptError('id must be an integer.')
         elif id <= current_id[level]:
-            raise ValueError(
-                "Level {0} id must be greater than {1}.".format(
-                    level,
-                    current_id[level]))
+            raise error.UserScriptError(
+                f"Invalid id value.",
+                f"Level {level} id must be greater than {current_id[level]}."
+            )
         current_id[level] = id
 
     # Reset higher ID levels.
@@ -92,13 +99,14 @@ def section(level, id=None, title=None):
 
     if title is not None:
         if not isinstance(title, str):
-            raise TypeError('Section title must be a string.')
+            raise error.UserScriptError('Section title must be a string.')
         section = tuple(current_id[:level + 1])
         stripped = title.strip()
         if stripped:
             section_titles[section] = stripped
 
 
+@error.exit_on_script_error
 @misc.setup_only
 def set_id_depth(levels):
     """Configures the number of fields in test numeric identifiers.
@@ -117,12 +125,16 @@ def set_id_depth(levels):
     """
     global current_id
     if not isinstance(levels, int):
-        raise TypeError('Identifier depth must be an integer.')
+        raise error.UserScriptError('Identifier depth must be an integer.')
     if levels < 1:
-        raise ValueError('Identifier depth must be greater than zero.')
+        raise error.UserScriptError(
+            f"Invalid identifier depth value: {levels}",
+            'Select an identifier depth greater than zero.'
+        )
     current_id = [0] * levels
 
 
+@error.exit_on_script_error
 def skip_test(id=None):
     """Omits one or more tests.
 
@@ -147,10 +159,12 @@ def skip_test(id=None):
 
     if id is not None:
         if not isinstance(id, int):
-            raise TypeError('id must be an integer.')
+            raise error.UserScriptError('id must be an integer.')
         if id <= current_id[-1]:
-            raise ValueError("id must be greater than {0}.".format(
-                current_id[-1]))
+            raise error.UserScriptError(
+                f"Invalid id value: {id}",
+                f"Select an id greater than {current_id[-1]}."
+            )
 
         # The current ID is set to one previous because the get_id() call
         # above already increments the ID. The next test will then be assigned

@@ -2,6 +2,7 @@
 # a user-provided label.
 
 
+from . import error
 import re
 import string
 
@@ -26,14 +27,19 @@ def add(label, id):
     global labels
 
     if not isinstance(label, str):
-        raise TypeError('Label must be a string.')
+        raise error.UserScriptError('Label must be a string.')
 
     if not valid_label_pattern.match(label):
-        raise ValueError(
-            'Invalid label; only letters, numbers, and underscore are allowed.')
+        raise error.UserScriptError(
+            f"Invalid label: {label}",
+            f"Labels may contain only letters, numbers, and underscore."
+        )
 
     if label in labels:
-        raise ValueError("Duplicate label: {0}".format(label))
+        raise error.UserScriptError(
+            f"Duplicate label: {label}",
+            "Select a label that has not yet been used.",
+        )
 
     labels[label] = id
 
@@ -50,7 +56,14 @@ def resolve(orig):
         return tpl.substitute(labels)
 
     except KeyError as e:
-        raise KeyError("Undefined label: {0}".format(e))
-    except ValueError:
-        raise ValueError(
-            'Invalid label replacement syntax: "{0}"'.format(orig))
+        raise error.UserScriptError(
+            f"Undefined label: {e}",
+            "Select a label that has been defined.",
+        )
+    except ValueError as e:
+        raise error.UserScriptError(
+            f"Invalid label replacement syntax.",
+            "Labels are formatted as $<name>, where <name> begins with a "
+            "letter or underscore, followed by zero or more letters, "
+            "numbers, or underscore.",
+        )

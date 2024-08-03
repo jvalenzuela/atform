@@ -1,6 +1,7 @@
 # This module implements the API for defining approval signatures.
 
 
+from . import error
 from . import misc
 
 
@@ -15,6 +16,7 @@ titles = []
 ################################################################################
 
 
+@error.exit_on_script_error
 @misc.setup_only
 def add_signature(title):
     """Adds an approval signature line.
@@ -25,10 +27,5 @@ def add_signature(title):
 
     Args:
         title (str): A short description of the person signing.
-
-    Raises:
-        RuntimeError
-        TypeError
-        ValueError
     """
     titles.append(misc.nonempty_string('Signature title', title))

@@ -1,6 +1,9 @@
 # Module versioning, not the version control interface.
 
 
+from . import error
+
+
 # This is the version number for the entire module, and is used by the
 # hatch packaging and Sphinx documentation systems.
 VERSION = '0.0'
@@ -13,6 +16,7 @@ VERSION = '0.0'
 ################################################################################
 
 
+@error.exit_on_script_error
 def require_version(major, minor=0):
     """Verifies the installed version of atform.
 
@@ -22,29 +26,27 @@ def require_version(major, minor=0):
     Args:
         major (int): The required major version.
         minor (int, optional): The required minor version.
-
-    Raises:
-        SystemExit
-        TypeError
-        ValueError
     """
     if not isinstance(major, int):
-        raise TypeError('Major version must be an integer.')
+        raise error.UserScriptError('Major version must be an integer.')
     if not isinstance(minor, int):
-        raise TypeError('Minor version must be an integer.')
+        raise error.UserScriptError('Minor version must be an integer.')
     if major < 1:
-        raise ValueError('Major version must be greater than or equal to 1.')
+        raise error.UserScriptError(
+            f"Invalid major version: {major}",
+            'Major version must be greater than or equal to 1.',
+        )
     if minor < 0:
-        raise ValueError('Minor version must be greater than or equal to 0.')
+        raise error.UserScriptError(
+            f"Invalid minor version: {minor}",
+            'Minor version must be greater than or equal to 0.',
+        )
     inst_major, inst_minor = [int(x) for x in VERSION.split('.')]
     if (inst_major != major) or (inst_minor < minor):
         module_name = __name__.split('.')[0]
-        raise SystemExit(
-            "This script requires {0} major version {1} and at least minor "
-            "version {2}, i.e., {1}.{2} or greater, and less than "
-            "{3}.0.".format(
-                module_name,
-                major,
-                minor,
-                major+1,
-            ))
+        raise error.UserScriptError(
+            f"""This script requires {module_name} version {major}.{minor} or
+            later.""",
+            f"""Install {module_name} version {major}.{minor} or greater,
+            and less than {major+1}.0.""",
+        )

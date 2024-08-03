@@ -11,22 +11,22 @@ class RequireVersion(unittest.TestCase):
 
     def test_major_type(self):
         """Confirm exception if major is not an integer."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(SystemExit):
             atform.require_version('1')
 
     def test_major_invalid_value(self):
         """Confirm exception if major is less than 1."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SystemExit):
             atform.require_version(0)
 
     def test_minor_type(self):
         """Confirm exception if minor is not an integer."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(SystemExit):
             atform.require_version(1, '0')
 
     def test_minor_invalid_value(self):
         """Confirm exception if minor is less than 0."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SystemExit):
             atform.require_version(1, -1)
 
     @patch.object(atform.version, 'VERSION', new='1.0')

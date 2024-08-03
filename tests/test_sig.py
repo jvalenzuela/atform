@@ -16,22 +16,22 @@ class AddSignature(unittest.TestCase):
     def test_after_content(self):
         """Confirm exception if called after a test or section is created."""
         atform.id.current_id = [2] # Simulate a generated test.
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(SystemExit):
             atform.add_signature('foo')
 
     def test_title_type(self):
         """Confirm exception for a non-string title."""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(SystemExit):
             atform.add_signature(99)
 
     def test_empty_title(self):
         """Confirm exception for an empty title."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SystemExit):
             atform.add_signature('')
 
     def test_blank_title(self):
         """Confirm exception for a title containing only whitespace."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SystemExit):
             atform.add_signature(string.whitespace)
 
     def test_title_strip(self):

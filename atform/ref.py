@@ -2,6 +2,7 @@
 
 
 from . import content
+from . import error
 from . import id
 from . import misc
 
@@ -17,6 +18,7 @@ titles = {}
 ################################################################################
 
 
+@error.exit_on_script_error
 @misc.setup_only
 def add_reference_category(title, label):
     """Creates a topic for listing external references.
@@ -32,30 +34,33 @@ def add_reference_category(title, label):
         label (str): A shorthand abbreviation to identify this category
             when adding references to individual tests. Must be unique across
             all reference categories.
-
-    Raises:
-        RuntimeError
-        TypeError
-        ValueError
     """
     global titles
 
     # Validate title.
     if not isinstance(title, str):
-        raise TypeError('Reference title must be a string.')
+        raise error.UserScriptError('Reference title must be a string.')
     title_stripped = title.strip()
     if not title_stripped:
-        raise ValueError('Reference title must not be blank.')
+        raise error.UserScriptError(
+            'Reference title must not be blank.',
+            'Add printable characters to the title, or remove the category.',
+        )
 
     # Validate label.
     if not isinstance(label, str):
-        raise TypeError('Reference label must be a string.')
+        raise error.UserScriptError('Reference label must be a string.')
     label_stripped = label.strip()
     if not label_stripped:
-        raise ValueError('Reference label must not be blank.')
+        raise error.UserScriptError(
+            'Reference label must not be blank.',
+            'Add printable characters to the label, or remove the category.',
+        )
     if label_stripped in titles:
-        raise ValueError("Duplicate reference label: {0}".format(
-            label_stripped))
+        raise error.UserScriptError(
+            f"Duplicate reference label: {label_stripped}",
+            f"Create a unique label for {title} references.",
+        )
 
     titles[label_stripped] = title_stripped
 
