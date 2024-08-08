@@ -82,7 +82,8 @@ class ExampleRunner(object):
         # PYTHONPATH is set to the current working directory(the repository
         # root) so the module can be imported when running scripts in the
         # output directories.
-        env = {'PYTHONPATH': os.getcwd()}
+        env = dict(os.environ)
+        env['PYTHONPATH'] = os.getcwd()
 
         # The target script will be run from within its dedicated output
         # path.
