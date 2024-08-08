@@ -12,10 +12,9 @@ description = "Acceptance test procedure form generator."
 license = {file = "LICENSE.txt"}
 dynamic = ["version"]
 
-# This version number is automatically inserted into the user manual, however,
-# the '>=' is not, so the manual language needs to be updated separately
-# if the comparison operator changes.
-requires-python = ">= 3.11"
+# Update doc/source/intro.rst to match this. Range of versions is equivalent
+# to those supported by Reportlab.
+requires-python = ">= 3.7, <= 3.11"
 
 dependencies = [
     "reportlab>=4.2.0",
