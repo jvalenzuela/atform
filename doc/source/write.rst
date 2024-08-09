@@ -132,18 +132,50 @@ the action text.
 Each item in the procedure list is a single step, and may be given in
 one of two different forms: string or dictionary. A string is suitable
 if the step only needs instructional text whereas a dictionary
-allows additional information to be included along with the main text.
-A procedure step dictionary must have a :code:`'text'` key holding a string
-with the instructional text; all other keys are optional.
+allows additional information as listed in :numref:`tbl-procstepdict`
+to be included along with the main text.
 
-The :code:`'fields'` key in a step dictionary will add data entry fields
-to record information as part of the step, such as a measurement result,
-and must be a list where each item is a tuple in the form
-:samp:`({title}, {length}, {suffix})` defining a single field.
-*title* is a string
-describing data to be recorded; *length* is the maximum number of
-characters the field should accommodate. *suffix* is an optional
-string to place after the field, typically used to denote units.
+.. _tbl-procstepdict:
+.. list-table:: Procedure Step Dictionary Entries
+   :header-rows: 1
+   :widths: 15, 15, 55, 15
+
+   * - Key
+     - Value Type
+     - Description
+     - Required
+   * - ``'text'``
+     - string
+     - The instructions for the step.
+     - Yes
+   * - ``'fields'``
+     - list(tuple)
+     - Data entry fields, one tuple per field, to record information
+       as part of the step, such as a measurement result.
+       See :numref:`tbl-procstepfieldtpl`.
+     - No
+
+.. _tbl-procstepfieldtpl:
+.. list-table:: Procedure Step Data Entry Field Tuple
+   :header-rows: 1
+   :widths: 10, 15, 60, 15
+
+   * - Index
+     - Value Type
+     - Description
+     - Required
+   * - 0
+     - string
+     - The field title.
+     - Yes
+   * - 1
+     - integer
+     - Maximum number of characters the field should accommodate.
+     - Yes
+   * - 2
+     - string
+     - A suffix to place after the field, typically used to denote units.
+     - No
 
 The procedure list may contain both string and dictionary items as the
 following example illustrates:
