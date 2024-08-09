@@ -34,46 +34,97 @@ class Title(unittest.TestCase):
         self.assertEqual('Spam', t.title)
 
 
-class Label(unittest.TestCase):
-    """Unit tests for label replacement."""
+class LabelReplacement(object):
+    """
+    Base class for testing label replacement in each type of content
+    where label placeholders are supported. Subclasses must create
+    a test with the label applied to the target object, e.g., test or
+    procedure step, and define what the label replacement text should be.
+    """
+
+    LABEL = 'TheLabel'
+    PLACEHOLDER = f"spam ${LABEL} eggs"
+
+    def setUp(self):
+        utils.reset()
+        self.make_labeled_test()
+
+    def assertReplacement(self, text):
+        """Verifies correct placeholder replacement in the given text."""
+        self.assertEqual(f"spam {self.REPLACEMENT} eggs", text)
+
+    def test_objective(self):
+        """Confirm placeholder is replaced in the objective."""
+        t = atform.Test('title', objective=self.PLACEHOLDER)
+        t._pregenerate()
+        self.assertReplacement(t.objective)
+
+    def test_precondition(self):
+        """Confirm placeholder is replaced in the preconditions."""
+        t = atform.Test('title', preconditions=[self.PLACEHOLDER])
+        t._pregenerate()
+        self.assertReplacement(t.preconditions[0])
+
+    def test_procedure_step_string(self):
+        """Confirm placeholder is replaced in string procedure steps."""
+        t = atform.Test('title', procedure=[self.PLACEHOLDER])
+        t._pregenerate()
+        self.assertReplacement(t.procedure[0].text)
+
+    def test_procedure_step_dict(self):
+        """Confirm placeholder is replaced in dict procedure steps."""
+        t = atform.Test('title', procedure=[{'text':self.PLACEHOLDER}])
+        t._pregenerate()
+        self.assertReplacement(t.procedure[0].text)
+
+
+class TestLabelReplacement(LabelReplacement, unittest.TestCase):
+    """Unit tests for test identifier label replacement."""
+
+    REPLACEMENT = '1.2'
+
+    def make_labeled_test(self):
+        """Creates a labeled test."""
+        atform.set_id_depth(2)
+        atform.Test('Some other test')
+        atform.Test('Referenced Test', label=self.LABEL)
+
+
+class ProcedureStepLabelReplacement(LabelReplacement, unittest.TestCase):
+    """Unit tests for procedure step label replacement."""
+
+    REPLACEMENT = '2'
+
+    def make_labeled_test(self):
+        """Creates a labeled procedure step."""
+        atform.Test('Referenced Test', procedure=[
+            'Step foo.',
+            {'text':'Target step.', 'label':self.LABEL},
+            'Step bar.'
+        ])
+
+
+class ForwardLabelReplacement(unittest.TestCase):
+    """Unit tests for label replacement where the placeholder preceeds the label."""
 
     def setUp(self):
         utils.reset()
 
-    def test_objective_placeholder(self):
-        """Confirm placeholders are replaced in the objective."""
-        atform.Test('target', label='TheLabel')
-        t = atform.Test('title', objective='$TheLabel')
-        t._pregenerate()
-        self.assertEqual('1', t.objective)
-
-    def test_precondition_placeholder(self):
-        """Confirm placeholders are replaced in preconditions."""
-        atform.Test('target', label='TheLabel')
-        t = atform.Test('title', preconditions=['$TheLabel'])
-        t._pregenerate()
-        self.assertEqual('1', t.preconditions[0])
-
-    def test_procedure_step_string_placeholder(self):
-        """Confirm placeholders are replaced in string procedure steps."""
-        atform.Test('target', label='TheLabel')
-        t = atform.Test('title', procedure=['$TheLabel'])
-        t._pregenerate()
-        self.assertEqual('1', t.procedure[0].text)
-
-    def test_procedure_step_dict_placeholder(self):
-        """Confirm placeholders are replaced in dict procedure steps."""
-        atform.Test('target', label='TheLabel')
-        t = atform.Test('title', procedure=[{'text':'$TheLabel'}])
-        t._pregenerate()
-        self.assertEqual('1', t.procedure[0].text)
-
-    def test_forward_reference(self):
-        """Confirm a placeholder for a label defined in a later test."""
+    def test_test(self):
+        """Confirm replacement for a labeled test."""
         t = atform.Test('title', objective='$TheLabel')
         atform.Test('target', label='TheLabel')
         t._pregenerate()
         self.assertEqual('2', t.objective)
+
+    def test_procedure_step(self):
+        """Confirm replacement for a labeled procedure step."""
+        t = atform.Test('title', procedure=[
+            '$TheLabel',
+            {'text':'foo', 'label':'TheLabel'}
+        ])
+        t._pregenerate()
+        self.assertEqual('2', t.procedure[0].text)
 
 
 class Objective(unittest.TestCase):

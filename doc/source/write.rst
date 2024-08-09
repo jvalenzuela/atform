@@ -98,14 +98,23 @@ Labels are simple strings, typically an abbreviated description of the test.
 As an example, for a test titled "Zone 42 Contactor",
 a suitable label would be ``z42ctr``. Labels may only contain letters,
 numbers, and underscore; they are also case-sensitive, e.g., ``Z42_A``
-is different from ``z42_a``. One final stipulation is a label must
-be unique.
+is different from ``z42_a``.
 
-Once assigned to a test, a label can be used in content strings by
-inserting a placeholder where the labeled test's assigned number
+Individual procedure steps may also be given labels; the typical use
+is so other steps within the same procedure can refer to the labeled step.
+Procedure step labels use the same format as test labels, and are
+replaced with the procedure step number.
+See :ref:`procedure` for details on applying labels to procedure steps.
+
+All labels, regardless of what they are applied to, must be unique
+throughout the entire project. For example, a label assigned to a test
+cannot be used for another test *or* procedure step.
+
+Once assigned, a label can be used in content strings by
+inserting a placeholder where the label's replacement text
 should appear. Placeholders use the format :samp:`${label}` where
-*label* is the label assigned to the target test. |project_name| will
-automatically replace placeholders with their respective test number
+*label* is the label assigned to the target test or procedure step.
+|project_name| will automatically replace placeholders
 when generating output. Placeholders can be used in any of the following
 content:
 
@@ -144,6 +153,11 @@ to be included along with the main text.
      - Value Type
      - Description
      - Required
+   * - ``'label'``
+     - string
+     - A label that can be used to reference this step number.
+       See :ref:`labels`.
+     - No
    * - ``'text'``
      - string
      - The instructions for the step.

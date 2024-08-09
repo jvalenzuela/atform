@@ -23,10 +23,11 @@ class ProcedureStep(object):
     an item, string or dict, from the procedure parameter list of Test.
     """
 
-    def __init__(self, raw):
+    def __init__(self, raw, num):
         data = self._normalize_type(raw)
         self.text = self._validate_text(data)
         self.fields = self._validate_fields(data)
+        self._validate_label(data, num)
         self._check_undefined_keys(data)
 
     def _normalize_type(self, raw):
@@ -121,6 +122,18 @@ class ProcedureStep(object):
             )
 
         return ProcedureStepField(title, length, suffix)
+
+    def _validate_label(self, data, num):
+        """Creates a label referencing this step."""
+        try:
+            lbl = data.pop('label')
+
+        # Label is optional; do nothing if omitted.
+        except KeyError:
+            pass
+
+        else:
+            label.add(lbl, str(num))
 
     def resolve_labels(self):
         """Replaces label placeholders with their target IDs."""
@@ -280,10 +293,11 @@ class Test(object):
             raise error.UserScriptError('Procedure must be a list.')
         steps = []
         for i in range(len(lst)):
+            num = i + 1 # Step numbers are one-based.
             try:
-                steps.append(ProcedureStep(lst[i]))
+                steps.append(ProcedureStep(lst[i], num))
             except error.UserScriptError as e:
-                e.add_field('Procedure Step', i+1)
+                e.add_field('Procedure Step', num)
                 raise
         return steps
 

@@ -21,8 +21,18 @@ atform.Test('A Dependent Test',
             # other procedures.
             objective="""
             This procedure is dependent on tests $doA and $doX.
-            """
-            )
+            """,
+
+            procedure=[
+                # Create a labeled procedure step.
+                {
+                    'label':'ps_verify',
+                    'text':'Verify something important.'
+                },
+
+                # Reference the labeled procedure step.
+                'Repeat step $ps_verify.'
+            ])
 
 
 # This test is also referenced by another test.
