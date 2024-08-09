@@ -117,11 +117,6 @@ def set_id_depth(levels):
 
     Args:
         levels (int): Number of identifier levels.
-
-    Raises:
-        RuntimeError
-        TypeError
-        ValueError
     """
     global current_id
     if not isinstance(levels, int):
@@ -145,10 +140,6 @@ def skip_test(id=None):
     Args:
         id (int, optional): ID of the next test. If omitted, one test will
             be skipped.
-
-    Raises:
-        TypeError
-        ValueError
     """
     global current_id
 

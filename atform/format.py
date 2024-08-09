@@ -1,6 +1,7 @@
 # This module contains the text formatting API.
 
 
+from . import error
 import xml.etree.ElementTree as ElementTree
 
 
@@ -28,6 +29,7 @@ FONTS = {
 ################################################################################
 
 
+@error.exit_on_script_error
 def bullet_list(*items):
     """Creates a list of items.
 
@@ -47,9 +49,6 @@ def bullet_list(*items):
         into strings passed to the ``objective``, ``equipment``,
         ``preconditions``, and ``procedure`` parameters of
         :py:class:`atform.Test`.
-
-    Raises:
-        TypeError
     """
     indent = 12 # Horizontal indentation in points applied to each item.
 
@@ -57,10 +56,17 @@ def bullet_list(*items):
     # from the bullet used by ReportLab ListItem().
     symbol = '&diams;'
 
-    try:
-        stripped = [i.strip() for i in items]
-    except AttributeError:
-        raise TypeError('Bullet list items must be strings.')
+    stripped = []
+    for i in items:
+        try:
+            item = i.strip()
+        except AttributeError:
+            raise error.UserScriptError(
+                f"Invalid bullet list item type: {i}",
+                'Bullet list items must be strings.',
+            )
+        else:
+            stripped.append(item)
 
     bullet_items = ["<bullet indent='{0}'>{1}</bullet>{2}".format(
         indent,
@@ -77,6 +83,7 @@ def bullet_list(*items):
     return '\n\n'.join(bullet_items)
 
 
+@error.exit_on_script_error
 def format_text(text, typeface='normal', font='normal'):
     """Applies special formatting attributes to text.
 
@@ -94,24 +101,24 @@ def format_text(text, typeface='normal', font='normal'):
 
     Returns:
         str: The original text with embedded formatting information.
-
-    Raises:
-        KeyError
-        TypeError
     """
     if not isinstance(text, str):
-        raise TypeError('text must be a string.')
+        raise error.UserScriptError(
+            f"Invalid formatted text type: {text}",
+            'Text to be formatted must be a string.',
+        )
 
     typefaces = set([k[0] for k in FONTS.keys()])
     if not typeface in typefaces:
-        raise KeyError(
-            "Invalid typeface: '{0}'. Valid typefaces are {1}.".format(
-                typeface, ', '.join(typefaces)))
+        raise error.UserScriptError(
+            f"Invalid text format typeface: {typeface}",
+        )
 
     fonts = set([k[1] for k in FONTS.keys()])
     if not font in fonts:
-        raise KeyError("Invalid font: '{0}'. Valid fonts are {1}.".format(
-            font, ', '.join(fonts)))
+        raise error.UserScriptError(
+            f"Invalid text font: {font}",
+        )
 
     font_values = FONTS[(typeface, font)]
     attrib = {'face':font_values[0]}
