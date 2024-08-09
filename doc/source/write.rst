@@ -96,7 +96,8 @@ The first step in this approach is to assign a label to a test with
 the :code:`label` parameter of :py:class:`atform.Test`.
 Labels are simple strings, typically an abbreviated description of the test.
 As an example, for a test titled "Zone 42 Contactor",
-a suitable label would be ``z42ctr``. Labels may only contain letters,
+a suitable label would be ``z42ctr``. Labels must begin with a letter
+or underscore, optionally followed by letters,
 numbers, and underscore; they are also case-sensitive, e.g., ``Z42_A``
 is different from ``z42_a``.
 
