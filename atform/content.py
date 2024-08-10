@@ -30,7 +30,8 @@ class ProcedureStep(object):
         self._validate_label(data, num)
         self._check_undefined_keys(data)
 
-    def _normalize_type(self, raw):
+    @staticmethod
+    def _normalize_type(raw):
         """Normalizes the raw data into a dict."""
         # Convert a string to a dict with text key.
         if isinstance(raw, str):
@@ -45,7 +46,8 @@ class ProcedureStep(object):
 
         return normalized
 
-    def _check_undefined_keys(self, data):
+    @staticmethod
+    def _check_undefined_keys(data):
         """Raises an exception for any unconsumed keys."""
         if data:
             keys = [str(k) for k in data.keys()]
@@ -54,7 +56,8 @@ class ProcedureStep(object):
                     ', '.join(keys)
                 ))
 
-    def _validate_text(self, data):
+    @staticmethod
+    def _validate_text(data):
         """Validates the text key."""
         try:
             text = data.pop('text')
@@ -83,7 +86,8 @@ class ProcedureStep(object):
                 raise
         return fields
 
-    def _create_field(self, tpl):
+    @staticmethod
+    def _create_field(tpl):
         """
         Converts a raw procedure step field definition tuple into a
         named tuple.
@@ -123,7 +127,8 @@ class ProcedureStep(object):
 
         return ProcedureStepField(title, length, suffix)
 
-    def _validate_label(self, data, num):
+    @staticmethod
+    def _validate_label(data, num):
         """Creates a label referencing this step."""
         try:
             lbl = data.pop('label')
@@ -221,7 +226,8 @@ class Test(object):
             id_string = id.to_string(self.id)
             label.add(lbl, id_string)
 
-    def _validate_objective(self, obj):
+    @staticmethod
+    def _validate_objective(obj):
         """Validates the objective parameter."""
         if obj is not None:
             return misc.nonempty_string('Objective', obj)
@@ -236,7 +242,8 @@ class Test(object):
          for label in refs]
         return validated
 
-    def _validate_ref_category(self, label, refs):
+    @staticmethod
+    def _validate_ref_category(label, refs):
         """Validates a single reference category and associated references."""
         label = misc.nonempty_string('Reference label', label)
 
@@ -287,7 +294,8 @@ class Test(object):
         """Validates the equipment parameter."""
         return self._validate_string_list('Equipment', equip)
 
-    def _validate_procedure(self, lst):
+    @staticmethod
+    def _validate_procedure(lst):
         """Validates the procedure parameter."""
         if not isinstance(lst, list):
             raise error.UserScriptError('Procedure must be a list.')
@@ -301,7 +309,8 @@ class Test(object):
                 raise
         return steps
 
-    def _validate_string_list(self, name, lst):
+    @staticmethod
+    def _validate_string_list(name, lst):
         """Checks a list to ensure it contains only non-empty/blank strings."""
         if not isinstance(lst, list):
             raise error.UserScriptError(
