@@ -854,6 +854,7 @@ class TextEntryField(Flowable):
     HEIGHT_FACTOR = 1.2
 
     def __init__(self, width, style, tooltip=None):
+        super().__init__()
         self.style = style
         self.tooltip = tooltip
         self.width = self._calc_width(width)
