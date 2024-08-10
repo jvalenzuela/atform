@@ -20,7 +20,7 @@ def add(label, id):
     """Assigns an identifier to a label.
 
     This function is not exposed in the public API, however, the label
-    label argument is passed directly from public API arguments, so it is
+    argument is passed directly from public API arguments, so it is
     validated here. The id is generated internally by atform, e.g., a test
     number, and can be assumed appropriate.
     """

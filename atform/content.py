@@ -19,7 +19,7 @@ tests = []
 class ProcedureStep(object):
     """Object containing all user-provided content for a single procedure step.
 
-    This is not created directly by the user, but is instantiated using a
+    This is not created directly by the user, but is instantiated using
     an item, string or dict, from the procedure parameter list of Test.
     """
 

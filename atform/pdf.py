@@ -239,7 +239,7 @@ class TestDocument(object):
         self.version = version
 
         # The full name is the combination of the test's numeric
-        # identifer and title.
+        # identifier and title.
         self.full_name = ' '.join((id.to_string(test.id), test.title))
 
         # The document is built twice; the first time to a dummy memory
@@ -860,7 +860,7 @@ class TextEntryField(Flowable):
         self.height = style.fontSize * self.HEIGHT_FACTOR
 
     def _calc_width(self, width):
-        """Computes the horiontal size from the width argument.
+        """Computes the horizontal size from the width argument.
 
         The width argument can be provided in two ways:
          - If an integer, width will the sized to hold the same character
