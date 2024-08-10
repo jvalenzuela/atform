@@ -24,7 +24,7 @@ dynamic = ["version"]
 
 # Update doc/source/intro.rst to match this. Range of versions is equivalent
 # to those supported by Reportlab.
-requires-python = ">= 3.7, <= 3.11"
+requires-python = ">= 3.7, < 3.12"
 
 dependencies = [
     "reportlab>=4.2.0",
