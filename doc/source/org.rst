@@ -4,18 +4,20 @@ Organization
 Sectioning
 ----------
 
-By default, |project_name| will automatically number tests with increasing integers,
-a simple approach that may be insufficient. Most projects will need
-additional organizational levels to separate related test procedures into
-sections, and |project_name| can be configured to use multiple integer fields for
-numbering tests, e.g., 5.1 or 1.8.9. Any quantity of fields can be used,
+By default, |project_name| will automatically number tests with single,
+increasing integer;
+simple, yet often insufficient. Most projects will need
+additional organizational levels to segregate related test procedures into
+sections, and |project_name| can support this by numbering tests
+with multiple integer fields,
+e.g., 5.1 or 1.8.9. Any quantity of fields can be used,
 although practical values are between two and four. The only stipulation
 regarding numbering is all test procedures must use the same format,
 i.e., *every* test will be numbered with the same quantity of fields.
 
 When using two or more numbering fields, |project_name| refers to each field as a
-level, with the first, or highest level, as level zero, increasing up to
-the number of configured levels minus one. For example, configuring
+level, with the leftmost field as level zero, increasing up to
+the number of configured levels minus one. For example, when configured for
 three levels, tests will be numbered *x.y.z*; where *x* is level zero, *y* is
 level one, and *z* is level two.
 
@@ -31,7 +33,7 @@ Skipping Tests
 --------------
 
 Having tests automatically numbered is generally helpful, alleviating the
-task of manually enumerating tests and sections. However, there are
+task of manually enumerating tests and sections, however, there are
 some circumstances where the author must intervene. The most common
 cases are reserving a range of numbers for future use, or removing a
 defunct test without affecting later ones. The following example illustrates
@@ -46,7 +48,7 @@ Source Files
 Another tactic for organizing test procedures is to split them into separate
 scripts. Dividing large constructs into smaller components, each within their
 own file is common in many domains, including documentation. This approach
-makes it easier to locate content and for multiple authors to work on tests
+makes it easier to locate content, and for multiple authors to work on tests
 simultaneously. Separating tests into multiple scripts, however, does not
 affect the output; tests are numbered in the order they are encountered
 regardless of how many source files are involved.

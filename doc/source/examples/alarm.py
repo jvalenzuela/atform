@@ -22,8 +22,7 @@ with open('alarms.csv', newline='') as f:
 def verify_alarm(num):
     """
     This function will generate a procedure step(a string) verifying
-    a specific alarm based on the alarm number, which is used to
-    construct a string containing the full message text.
+    a specific alarm based on the alarm number.
     """
     return f"Verify the following alarm:\n\n{num}: {alarms[num]}"
 

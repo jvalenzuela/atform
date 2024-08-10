@@ -1,7 +1,8 @@
 Introduction
 ============
 
-The |project_name| software is intended for writing test procedures, which often
+The Acceptance Test Form package, or |project_name|, is software intended
+for writing test procedures, which often
 requires significant repetition, iteration, or other similar
 time-consuming and error-prone tasks where computers excel.
 This software employs the Python programming language to help alleviate
@@ -12,10 +13,10 @@ on content.
 While the test author will need to write what are in fact small Python
 programs to use this system, no previous experience with Python or
 other programming language is required.
-Only elementary Python knowledge is needed to use the |project_name| package,
+Only elementary Python knowledge is needed to use |project_name|,
 much of which can be gleaned from the examples in this guide.
 Furthermore, Python's popularity means a wealth of information is
-available online, all of which will be directly
+available online, all of which is directly
 applicable as |project_name| is a normal Python package, and does not alter or
 limit the language in any way.
 
@@ -31,8 +32,9 @@ Windows, Linux, and macOS.
 
 The Python programming language, within version 3.7 to 3.11 inclusive,
 must be installed,
-and is available from `<https://python.org>`_. Make sure to select the
-add Python to the path option from the installation dialog:
+and is available from `<https://python.org>`_. Make sure Python is
+added to the system path; the option to so
+when installing on Windows is shown below:
 
 .. image:: images/python_install.png
    :align: center
@@ -66,7 +68,7 @@ Upgrading
 ---------
 
 The version numbers assigned to |project_name| releases are
-constructed to help convey what type of changes can be expected.
+constructed to help convey what type of changes can be expected in a release.
 Versions take the form of two integers separated
 by a period, :samp:`{major}.{minor}`. The major version is incremented
 for changes that are not backwards compatible, i.e., upgrading to a different
@@ -111,22 +113,35 @@ only provide content and structure, i.e., what is in the tests and how
 they are organized.
 
 As Python scripts are regular text files, they can be created and edited
-with any text editor, however, it is *highly* recommended to use an editor
-with integrated Python support. A significant feature when selecting an
+with any text editor, however, it is *strongly* recommended to use an editor
+with integrated Python support. Another significant feature when selecting an
 editor is the ability to provide contextual help, which will display the
 same documentation presented in the :ref:`api` section of this manual
 directly in the editor window when each command is used. Having
 the necessary documentation immediately and automatically available
 while writing tests is quite convenient.
-Many suitable editors are freely-available; some popular ones are listed below:
+Many editors supporting Python are freely-available;
+:numref:`tbl_ides` lists some popular ones.
 
-.. csv-table::
-   :header: Name, URL, "Context Help"
+.. _tbl_ides:
+.. list-table:: Python Editors
+   :header-rows: 1
 
-   Notepad++, `<https://notepad-plus-plus.org/>`_, No
-   Sublime Text, `<https://www.sublimetext.com/>`_, Yes
-   Visual Studio Code, `<https://code.visualstudio.com/>`_, Yes
-   PyCharm, `<https://www.jetbrains.com/pycharm/>`_, Yes
+   * - Name
+     - URL
+     - Context Help
+   * - Notepad++
+     - `<https://notepad-plus-plus.org/>`_
+     - No
+   * - Sublime Text
+     - `<https://www.sublimetext.com/>`_
+     - Yes
+   * - Visual Studio Code
+     - `<https://code.visualstudio.com/>`_
+     - Yes
+   * - PyCharm
+     - `<https://www.jetbrains.com/pycharm/>`_
+     - Yes
 
 The Python installation also includes a simple, yet functional editor, IDLE,
 although it does not feature context help. One note about IDLE is
@@ -143,17 +158,16 @@ are entered, not editing scripts saved to files. Use the
 :menuselection:`File --> New` menu
 to open a new editor window for creating a script that will be saved to disk.
 
-Below is a minimal example to illustrate the basic layout of a |project_name|
-Python script. All examples in this manual are fully-functional, attached
-to the PDF in the same way as the |project_name| package, and can be
+Below is a minimal example to illustrate the basic layout of an |project_name|
+script. All examples in this manual are fully-functional, and are attached
+to this PDF so they may be
 used as initial templates for writing actual test procedures.
 
 .. literalinclude:: examples/minimal.py
 
-This example contains three, rather spartan tests, containing only a
+This example contains three tests, containing only a
 title and automatically-assigned number, yet is sufficient to demonstrate
-the entire workflow from source script to output PDF. Simple tests without
-much content are also common when creating an initial outline.
+the entire workflow from source script to output PDF.
 Obviously, test procedures will require much more detail,
 which can be provided by additional parameters to :py:class:`atform.Test`.
 

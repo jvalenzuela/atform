@@ -1,10 +1,9 @@
 Document Setup
 ==============
 
-Several options are available in the script setup area to tailor the
+Several options are available in the script setup area to tailor
 test documents to a specific project. These options can *only* be
-specified in the setup area, and affect all tests equally,
-removing the need to duplicate such information manually.
+specified in the setup area, and affect all tests equally.
 
 The environment in which a test is executed often needs to be recorded
 by the person executing the test. Common examples of this type of
@@ -28,7 +27,7 @@ Project Information
 
 Metadata describing the scope of the test procedures, such as the
 project name, can be defined with :py:func:`atform.set_project_info`,
-and is typically used in the setup area. It can also be used
+and is typically used in the setup area. This function can also be used
 repeatedly throughout the content area to change information
 among test procedures. In other words, project information is applied
 to tests until the next time the function is called.

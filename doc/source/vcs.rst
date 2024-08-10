@@ -21,11 +21,11 @@ How to use a version control system, git or otherwise, is beyond the
 scope of this manual; users should refer to the documentation specific
 to the system in use.
 
-The version control functions of |project_name| are activated if git is
-installed and scripts are placed in a git repository;
-|project_name| automatically detects the presence of a git repository
-and enables these features accordingly. When version control is enabled
-|project_name| will apply the following to output PDF documents:
+The version control functions of |project_name| are automatically
+activated if git is
+installed and scripts are placed in a git repository.
+When version control is enabled
+|project_name| will apply the following marks to output PDF documents:
 
 * A :literal:`DRAFT` watermark if the working directory contains *any*
   uncommitted changes.
@@ -38,4 +38,5 @@ This manual does not include any examples specific to version control
 because no changes are needed to enable or configure it.
 Copying any of the existing examples into a git repository will
 demonstrate version control functionality.
-There is, however, a sample :file:`.gitignore` file attached to this manual.
+There is, however, a sample :file:`.gitignore` file attached to this manual
+to assist in setting up a git repository for |project_name| scripts.
