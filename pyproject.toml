@@ -16,6 +16,9 @@ build-backend = "hatchling.build"
 [project]
 name = "atform"
 description = "Acceptance test procedure form generator."
+authors = [
+    {name = "Jason Valenzuela", email = "jvalenzuela1977@gmail.com"},
+]
 license = {file = "LICENSE.txt"}
 dynamic = ["version"]
 
@@ -35,6 +38,12 @@ classifiers = [
     "Topic :: Software Development :: Testing :: Acceptance",
     "Topic :: Text Processing :: Markup",
 ]
+
+
+[project.urls]
+Homepage = "https://github.com/jvalenzuela/atform"
+Repository = "https://github.com/jvalenzuela/atform.git"
+Issues = "https://github.com/jvalenzuela/atform/issues"
 
 
 [tool.hatch.version]
