@@ -68,8 +68,13 @@ latex_elements = {
     'preamble': r"""
     \usepackage{embedfile} % For attaching examples.
     \setlength{\headheight}{15pt}
+    \usepackage{changelog}
     """,
 }
+
+latex_additional_files = [
+    "changelog.sty",
+]
 
 
 # Example files that will not be embedded in the output PDF.
