@@ -2,6 +2,13 @@
 requires = [
     "hatchling",
     "hatch-build-scripts",
+    "sphinx",
+
+    # Needed because Sphinx autodoc imports atform, which in turn imports
+    # reportlab. The version specifier is omitted because only importing
+    # is necessary, allowing the required version to be specified solely in
+    # dependencies.
+    "reportlab",
 ]
 build-backend = "hatchling.build"
 
