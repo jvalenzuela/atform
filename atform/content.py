@@ -177,10 +177,12 @@ class Test(object):
         objective (str, optional): A longer narrative, possibly spanning
             several sentences or paragraphs, describing the intent of the
             test procedure.
-        references (dict, optional): References associated with this test.
-            Keys must be labels defined with
-            :py:func:`atform.add_reference_category`; values are a list of
-            strings containing references for that category.
+        references (dict, optional): A mapping from category labels
+            defined with :py:func:`atform.add_reference_category`
+            to lists of reference strings for that category.
+            For example, ``{'C1':['rA', 'rB']}`` would result in references
+            ``'rA'`` and ``'rB'`` to be listed under the ``'C1'`` category.
+            See :ref:`ref`.
         equipment (list[str], optional): A list of equipment required to
             perform the procedure; will be rendered as a bullet list under
             a dedicated section heading.
