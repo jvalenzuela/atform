@@ -4,6 +4,7 @@
 
 from . import error
 from . import id
+from . import field
 from . import label
 from . import misc
 from . import pdf
@@ -174,6 +175,12 @@ class Test(object):
             this specific test.
         label (str, optional): An identifier for use in content strings to
             refer back to this test. See :ref:`labels`.
+        include_fields (list[str], optional): Names of fields to add to
+            this test. See :py:func:`atform.add_field`.
+        exclude_fields (list[str], optional): Names of fields to remove
+            from this test. See :py:func:`atform.add_field`.
+        active_fields (list[str], optional): Names of fields to apply
+            to this test. See :py:func:`atform.add_field`.
         objective (str, optional): A longer narrative, possibly spanning
             several sentences or paragraphs, describing the intent of the
             test procedure.
@@ -195,6 +202,9 @@ class Test(object):
     def __init__(self,
                  title,
                  label=None,
+                 include_fields=[],
+                 exclude_fields=[],
+                 active_fields=None,
                  objective=None,
                  references={},
                  equipment=[],
@@ -206,6 +216,11 @@ class Test(object):
         try:
             self.title = misc.nonempty_string('Title', title)
             self._store_label(label)
+            self.fields = field.get_active_fields(
+                include_fields,
+                exclude_fields,
+                active_fields,
+            )
             self.objective = self._validate_objective(objective)
             self.references = self._validate_refs(references)
             self.equipment = self._validate_equipment(equipment)

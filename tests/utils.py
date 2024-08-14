@@ -19,6 +19,7 @@ def reset():
     atform.id.section_titles = {}
     atform.misc.project_info = {}
     atform.sig.titles = []
-    atform.field.lengths = collections.OrderedDict()
+    atform.field.fields = collections.OrderedDict()
+    atform.field.active_names = set()
     atform.ref.titles = {}
     label.labels = {}

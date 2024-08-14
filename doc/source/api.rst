@@ -32,6 +32,7 @@ Content
    atform.format_text
    atform.Test
    atform.section
+   atform.set_active_fields
    atform.skip_test
 
 

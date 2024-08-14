@@ -466,17 +466,17 @@ class TestDocument(object):
         This section is structured as a table with a row per field.
         """
         flowables = []
-        if field.lengths:
+        if self.test.fields:
             flowables.append(self._heading('Environment'))
 
             style = self.style['Normal']
-            rows = [[Preformatted(t, style),
-                     TextEntryField(field.lengths[t], style)]
-                    for t in field.lengths]
+            rows = [[Preformatted(f.title, style),
+                     TextEntryField(f.length, style)]
+                    for f in self.test.fields]
 
             # Field title widths for column 0.
-            widths = [[stringWidth(t, style.fontName, style.fontSize)
-                       for t in field.lengths]]
+            widths = [[stringWidth(f.title, style.fontName, style.fontSize)
+                       for f in self.test.fields]]
 
             # Form field widths for column 1.
             widths.append([row[1].wrap()[0] for row in rows])

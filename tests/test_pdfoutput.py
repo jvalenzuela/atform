@@ -149,12 +149,12 @@ class Fields(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify layout of a single field."""
-        atform.add_field('Only Field (10 chars)', 10)
+        atform.add_field('Only Field (10 chars)', 10, 'f')
         self.make_test()
 
     def test_multiple(self):
-        atform.add_field('First Field (5 chars)', 5)
-        atform.add_field('Second Field (10 chars)', 10)
+        atform.add_field('First Field (5 chars)', 5, 'f1')
+        atform.add_field('Second Field (10 chars)', 10, 'f2')
         self.make_test()
 
 

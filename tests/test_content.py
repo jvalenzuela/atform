@@ -127,6 +127,114 @@ class ForwardLabelReplacement(unittest.TestCase):
         self.assertEqual('2', t.procedure[0].text)
 
 
+class FieldBase(object):
+    """Base class for field arguments of Test."""
+
+    def setUp(self):
+        utils.reset()
+        atform.add_field('f1', 42, 'f1')
+        atform.add_field('f2', 99, 'f2', False)
+        atform.add_field('f3', 10, 'f3')
+
+    def verify_next_test(self):
+        """Confirm the next test contains the originally-defined fields."""
+        t = atform.Test('title')
+        self.assertEqual([('f1', 42), ('f3', 10)], t.fields)
+
+    def test_type(self):
+        """Verify exception if the argument is not a list."""
+        with self.assertRaises(SystemExit):
+            self.make_test('f1')
+
+    def test_item_type(self):
+        """Verify exception if an item is not a string."""
+        with self.assertRaises(SystemExit):
+            self.make_test([99])
+
+    def test_undefined_item(self):
+        """Verify exception if an item is not a defined field name."""
+        with self.assertRaises(SystemExit):
+            self.make_test(['foo'])
+
+
+class IncludeFields(FieldBase, unittest.TestCase):
+    """Tests for the include_fields argument of Test."""
+
+    def make_test(self, fields):
+        """Creates a test with a given list of include_fields."""
+        return atform.Test('title', include_fields=fields)
+
+    def test_add_inactive(self):
+        """Confirm including an inactive field adds it to the test."""
+        t = self.make_test(['f2'])
+        self.assertEqual([
+            ('f1', 42),
+            ('f2', 99),
+            ('f3', 10),
+            ], t.fields)
+
+    def test_add_active(self):
+        """Confirm including an active field has no effect."""
+        t = self.make_test(['f1'])
+        self.assertEqual([
+            ('f1', 42),
+            ('f3', 10),
+            ], t.fields)
+
+    def test_isolate(self):
+        """Confirm included fields do not affect later tests."""
+        self.make_test(['f2'])
+        self.verify_next_test()
+
+
+class ExcludeFields(FieldBase, unittest.TestCase):
+    """Tests for the exclude_fields argument of Test."""
+
+    def make_test(self, fields):
+        """Creates a test with a given list of exclude_fields."""
+        return atform.Test('title', exclude_fields=fields)
+
+    def test_remove_active(self):
+        """Confirm excluding an active field removes it from the test."""
+        t = self.make_test(['f1'])
+        self.assertEqual([
+            ('f3', 10),
+            ], t.fields)
+
+    def test_remove_inactive(self):
+        """Confirm excluding an inactive field has no effect."""
+        t = self.make_test(['f2'])
+        self.assertEqual([
+            ('f1', 42),
+            ('f3', 10),
+            ], t.fields)
+
+    def test_isolate(self):
+        """Confirm excluded fields do not affect later tests."""
+        self.make_test(['f1'])
+        self.verify_next_test()
+
+
+class ActiveFields(FieldBase, unittest.TestCase):
+    """Tests for the active_fields argument of Test."""
+
+    def make_test(self, fields):
+        """Creates a test with a given list of active_fields."""
+        return atform.Test('title', active_fields=fields)
+
+    def test_override(self):
+        """Confirm the given fields override the active fields."""
+        t = self.make_test(['f2'])
+        self.assertEqual([
+            ('f2', 99),
+            ], t.fields)
+
+    def test_isolate(self):
+        """Confirm active fields do not affect later tests."""
+        self.make_test(['f2'])
+        self.verify_next_test()
+
+
 class Objective(unittest.TestCase):
     """Unit tests for test objectives."""
 

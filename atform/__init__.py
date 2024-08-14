@@ -5,6 +5,7 @@ from atform.content import (
 
 from atform.field import (
     add_field,
+    set_active_fields,
 )
 
 from atform.format import (

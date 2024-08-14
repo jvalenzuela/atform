@@ -2,14 +2,25 @@ Document Setup
 ==============
 
 Several options are available in the script setup area to tailor
-test documents to a specific project. These options can *only* be
+test documents to a specific project. Unless otherwise noted,
+these options can *only* be
 specified in the setup area, and affect all tests equally.
 
 The environment in which a test is executed often needs to be recorded
-by the person executing the test. Common examples of this type of
-information are system software version, or vehicle number. The
+when the procedure is performed. Common examples of this type of
+information are software version or vehicle number. The
 :py:func:`atform.add_field` function creates a field
 where such contextual data may be entered.
+
+By default, every field will be present on all tests, but it is also
+possible to customize the fields applied to each test procedure.
+Every field must first be defined with :py:func:`atform.add_field`,
+regardless of how many tests it will be applied to. Once defined, the
+``include_fields``, ``exclude_fields``, and ``active_fields`` parameters
+of :py:class:`atform.Test` can be used to adjust the fields
+listed on a single test. To change the fields on a number of consecutive
+tests, :py:func:`atform.set_active_fields` can be used throughout the
+content area to alter the default fields.
 
 Test procedures can be configured to include an area to record personnel
 involved with the execution, review, or approval of a completed procedure.
