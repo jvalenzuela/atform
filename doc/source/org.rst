@@ -16,10 +16,10 @@ regarding numbering is all test procedures must use the same format,
 i.e., *every* test will be numbered with the same quantity of fields.
 
 When using two or more numbering fields, |project_name| refers to each field as a
-level, with the leftmost field as level zero, increasing up to
-the number of configured levels minus one. For example, when configured for
-three levels, tests will be numbered *x.y.z*; where *x* is level zero, *y* is
-level one, and *z* is level two.
+level, with the leftmost field as level one, increasing up to
+the number of configured levels. For example, when configured for
+three levels, tests will be numbered *x.y.z*; where *x* is level one, *y* is
+level two, and *z* is level three.
 
 The following example shows the two commands for organizing tests
 into sections:

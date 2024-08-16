@@ -14,15 +14,15 @@ atform.set_id_depth(2)
 # Content
 ######################################################################
 
-atform.section(0, title='The First Section')
+atform.section(1, title='The First Section')
 
 # Tests here will be numbered 1.x.
 
 # The optional id parameter of atform.section() can be used to
 # advance a level to a specific value instead of just incrementing.
-# Here the level 0 field will be advanced to 5 instead of 2, reserving
+# Here the level 1 field will be advanced to 5 instead of 2, reserving
 # sections 2.x, 3.x, and 4.x.
-atform.section(0, id=5, title='A Later Section')
+atform.section(1, id=5, title='A Later Section')
 
 atform.Test('An Important Test') # This will be 5.1.
 

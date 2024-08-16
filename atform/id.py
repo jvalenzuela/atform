@@ -47,8 +47,10 @@ def section(level, id=None, title=None):
     test numbers will be reset.
 
     Args:
-        level (int): Zero-based index of the target identifier level in which
-            to start a new section.
+        level (int): Target identifier level in which to start a new section;
+            must be greater than zero and less than the number of levels
+            configured with :py:func:`atform.set_id_depth` because the
+            highest level represents individual tests, not sections.
         id (int, optional): Target section value; target section is incremented
             by one if omitted. If specified, it must result in a jump
             forward relative to the current section, i.e., jumping backwards,
@@ -70,37 +72,41 @@ def section(level, id=None, title=None):
     if not isinstance(level, int):
         raise error.UserScriptError('Section level must be an integer.')
 
-    section_levels = range(0, len(current_id) - 1)
+    section_levels = range(1, len(current_id))
     if not level in section_levels:
         raise error.UserScriptError(
             f"Invalid section level: {level}",
-            f"Use a section level between 0 and {section_levels[-1]}, "
+            f"Use a section level between 1 and {section_levels[-1]}, "
             "inclusive."
         )
 
+    # Convert the one-based level to a zero-based index suitable for
+    # indexing current_id[].
+    id_index = level - 1
+
     # Increment the target ID level.
     if id is None:
-        current_id[level] = current_id[level] + 1
+        current_id[id_index] = current_id[id_index] + 1
 
     # Jump to a specific number.
     else:
         if not isinstance(id, int):
             raise error.UserScriptError('id must be an integer.')
-        elif id <= current_id[level]:
+        elif id <= current_id[id_index]:
             raise error.UserScriptError(
                 f"Invalid id value.",
-                f"Level {level} id must be greater than {current_id[level]}."
+                f"Level {level} id must be greater than {current_id[id_index]}."
             )
-        current_id[level] = id
+        current_id[id_index] = id
 
     # Reset higher ID levels.
-    for i in range(level + 1, len(current_id)):
+    for i in range(id_index + 1, len(current_id)):
         current_id[i] = 0
 
     if title is not None:
         if not isinstance(title, str):
             raise error.UserScriptError('Section title must be a string.')
-        section = tuple(current_id[:level + 1])
+        section = tuple(current_id[:id_index + 1])
         stripped = title.strip()
         if stripped:
             section_titles[section] = stripped
