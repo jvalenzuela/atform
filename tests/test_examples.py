@@ -28,23 +28,46 @@ EXCLUDE = set([
 OUTPUT_PATH = 'example_output'
 
 
-class Examples(unittest.TestCase):
-    """Test case for executing example scripts."""
+def setUpModule():
+    # Remove output from previous runs.
+    shutil.rmtree(OUTPUT_PATH, ignore_errors=True)
 
-    @classmethod
-    def setUpClass(cls):
-        # Remove output from previous runs.
-        shutil.rmtree(OUTPUT_PATH, ignore_errors=True)
+
+def load_tests(loader, tests, pattern):
+    """
+    Overrides the default test discovery to create a separate TestCase
+    for each example script.
+    """
+    scripts = set([f for f in SRC_FILES if f.endswith('.py')])
+    scripts.difference_update(EXCLUDE)
+
+    suite = unittest.TestSuite()
+
+    # Add a TestCase for each script.
+    for script in scripts:
+
+        # Create the TestCase class name using the script file name
+        # with the '.py' extension removed.
+        name = os.path.splitext(script)[0]
+
+        # Create a TestCase subclass dedicated to this script.
+        cls = type(name, (Example,), {'script': script})
+
+        tests = unittest.defaultTestLoader.loadTestsFromTestCase(cls)
+        suite.addTests(tests)
+
+    return suite
+
+
+class Example(unittest.TestCase):
+    """Base class for a test case executing a single script."""
 
     def setUp(self):
         utils.reset()
 
-    def test_examples(self):
-        scripts = set([f for f in SRC_FILES if f.endswith('.py')])
-        scripts.difference_update(EXCLUDE)
-        for script in scripts:
-            with ExampleRunner(script) as runner:
-                runner.run()
+    def test_example(self):
+        with ExampleRunner(self.script) as runner:
+            runner.run()
 
 
 class ExampleRunner(object):
@@ -89,7 +112,7 @@ class ExampleRunner(object):
         # path.
         cwd = os.path.join(os.getcwd(), OUTPUT_PATH, self.script)
 
-        subprocess.run(args, env=env, cwd=cwd)
+        subprocess.run(args, env=env, cwd=cwd).check_returncode()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
