@@ -49,10 +49,7 @@ class Add(unittest.TestCase):
         punc = set(string.punctuation)
         punc.remove('_')
         for p in punc:
-            with self.assertRaises(
-                    UserScriptError,
-                    msg="Failed for '{0}'".format(p)
-            ):
+            with self.subTest(p=p), self.assertRaises(UserScriptError):
                 label.add('foo' + p, 'id')
 
     def test_duplicate(self):

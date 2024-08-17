@@ -15,13 +15,15 @@ class GetId(unittest.TestCase):
     def test_single_depth_increment(self):
         """Confirm single-level IDs are properly incremented."""
         for i in range(1, 4):
-            self.assertEqual((i,), atform.id.get_id())
+            with self.subTest(i=i):
+                self.assertEqual((i,), atform.id.get_id())
 
     def test_multi_depth_increment(self):
         """Confirm multi-level IDs are properly incremented."""
         atform.id.set_id_depth(3)
         for i in range(1, 4):
-            self.assertEqual((1, 1, i), atform.id.get_id())
+            with self.subTest(i=i):
+                self.assertEqual((1, 1, i), atform.id.get_id())
 
     def test_level_initialization(self):
         """Confirm levels that have been reset are initialized to 1."""
@@ -71,7 +73,7 @@ class Section(unittest.TestCase):
         atform.set_id_depth(2)
         atform.section(1, id=3)
         for id in range(-1, 4):
-            with self.assertRaises(SystemExit):
+            with self.subTest(id=id), self.assertRaises(SystemExit):
                 atform.section(1, id=id)
 
     def test_title_type(self):
@@ -151,7 +153,7 @@ class SetIdDepth(unittest.TestCase):
     def test_levels_leq_zero(self):
         """Confirm an exception is raised for arguments less than 1."""
         for level in [-1, 0]:
-            with self.assertRaises(SystemExit):
+            with self.subTest(level=level), self.assertRaises(SystemExit):
                 atform.id.set_id_depth(level)
 
     def test_after_test_created(self):
@@ -180,7 +182,7 @@ class SkipTest(unittest.TestCase):
     def test_invalid_id(self):
         """Confirm exception for invalid id values."""
         for id in [-1, 0]:
-            with self.assertRaises(SystemExit):
+            with self.subTest(id=id), self.assertRaises(SystemExit):
                 atform.skip_test(id)
 
     def test_zero_distance_first(self):

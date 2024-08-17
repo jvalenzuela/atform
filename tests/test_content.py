@@ -454,7 +454,7 @@ class ProcedureStepFieldLength(ProcedureStepBase, unittest.TestCase):
     def test_invalid_length(self):
         """Confirm exception for a length less than one."""
         for i in [-1, 0]:
-            with self.assertRaises(SystemExit):
+            with self.subTest(i=i), self.assertRaises(SystemExit):
                 self.make_field(('field', i))
 
 
