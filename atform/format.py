@@ -42,7 +42,7 @@ def bullet_list(*items):
     Args:
         *items (str): The bullet list items. This is *not* a Python list of
             items, but rather each item passed as a separate parameter.
-            E.g., `'Item 1', 'Item 2'`, not `['Item 1', 'Item 2']`.
+            E.g., ``'Item 1', 'Item 2'``, not ``['Item 1', 'Item 2']``.
 
     Returns:
         str: The entire list with embedded formatting that can be incorporated
