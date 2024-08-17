@@ -44,7 +44,7 @@ def section(level, id=None, title=None):
 
     The target section level is incremented, and the new section can be given
     an optional title. All subsections after the target level and individual
-    test numbers will be reset.
+    test numbers will be reset back to one.
 
     Args:
         level (int): Target identifier level in which to start a new section;
@@ -55,8 +55,11 @@ def section(level, id=None, title=None):
             by one if omitted. If specified, it must result in a jump
             forward relative to the current section, i.e., jumping backwards,
             or even to the current section, is not permitted.
-        title (str, optional): Section title. Must only contain characters
-            allowed in file system folder names.
+        title (str, optional): Section title; this information is only used
+            to name the folder where output PDFs for tests in
+            this section are generated, and consequently may only contain
+            characters allowed in file system folder names. If not provided,
+            the section folder name will just be the section number.
     """
     global current_id
     global section_titles
