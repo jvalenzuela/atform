@@ -25,7 +25,7 @@ def setup_only(func):
                 "Call this function before any tests or sections are created."
             )
 
-        func(*args, *kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
