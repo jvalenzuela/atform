@@ -3,6 +3,8 @@
 
 from . import error
 from . import misc
+import pathlib
+import tempfile
 
 
 # Fields assigned to the most recent test.
@@ -29,6 +31,29 @@ def get_id():
 def to_string(id):
     """Generates a presentation string for a given ID tuple."""
     return '.'.join([str(x) for x in id])
+
+
+def validate_section_title(title):
+    """Confirms a section title is valid.
+
+    Validation is implemented by attempting to create a folder named with
+    the title in a temporary directory.
+    """
+    if not isinstance(title, str):
+        raise error.UserScriptError('Section title must be a string.')
+
+    with tempfile.TemporaryDirectory() as tdir:
+        path = pathlib.Path(tdir, title)
+        try:
+            path.mkdir()
+        except OSError:
+            raise error.UserScriptError(
+                f"Invalid section title: '{title}'",
+                """
+                Use a section title that is also a valid file system
+                folder name.
+                """,
+            )
 
 
 ################################################################################
@@ -107,8 +132,7 @@ def section(level, id=None, title=None):
         current_id[i] = 0
 
     if title is not None:
-        if not isinstance(title, str):
-            raise error.UserScriptError('Section title must be a string.')
+        validate_section_title(title)
         section = tuple(current_id[:id_index + 1])
         stripped = title.strip()
         if stripped:

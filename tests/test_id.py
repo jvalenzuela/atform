@@ -114,29 +114,23 @@ class Section(unittest.TestCase):
         atform.section(1)
         self.assertNotIn((1,), atform.id.section_titles)
 
-    def test_empty_title(self):
-        """Confirm no title is saved if title is an empty string."""
-        atform.set_id_depth(2)
-        atform.section(1, title='')
-        self.assertNotIn((1,), atform.id.section_titles)
+    def test_invalid_title(self):
+        """Confirm exception for a title that is not a valid folder name.
 
-    def test_blank_title(self):
-        """Confirm no title is saved if title is all whitespace."""
+        The list of invalid characters varies widely among operating
+        systems, so this test uses a single character universally
+        rejected.
+        """
+        utils.reset()
         atform.set_id_depth(2)
-        atform.section(1, title='\n\r\t ')
-        self.assertNotIn((1,), atform.id.section_titles)
+        with self.assertRaises(SystemExit):
+            atform.section(1, title='/')
 
     def test_title_store(self):
         """Confirm the title is saved."""
         atform.set_id_depth(2)
         atform.section(1, title='spam')
         self.assertEqual('spam', atform.id.section_titles[(1,)])
-
-    def test_title_strip(self):
-        """Confirm the saved title is stripped of surrounding whitespace."""
-        atform.set_id_depth(2)
-        atform.section(1, title='\nfoo\t \r ')
-        self.assertEqual('foo', atform.id.section_titles[(1,)])
 
 
 class SetIdDepth(unittest.TestCase):
