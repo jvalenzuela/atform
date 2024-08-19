@@ -118,7 +118,8 @@ class AddFieldActive(unittest.TestCase):
     def test_type(self):
         """Verify exception if not a boolean."""
         for i in [0, 1, '']:
-            with self.assertRaises(SystemExit):
+            utils.reset()
+            with self.subTest(i=i), self.assertRaises(SystemExit):
                 atform.add_field('title', 1, 'foo', i)
 
     def test_default(self):
