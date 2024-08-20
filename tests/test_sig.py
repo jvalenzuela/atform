@@ -13,12 +13,6 @@ class AddSignature(unittest.TestCase):
     def setUp(self):
         utils.reset()
 
-    def test_after_content(self):
-        """Confirm exception if called after a test or section is created."""
-        atform.id.current_id = [2] # Simulate a generated test.
-        with self.assertRaises(SystemExit):
-            atform.add_signature('foo')
-
     def test_title_type(self):
         """Confirm exception for a non-string title."""
         with self.assertRaises(SystemExit):
@@ -44,3 +38,14 @@ class AddSignature(unittest.TestCase):
         expected = ['foo', 'bar', 'spam', 'eggs']
         [atform.add_signature(s) for s in expected]
         self.assertEqual(expected, atform.sig.titles)
+
+
+class AddSignatureContentArea(utils.ContentAreaException):
+    """
+    Tests to confirm exceptions when calling add_signature() outside of
+    the setup area.
+    """
+
+    @staticmethod
+    def call():
+        atform.add_signature('foo')

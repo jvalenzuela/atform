@@ -25,11 +25,16 @@ class AddField(unittest.TestCase):
             ('foo', 99),
             ], t.fields)
 
-    def test_after_test_created(self):
-        """Confirm exception if called after creating tests."""
-        atform.id.current_id = [2]  # Simulate a generated test.
-        with self.assertRaises(SystemExit):
-            atform.add_field('foo', 1, 'foo')
+
+class AddFieldContentAreaException(utils.ContentAreaException):
+    """
+    Tests to confirm exceptions when calling add_field() outside of
+    the setup area.
+    """
+
+    @staticmethod
+    def call():
+        atform.add_field('foo', 1, 'foo')
 
 
 class AddFieldTitle(unittest.TestCase):

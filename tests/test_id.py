@@ -150,16 +150,21 @@ class SetIdDepth(unittest.TestCase):
             with self.subTest(level=level), self.assertRaises(SystemExit):
                 atform.id.set_id_depth(level)
 
-    def test_after_test_created(self):
-        """Confirm an exception is raised if called after creating tests."""
-        atform.id.current_id = [2] # Simulate a generated test.
-        with self.assertRaises(SystemExit):
-            atform.set_id_depth(2)
-
     def test_set_current_id(self):
         """Confirm the current ID is correctly updated."""
         atform.set_id_depth(3)
         self.assertEqual([0] * 3, atform.id.current_id)
+
+
+class SetIdDepthContentAreaException(utils.ContentAreaException):
+    """
+    Tests to confirm exceptions when calling set_id_depth() outside of
+    the setup area.
+    """
+
+    @staticmethod
+    def call():
+        atform.set_id_depth(2)
 
 
 class SkipTest(unittest.TestCase):

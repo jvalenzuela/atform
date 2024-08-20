@@ -68,11 +68,16 @@ class TestAddReferenceCategory(unittest.TestCase):
         atform.add_reference_category('foo', 'bar')
         self.assertEqual({'bar':'foo'}, atform.ref.titles)
 
-    def test_after_setup(self):
-        """Confirm exception if called after creating tests or sections."""
-        atform.id.current_id = [2] # Simulate a generated test.
-        with self.assertRaises(SystemExit):
-            atform.add_reference_category('foo', 'bar')
+
+class AddReferenceCategoryContentAreaException(utils.ContentAreaException):
+    """
+    Tests to confirm exceptions when calling add_reference_category()
+    outside of the setup area.
+    """
+
+    @staticmethod
+    def call():
+        atform.add_reference_category('foo', 'bar')
 
 
 class GetXRef(unittest.TestCase):
