@@ -342,13 +342,7 @@ class Test(object):
                 raise
         return items
 
-    def _store_call_frame(self, frame):
-        """
-        Stores the traceback frame where this object was created in the
-        user script.
-        """
-        self.call_frame = frame
-
+    @error.external_call
     def _pregenerate(self):
         """
         Performs tasks that need to occur after all tests have been defined,
@@ -357,13 +351,6 @@ class Test(object):
         try:
             self._resolve_labels()
         except error.UserScriptError as e:
-            # Exceptions in _pregenerate() use the call frame from when this
-            # object was originally created in the user script because this
-            # method is called after all Test() objects have been created.
-            # The original call frame contains the actual location of the
-            # problem.
-            e.call_frame = self.call_frame
-
             self._add_exception_context(e)
 
     def _resolve_labels(self):

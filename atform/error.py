@@ -9,6 +9,7 @@
 
 import collections
 import functools
+import inspect
 import textwrap
 import traceback
 
@@ -18,14 +19,14 @@ import traceback
 DEBUG = False
 
 
-def exit_on_script_error(func):
+def exit_on_script_error(api):
     """Decorator to exit upon catching a ScriptError.
 
     This must only be applied to public API objects to ensure all context
     is added to the original exception. When stacked with other decorators
     it must be outermost, i.e., listed first.
     """
-    @functools.wraps(func)
+    @functools.wraps(api)
     def wrapper(*args, **kwargs):
 
         # Capture the location where this API was called from the
@@ -37,7 +38,7 @@ def exit_on_script_error(func):
         call_frame = traceback.extract_stack(limit=2)[0]
 
         try:
-            result = func(*args, **kwargs)
+            result = api(*args, **kwargs)
 
         except UserScriptError as e:
 
@@ -47,11 +48,8 @@ def exit_on_script_error(func):
             # Use the frame from this call if the exception does not
             # provide one.
             except AttributeError:
-                frame = call_frame
-                e.api = func
-
-            e.add_field('Line Number', frame.lineno)
-            e.add_field('File', frame.filename)
+                e.call_frame = call_frame
+                e.api = api
 
             if DEBUG:
                 raise
@@ -61,14 +59,36 @@ def exit_on_script_error(func):
             else:
                 raise SystemExit(e) from e
 
-        # Some object types need to store the call frame where they were
-        # created so it can be attached to UserScriptError exceptions.
-        try:
-            result._store_call_frame(call_frame)
-        except AttributeError:
-            pass
+        # For API classes, store the call frame where the object was created
+        # in the instance. This attribute is needed by the
+        # @external_call decorator.
+        if inspect.isclass(api):
+            result._call_frame = call_frame
 
         return result
+
+    return wrapper
+
+
+def external_call(method):
+    """Decorator for methods called after an object is created.
+
+    Methods that can raise UserScriptError to indicate a problem with
+    data provided when the object was initially created, but are called
+    after the instance was created, i.e., indirectly by some other API,
+    need to have the traceback point back to where the instance was created,
+    not the API that called the method. This decorator adds the call frame
+    stored in the object, which was cached by @exit_on_script_error
+    when the object was originally created, to a raised UserScriptError,
+    overriding the call frame from the top-level API that called this method.
+    """
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        try:
+            return method(self, *args, **kwargs)
+        except UserScriptError as e:
+            e.call_frame = self._call_frame
+            raise
 
     return wrapper
 
@@ -108,6 +128,9 @@ class UserScriptError(Exception):
 
         if has_api:
             self.fields['In Call To'] = f"atform.{self.api.__name__}"
+
+        self.fields['Line Number'] = self.call_frame.lineno
+        self.fields['File'] = self.call_frame.filename
 
         # Compute the indentation required to right-align all field names.
         indent = max([len(s) for s in self.fields.keys()])
