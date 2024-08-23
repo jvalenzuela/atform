@@ -25,6 +25,7 @@ def validate_name_list(title, lst):
     """Verifies a list to confirm it contains only valid field names."""
     if not isinstance(lst, list):
         raise error.UserScriptError(
+            f"Invalid {title} data type: {type(lst).__name__}",
             f"{title} must be a list of field names.",
         )
     names = set()

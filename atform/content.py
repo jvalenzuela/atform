@@ -43,7 +43,9 @@ class ProcedureStep(object):
 
         else:
             raise error.UserScriptError(
-                "A procedure step must be a string or dictionary.")
+                f"Invalid procedure step data type: {type(raw).__name__}",
+                "A procedure step must be a string or dictionary.",
+            )
 
         return normalized
 
@@ -75,6 +77,10 @@ class ProcedureStep(object):
         tpls = data.pop("fields", [])
         if not isinstance(tpls, list):
             raise error.UserScriptError(
+                f"""
+                Invalid procedure step fields data type:
+                {type(tpls).__name__}
+                """,
                 "Procedure step fields must be a list.",
             )
 
@@ -95,7 +101,15 @@ class ProcedureStep(object):
         """
         if not isinstance(tpl, tuple):
             raise error.UserScriptError(
-                "Procedure step fields list items must be tuples.")
+                f"""
+                Invalid procedure step field list item data type:
+                {type(tpl).__name__}
+                """,
+                """
+                Each item in the list of fields for a procedure step must
+                be a tuple.
+                """,
+            )
 
         # Validate the required items: title and length.
         try:
@@ -103,8 +117,14 @@ class ProcedureStep(object):
             raw_length = tpl[1]
         except IndexError:
             raise error.UserScriptError(
-                "Procedure step field tuples must have at least two members: "
-                "title and length.")
+                """
+                Procedure step field tuple is too short.
+                """,
+                """
+                A tuple defining a data entry field for a procedure step
+                must have at least two members: title and length.
+                """,
+            )
         else:
             title = misc.nonempty_string(
                 "Procedure step field title",
@@ -122,8 +142,13 @@ class ProcedureStep(object):
 
         if len(tpl) > 3:
             raise error.UserScriptError(
-                """Procedure step field tuples may not exceed three members:
-                title, length, and suffix.""",
+                """
+                Procedure step field tuple is too long.
+                """,
+                """
+                A tuple defining a data entry field for a procedure step
+                may not exceed three members: title, length, and suffix.
+                """,
             )
 
         return ProcedureStepField(title, length, suffix)
@@ -253,6 +278,10 @@ class Test(object):
         """Validates the references parameter."""
         if not isinstance(refs, dict):
             raise error.UserScriptError("References must be a dictionary.")
+            raise error.UserScriptError(
+                f"Invalid references data type: {type(refs).__name__}",
+                "References must be a dictionary.",
+            )
 
         validated = {}
         [validated.update(self._validate_ref_category(label, refs[label]))
@@ -285,7 +314,16 @@ class Test(object):
         for reference in refs:
             try:
                 if not isinstance(reference, str):
-                    raise error.UserScriptError("References must be strings.")
+                    raise error.UserScriptError(
+                        f"""
+                        Invalid reference list item data type:
+                        {type(reference).__name__}
+                        """,
+                        """
+                        Items in the list for a reference category
+                        must be strings.
+                        """,
+                    )
                 reference = reference.strip()
 
                 # Reject duplicate references.

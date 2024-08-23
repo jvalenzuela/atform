@@ -33,7 +33,10 @@ def setup_only(func):
 def nonempty_string(name, s):
     """Checks a string to ensure it is not empty or blank."""
     if not isinstance(s, str):
-        raise error.UserScriptError(f"{name} must be a string.")
+        raise error.UserScriptError(
+            f"Invalid {name} data type: {type(s).__name__}",
+            f"{name} must be a string.",
+        )
     stripped = s.strip()
     if not stripped:
         raise error.UserScriptError(
@@ -46,9 +49,15 @@ def nonempty_string(name, s):
 def validate_field_length(length):
     """Validates a data entry field length."""
     if not isinstance(length, int):
-        raise error.UserScriptError("Field length must be an integer.")
+        raise error.UserScriptError(
+            f"Invalid field length data type: {type(length).__name__}",
+            "Field length must be an integer.",
+        )
     if length < 1:
-        raise error.UserScriptError("Field length must be greater than zero.")
+        raise error.UserScriptError(
+            f"Invalid field length value: {length}",
+            "Field length must be greater than zero.",
+        )
     return length
 
 

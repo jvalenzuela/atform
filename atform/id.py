@@ -40,7 +40,10 @@ def validate_section_title(title):
     the title in a temporary directory.
     """
     if not isinstance(title, str):
-        raise error.UserScriptError("Section title must be a string.")
+        raise error.UserScriptError(
+            f"Invalid section title data type: {type(title).__name__}",
+            "Section title must be a string.",
+        )
 
     with tempfile.TemporaryDirectory() as tdir:
         path = pathlib.Path(tdir, title)
@@ -98,7 +101,10 @@ def section(level, id=None, title=None):
         )
 
     if not isinstance(level, int):
-        raise error.UserScriptError("Section level must be an integer.")
+        raise error.UserScriptError(
+            f"Invalid section level data type: {type(level).__name__}",
+            "Section level must be an integer.",
+        )
 
     section_levels = range(1, len(current_id))
     if not level in section_levels:
@@ -119,7 +125,10 @@ def section(level, id=None, title=None):
     # Jump to a specific number.
     else:
         if not isinstance(id, int):
-            raise error.UserScriptError("id must be an integer.")
+            raise error.UserScriptError(
+                f"Invalid id data type: {type(id).__name__}",
+                "id must be an integer.",
+            )
         elif id <= current_id[id_index]:
             raise error.UserScriptError(
                 f"Invalid id value.",
@@ -153,7 +162,10 @@ def set_id_depth(levels):
     """
     global current_id
     if not isinstance(levels, int):
-        raise error.UserScriptError("Identifier depth must be an integer.")
+        raise error.UserScriptError(
+            f"Invalid ID levels data type: {type(levels).__name__}",
+            "The number of ID levels must be an integer.",
+        )
     if levels < 1:
         raise error.UserScriptError(
             f"Invalid identifier depth value: {levels}",
@@ -183,7 +195,10 @@ def skip_test(id=None):
 
     if id is not None:
         if not isinstance(id, int):
-            raise error.UserScriptError("id must be an integer.")
+            raise error.UserScriptError(
+                f"Invalid id data type: {type(id).__name__}",
+                "id must be an integer.",
+            )
         if id <= current_id[-1]:
             raise error.UserScriptError(
                 f"Invalid id value: {id}",

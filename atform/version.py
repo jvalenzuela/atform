@@ -28,9 +28,15 @@ def require_version(major, minor=0):
         minor (int, optional): The required minor version.
     """
     if not isinstance(major, int):
-        raise error.UserScriptError("Major version must be an integer.")
+        raise error.UserScriptError(
+            f"Invalid major version data type: {type(major).__name__}",
+            "Major version must be an integer.",
+        )
     if not isinstance(minor, int):
-        raise error.UserScriptError("Minor version must be an integer.")
+        raise error.UserScriptError(
+            f"Invalid minor version data type: {type(minor).__name__}",
+            "Minor version must be an integer.",
+        )
     if major < 1:
         raise error.UserScriptError(
             f"Invalid major version: {major}",

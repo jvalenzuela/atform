@@ -22,6 +22,17 @@ FONTS = {
 }
 
 
+def allowed_format(i):
+    """
+    Formats a list of allowable format selectors into a string for use in
+    error messages.
+    """
+    uniq = set([f[i] for f in FONTS])
+    quoted = [f"'{s}'" for s in uniq]
+    quoted.sort()
+    return ", ".join(quoted[:-1]) + f", or {quoted[-1]}"
+
+
 ################################################################################
 # Public API
 #
@@ -62,7 +73,7 @@ def bullet_list(*items):
             item = i.strip()
         except AttributeError:
             raise error.UserScriptError(
-                f"Invalid bullet list item type: {i}",
+                f"Invalid bullet list item type: {type(i).__name__}",
                 "Bullet list items must be strings.",
             )
         else:
@@ -112,12 +123,14 @@ def format_text(text, typeface="normal", font="normal"):
     if not typeface in typefaces:
         raise error.UserScriptError(
             f"Invalid text format typeface: {typeface}",
+            f"Select {allowed_format(0)} as a typeface.",
         )
 
     fonts = set([k[1] for k in FONTS.keys()])
     if not font in fonts:
         raise error.UserScriptError(
-            f"Invalid text font: {font}",
+            f"Invalid text format font: {font}",
+            f"Select {allowed_format(1)} as a font.",
         )
 
     font_values = FONTS[(typeface, font)]

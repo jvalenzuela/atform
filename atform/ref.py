@@ -38,24 +38,10 @@ def add_reference_category(title, label):
     global titles
 
     # Validate title.
-    if not isinstance(title, str):
-        raise error.UserScriptError("Reference title must be a string.")
-    title_stripped = title.strip()
-    if not title_stripped:
-        raise error.UserScriptError(
-            "Reference title must not be blank.",
-            "Add printable characters to the title, or remove the category.",
-        )
+    title_stripped = misc.nonempty_string("reference category title", title)
 
     # Validate label.
-    if not isinstance(label, str):
-        raise error.UserScriptError("Reference label must be a string.")
-    label_stripped = label.strip()
-    if not label_stripped:
-        raise error.UserScriptError(
-            "Reference label must not be blank.",
-            "Add printable characters to the label, or remove the category.",
-        )
+    label_stripped = misc.nonempty_string("reference category label", label)
     if label_stripped in titles:
         raise error.UserScriptError(
             f"Duplicate reference label: {label_stripped}",
