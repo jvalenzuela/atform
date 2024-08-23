@@ -1,3 +1,7 @@
+This document contains information relevant for package development and
+maintenance; refer to the main README.md for end user documentation.
+
+
 Docstring Format
 ================
 

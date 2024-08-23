@@ -16,6 +16,7 @@ build-backend = "hatchling.build"
 [project]
 name = "atform"
 description = "Acceptance test procedure form generator."
+readme = "README.md"
 authors = [
     {name = "Jason Valenzuela", email = "jvalenzuela1977@gmail.com"},
 ]
