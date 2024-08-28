@@ -4,6 +4,7 @@
 
 from tests import utils
 import atform
+import functools
 import string
 import unittest
 from unittest.mock import patch
@@ -26,6 +27,22 @@ class Base(object):
         atform.Test(title, **kwargs)
         if generate:
             atform.generate()
+
+
+def nosplit(method):
+    """Decorator for methods verifying a section is not split across pages.
+
+    This works by patching the distance between sections to create a large
+    amount of space after the Objective section, forcing the section
+    being tested to the bottom of the first page. The wrapped test method
+    then only needs to make the section being tested suitably long enough
+    that it would be split across the page break.
+    """
+    @patch.object(atform.pdf, 'SECTION_SEP', new=550)
+    @functools.wraps(method)
+    def wrapper(self):
+        method(self)
+    return wrapper
 
 
 class VersionControl(Base, unittest.TestCase):
@@ -107,6 +124,17 @@ class References(Base, unittest.TestCase):
                 'long':[str(x) for x in range(50)],
         })
 
+    @nosplit
+    def test_nosplit(self):
+        """Verify references section is on the top of the second page."""
+        num_refs = 10
+        [atform.add_reference_category(f"r{i}", f"r{i}")
+         for i in range(num_refs)]
+
+        self.make_test(
+            references=dict([(f"r{i}", ['spam']) for i in range(num_refs)])
+        )
+
 
 class Equipment(Base, unittest.TestCase):
     """Tests for the Equipment section."""
@@ -143,6 +171,13 @@ class Equipment(Base, unittest.TestCase):
                 'The last equipment.'
             ])
 
+    @nosplit
+    def test_nosplit(self):
+        """Verify Equipment section is at the top of the second page."""
+        self.make_test(
+            equipment=[str(i) for i in range(10)]
+        )
+
 
 class Fields(Base, unittest.TestCase):
     """Tests for Environment section fields."""
@@ -155,6 +190,12 @@ class Fields(Base, unittest.TestCase):
     def test_multiple(self):
         atform.add_field('First Field (5 chars)', 5, 'f1')
         atform.add_field('Second Field (10 chars)', 10, 'f2')
+        self.make_test()
+
+    @nosplit
+    def test_nosplit(self):
+        """Verify Environment section starts at the top of the second page."""
+        [atform.add_field(f"f{i}", 5, f"f{i}") for i in range(10)]
         self.make_test()
 
 
@@ -190,6 +231,13 @@ class Preconditions(Base, unittest.TestCase):
             """,
             'The last precondition.'
         ])
+
+    @nosplit
+    def test_nosplit(self):
+        """Verify Preconditions starts at the top of the second page."""
+        self.make_test(
+            preconditions=[str(i) for i in range(10)]
+        )
 
 
 class Procedure(Base, unittest.TestCase):
@@ -279,6 +327,31 @@ class Procedure(Base, unittest.TestCase):
 
         self.make_test(procedure=procedure)
 
+    def test_nosplit_first_step(self):
+        """Verify Procedure section starts at the top of the second page.
+
+        This is a null test because there does seeem to be a way to get
+        Reportlab to split the procedure table between the the header row
+        and first step.
+        """
+        pass
+
+    @nosplit
+    def test_nosplit_last_row(self):
+        """Verify the second page starts with the last step."""
+        self.make_test(
+            procedure=['step'] * 2
+        )
+
+
+class Notes(Base, unittest.TestCase):
+    """Tests for the Notes section."""
+
+    @nosplit
+    def test_nosplit(self):
+        """Verify the Notes section starts at the top of the second page."""
+        self.make_test()
+
 
 class Approval(Base, unittest.TestCase):
     """Tests for the Approval section."""
@@ -293,6 +366,16 @@ class Approval(Base, unittest.TestCase):
         atform.add_signature('First Signature')
         atform.add_signature('Second Signature')
         atform.add_signature('Third Signature')
+        self.make_test()
+
+    def test_nosplit(self):
+        """Verify approval section is on the top of the second page.
+
+        This method does not use the @nosplit decorator because
+        the Approval section comes after Notes, so it just creates
+        enough signature entries to require a page break.
+        """
+        [atform.add_signature(f"Sig{i}") for i in range(25)]
         self.make_test()
 
 
