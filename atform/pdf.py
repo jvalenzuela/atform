@@ -139,7 +139,12 @@ def build_path(tid, root):
     return os.path.join(*folders)
 
 
-def max_width(items, style_name):
+def max_width(
+        items,
+        style_name,
+        left_pad=DEFAULT_TABLE_HORIZ_PAD,
+        right_pad=DEFAULT_TABLE_HORIZ_PAD,
+):
     """Finds the width required to hold the longest among a set of strings.
 
     Used to size a table column such that it can hold the content
@@ -150,7 +155,7 @@ def max_width(items, style_name):
               for i in items]
 
     # The final width includes left and right table padding.
-    return max(widths) + (DEFAULT_TABLE_HORIZ_PAD * 2)
+    return max(widths) + left_pad + right_pad
 
 
 class TableFormat(object):
@@ -556,14 +561,6 @@ class ProcedureList(object):
     The procedure list is built as a table, with one row per step.
     """
 
-    # Vertical space between the text and data entry fields in a
-    # single procedure step.
-    FIELD_TABLE_SEP = 12 * point
-
-    # Horizontal space between columns in table containing the
-    # data entry fields for a step.
-    FIELD_TABLE_HORIZ_PAD = 6 * point
-
     # Header row text.
     HEADER_FIELDS = ['Step #', 'Description', 'Pass']
 
@@ -602,67 +599,14 @@ class ProcedureList(object):
         flowables = make_paragraphs(step.text)
 
         if step.fields:
-                flowables.append(Spacer(0, self.FIELD_TABLE_SEP))
-                flowables.append(self._make_fields(step.fields))
+            flowables.extend(ProcedureStepFields(step.fields).flowables)
 
         return flowables
-
-    def _make_fields(self, fields):
-        """Makes a flowable with all data entry fields for a single step.
-
-        Fields are arranged into a table, with one row per field.
-        """
-        style = stylesheet['Normal']
-        rows = []
-        for field in fields:
-            row = [
-                Preformatted(field.title, style),
-                TextEntryField(field.length),
-            ]
-
-            # Add the optional suffix if it exists.
-            if field.suffix:
-                row.append(Preformatted(field.suffix, style))
-
-            rows.append(row)
-
-        return Table(
-            rows,
-            colWidths=self._field_table_widths(rows),
-            style=self._field_table_style,
-        )
-
-    def _field_table_widths(self, rows):
-        """
-        Computes the column widths for a table containing data entry
-        fields in a single step.
-        """
-        widths = []
-
-        widths.append([row[0].minWidth() for row in rows])
-        widths.append([row[1].minWidth() for row in rows])
-
-        max_widths = [max(l) + self.FIELD_TABLE_HORIZ_PAD for l in widths]
-
-        # The last column for the suffix takes up all remaining space.
-        max_widths.append(None)
-
-        return max_widths
 
     def _add_last_row(self):
         """Creates the final row indicating the end of the procedure."""
         self.rows.append([
             Paragraph('End Procedure', stylesheet['ProcedureTableHeading'])
-        ])
-
-    @property
-    def _field_table_style(self):
-        """
-        Creates the style for table containing data entry fields in a
-        single step.
-        """
-        return TableStyle([
-            ('LEFTPADDING', (0, 0), (-1, -1), 0 * point),
         ])
 
     @property
@@ -741,6 +685,78 @@ class ProcedureList(object):
                 (-1, 'splitlast')
             ),
         ]
+
+
+class ProcedureStepFields(object):
+    """Generates data entry fields for a single procedure step.
+
+    Each field is implemented as a table with one row to permit varying
+    column widths among each field.
+    """
+
+    # Vertical space between the procedure step text and data entry fields.
+    FIELD_TABLE_SEP = 12 * point
+
+    # Table column indices.
+    TITLE_COL = 0
+    FIELD_COL = 1
+    SUFFIX_COL = 2
+
+    def __init__(self, fields):
+        self.fields = fields
+
+        # Width of the title column for every field is set to accommodate
+        # the longest title.
+        self.title_col_width = max_width(
+            [f.title for f in fields],
+            'Normal',
+            left_pad=0,
+        )
+
+    @property
+    def flowables(self):
+        """Generates the list of flowables to include in the parent step."""
+        flowables = [Spacer(0, self.FIELD_TABLE_SEP)]
+        flowables.extend([self._make_row(f) for f in self.fields])
+        return flowables
+
+    def _make_row(self, field):
+        """Constructs the table representing a single field."""
+        text_entry_field = TextEntryField(field.length)
+        row = [
+            Paragraph(field.title, stylesheet['NormalRight']),
+            text_entry_field,
+        ]
+
+        # Add the optional suffix.
+        if field.suffix:
+            row.append(Paragraph(field.suffix, stylesheet['Normal']))
+
+        widths = [
+            self.title_col_width,
+            text_entry_field.wrap()[0],
+            None,
+        ]
+
+        style = [
+            # Remove left padding from the first column to keep the entire
+            # set of fields left-aligned with the parent procedure step.
+            # Right padding remains to separate the title from the text
+            # entry field.
+            ('LEFTPADDING', (self.TITLE_COL, 0), (self.TITLE_COL, -1), 0),
+
+            # Remove all horizontal padding surrounding the text entry field.
+            # Separation from adjacent columns is provided by padding in
+            # those other columns.
+            ('LEFTPADDING', (self.FIELD_COL, 0), (self.FIELD_COL, -1), 0),
+            ('RIGHTPADDING', (self.FIELD_COL, 0), (self.FIELD_COL, -1), 0),
+        ]
+
+        return Table(
+            [row],
+            colWidths=widths,
+            style=style,
+        )
 
 
 class Approval(object):

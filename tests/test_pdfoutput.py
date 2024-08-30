@@ -317,12 +317,24 @@ class Procedure(Base, unittest.TestCase):
 
             {
                 'text':"""
+                This is a procedure step with a single data entry field
+                with a suffix.
+                """,
+                'fields':[
+                    ('Spam Eggs', 10, 'Foo Bar'),
+                ]
+            },
+
+            {
+                'text':"""
                 This is a procedure step with multiple data entry fields,
-                all with suffixes.
+                all with suffixes. Ensure field titles are right-justified
+                and suffixes are left-justified against the text entry
+                field.
                 """,
                 'fields':[
                     ('Spam', 10, 'Eggs'),
-                    ('Foo', 3, 'Bar'),
+                    ('A Long Title', 3, 'Bar'),
                 ]
             },
         ]
