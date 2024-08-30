@@ -184,7 +184,11 @@ class Fields(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify layout of a single field."""
-        atform.add_field('Only Field (10 chars)', 10, 'f')
+        atform.add_field(
+            'Enter "Xy"; verify cap height and descender',
+            3,
+            'f',
+        )
         self.make_test()
 
     def test_multiple(self):

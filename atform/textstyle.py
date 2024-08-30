@@ -108,3 +108,11 @@ stylesheet.add(ParagraphStyle(
     fontName='Helvetica-Bold',
     fontSize=200 * point,
 ))
+
+
+# Content entered into a TextEntryField.
+stylesheet.add(ParagraphStyle(
+    name='TextField',
+    parent=stylesheet['Normal'],
+    fontName='Helvetica',
+))

@@ -421,7 +421,7 @@ class TestDocument(object):
         """Generates the Environment section."""
         if self.test.fields:
             rows = [[Paragraph(f.title, stylesheet['NormalRight']),
-                     TextEntryField(f.length, 'Normal')]
+                     TextEntryField(f.length)]
                     for f in self.test.fields]
 
             # Field title widths for column 0.
@@ -617,7 +617,7 @@ class ProcedureList(object):
         for field in fields:
             row = [
                 Preformatted(field.title, style),
-                TextEntryField(field.length, 'Normal'),
+                TextEntryField(field.length),
             ]
 
             # Add the optional suffix if it exists.
@@ -790,13 +790,12 @@ class Approval(object):
 
     def _name_entry_field(self):
         """Creates a name entry field."""
-        return TextEntryField(self.NAME_WIDTH, 'Normal')
+        return TextEntryField(self.NAME_WIDTH)
 
     def _date_entry_field(self):
         """Creates a date entry field."""
         return TextEntryField(
             '0000/00/00',
-            'Normal',
             'YYYY/MM/DD'
         )
 
@@ -953,12 +952,13 @@ class Checkbox(Flowable):
 class TextEntryField(Flowable):
     """Creates an Acroform for entering a single line of text."""
 
-    # Coefficient applied to the font size to calculate box height.
-    HEIGHT_FACTOR = 1.2
+    # Coefficient applied to the font size to calculate box height; set
+    # to accommodate descenders.
+    HEIGHT_FACTOR = 1.3
 
-    def __init__(self, width, style_name, tooltip=None):
+    def __init__(self, width, tooltip=None):
         super().__init__()
-        self.style = stylesheet[style_name]
+        self.style = stylesheet['TextField']
         self.tooltip = tooltip
         self.width = self._calc_width(width)
         self.height = self.style.fontSize * self.HEIGHT_FACTOR
