@@ -7,19 +7,15 @@ from . import (
     ref,
     sig,
 )
+from .textstyle import (
+    point,
+    stylesheet,
+)
 import functools
 import io
 import os
 from reportlab.lib import colors
-from reportlab.lib.enums import (
-    TA_CENTER,
-    TA_RIGHT,
-)
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import (
-    getSampleStyleSheet,
-    ParagraphStyle,
-)
 from reportlab.lib.units import inch
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
@@ -33,13 +29,6 @@ from reportlab.platypus import (
     TableStyle,
 )
 from reportlab.platypus.flowables import Flowable
-
-
-# Constant denoting the point unit of measure(1/72 inch). The unity value
-# is because points are the default unit for ReportLab, so a conversion
-# constant is not strictly necessary, however, this provides an explicit
-# notation consistent with other units imported from reportlab.lib.units.
-point = 1
 
 
 LEFT_MARGIN = 0.75 * inch
@@ -105,7 +94,7 @@ def split_paragraphs(s):
     return [' '.join(lines) for lines in plines if lines]
 
 
-def make_paragraphs(text, style_sheet):
+def make_paragraphs(text):
     """
     Creates a set of flowables from a string containing one or
     more paragraphs.
@@ -113,13 +102,13 @@ def make_paragraphs(text, style_sheet):
     flowables = []
 
     # Set style for the leading paragraph.
-    style = style_sheet['FirstParagraph']
+    style = 'FirstParagraph'
 
     for ptext in split_paragraphs(text):
-        flowables.append(Paragraph(ptext, style=style))
+        flowables.append(Paragraph(ptext, style=stylesheet[style]))
 
         # Set style for all paragraphs after the first.
-        style = style_sheet['NextParagraph']
+        style = 'NextParagraph'
 
     return flowables
 
@@ -150,97 +139,13 @@ def build_path(tid, root):
     return os.path.join(*folders)
 
 
-def create_text_style():
-    """Generates a style sheet for all text styles.
-
-    All fonts are chosen from the 14 standard PDF fonts to ensure
-    maximum compatibility with PDF readers, without embedding font
-    encodings. Reference PDF 1.7, Adobe Systems, First Edition 2008-7-1,
-    section 9.6.2.2.
-
-    Use of a serifed typeface, Times Roman, as the default is per
-    typographical convention, and leaves sans-serif available
-    for use with setting verbatim text.
-    """
-    style = getSampleStyleSheet()
-
-    style['Normal'].fontName = 'Times-Roman'
-    style['Normal'].fontSize = 12
-
-    style.add(ParagraphStyle(
-        name='NormalCentered',
-        parent=style['Normal'],
-        alignment=TA_CENTER,
-    ))
-
-    style.add(ParagraphStyle(
-        name='NormalRight',
-        parent=style['Normal'],
-        alignment=TA_RIGHT,
-    ))
-
-    style.add(ParagraphStyle(
-        name='SectionHeading',
-        parent=style['Heading3'],
-        fontName='Times-Bold',
-    ))
-
-    # Leading paragraph in a body of text.
-    style.add(ParagraphStyle(
-        name='FirstParagraph',
-        parent=style['Normal'],
-    ))
-
-    # Any additional paragraphs in a body of text.
-    style.add(ParagraphStyle(
-        name='NextParagraph',
-        parent=style['FirstParagraph'],
-        spaceBefore=4 * point,
-        firstLineIndent=0.25 * inch,
-    ))
-
-    style.add(ParagraphStyle(
-        name='Header',
-        parent=style['Heading2'],
-        fontName='Times-Bold',
-    ))
-
-    style.add(ParagraphStyle(
-        name='Footer',
-        parent=style['Normal'],
-    ))
-
-    style.add(ParagraphStyle(
-        name='ProcedureTableHeading',
-        parent=style['Heading4'],
-        fontName='Times-Bold',
-        alignment=TA_CENTER,
-    ))
-
-    style.add(ParagraphStyle(
-        name='SignatureFieldTitle',
-        parent=style['Normal'],
-        fontSize=8 * point,
-        leading=8 * point,
-    ))
-
-    # textColor is not set here because it is ignored by the canvas methods
-    # used to draw the draft mark.
-    style.add(ParagraphStyle(
-        name='Draftmark',
-        fontName='Helvetica-Bold',
-        fontSize=200,
-    ))
-
-    return style
-
-
-def max_width(items, style):
+def max_width(items, style_name):
     """Finds the width required to hold the longest among a set of strings.
 
     Used to size a table column such that it can hold the content
     of all rows in that column.
     """
+    style = stylesheet[style_name]
     widths = [stringWidth(i, style.fontName, style.fontSize)
               for i in items]
 
@@ -296,9 +201,6 @@ class TableFormat(object):
 
 class TestDocument(object):
     """This class creates a PDF for a single Test instance."""
-
-
-    style = create_text_style()
 
     def __init__(self, test, root, draft, version):
         self.test = test
@@ -388,14 +290,14 @@ class TestDocument(object):
         for line in lines:
             if line:
                 canvas.drawRightString(right_margin, baseline, line)
-                baseline += self.style['Header'].fontSize * 1.2
+                baseline += stylesheet['Header'].fontSize * 1.2
 
     def _footer(self, canvas, doc):
         """Draws the page footer."""
         self._set_canvas_text_style(canvas, 'Footer')
 
         # Offset text below the margin relative to the font size.
-        baseline = BOTTOM_MARGIN - (self.style['Footer'].fontSize * 1.2)
+        baseline = BOTTOM_MARGIN - (stylesheet['Footer'].fontSize * 1.2)
 
         # See if a total page count is available.
         try:
@@ -414,7 +316,7 @@ class TestDocument(object):
 
     def _set_canvas_text_style(self, canvas, style):
         """Sets the current canvas font to a given style."""
-        style = self.style[style]
+        style = stylesheet[style]
         canvas.setFont(style.fontName, style.fontSize)
 
     def _build_body(self):
@@ -438,9 +340,7 @@ class TestDocument(object):
     def _objective(self):
         """Generates Objective section."""
         if self.test.objective:
-            rows = [
-                [make_paragraphs(self.test.objective, self.style)],
-            ]
+            rows = [[make_paragraphs(self.test.objective)]]
             return self._section('Objective', rows)
 
     def _references(self):
@@ -448,10 +348,10 @@ class TestDocument(object):
         if self.test.references:
             # Generate a row for each reference category.
             rows = [
-                [Paragraph(ref.titles[label], self.style['NormalRight']),
+                [Paragraph(ref.titles[label], stylesheet['NormalRight']),
                  Paragraph(
                      ', '.join(self.test.references[label]),
-                     self.style['Normal']
+                     stylesheet['Normal']
                  )]
                 for label in self.test.references
             ]
@@ -461,7 +361,7 @@ class TestDocument(object):
 
             column_widths = [
                 # First column is sized to fit the longest category title.
-                max_width(titles, self.style['NormalRight']),
+                max_width(titles, 'NormalRight'),
 
                 # Second column gets all remaining space.
                 None,
@@ -503,7 +403,7 @@ class TestDocument(object):
     def _procedure(self):
         """Creates the Procedure section."""
         if self.test.procedure:
-            proc = ProcedureList(self.test.procedure, self.style)
+            proc = ProcedureList(self.test.procedure)
             return self._section(
                 'Procedure',
                 proc.rows,
@@ -520,15 +420,15 @@ class TestDocument(object):
     def _environment(self):
         """Generates the Environment section."""
         if self.test.fields:
-            rows = [[Paragraph(f.title, self.style['NormalRight']),
-                     TextEntryField(f.length, self.style['Normal'])]
+            rows = [[Paragraph(f.title, stylesheet['NormalRight']),
+                     TextEntryField(f.length, 'Normal')]
                     for f in self.test.fields]
 
             # Field title widths for column 0.
             widths = [
                 max_width(
                     [f.title for f in self.test.fields],
-                    self.style['NormalRight'],
+                    'NormalRight',
                 ),
 
                 # All remaining width to the text entry column.
@@ -550,7 +450,7 @@ class TestDocument(object):
     def _approval(self):
         """Generates the Approval section."""
         if sig.titles:
-            content = Approval(self.style)
+            content = Approval()
             return self._section(
                 'Approval',
                 content.rows,
@@ -562,7 +462,7 @@ class TestDocument(object):
         """Creates a table enclosing an entire top-level section."""
         # Add the title as the first row.
         rows.insert(0, [
-            Preformatted(title, self.style['SectionHeading'])
+            Preformatted(title, stylesheet['SectionHeading'])
         ])
 
         style.extend([
@@ -625,7 +525,7 @@ class TestDocument(object):
 
             # Each item may contain multiple paragraphs, which are
             # expanded to a list of strings.
-            [ListItem(make_paragraphs(i, self.style))],
+            [ListItem(make_paragraphs(i))],
             bulletType='bullet',
             )] for i in items]
 
@@ -644,7 +544,7 @@ class TestDocument(object):
 
         # Offset y coordinate by half the font size because the text
         # is anchored at its baseline, not the midpoint.
-        y = self.style['Draftmark'].fontSize / -2
+        y = stylesheet['Draftmark'].fontSize / -2
 
         canvas.drawCentredString(0, y, 'DRAFT')
         canvas.restoreState()
@@ -672,9 +572,8 @@ class ProcedureList(object):
     DESC_COL = 1
     PASS_COL = 2
 
-    def __init__(self, steps, style_sheet):
+    def __init__(self, steps):
         self.steps = steps
-        self.style_sheet = style_sheet
         self.rows = []
         self._add_header()
         self._add_steps()
@@ -682,13 +581,13 @@ class ProcedureList(object):
 
     def _add_header(self):
         """Generates the header row."""
-        style = self.style_sheet['ProcedureTableHeading']
+        style = stylesheet['ProcedureTableHeading']
         row = [Paragraph(s, style) for s in self.HEADER_FIELDS]
         self.rows.append(row)
 
     def _add_steps(self):
         """Adds rows for all steps."""
-        step_style = self.style_sheet['ProcedureTableHeading']
+        step_style = stylesheet['ProcedureTableHeading']
         for i in range(len(self.steps)):
             desc = self._step_body(self.steps[i])
             step_num = Paragraph(str(i + 1), step_style)
@@ -700,7 +599,7 @@ class ProcedureList(object):
         step, i.e., everything that goes in the Description column.
         """
         # Begin with the step instruction text.
-        flowables = make_paragraphs(step.text, self.style_sheet)
+        flowables = make_paragraphs(step.text)
 
         if step.fields:
                 flowables.append(Spacer(0, self.FIELD_TABLE_SEP))
@@ -713,12 +612,12 @@ class ProcedureList(object):
 
         Fields are arranged into a table, with one row per field.
         """
-        style = self.style_sheet['Normal']
+        style = stylesheet['Normal']
         rows = []
         for field in fields:
             row = [
                 Preformatted(field.title, style),
-                TextEntryField(field.length, style),
+                TextEntryField(field.length, 'Normal'),
             ]
 
             # Add the optional suffix if it exists.
@@ -752,8 +651,9 @@ class ProcedureList(object):
 
     def _add_last_row(self):
         """Creates the final row indicating the end of the procedure."""
-        style = self.style_sheet['ProcedureTableHeading']
-        self.rows.append([Paragraph('End Procedure', style)])
+        self.rows.append([
+            Paragraph('End Procedure', stylesheet['ProcedureTableHeading'])
+        ])
 
     @property
     def _field_table_style(self):
@@ -768,7 +668,7 @@ class ProcedureList(object):
     @property
     def widths(self):
         """Computes column widths for the overall table."""
-        style = self.style_sheet['ProcedureTableHeading']
+        style = 'ProcedureTableHeading'
 
         widths = []
 
@@ -864,18 +764,17 @@ class Approval(object):
     SIG_COL = 2
     DATE_COL = 3
 
-    def __init__(self, stylesheet):
-        self.stylesheet = stylesheet
+    def __init__(self):
         self.rows = []
         [self._make_sig_rows(title) for title in sig.titles]
 
     def _make_sig_rows(self, title):
         """Generates a row for a given signature entry."""
-        field_style = self.stylesheet['SignatureFieldTitle']
+        field_style = stylesheet['SignatureFieldTitle']
 
         # Top row has the signature and field titles.
         self.rows.append([
-            Paragraph(title, self.stylesheet['NormalRight']),
+            Paragraph(title, stylesheet['NormalRight']),
             Paragraph('Name', field_style),
             Paragraph('Signature', field_style),
             Paragraph('Date', field_style),
@@ -891,13 +790,13 @@ class Approval(object):
 
     def _name_entry_field(self):
         """Creates a name entry field."""
-        return TextEntryField(self.NAME_WIDTH, self.stylesheet['Normal'])
+        return TextEntryField(self.NAME_WIDTH, 'Normal')
 
     def _date_entry_field(self):
         """Creates a date entry field."""
         return TextEntryField(
             '0000/00/00',
-            self.stylesheet['Normal'],
+            'Normal',
             'YYYY/MM/DD'
         )
 
@@ -993,7 +892,7 @@ class Approval(object):
         return [
             # Width of the first column is set to accommodate the
             # longest title.
-            max_width(sig.titles, self.stylesheet['Normal']),
+            max_width(sig.titles, 'Normal'),
 
             self._name_col_width(),
             None, # Signature occupies all remaining width.
@@ -1002,7 +901,7 @@ class Approval(object):
 
     def _name_col_width(self):
         """Calculates the width of the name column."""
-        style = self.stylesheet['SignatureFieldTitle']
+        style = stylesheet['SignatureFieldTitle']
         title_width = stringWidth('Name', style.fontName, style.fontSize)
 
         # The title cell includes default left and right padding.
@@ -1017,7 +916,7 @@ class Approval(object):
 
     def _date_col_width(self):
         """Calculates the width of the date column."""
-        style = self.stylesheet['SignatureFieldTitle']
+        style = stylesheet['SignatureFieldTitle']
         title_width = stringWidth('Date', style.fontName, style.fontSize)
 
         # The title cell includes default left and right padding.
@@ -1057,12 +956,12 @@ class TextEntryField(Flowable):
     # Coefficient applied to the font size to calculate box height.
     HEIGHT_FACTOR = 1.2
 
-    def __init__(self, width, style, tooltip=None):
+    def __init__(self, width, style_name, tooltip=None):
         super().__init__()
-        self.style = style
+        self.style = stylesheet[style_name]
         self.tooltip = tooltip
         self.width = self._calc_width(width)
-        self.height = style.fontSize * self.HEIGHT_FACTOR
+        self.height = self.style.fontSize * self.HEIGHT_FACTOR
 
     def _calc_width(self, width):
         """Computes the horizontal size from the width argument.
