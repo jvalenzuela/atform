@@ -270,7 +270,7 @@ class References(unittest.TestCase):
         utils.reset()
 
     def test_type(self):
-        """Confirm exception for non-dict preconditions."""
+        """Confirm exception for non-dict references."""
         with self.assertRaises(SystemExit):
             atform.Test('title', references=[])
 
@@ -364,7 +364,7 @@ class StringList(object):
         utils.reset()
 
     def test_type(self):
-        """Confirm exception for a non-list.."""
+        """Confirm exception for a non-list."""
         with self.assertRaises(SystemExit):
             self.call('spam')
 
