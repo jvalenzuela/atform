@@ -33,8 +33,8 @@ Windows, Linux, and macOS.
 The Python programming language, within version 3.7 to 3.11 inclusive,
 must be installed,
 and is available from `<https://python.org>`_. Make sure Python is
-added to the system path; the option to so
-when installing on Windows is shown below:
+added to the system path; the relevant Windows installation option
+is shown below:
 
 .. image:: images/python_install.png
    :align: center
