@@ -179,7 +179,7 @@ define a function for a specific type of content, with a name
 reflecting the type of content for which it is intended. The new function
 can then use :py:func:`atform.format_text` internally to apply the
 desired formatting. The benefits to this approach are twofold. First,
-a function with a semantically significant name, such as :code:`tagName()`,
+a function with a semantically significant name, such as :code:`tag_name()`,
 is much clearer than :code:`atform.format_text()`. Second, it
 ensures like content is presented uniformly because
 the format for a given type of content is defined in a single place.

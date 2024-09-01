@@ -11,7 +11,7 @@ import atform
 # Define a function to format a specific type of text, a program
 # tag name in this case, which will then be used in tests
 # anywhere a program tag name is needed.
-def tagname(name):
+def tag_name(name):
     return atform.format_text(name,
                               typeface='sansserif',
                               font='bold')
@@ -50,9 +50,9 @@ atform.Test('Formatting',
 
                 "Prepare a watch list for the following tags:"
                 + atform.bullet_list(
-                    tagname('Tag1'),
-                    tagname('Tag2'),
-                    tagname('Tag3'))
+                    tag_name('Tag1'),
+                    tag_name('Tag2'),
+                    tag_name('Tag3'))
             ])
 
 
