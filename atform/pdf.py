@@ -972,6 +972,10 @@ class TextEntryField(Flowable):
     # to accommodate descenders.
     HEIGHT_FACTOR = 1.3
 
+    # Additional horizontal size to account for the non-adjustable padding
+    # integral to the field.
+    EXTRA_WIDTH = 4 * point
+
     def __init__(self, width, tooltip=None):
         super().__init__()
         self.style = stylesheet['TextField']
@@ -990,11 +994,12 @@ class TextEntryField(Flowable):
 
         # Build the template string from which width will be computed.
         try:
-            template = width * 'X' # Integer width argument.
+            # Integer width argument; use em dashes for the template.
+            template = width * '\u2014'
         except TypeError:
             template = width # String width argument.
 
-        return stringWidth(
+        return self.EXTRA_WIDTH + stringWidth(
             template,
             self.style.fontName,
             self.style.fontSize,
