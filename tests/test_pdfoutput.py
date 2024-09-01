@@ -19,10 +19,10 @@ class Base(object):
     def make_test(self, generate=True, **kwargs):
         """atform.Test() wrapper to assign a title and default objective."""
         # Generate a title that is class_name.method_name.
-        title = '.'.join(self.id().split('.')[-2:])
+        title = ".".join(self.id().split(".")[-2:])
 
         # Use the test's docstring as the default objective.
-        kwargs.setdefault('objective', self.shortDescription())
+        kwargs.setdefault("objective", self.shortDescription())
 
         atform.Test(title, **kwargs)
         if generate:
@@ -38,7 +38,7 @@ def nosplit(method):
     then only needs to make the section being tested suitably long enough
     that it would be split across the page break.
     """
-    @patch.object(atform.pdf, 'SECTION_SEP', new=550)
+    @patch.object(atform.pdf, "SECTION_SEP", new=550)
     @functools.wraps(method)
     def wrapper(self):
         method(self)
@@ -48,20 +48,20 @@ def nosplit(method):
 class VersionControl(Base, unittest.TestCase):
     """Generate PDFs under various version control conditions."""
 
-    @patch('atform.vcs.Git')
+    @patch("atform.vcs.Git")
     def test_no_version_control(self, mock):
         """Verify no draft mark or version in footer."""
         mock.side_effect = atform.vcs.NoVersionControlError
         self.make_test()
 
-    @patch.object(atform.vcs.Git, 'clean', new=False)
-    @patch.object(atform.vcs.Git, 'version', new='foo')
+    @patch.object(atform.vcs.Git, "clean", new=False)
+    @patch.object(atform.vcs.Git, "version", new="foo")
     def test_draft(self):
         """Verify draft mark and no version in the footer."""
         self.make_test()
 
-    @patch.object(atform.vcs.Git, 'clean', new=True)
-    @patch.object(atform.vcs.Git, 'version', new='spam')
+    @patch.object(atform.vcs.Git, "clean", new=True)
+    @patch.object(atform.vcs.Git, "version", new="spam")
     def test_clean(self):
         """Verify version in the footer and no draft mark."""
         self.make_test()
@@ -105,23 +105,23 @@ class References(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify table layout with a single reference category."""
-        atform.add_reference_category('Single Reference', 'single')
+        atform.add_reference_category("Single Reference", "single")
         self.make_test(
-            references={'single':['spam']}
+            references={"single":["spam"]}
         )
 
     def test_multiple(self):
         """Verify table layout with multiple reference categories."""
-        atform.add_reference_category('Single Reference', 'single')
-        atform.add_reference_category('Multiple References', 'multi')
-        atform.add_reference_category('Long List', 'long')
+        atform.add_reference_category("Single Reference", "single")
+        atform.add_reference_category("Multiple References", "multi")
+        atform.add_reference_category("Long List", "long")
         self.make_test(
             references={
-                'single':['spam'],
-                'multi':['foo', 'bar'],
+                "single":["spam"],
+                "multi":["foo", "bar"],
 
                 # Long enough to require breaking across multiple lines.
-                'long':[str(x) for x in range(50)],
+                "long":[str(x) for x in range(50)],
         })
 
     @nosplit
@@ -132,7 +132,7 @@ class References(Base, unittest.TestCase):
          for i in range(num_refs)]
 
         self.make_test(
-            references=dict([(f"r{i}", ['spam']) for i in range(num_refs)])
+            references=dict([(f"r{i}", ["spam"]) for i in range(num_refs)])
         )
 
 
@@ -152,7 +152,7 @@ class Equipment(Base, unittest.TestCase):
         """Verify layout of multiple equipment items."""
         self.make_test(
             equipment=[
-                'The first equipment.',
+                "The first equipment.",
                 """The second equipment with multiple paragraphs.
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore magna
@@ -168,7 +168,7 @@ class Equipment(Base, unittest.TestCase):
                 adipiscing at. Amet consectetur adipiscing elit ut aliquam
                 purus. Magna sit amet purus gravida.
                 """,
-                'The last equipment.'
+                "The last equipment."
             ])
 
     @nosplit
@@ -185,16 +185,16 @@ class Fields(Base, unittest.TestCase):
     def test_single(self):
         """Verify layout of a single field."""
         atform.add_field(
-            'Enter "Xy"; verify cap height and descender',
+            "Enter 'Xy'; verify cap height and descender",
             3,
-            'f',
+            "f",
         )
         self.make_test()
 
     def test_multiple(self):
         """Verify layout of multiple fields."""
-        atform.add_field('Enter "MM", verify width.', 2, 'f1')
-        atform.add_field('Second Field (10 chars)', 10, 'f2')
+        atform.add_field("Enter 'MM', verify width.", 2, "f1")
+        atform.add_field("Second Field (10 chars)", 10, "f2")
         self.make_test()
 
     @nosplit
@@ -218,7 +218,7 @@ class Preconditions(Base, unittest.TestCase):
     def test_multiple(self):
         """Verify layout of multiple items."""
         self.make_test(preconditions=[
-            'The first precondition.',
+            "The first precondition.",
             """The second precondition with multiple paragraphs. Lorem ipsum
             dolor sit amet, consectetur adipiscing elit, sed do eiusmod
             tempor incididunt ut labore et dolore magna aliqua. Eros in
@@ -234,7 +234,7 @@ class Preconditions(Base, unittest.TestCase):
             Amet consectetur adipiscing elit ut aliquam purus. Magna sit amet
             purus gravida.
             """,
-            'The last precondition.'
+            "The last precondition."
         ])
 
     @nosplit
@@ -279,7 +279,7 @@ class Procedure(Base, unittest.TestCase):
             """,
 
             {
-                'text':"""
+                "text":"""
                 This is a procedure step with a single paragraph created
                 as a dictionary. Lorem ipsum dolor sit amet,
                 consectetur adipiscing elit, sed do eiusmod tempor
@@ -289,7 +289,7 @@ class Procedure(Base, unittest.TestCase):
             },
 
             {
-                'text':"""
+                "text":"""
                 This is a procedure step with multiple paragraphs created
                 as a dictionary. Lorem ipsum dolor sit amet,
                 consectetur adipiscing elit, sed do eiusmod tempor
@@ -306,41 +306,41 @@ class Procedure(Base, unittest.TestCase):
             },
 
             {
-                'text':"""
+                "text":"""
                 This is a procedure step with a single data entry field
                 with no suffix.
                 """,
-                'fields':[
-                    ('A Field', 10),
+                "fields":[
+                    ("A Field", 10),
                 ]
             },
 
             {
-                'text':"""
+                "text":"""
                 This is a procedure step with a single data entry field
                 with a suffix.
                 """,
-                'fields':[
-                    ('Spam Eggs', 10, 'Foo Bar'),
+                "fields":[
+                    ("Spam Eggs", 10, "Foo Bar"),
                 ]
             },
 
             {
-                'text':"""
+                "text":"""
                 This is a procedure step with multiple data entry fields,
                 all with suffixes. Ensure field titles are right-justified
                 and suffixes are left-justified against the text entry
                 field.
                 """,
-                'fields':[
-                    ('Spam', 10, 'Eggs'),
-                    ('A Long Title', 3, 'Bar'),
+                "fields":[
+                    ("Spam", 10, "Eggs"),
+                    ("A Long Title", 3, "Bar"),
                 ]
             },
         ]
 
         # Add enough steps to force the table to span muliple pages.
-        [procedure.append('Dummy step') for i in range(10)]
+        [procedure.append("Dummy step") for i in range(10)]
 
         self.make_test(procedure=procedure)
 
@@ -357,7 +357,7 @@ class Procedure(Base, unittest.TestCase):
     def test_nosplit_last_row(self):
         """Verify the second page starts with the last step."""
         self.make_test(
-            procedure=['step'] * 2
+            procedure=["step"] * 2
         )
 
 
@@ -375,14 +375,14 @@ class Approval(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify layout with a single signature entry and date tooltip."""
-        atform.add_signature('Only Signature')
+        atform.add_signature("Only Signature")
         self.make_test()
 
     def test_multiple(self):
         """Verify layout with multiple signature entries."""
-        atform.add_signature('First Signature')
-        atform.add_signature('Second Signature')
-        atform.add_signature('Third Signature')
+        atform.add_signature("First Signature")
+        atform.add_signature("Second Signature")
+        atform.add_signature("Third Signature")
         self.make_test()
 
     def test_nosplit(self):
@@ -401,19 +401,19 @@ class ProjectInfo(Base, unittest.TestCase):
 
     def test_project(self):
         """Verify only project name in the header."""
-        atform.set_project_info(project='The Project Name')
+        atform.set_project_info(project="The Project Name")
         self.make_test()
 
     def test_system(self):
         """Verify only system name in the header."""
-        atform.set_project_info(system='The System Name')
+        atform.set_project_info(system="The System Name")
         self.make_test()
 
     def test_project_and_system(self):
         """Verify project and system names in the header."""
         atform.set_project_info(
-            project='The Project Name',
-            system='The System Name',
+            project="The Project Name",
+            system="The System Name",
         )
         self.make_test()
 
@@ -425,11 +425,11 @@ class Format(Base, unittest.TestCase):
         """Verify text formatting appearance."""
         # List of lines for all format combinations.
         cases = [
-            'Leading text. '
+            "Leading text. "
             + atform.format_text("This is {0} {1}.".format(typeface, font),
                                  typeface, font)
-            + ' Trailing text. X'
-            + atform.format_text('X', typeface, font)
+            + " Trailing text. X"
+            + atform.format_text("X", typeface, font)
             for typeface, font in atform.format.FONTS.keys()]
 
         self.make_test(
@@ -440,7 +440,7 @@ class Format(Base, unittest.TestCase):
             relative vertical height.
             \n
             """
-            + '\n\n'.join(cases),
+            + "\n\n".join(cases),
 
             preconditions=cases,
             equipment=cases,
@@ -450,17 +450,17 @@ class Format(Base, unittest.TestCase):
     def test_bullet_list(self):
         """Verify bullet list appearance."""
         single = "This is a single-item list:" + atform.bullet_list(
-            'The only item.')
+            "The only item.")
         multi = "A multi-item list with formatted items:" + atform.bullet_list(
-            'First item',
+            "First item",
 
-            'An ' + atform.format_text('italic', font='italic') + ' item',
+            "An " + atform.format_text("italic", font="italic") + " item",
 
             string.whitespace
-            + 'Item surrounded by whitespace.'
+            + "Item surrounded by whitespace."
             + string.whitespace,
 
-            'Last item')
+            "Last item")
 
         self.make_test(
             objective="Verify appearance of bullet lists in various contexts."
@@ -481,4 +481,4 @@ class PageCount(Base, unittest.TestCase):
 
     def test_page_count_multi(self):
         """Verify correct footer page count for a multi-page document."""
-        self.make_test(procedure=['Lots of steps'] * 60)
+        self.make_test(procedure=["Lots of steps"] * 60)

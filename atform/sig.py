@@ -28,4 +28,4 @@ def add_signature(title):
     Args:
         title (str): A short description of the person signing.
     """
-    titles.append(misc.nonempty_string('Signature title', title))
+    titles.append(misc.nonempty_string("Signature title", title))

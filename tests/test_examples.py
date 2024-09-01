@@ -10,7 +10,7 @@ import unittest
 
 
 # Path to the example scripts, relative to the repository root.
-INPUT_PATH = os.path.join('doc', 'source', 'examples')
+INPUT_PATH = os.path.join("doc", "source", "examples")
 
 # List of all files in the examples directory, including supporting files
 # that may not be Python scripts.
@@ -19,13 +19,13 @@ SRC_FILES = [entry.name for entry in os.scandir(INPUT_PATH) if entry.is_file()]
 # Scripts to exclude from running.
 EXCLUDE = set([
     # These scripts are imported, not standalone.
-    'button.py',
-    'switch.py',
+    "button.py",
+    "switch.py",
 ])
 
 # Folder relative to the repository root where examples will be executed
 # and resulting output will appear.
-OUTPUT_PATH = 'example_output'
+OUTPUT_PATH = "example_output"
 
 
 def setUpModule():
@@ -38,7 +38,7 @@ def load_tests(loader, tests, pattern):
     Overrides the default test discovery to create a separate TestCase
     for each example script.
     """
-    scripts = set([f for f in SRC_FILES if f.endswith('.py')])
+    scripts = set([f for f in SRC_FILES if f.endswith(".py")])
     scripts.difference_update(EXCLUDE)
 
     suite = unittest.TestSuite()
@@ -51,7 +51,7 @@ def load_tests(loader, tests, pattern):
         name = os.path.splitext(script)[0]
 
         # Create a TestCase subclass dedicated to this script.
-        cls = type(name, (Example,), {'script': script})
+        cls = type(name, (Example,), {"script": script})
 
         tests = unittest.defaultTestLoader.loadTestsFromTestCase(cls)
         suite.addTests(tests)
@@ -106,7 +106,7 @@ class ExampleRunner(object):
         # root) so the module can be imported when running scripts in the
         # output directories.
         env = dict(os.environ)
-        env['PYTHONPATH'] = os.getcwd()
+        env["PYTHONPATH"] = os.getcwd()
 
         # The target script will be run from within its dedicated output
         # path.

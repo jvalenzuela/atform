@@ -31,71 +31,71 @@ point = 1
 stylesheet = getSampleStyleSheet()
 
 
-stylesheet['Normal'].fontName = 'Times-Roman'
-stylesheet['Normal'].fontSize = 12 * point
+stylesheet["Normal"].fontName = "Times-Roman"
+stylesheet["Normal"].fontSize = 12 * point
 
 
 stylesheet.add(ParagraphStyle(
-    name='NormalCentered',
-    parent=stylesheet['Normal'],
+    name="NormalCentered",
+    parent=stylesheet["Normal"],
     alignment=TA_CENTER,
 ))
 
 
 stylesheet.add(ParagraphStyle(
-    name='NormalRight',
-    parent=stylesheet['Normal'],
+    name="NormalRight",
+    parent=stylesheet["Normal"],
     alignment=TA_RIGHT,
 ))
 
 
 stylesheet.add(ParagraphStyle(
-    name='SectionHeading',
-    parent=stylesheet['Heading3'],
-    fontName='Times-Bold',
+    name="SectionHeading",
+    parent=stylesheet["Heading3"],
+    fontName="Times-Bold",
 ))
 
 
 # Leading paragraph in a body of text.
 stylesheet.add(ParagraphStyle(
-    name='FirstParagraph',
-    parent=stylesheet['Normal'],
+    name="FirstParagraph",
+    parent=stylesheet["Normal"],
 ))
 
 
 # Any additional paragraphs in a body of text.
 stylesheet.add(ParagraphStyle(
-    name='NextParagraph',
-    parent=stylesheet['FirstParagraph'],
+    name="NextParagraph",
+    parent=stylesheet["FirstParagraph"],
     spaceBefore=4 * point,
     firstLineIndent=0.25 * inch,
 ))
 
 
 stylesheet.add(ParagraphStyle(
-    name='Header',
-    parent=stylesheet['Heading2'],
-    fontName='Times-Bold',
+    name="Header",
+    parent=stylesheet["Heading2"],
+    fontName="Times-Bold",
 ))
 
 
 stylesheet.add(ParagraphStyle(
-    name='Footer',
-    parent=stylesheet['Normal'],
+    name="Footer",
+    parent=stylesheet["Normal"],
 ))
 
 
 stylesheet.add(ParagraphStyle(
-    name='ProcedureTableHeading',
-    parent=stylesheet['Heading4'],
-    fontName='Times-Bold',
+    name="ProcedureTableHeading",
+    parent=stylesheet["Heading4"],
+    fontName="Times-Bold",
     alignment=TA_CENTER,
 ))
 
 
 stylesheet.add(ParagraphStyle(
-    name='SignatureFieldTitle',
-    parent=stylesheet['Normal'],
+    name="SignatureFieldTitle",
+    parent=stylesheet["Normal"],
     fontSize=8 * point,
     leading=8 * point,
 ))
@@ -104,15 +104,15 @@ stylesheet.add(ParagraphStyle(
 # textColor is not set here because it is ignored by the canvas methods
 # used to draw the draft mark.
 stylesheet.add(ParagraphStyle(
-    name='Draftmark',
-    fontName='Helvetica-Bold',
+    name="Draftmark",
+    fontName="Helvetica-Bold",
     fontSize=200 * point,
 ))
 
 
 # Content entered into a TextEntryField.
 stylesheet.add(ParagraphStyle(
-    name='TextField',
-    parent=stylesheet['Normal'],
-    fontName='Helvetica',
+    name="TextField",
+    parent=stylesheet["Normal"],
+    fontName="Helvetica",
 ))

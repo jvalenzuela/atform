@@ -13,27 +13,27 @@ import atform
 ######################################################################
 
 # Define a safety function reference category.
-atform.add_reference_category('Safety Functions', 'sf')
+atform.add_reference_category("Safety Functions", "sf")
 
 
 ######################################################################
 # Content
 ######################################################################
 
-# Test 1 with several 'sf' references.
-atform.Test('Button 3',
+# Test 1 with several "sf" references.
+atform.Test("Button 3",
             references={
-                'sf': ['SF7', 'SF42', 'SF99']
+                "sf": ["SF7", "SF42", "SF99"]
             })
 
 
 # Test 2 with no references.
-atform.Test('Relay 66')
+atform.Test("Relay 66")
 
-# Test 3 with a single 'sf' reference.
-atform.Test('Zone 4',
+# Test 3 with a single "sf" reference.
+atform.Test("Zone 4",
             references={
-                'sf': ['SF42']
+                "sf": ["SF42"]
             })
 
 
@@ -47,8 +47,8 @@ atform.generate()
 xrefs = atform.get_xref()
 
 # Export safety function cross-reference to a CSV file.
-sf_refs = xrefs['sf'] # Get all references in the 'sf' category.
-with open('safetyfunctions.csv', 'w', newline='') as f:
+sf_refs = xrefs["sf"] # Get all references in the "sf" category.
+with open("safetyfunctions.csv", "w", newline="") as f:
     writer = csv.writer(f)
 
     # Generate a row for each safety function. Dictionary keys,

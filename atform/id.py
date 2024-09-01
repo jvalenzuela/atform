@@ -30,7 +30,7 @@ def get_id():
 
 def to_string(id):
     """Generates a presentation string for a given ID tuple."""
-    return '.'.join([str(x) for x in id])
+    return ".".join([str(x) for x in id])
 
 
 def validate_section_title(title):
@@ -40,7 +40,7 @@ def validate_section_title(title):
     the title in a temporary directory.
     """
     if not isinstance(title, str):
-        raise error.UserScriptError('Section title must be a string.')
+        raise error.UserScriptError("Section title must be a string.")
 
     with tempfile.TemporaryDirectory() as tdir:
         path = pathlib.Path(tdir, title)
@@ -91,14 +91,14 @@ def section(level, id=None, title=None):
 
     if len(current_id) == 1:
         raise error.UserScriptError(
-            'No section levels available',
+            "No section levels available",
             """This function cannot be used unless the test ID depth is
             first increased with atform.set_id_depth to allow tests to be
             divided into sections."""
         )
 
     if not isinstance(level, int):
-        raise error.UserScriptError('Section level must be an integer.')
+        raise error.UserScriptError("Section level must be an integer.")
 
     section_levels = range(1, len(current_id))
     if not level in section_levels:
@@ -119,7 +119,7 @@ def section(level, id=None, title=None):
     # Jump to a specific number.
     else:
         if not isinstance(id, int):
-            raise error.UserScriptError('id must be an integer.')
+            raise error.UserScriptError("id must be an integer.")
         elif id <= current_id[id_index]:
             raise error.UserScriptError(
                 f"Invalid id value.",
@@ -153,11 +153,11 @@ def set_id_depth(levels):
     """
     global current_id
     if not isinstance(levels, int):
-        raise error.UserScriptError('Identifier depth must be an integer.')
+        raise error.UserScriptError("Identifier depth must be an integer.")
     if levels < 1:
         raise error.UserScriptError(
             f"Invalid identifier depth value: {levels}",
-            'Select an identifier depth greater than zero.'
+            "Select an identifier depth greater than zero."
         )
     current_id = [0] * levels
 
@@ -183,7 +183,7 @@ def skip_test(id=None):
 
     if id is not None:
         if not isinstance(id, int):
-            raise error.UserScriptError('id must be an integer.')
+            raise error.UserScriptError("id must be an integer.")
         if id <= current_id[-1]:
             raise error.UserScriptError(
                 f"Invalid id value: {id}",

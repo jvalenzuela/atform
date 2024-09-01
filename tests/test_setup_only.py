@@ -30,10 +30,10 @@ class SetupOnly(unittest.TestCase):
 
     def test_call_after_test(self):
         """Confirm exception when calling a decorated function after Test()."""
-        atform.Test('title')
+        atform.Test("title")
         with self.assertRaises(atform.error.UserScriptError):
             func(0)
 
     def test_params(self):
         """Confirm positional and keyword parameters are passed to the decorated function."""
-        self.assertEqual((42, 'foo'), func(42, b='foo'))
+        self.assertEqual((42, "foo"), func(42, b="foo"))

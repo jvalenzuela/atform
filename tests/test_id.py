@@ -42,7 +42,7 @@ class Section(unittest.TestCase):
         """Confirm an exception is raised for a non-integer level."""
         atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
-            atform.section('0')
+            atform.section("0")
 
     def test_level_nonsection_single(self):
         """Confirm an exception is raised for a level that is not a section for single-level IDs."""
@@ -66,7 +66,7 @@ class Section(unittest.TestCase):
         """Confirm an exception is raised if id is not an integer."""
         atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
-            atform.section(0, id='42')
+            atform.section(0, id="42")
 
     def test_id_backwards(self):
         """Confirm an exception is raised for id values of previous sections."""
@@ -124,13 +124,13 @@ class Section(unittest.TestCase):
         utils.reset()
         atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
-            atform.section(1, title='/')
+            atform.section(1, title="/")
 
     def test_title_store(self):
         """Confirm the title is saved."""
         atform.set_id_depth(2)
-        atform.section(1, title='spam')
-        self.assertEqual('spam', atform.id.section_titles[(1,)])
+        atform.section(1, title="spam")
+        self.assertEqual("spam", atform.id.section_titles[(1,)])
 
 
 class SetIdDepth(unittest.TestCase):
@@ -142,7 +142,7 @@ class SetIdDepth(unittest.TestCase):
     def test_non_integer_levels(self):
         """Confirm an exception is raised for non-integer argument."""
         with self.assertRaises(SystemExit):
-            atform.set_id_depth('1')
+            atform.set_id_depth("1")
 
     def test_levels_leq_zero(self):
         """Confirm an exception is raised for arguments less than 1."""
@@ -176,7 +176,7 @@ class SkipTest(unittest.TestCase):
     def test_id_type(self):
         """Confirm exception if id is not an integer."""
         with self.assertRaises(SystemExit):
-            atform.skip_test('10')
+            atform.skip_test("10")
 
     def test_invalid_id(self):
         """Confirm exception for invalid id values."""

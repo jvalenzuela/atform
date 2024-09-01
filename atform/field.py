@@ -8,8 +8,8 @@ import collections
 
 # Object used to store the definition of each field.
 Field = collections.namedtuple(
-    'Field',
-    ['title', 'length'],
+    "Field",
+    ["title", "length"],
 )
 
 
@@ -29,13 +29,13 @@ def validate_name_list(title, lst):
         )
     names = set()
     for raw in lst:
-        name = misc.nonempty_string('field name', raw)
+        name = misc.nonempty_string("field name", raw)
         try:
             fields[name]
         except KeyError:
             raise error.UserScriptError(
                 f"Undefined name in {title} list: {name}",
-                'Use a name defined with atform.add_field().',
+                "Use a name defined with atform.add_field().",
             )
         names.add(name)
     return names
@@ -43,10 +43,10 @@ def validate_name_list(title, lst):
 
 def get_active_names(include, exclude, active):
     """Computes the resulting active names after applying filters."""
-    include = validate_name_list('include fields', include)
-    exclude = validate_name_list('exclude fields', exclude)
+    include = validate_name_list("include fields", include)
+    exclude = validate_name_list("exclude fields", exclude)
     if active is not None:
-        return validate_name_list('active fields', active)
+        return validate_name_list("active fields", active)
     return active_names.union(include).difference(exclude)
 
 
@@ -91,11 +91,11 @@ def add_field(title, length, name, active=True):
             such as with :py:func:`atform.set_active_fields`.
     """
     field = Field(
-        misc.nonempty_string('field title', title),
+        misc.nonempty_string("field title", title),
         misc.validate_field_length(length),
     )
 
-    name = misc.nonempty_string('field name', name)
+    name = misc.nonempty_string("field name", name)
     try:
         fields[name]
     except KeyError:
@@ -103,13 +103,13 @@ def add_field(title, length, name, active=True):
     else:
         raise error.UserScriptError(
             f"Duplicate field name: {name}",
-            'Select a unique field name.'
+            "Select a unique field name."
         )
 
     if not isinstance(active, bool):
         raise error.UserScriptError(
             f"Invalid active selection: {active}",
-            'Set active to False, or omit the argument.',
+            "Set active to False, or omit the argument.",
         )
 
     if active:

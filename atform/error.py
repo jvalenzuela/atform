@@ -101,21 +101,21 @@ class UserScriptError(Exception):
     """
 
     # String separating keys and values in the formatted presentation string.
-    FIELD_SEP = ': '
+    FIELD_SEP = ": "
 
     # These fields may contain lengthy strings, and are therefore line wrapped
     # in the string output.
     MULTILINE_FIELDS = set([
-        'Description',
-        'Remedy',
+        "Description",
+        "Remedy",
     ])
 
     def __init__(self, desc, remedy=None, *args, **kwargs):
         super().__init__(*args)
         self.fields = collections.OrderedDict()
         if remedy:
-            self.fields['Remedy'] = remedy
-        self.fields['Description'] = desc
+            self.fields["Remedy"] = remedy
+        self.fields["Description"] = desc
 
     def add_field(self, key, value):
         """Appends an item describing the context of the error."""
@@ -124,19 +124,19 @@ class UserScriptError(Exception):
     def __str__(self):
         """Formats all fields into a simple key: value table."""
 
-        has_api = hasattr(self, 'api')
+        has_api = hasattr(self, "api")
 
         if has_api:
-            self.fields['In Call To'] = f"atform.{self.api.__name__}"
+            self.fields["In Call To"] = f"atform.{self.api.__name__}"
 
-        self.fields['Line Number'] = self.call_frame.lineno
-        self.fields['File'] = self.call_frame.filename
+        self.fields["Line Number"] = self.call_frame.lineno
+        self.fields["File"] = self.call_frame.filename
 
         # Compute the indentation required to right-align all field names.
         indent = max([len(s) for s in self.fields.keys()])
 
-        lines = ['The following error was encountered:']
-        lines.append('')
+        lines = ["The following error was encountered:"]
+        lines.append("")
 
         # Fields are added from most specific to most general as the
         # exception propagates up from its origin, so they are listed here
@@ -146,17 +146,17 @@ class UserScriptError(Exception):
 
             # Wrap multiline fields.
             if field in self.MULTILINE_FIELDS:
-                collapsed = ' '.join(value.split()) # Collapse whitespace.
+                collapsed = " ".join(value.split()) # Collapse whitespace.
                 line = textwrap.fill(
                     self.FIELD_SEP.join((field, collapsed)),
 
                     # Indent first line so the field name is right-aligned
                     # with other field names.
-                    initial_indent=' ' * (indent - len(field)),
+                    initial_indent=" " * (indent - len(field)),
 
                     # Remaining lines are indented to align with other
                     # field values.
-                    subsequent_indent=' ' * (indent + len(self.FIELD_SEP)),
+                    subsequent_indent=" " * (indent + len(self.FIELD_SEP)),
                 )
 
             # Single line field.
@@ -167,9 +167,9 @@ class UserScriptError(Exception):
 
         # Add API docstring.
         if has_api:
-            lines.append('')
+            lines.append("")
             lines.append(
                 f"atform.{self.api.__name__} help: {self.api.__doc__}"
             )
 
-        return '\n'.join(lines)
+        return "\n".join(lines)

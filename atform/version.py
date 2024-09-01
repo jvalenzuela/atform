@@ -6,7 +6,7 @@ from . import error
 
 # This is the version number for the entire module, and is used by the
 # hatch packaging and Sphinx documentation systems.
-VERSION = '0.0'
+VERSION = "0.0"
 
 
 ################################################################################
@@ -28,22 +28,22 @@ def require_version(major, minor=0):
         minor (int, optional): The required minor version.
     """
     if not isinstance(major, int):
-        raise error.UserScriptError('Major version must be an integer.')
+        raise error.UserScriptError("Major version must be an integer.")
     if not isinstance(minor, int):
-        raise error.UserScriptError('Minor version must be an integer.')
+        raise error.UserScriptError("Minor version must be an integer.")
     if major < 1:
         raise error.UserScriptError(
             f"Invalid major version: {major}",
-            'Major version must be greater than or equal to 1.',
+            "Major version must be greater than or equal to 1.",
         )
     if minor < 0:
         raise error.UserScriptError(
             f"Invalid minor version: {minor}",
-            'Minor version must be greater than or equal to 0.',
+            "Minor version must be greater than or equal to 0.",
         )
-    inst_major, inst_minor = [int(x) for x in VERSION.split('.')]
+    inst_major, inst_minor = [int(x) for x in VERSION.split(".")]
     if (inst_major != major) or (inst_minor < minor):
-        module_name = __name__.split('.')[0]
+        module_name = __name__.split(".")[0]
         raise error.UserScriptError(
             f"""This script requires {module_name} version {major}.{minor} or
             later.""",

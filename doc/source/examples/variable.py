@@ -19,7 +19,7 @@ RESET_STEP = "Do something important to try and reset."
 ######################################################################
 
 
-atform.Test('The First Test',
+atform.Test("The First Test",
 
             procedure=[
                 "Perform some initial setup.",
@@ -29,7 +29,7 @@ atform.Test('The First Test',
             ])
 
 
-atform.Test('The Second Test',
+atform.Test("The Second Test",
 
             procedure=[
                 "Do the setup again.",

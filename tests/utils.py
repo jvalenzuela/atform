@@ -37,7 +37,7 @@ class ContentAreaException(unittest.TestCase):
 
     def test_after_test_created(self):
         """Confirm exception if called after a test is created."""
-        atform.Test('title')
+        atform.Test("title")
         with self.assertRaises(SystemExit):
             self.call()
 

@@ -14,7 +14,7 @@ import csv
 # Load alarms.csv using the Python csv module, creating a dictionary
 # mapping alarm number to its respective message, so the text for
 # any alarm can be acquired by alarms[num].
-with open('alarms.csv', newline='') as f:
+with open("alarms.csv", newline="") as f:
     reader = csv.reader(f)
     alarms = dict([(int(row[0]), row[1]) for row in reader])
 
@@ -35,7 +35,7 @@ def verify_alarm(num):
 # argument to include a step verifying an alarm with the message
 # text acquired from the external CSV file.
 
-atform.Test('Test Alarm 42',
+atform.Test("Test Alarm 42",
             procedure=[
                 "Verify normal operation.",
                 "Introduce some fault condition.",
@@ -43,7 +43,7 @@ atform.Test('Test Alarm 42',
             ])
 
 
-atform.Test('Test Alarm 15',
+atform.Test("Test Alarm 15",
             procedure=[
                 "Verify normal operation.",
                 "Introduce some fault condition.",
@@ -51,7 +51,7 @@ atform.Test('Test Alarm 15',
             ])
 
 
-atform.Test('Test Alarm 99',
+atform.Test("Test Alarm 99",
             procedure=[
                 "Verify normal operation.",
                 "Introduce some fault condition.",

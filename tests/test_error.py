@@ -11,7 +11,7 @@ class ExternalCallDummy(object):
 
     @atform.error.external_call
     def ext(self):
-        raise atform.error.UserScriptError('foo')
+        raise atform.error.UserScriptError("foo")
 
 
 def make_external_call_dummy():
@@ -30,7 +30,7 @@ class ExitOnScriptError(unittest.TestCase):
         """Confirm a UserScriptError is converted to SystemExit."""
         @atform.error.exit_on_script_error
         def func():
-            raise atform.error.UserScriptError('foo')
+            raise atform.error.UserScriptError("foo")
 
         with self.assertRaises(SystemExit):
             func()
@@ -57,15 +57,15 @@ class ExitOnScriptError(unittest.TestCase):
         """Confirm return value of wrapped function is preserved."""
         @atform.error.exit_on_script_error
         def func():
-            return 'spam'
+            return "spam"
 
-        self.assertEqual('spam', func())
+        self.assertEqual("spam", func())
 
     def test_traceback_file(self):
         """Confirm the traceback points to the call of the wrapped function."""
         @atform.error.exit_on_script_error
         def func():
-            raise atform.error.UserScriptError('foo')
+            raise atform.error.UserScriptError("foo")
 
         with self.assertRaises(SystemExit) as e:
             func()
@@ -79,7 +79,7 @@ class ExitOnScriptError(unittest.TestCase):
 
         obj = MyClass()
 
-        this_test_method_name = self.id().split('.')[-1]
+        this_test_method_name = self.id().split(".")[-1]
         self.assertEqual(this_test_method_name, obj._call_frame.name)
 
     def test_external_call_frame(self):
@@ -92,7 +92,7 @@ class ExitOnScriptError(unittest.TestCase):
             func()
 
         self.assertEqual(
-            'make_external_call_dummy',
+            "make_external_call_dummy",
             cm.exception.__context__.call_frame.name
         )
 
@@ -106,15 +106,15 @@ class ExternalCall(unittest.TestCase):
         class TheClass(object):
 
             @atform.error.external_call
-            def method(self, a, b='spam'):
+            def method(self, a, b="spam"):
                 self.a = a
                 self.b = b
 
         obj = TheClass()
-        obj.method('foo', b='bar')
+        obj.method("foo", b="bar")
 
-        self.assertEqual('foo', obj.a)
-        self.assertEqual('bar', obj.b)
+        self.assertEqual("foo", obj.a)
+        self.assertEqual("bar", obj.b)
 
     def test_return_value(self):
         """Confirm return value of the wrapped method is preserved."""
@@ -123,11 +123,11 @@ class ExternalCall(unittest.TestCase):
 
             @atform.error.external_call
             def method(self):
-                return 'foo'
+                return "foo"
 
         obj = TheClass()
 
-        self.assertEqual('foo', obj.method())
+        self.assertEqual("foo", obj.method())
 
     def test_call_frame(self):
         """Confirm the call frame where the parent object was created is attached to a UserScriptError."""
@@ -135,6 +135,6 @@ class ExternalCall(unittest.TestCase):
             make_external_call_dummy().ext()
 
         self.assertEqual(
-            'make_external_call_dummy',
+            "make_external_call_dummy",
             cm.exception.call_frame.name,
         )

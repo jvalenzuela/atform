@@ -28,16 +28,16 @@ to be included along with the main text.
      - Value Type
      - Description
      - Required
-   * - ``'label'``
+   * - ``"label"``
      - string
      - A label that can be used to reference this step number.
        See :ref:`labels`.
      - No
-   * - ``'text'``
+   * - ``"text"``
      - string
      - The instructions for the step.
      - Yes
-   * - ``'fields'``
+   * - ``"fields"``
      - list(tuple)
      - Data entry fields, one tuple per field, to record information
        as part of the step, such as a measurement result.

@@ -21,7 +21,7 @@ class ParameterBase(object):
     def test_empty(self):
         """Confirm exception for an empty parameter."""
         with self.assertRaises(SystemExit):
-            self.do('')
+            self.do("")
 
     def test_blank(self):
         """Confirm exception for a parameter containing only whitespace."""
@@ -30,8 +30,8 @@ class ParameterBase(object):
 
     def test_strip(self):
         """Confirm surrounding whitespace is removed the value."""
-        self.do(string.whitespace + 'foo' + string.whitespace)
-        self.assertEqual('foo', atform.misc.project_info[self.parameter])
+        self.do(string.whitespace + "foo" + string.whitespace)
+        self.assertEqual("foo", atform.misc.project_info[self.parameter])
 
     def do(self, value):
         """Calls set_project_info() with a given parameter value."""
@@ -41,10 +41,10 @@ class ParameterBase(object):
 class Project(ParameterBase, unittest.TestCase):
     """Unit tests for setting the project name."""
 
-    parameter = 'project'
+    parameter = "project"
 
 
 class System(ParameterBase, unittest.TestCase):
     """Unit tests for setting the system name."""
 
-    parameter = 'system'
+    parameter = "system"

@@ -26,9 +26,9 @@ def button_test(button):
 ######################################################################
 
 # Call the button_test() function to generate a test for each button.
-button_test('Left')
-button_test('Center')
-button_test('Right')
+button_test("Left")
+button_test("Center")
+button_test("Right")
 
 
 ######################################################################

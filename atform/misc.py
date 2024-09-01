@@ -46,9 +46,9 @@ def nonempty_string(name, s):
 def validate_field_length(length):
     """Validates a data entry field length."""
     if not isinstance(length, int):
-        raise error.UserScriptError('Field length must be an integer.')
+        raise error.UserScriptError("Field length must be an integer.")
     if length < 1:
-        raise error.UserScriptError('Field length must be greater than zero.')
+        raise error.UserScriptError("Field length must be greater than zero.")
     return length
 
 

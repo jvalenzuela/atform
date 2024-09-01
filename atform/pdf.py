@@ -91,7 +91,7 @@ def split_paragraphs(s):
             plines.append([])
 
     # Assemble each non-empty inner list into a paragraph.
-    return [' '.join(lines) for lines in plines if lines]
+    return [" ".join(lines) for lines in plines if lines]
 
 
 def make_paragraphs(text):
@@ -102,13 +102,13 @@ def make_paragraphs(text):
     flowables = []
 
     # Set style for the leading paragraph.
-    style = 'FirstParagraph'
+    style = "FirstParagraph"
 
     for ptext in split_paragraphs(text):
         flowables.append(Paragraph(ptext, style=stylesheet[style]))
 
         # Set style for all paragraphs after the first.
-        style = 'NextParagraph'
+        style = "NextParagraph"
 
     return flowables
 
@@ -194,13 +194,13 @@ class TableFormat(object):
     @table_style_cmd
     def section_background(seq):
         """Background for top-level section titles."""
-        seq.insert(0, 'BACKGROUND')
+        seq.insert(0, "BACKGROUND")
         seq.append(colors.lightsteelblue)
 
     @table_style_cmd
     def subsection_background(seq):
         """Background for divisions within a section."""
-        seq.insert(0, 'BACKGROUND')
+        seq.insert(0, "BACKGROUND")
         seq.append(colors.lightgrey)
 
 
@@ -214,7 +214,7 @@ class TestDocument(object):
 
         # The full name is the combination of the test's numeric
         # identifier and title.
-        self.full_name = ' '.join((id.to_string(test.id), test.title))
+        self.full_name = " ".join((id.to_string(test.id), test.title))
 
         # The document is built twice; the first time to a dummy memory
         # buffer in order to determine the total page count, and the
@@ -234,7 +234,7 @@ class TestDocument(object):
         """Creates the document template."""
         # Output a PDF if root is a string containing a directory.
         if isinstance(root, str):
-            pdfname = self.full_name + '.pdf'
+            pdfname = self.full_name + ".pdf"
             path = build_path(self.test.id, root)
             os.makedirs(path, exist_ok=True)
             filename = os.path.join(path, pdfname)
@@ -262,7 +262,7 @@ class TestDocument(object):
 
     def _header(self, canvas, doc):
         """Draws the page header."""
-        self._set_canvas_text_style(canvas, 'Header')
+        self._set_canvas_text_style(canvas, "Header")
         baseline = doc.pagesize[1] - TOP_MARGIN
 
         canvas.drawString(LEFT_MARGIN,
@@ -285,8 +285,8 @@ class TestDocument(object):
         # Assemble the content of each line, ordered from bottom up.
         lines = [self.test.project_info.get(key)
                  for key in [
-                         'system',
-                         'project',
+                         "system",
+                         "project",
                  ]]
 
         right_margin = doc.pagesize[0] - RIGHT_MARGIN
@@ -295,20 +295,20 @@ class TestDocument(object):
         for line in lines:
             if line:
                 canvas.drawRightString(right_margin, baseline, line)
-                baseline += stylesheet['Header'].fontSize * 1.2
+                baseline += stylesheet["Header"].fontSize * 1.2
 
     def _footer(self, canvas, doc):
         """Draws the page footer."""
-        self._set_canvas_text_style(canvas, 'Footer')
+        self._set_canvas_text_style(canvas, "Footer")
 
         # Offset text below the margin relative to the font size.
-        baseline = BOTTOM_MARGIN - (stylesheet['Footer'].fontSize * 1.2)
+        baseline = BOTTOM_MARGIN - (stylesheet["Footer"].fontSize * 1.2)
 
         # See if a total page count is available.
         try:
             total_pages = self.total_pages
         except AttributeError:
-            total_pages = '?'
+            total_pages = "?"
 
         pages = "Page {0} of {1}".format(doc.page, total_pages)
         canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
@@ -346,17 +346,17 @@ class TestDocument(object):
         """Generates Objective section."""
         if self.test.objective:
             rows = [[make_paragraphs(self.test.objective)]]
-            return self._section('Objective', rows)
+            return self._section("Objective", rows)
 
     def _references(self):
         """Generates References flowables."""
         if self.test.references:
             # Generate a row for each reference category.
             rows = [
-                [Paragraph(ref.titles[label], stylesheet['NormalRight']),
+                [Paragraph(ref.titles[label], stylesheet["NormalRight"]),
                  Paragraph(
-                     ', '.join(self.test.references[label]),
-                     stylesheet['Normal']
+                     ", ".join(self.test.references[label]),
+                     stylesheet["Normal"]
                  )]
                 for label in self.test.references
             ]
@@ -366,7 +366,7 @@ class TestDocument(object):
 
             column_widths = [
                 # First column is sized to fit the longest category title.
-                max_width(titles, 'NormalRight'),
+                max_width(titles, "NormalRight"),
 
                 # Second column gets all remaining space.
                 None,
@@ -376,15 +376,15 @@ class TestDocument(object):
             column_widths[0] = column_widths[0] + (2 * DEFAULT_TABLE_HORIZ_PAD)
 
             table_style = [
-                TableFormat.subsection_rule('LINEBEFORE', (1, 1), (1, -1)),
-                TableFormat.subsection_rule('LINEABOVE', (0, 2), (-1, -1)),
+                TableFormat.subsection_rule("LINEBEFORE", (1, 1), (1, -1)),
+                TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
 
                 # Category column vertical alignment.
-                ('VALIGN', (0, 1), (0, -1), 'MIDDLE'),
+                ("VALIGN", (0, 1), (0, -1), "MIDDLE"),
             ]
 
             return self._section(
-                'References',
+                "References",
                 rows,
                 style=table_style,
                 colWidths=column_widths,
@@ -394,7 +394,7 @@ class TestDocument(object):
         """Generates the Required Equipment section."""
         if self.test.equipment:
             return self._bullet_list_section(
-                'Required Equipment',
+                "Required Equipment",
                 self.test.equipment
                 )
 
@@ -402,7 +402,7 @@ class TestDocument(object):
         """Generates Preconditions section."""
         if self.test.preconditions:
             return self._bullet_list_section(
-                'Preconditions',
+                "Preconditions",
                 self.test.preconditions)
 
     def _procedure(self):
@@ -410,7 +410,7 @@ class TestDocument(object):
         if self.test.procedure:
             proc = ProcedureList(self.test.procedure)
             return self._section(
-                'Procedure',
+                "Procedure",
                 proc.rows,
                 style=proc.style,
                 nosplit=False,
@@ -420,12 +420,12 @@ class TestDocument(object):
 
     def _notes(self):
         """Generates the Notes section."""
-        return self._section('Notes', [[Spacer(0, NOTES_AREA_SIZE)]])
+        return self._section("Notes", [[Spacer(0, NOTES_AREA_SIZE)]])
 
     def _environment(self):
         """Generates the Environment section."""
         if self.test.fields:
-            rows = [[Paragraph(f.title, stylesheet['NormalRight']),
+            rows = [[Paragraph(f.title, stylesheet["NormalRight"]),
                      TextEntryField(f.length)]
                     for f in self.test.fields]
 
@@ -433,7 +433,7 @@ class TestDocument(object):
             widths = [
                 max_width(
                     [f.title for f in self.test.fields],
-                    'NormalRight',
+                    "NormalRight",
                 ),
 
                 # All remaining width to the text entry column.
@@ -442,11 +442,11 @@ class TestDocument(object):
 
             table_style = [
                 # Horiziontal rule between each item.
-                TableFormat.subsection_rule('LINEABOVE', (0, 2), (-1, -1)),
+                TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
             ]
 
             return self._section(
-                'Environment',
+                "Environment",
                 rows,
                 colWidths=widths,
                 style=table_style,
@@ -457,7 +457,7 @@ class TestDocument(object):
         if sig.titles:
             content = Approval()
             return self._section(
-                'Approval',
+                "Approval",
                 content.rows,
                 style=content.style,
                 colWidths=content.widths,
@@ -467,24 +467,24 @@ class TestDocument(object):
         """Creates a table enclosing an entire top-level section."""
         # Add the title as the first row.
         rows.insert(0, [
-            Preformatted(title, stylesheet['SectionHeading'])
+            Preformatted(title, stylesheet["SectionHeading"])
         ])
 
         style.extend([
             # Border surrounding the entire section.
-            TableFormat.section_rule('BOX', (0, 0), (-1, -1)),
+            TableFormat.section_rule("BOX", (0, 0), (-1, -1)),
 
             # Title row background.
             TableFormat.section_background((0, 0), (0, 0)),
 
             # The title spans all columns.
-            ('SPAN', (0, 0), (-1, 0)),
+            ("SPAN", (0, 0), (-1, 0)),
         ])
 
         # Keep the entire section together unless the table is
         # explicitly built to handle splitting.
         if nosplit:
-            style.append(('NOSPLIT', (0, 0), (-1, -1)))
+            style.append(("NOSPLIT", (0, 0), (-1, -1)))
 
         self._set_section_table_width(kwargs)
 
@@ -505,12 +505,12 @@ class TestDocument(object):
         table_width = (self.doc.pagesize[0] - LEFT_MARGIN - RIGHT_MARGIN)
 
         try:
-            widths = table_args['colWidths']
+            widths = table_args["colWidths"]
 
         # Sections with a single column do not specify widths, so that
         # column occupies the entire width.
         except KeyError:
-            table_args['colWidths'] = [table_width]
+            table_args["colWidths"] = [table_width]
 
         # Sections with multiple one columns will have one column that
         # will be streteched to occupy all remaining space.
@@ -531,7 +531,7 @@ class TestDocument(object):
             # Each item may contain multiple paragraphs, which are
             # expanded to a list of strings.
             [ListItem(make_paragraphs(i))],
-            bulletType='bullet',
+            bulletType="bullet",
             )] for i in items]
 
         return self._section(title, rows)
@@ -539,7 +539,7 @@ class TestDocument(object):
     def _draftmark(self, canvas, doc):
         """Creates a draft watermark."""
         canvas.saveState()
-        self._set_canvas_text_style(canvas, 'Draftmark')
+        self._set_canvas_text_style(canvas, "Draftmark")
 
         # Translate origin to center of page.
         canvas.translate(doc.pagesize[0] / 2, doc.pagesize[1] / 2)
@@ -549,9 +549,9 @@ class TestDocument(object):
 
         # Offset y coordinate by half the font size because the text
         # is anchored at its baseline, not the midpoint.
-        y = stylesheet['Draftmark'].fontSize / -2
+        y = stylesheet["Draftmark"].fontSize / -2
 
-        canvas.drawCentredString(0, y, 'DRAFT')
+        canvas.drawCentredString(0, y, "DRAFT")
         canvas.restoreState()
 
 
@@ -562,7 +562,7 @@ class ProcedureList(object):
     """
 
     # Header row text.
-    HEADER_FIELDS = ['Step #', 'Description', 'Pass']
+    HEADER_FIELDS = ["Step #", "Description", "Pass"]
 
     # Column indices.
     STEP_COL = 0
@@ -578,13 +578,13 @@ class ProcedureList(object):
 
     def _add_header(self):
         """Generates the header row."""
-        style = stylesheet['ProcedureTableHeading']
+        style = stylesheet["ProcedureTableHeading"]
         row = [Paragraph(s, style) for s in self.HEADER_FIELDS]
         self.rows.append(row)
 
     def _add_steps(self):
         """Adds rows for all steps."""
-        step_style = stylesheet['ProcedureTableHeading']
+        step_style = stylesheet["ProcedureTableHeading"]
         for i in range(len(self.steps)):
             desc = self._step_body(self.steps[i])
             step_num = Paragraph(str(i + 1), step_style)
@@ -606,13 +606,13 @@ class ProcedureList(object):
     def _add_last_row(self):
         """Creates the final row indicating the end of the procedure."""
         self.rows.append([
-            Paragraph('End Procedure', stylesheet['ProcedureTableHeading'])
+            Paragraph("End Procedure", stylesheet["ProcedureTableHeading"])
         ])
 
     @property
     def widths(self):
         """Computes column widths for the overall table."""
-        style = 'ProcedureTableHeading'
+        style = "ProcedureTableHeading"
 
         widths = []
 
@@ -654,35 +654,35 @@ class ProcedureList(object):
             # on the initial page, however, it's the only way to get
             # a rule on the top of following pages because the 'splitfirst'
             # index doesn't apply to repeated rows.
-            TableFormat.section_rule('LINEABOVE', (0, 1), (-1, 1)),
+            TableFormat.section_rule("LINEABOVE", (0, 1), (-1, 1)),
 
             # Do not split between the section header row and first step.
-            ('NOSPLIT', (0, 0), (-1, 2)),
+            ("NOSPLIT", (0, 0), (-1, 2)),
 
             # Do not split between the final step and last row.
-            ('NOSPLIT', (0, -2), (0, -1)),
+            ("NOSPLIT", (0, -2), (0, -1)),
 
             # Horizontal rules between each step.
-            TableFormat.subsection_rule('LINEBELOW', (0, 2), (-1, -3)),
+            TableFormat.subsection_rule("LINEBELOW", (0, 2), (-1, -3)),
 
             # Step number column
-            ('VALIGN', (self.STEP_COL, 2), (self.STEP_COL, -2), 'MIDDLE'),
+            ("VALIGN", (self.STEP_COL, 2), (self.STEP_COL, -2), "MIDDLE"),
 
             # Checkbox column
-            ('ALIGN', (self.PASS_COL, 2), (self.PASS_COL, -2), 'CENTER'),
-            ('VALIGN', (self.PASS_COL, 2), (self.PASS_COL, -2), 'MIDDLE'),
+            ("ALIGN", (self.PASS_COL, 2), (self.PASS_COL, -2), "CENTER"),
+            ("VALIGN", (self.PASS_COL, 2), (self.PASS_COL, -2), "MIDDLE"),
 
             # Last row shading.
             TableFormat.subsection_background((0, -1), (-1, -1)),
 
             # Last row spans all columns.
-            ('SPAN', (0, -1), (-1, -1)),
+            ("SPAN", (0, -1), (-1, -1)),
 
             # Add a section rule at the bottom of every page break.
             TableFormat.section_rule(
-                'LINEBELOW',
-                (0, 'splitlast'),
-                (-1, 'splitlast')
+                "LINEBELOW",
+                (0, "splitlast"),
+                (-1, "splitlast")
             ),
         ]
 
@@ -709,7 +709,7 @@ class ProcedureStepFields(object):
         # the longest title.
         self.title_col_width = max_width(
             [f.title for f in fields],
-            'Normal',
+            "Normal",
             left_pad=0,
         )
 
@@ -724,13 +724,13 @@ class ProcedureStepFields(object):
         """Constructs the table representing a single field."""
         text_entry_field = TextEntryField(field.length)
         row = [
-            Paragraph(field.title, stylesheet['NormalRight']),
+            Paragraph(field.title, stylesheet["NormalRight"]),
             text_entry_field,
         ]
 
         # Add the optional suffix.
         if field.suffix:
-            row.append(Paragraph(field.suffix, stylesheet['Normal']))
+            row.append(Paragraph(field.suffix, stylesheet["Normal"]))
 
         widths = [
             self.title_col_width,
@@ -743,13 +743,13 @@ class ProcedureStepFields(object):
             # set of fields left-aligned with the parent procedure step.
             # Right padding remains to separate the title from the text
             # entry field.
-            ('LEFTPADDING', (self.TITLE_COL, 0), (self.TITLE_COL, -1), 0),
+            ("LEFTPADDING", (self.TITLE_COL, 0), (self.TITLE_COL, -1), 0),
 
             # Remove all horizontal padding surrounding the text entry field.
             # Separation from adjacent columns is provided by padding in
             # those other columns.
-            ('LEFTPADDING', (self.FIELD_COL, 0), (self.FIELD_COL, -1), 0),
-            ('RIGHTPADDING', (self.FIELD_COL, 0), (self.FIELD_COL, -1), 0),
+            ("LEFTPADDING", (self.FIELD_COL, 0), (self.FIELD_COL, -1), 0),
+            ("RIGHTPADDING", (self.FIELD_COL, 0), (self.FIELD_COL, -1), 0),
         ]
 
         return Table(
@@ -786,14 +786,14 @@ class Approval(object):
 
     def _make_sig_rows(self, title):
         """Generates a row for a given signature entry."""
-        field_style = stylesheet['SignatureFieldTitle']
+        field_style = stylesheet["SignatureFieldTitle"]
 
         # Top row has the signature and field titles.
         self.rows.append([
-            Paragraph(title, stylesheet['NormalRight']),
-            Paragraph('Name', field_style),
-            Paragraph('Signature', field_style),
-            Paragraph('Date', field_style),
+            Paragraph(title, stylesheet["NormalRight"]),
+            Paragraph("Name", field_style),
+            Paragraph("Signature", field_style),
+            Paragraph("Date", field_style),
         ])
 
         # Lower row contains the text entry fields.
@@ -811,8 +811,8 @@ class Approval(object):
     def _date_entry_field(self):
         """Creates a date entry field."""
         return TextEntryField(
-            '0000/00/00',
-            'YYYY/MM/DD'
+            "0000/00/00",
+            "YYYY/MM/DD"
         )
 
     @property
@@ -821,18 +821,18 @@ class Approval(object):
         style = [
             # Vertical rules.
             TableFormat.subsection_rule(
-                'LINEBEFORE',
+                "LINEBEFORE",
                 (self.NAME_COL, 1),
                 (-1, -1)
             ),
 
             # Remove all vertical padding around title column as it
             # spans two rows.
-            ('TOPPADDING', (self.TITLE_COL, 1), (self.TITLE_COL, -1), 0),
-            ('BOTTOMPADDING', (self.TITLE_COL, 1), (self.TITLE_COL, -1), 0),
+            ("TOPPADDING", (self.TITLE_COL, 1), (self.TITLE_COL, -1), 0),
+            ("BOTTOMPADDING", (self.TITLE_COL, 1), (self.TITLE_COL, -1), 0),
 
             # Vertically center the title column.
-            ('VALIGN', (self.TITLE_COL, 1), (self.TITLE_COL, -1), 'MIDDLE'),
+            ("VALIGN", (self.TITLE_COL, 1), (self.TITLE_COL, -1), "MIDDLE"),
         ]
 
         [style.extend(self._sig_row_style(i)) for i in range(len(sig.titles))]
@@ -847,27 +847,27 @@ class Approval(object):
 
         style = [
             # Title column spans both upper and lower rows.
-            ('SPAN', (self.TITLE_COL, upper), (self.TITLE_COL, lower)),
+            ("SPAN", (self.TITLE_COL, upper), (self.TITLE_COL, lower)),
 
             # Remove vertical padding above the upper field name row.
-            ('TOPPADDING', (self.NAME_COL, upper), (-1, upper), 0),
+            ("TOPPADDING", (self.NAME_COL, upper), (-1, upper), 0),
 
             # Set padding between the upper and lower row.
             (
-                'BOTTOMPADDING',
+                "BOTTOMPADDING",
                 (self.NAME_COL, upper),
                 (-1, upper),
                 self.FIELD_TITLE_SEP
             ),
 
             # Remove padding above the entire lower row.
-            ('TOPPADDING', (0, lower), (-1, lower), 0),
+            ("TOPPADDING", (0, lower), (-1, lower), 0),
         ]
 
         # Set left padding for the name and date entry fields so the text
         # entry field abuts the subsection rule to the left.
         [style.append((
-            'LEFTPADDING',
+            "LEFTPADDING",
             (col, lower),
             (col, lower),
             SUBSECTION_RULE_WEIGHT / 2
@@ -882,7 +882,7 @@ class Approval(object):
             # Horizontal rule beween each signature, except below the last
             # row because it's closed by a section rule.
             style.append(TableFormat.subsection_rule(
-                'LINEBELOW',
+                "LINEBELOW",
                 (0, lower),
                 (-1, lower)
             ))
@@ -893,7 +893,7 @@ class Approval(object):
         # Set padding below the data entry fields so they rest on the
         # rule below them.
         [style.append((
-            'BOTTOMPADDING',
+            "BOTTOMPADDING",
             (col, lower),
             (col, lower),
             hrule_weight / 2))
@@ -907,7 +907,7 @@ class Approval(object):
         return [
             # Width of the first column is set to accommodate the
             # longest title.
-            max_width(sig.titles, 'Normal'),
+            max_width(sig.titles, "Normal"),
 
             self._name_col_width(),
             None, # Signature occupies all remaining width.
@@ -916,8 +916,8 @@ class Approval(object):
 
     def _name_col_width(self):
         """Calculates the width of the name column."""
-        style = stylesheet['SignatureFieldTitle']
-        title_width = stringWidth('Name', style.fontName, style.fontSize)
+        style = stylesheet["SignatureFieldTitle"]
+        title_width = stringWidth("Name", style.fontName, style.fontSize)
 
         # The title cell includes default left and right padding.
         title_width += DEFAULT_TABLE_HORIZ_PAD * 2
@@ -931,8 +931,8 @@ class Approval(object):
 
     def _date_col_width(self):
         """Calculates the width of the date column."""
-        style = stylesheet['SignatureFieldTitle']
-        title_width = stringWidth('Date', style.fontName, style.fontSize)
+        style = stylesheet["SignatureFieldTitle"]
+        title_width = stringWidth("Date", style.fontName, style.fontSize)
 
         # The title cell includes default left and right padding.
         title_width += DEFAULT_TABLE_HORIZ_PAD * 2
@@ -978,7 +978,7 @@ class TextEntryField(Flowable):
 
     def __init__(self, width, tooltip=None):
         super().__init__()
-        self.style = stylesheet['TextField']
+        self.style = stylesheet["TextField"]
         self.tooltip = tooltip
         self.width = self._calc_width(width)
         self.height = self.style.fontSize * self.HEIGHT_FACTOR
@@ -995,7 +995,7 @@ class TextEntryField(Flowable):
         # Build the template string from which width will be computed.
         try:
             # Integer width argument; use em dashes for the template.
-            template = width * '\u2014'
+            template = width * "\u2014"
         except TypeError:
             template = width # String width argument.
 

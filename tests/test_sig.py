@@ -21,7 +21,7 @@ class AddSignature(unittest.TestCase):
     def test_empty_title(self):
         """Confirm exception for an empty title."""
         with self.assertRaises(SystemExit):
-            atform.add_signature('')
+            atform.add_signature("")
 
     def test_blank_title(self):
         """Confirm exception for a title containing only whitespace."""
@@ -31,11 +31,11 @@ class AddSignature(unittest.TestCase):
     def test_title_strip(self):
         """Confirm surrounding whitespace is removed from the title."""
         atform.add_signature(string.whitespace + "spam" + string.whitespace)
-        self.assertEqual(['spam'], atform.sig.titles)
+        self.assertEqual(["spam"], atform.sig.titles)
 
     def test_title_order(self):
         """Confirm titles are added in the order defined."""
-        expected = ['foo', 'bar', 'spam', 'eggs']
+        expected = ["foo", "bar", "spam", "eggs"]
         [atform.add_signature(s) for s in expected]
         self.assertEqual(expected, atform.sig.titles)
 
@@ -48,4 +48,4 @@ class AddSignatureContentArea(utils.ContentAreaException):
 
     @staticmethod
     def call():
-        atform.add_signature('foo')
+        atform.add_signature("foo")

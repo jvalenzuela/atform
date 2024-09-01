@@ -21,7 +21,7 @@ class Git(object):
     """
 
     # CLI command name.
-    GIT_CMD = 'git'
+    GIT_CMD = "git"
 
     def __init__(self):
         # Determine if git is installed.
@@ -32,7 +32,7 @@ class Git(object):
         # Execute a benign git command to determine if the current working
         # directory is a repository.
         try:
-            self._run_git('status')
+            self._run_git("status")
         except subprocess.CalledProcessError:
             raise NoVersionControlError()
 
@@ -40,19 +40,19 @@ class Git(object):
     def clean(self):
         """Determines if the working directory contains uncommitted changes."""
         status = self._run_git(
-            'status',
-            '--porcelain',
+            "status",
+            "--porcelain",
         )
-        return status.strip() == ''
+        return status.strip() == ""
 
     @property
     def version(self):
         """Acquires the SHA1 of the current HEAD."""
         try:
             sha1 = self._run_git(
-                'log',
-                '--format=format:%h',
-                '-n1',
+                "log",
+                "--format=format:%h",
+                "-n1",
             )
 
         # This can fail in a git repo with no commits.

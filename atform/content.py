@@ -36,14 +36,14 @@ class ProcedureStep(object):
         """Normalizes the raw data into a dict."""
         # Convert a string to a dict with text key.
         if isinstance(raw, str):
-            normalized = {'text': raw}
+            normalized = {"text": raw}
 
         elif isinstance(raw, dict):
             normalized = raw
 
         else:
             raise error.UserScriptError(
-                'A procedure step must be a string or dictionary.')
+                "A procedure step must be a string or dictionary.")
 
         return normalized
 
@@ -54,28 +54,28 @@ class ProcedureStep(object):
             keys = [str(k) for k in data.keys()]
             raise error.UserScriptError(
                 "Undefined procedure step dictionary key(s): {0}".format(
-                    ', '.join(keys)
+                    ", ".join(keys)
                 ))
 
     @staticmethod
     def _validate_text(data):
         """Validates the text key."""
         try:
-            text = data.pop('text')
+            text = data.pop("text")
         except KeyError:
             raise error.UserScriptError(
-                "A procedure step dictionary must have a 'text' key.",
-                """Add a 'text' key with a string value containing
+                'A procedure step dictionary must have a "text" key.',
+                """Add a "text" key with a string value containing
                 instructions for the step.""",
             )
         return misc.nonempty_string("Procedure step text", text)
 
     def _validate_fields(self, data):
         """Validates the fields key."""
-        tpls = data.pop('fields', [])
+        tpls = data.pop("fields", [])
         if not isinstance(tpls, list):
             raise error.UserScriptError(
-                'Procedure step fields must be a list.',
+                "Procedure step fields must be a list.",
             )
 
         fields = []
@@ -83,7 +83,7 @@ class ProcedureStep(object):
             try:
                 fields.append(self._create_field(tpls[i]))
             except error.UserScriptError as e:
-                e.add_field('Procedure Step Field #', i+1)
+                e.add_field("Procedure Step Field #", i+1)
                 raise
         return fields
 
@@ -95,7 +95,7 @@ class ProcedureStep(object):
         """
         if not isinstance(tpl, tuple):
             raise error.UserScriptError(
-                'Procedure step fields list items must be tuples.')
+                "Procedure step fields list items must be tuples.")
 
         # Validate the required items: title and length.
         try:
@@ -103,11 +103,11 @@ class ProcedureStep(object):
             raw_length = tpl[1]
         except IndexError:
             raise error.UserScriptError(
-                'Procedure step field tuples must have at least two members: '
-                'title and length.')
+                "Procedure step field tuples must have at least two members: "
+                "title and length.")
         else:
             title = misc.nonempty_string(
-                'Procedure step field title',
+                "Procedure step field title",
                 raw_title
             )
             length = misc.validate_field_length(raw_length)
@@ -116,9 +116,9 @@ class ProcedureStep(object):
         try:
             raw = tpl[2]
         except IndexError:
-            suffix = ''
+            suffix = ""
         else:
-            suffix = misc.nonempty_string('Procedure step field suffix', raw)
+            suffix = misc.nonempty_string("Procedure step field suffix", raw)
 
         if len(tpl) > 3:
             raise error.UserScriptError(
@@ -132,7 +132,7 @@ class ProcedureStep(object):
     def _validate_label(data, num):
         """Creates a label referencing this step."""
         try:
-            lbl = data.pop('label')
+            lbl = data.pop("label")
 
         # Label is optional; do nothing if omitted.
         except KeyError:
@@ -150,8 +150,8 @@ class ProcedureStep(object):
 # not part of the public API as fields are defined via normal tuples, which
 # are then validated to create instances of this named tuple.
 ProcedureStepField = collections.namedtuple(
-    'ProcedureStepField',
-    ['title', 'length', 'suffix'],
+    "ProcedureStepField",
+    ["title", "length", "suffix"],
 )
 
 
@@ -187,8 +187,8 @@ class Test(object):
         references (dict, optional): A mapping from category labels
             defined with :py:func:`atform.add_reference_category`
             to lists of reference strings for that category.
-            For example, ``{'C1':['rA', 'rB']}`` would result in references
-            ``'rA'`` and ``'rB'`` to be listed under the ``'C1'`` category.
+            For example, ``{"C1":["rA", "rB"]}`` would result in references
+            ``"rA"`` and ``"rB"`` to be listed under the ``"C1"`` category.
             See :ref:`ref`.
         equipment (list[str], optional): A list of equipment required to
             perform the procedure; will be rendered as a bullet list under
@@ -214,7 +214,7 @@ class Test(object):
         global tests
         self.id = id.get_id()
         try:
-            self.title = misc.nonempty_string('Title', title)
+            self.title = misc.nonempty_string("Title", title)
             self._store_label(label)
             self.fields = field.get_active_fields(
                 include_fields,
@@ -224,7 +224,7 @@ class Test(object):
             self.objective = self._validate_objective(objective)
             self.references = self._validate_refs(references)
             self.equipment = self._validate_equipment(equipment)
-            self.preconditions = self._validate_string_list('Preconditions',
+            self.preconditions = self._validate_string_list("Preconditions",
                                                             preconditions)
             self.procedure = self._validate_procedure(procedure)
         except error.UserScriptError as e:
@@ -247,12 +247,12 @@ class Test(object):
     def _validate_objective(obj):
         """Validates the objective parameter."""
         if obj is not None:
-            return misc.nonempty_string('Objective', obj)
+            return misc.nonempty_string("Objective", obj)
 
     def _validate_refs(self, refs):
         """Validates the references parameter."""
         if not isinstance(refs, dict):
-            raise error.UserScriptError('References must be a dictionary.')
+            raise error.UserScriptError("References must be a dictionary.")
 
         validated = {}
         [validated.update(self._validate_ref_category(label, refs[label]))
@@ -262,7 +262,7 @@ class Test(object):
     @staticmethod
     def _validate_ref_category(label, refs):
         """Validates a single reference category and associated references."""
-        label = misc.nonempty_string('Reference label', label)
+        label = misc.nonempty_string("Reference label", label)
 
         # Ensure the label has been defined by add_reference_category().
         try:
@@ -279,13 +279,13 @@ class Test(object):
 
         if not isinstance(refs, list):
             raise TypeError(
-                f"Reference items for '{label}' category must be contained "
+                f'Reference items for "{label}" category must be contained '
                 "in a list")
 
         for reference in refs:
             try:
                 if not isinstance(reference, str):
-                    raise error.UserScriptError('References must be strings.')
+                    raise error.UserScriptError("References must be strings.")
                 reference = reference.strip()
 
                 # Reject duplicate references.
@@ -297,7 +297,7 @@ class Test(object):
                     )
 
             except error.UserScriptError as e:
-                e.add_field('Reference Category', label)
+                e.add_field("Reference Category", label)
                 raise
 
             # Ignore blank/empty references.
@@ -309,20 +309,20 @@ class Test(object):
 
     def _validate_equipment(self, equip):
         """Validates the equipment parameter."""
-        return self._validate_string_list('Equipment', equip)
+        return self._validate_string_list("Equipment", equip)
 
     @staticmethod
     def _validate_procedure(lst):
         """Validates the procedure parameter."""
         if not isinstance(lst, list):
-            raise error.UserScriptError('Procedure must be a list.')
+            raise error.UserScriptError("Procedure must be a list.")
         steps = []
         for i in range(len(lst)):
             num = i + 1 # Step numbers are one-based.
             try:
                 steps.append(ProcedureStep(lst[i], num))
             except error.UserScriptError as e:
-                e.add_field('Procedure Step', num)
+                e.add_field("Procedure Step", num)
                 raise
         return steps
 
@@ -359,21 +359,21 @@ class Test(object):
             try:
                 self.objective = label.resolve(self.objective)
             except error.UserScriptError as e:
-                e.add_field('Test Section', 'Objective')
+                e.add_field("Test Section", "Objective")
                 raise
 
         for i in range(len(self.preconditions)):
             try:
                 self.preconditions[i] = label.resolve(self.preconditions[i])
             except error.UserScriptError as e:
-                e.add_field('Precondition Item', i+1)
+                e.add_field("Precondition Item", i+1)
                 raise
 
         for i in range(len(self.procedure)):
             try:
                 self.procedure[i].resolve_labels()
             except error.UserScriptError as e:
-                e.add_field('Procedure Step', i+1)
+                e.add_field("Procedure Step", i+1)
                 raise
 
     def _add_exception_context(self, e):
@@ -383,14 +383,14 @@ class Test(object):
         except AttributeError:
             pass
         else:
-            e.add_field('Test Title', self.title)
+            e.add_field("Test Title", self.title)
 
-        e.add_field('Test ID', id.to_string(self.id))
+        e.add_field("Test ID", id.to_string(self.id))
         raise e
 
 
 @error.exit_on_script_error
-def generate(path='pdf'):
+def generate(path="pdf"):
     """Builds PDF output files for all defined tests.
 
     Should be called once near the end of the script after tests have been
@@ -407,7 +407,7 @@ def generate(path='pdf'):
     """
     if not isinstance(path, str):
         raise error.UserScriptError(
-            'Output path must be a string.',
+            "Output path must be a string.",
         )
     [t._pregenerate() for t in tests]
 

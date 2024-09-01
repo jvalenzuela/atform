@@ -13,15 +13,15 @@ import atform
 # anywhere a program tag name is needed.
 def tag_name(name):
     return atform.format_text(name,
-                              typeface='sansserif',
-                              font='bold')
+                              typeface="sansserif",
+                              font="bold")
 
 
 ######################################################################
 # Content
 ######################################################################
 
-atform.Test('Formatting',
+atform.Test("Formatting",
 
             objective="""
             This objective is defined with a
@@ -50,9 +50,9 @@ atform.Test('Formatting',
 
                 "Prepare a watch list for the following tags:"
                 + atform.bullet_list(
-                    tag_name('Tag1'),
-                    tag_name('Tag2'),
-                    tag_name('Tag3'))
+                    tag_name("Tag1"),
+                    tag_name("Tag2"),
+                    tag_name("Tag3"))
             ])
 
 

@@ -19,29 +19,29 @@ import atform.version
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 # Load the top-level project configuration.
-with open(os.path.join('..', '..', 'pyproject.toml'), 'rb') as f:
+with open(os.path.join("..", "..", "pyproject.toml"), "rb") as f:
     config = tomllib.load(f)
 
 # Extract the minimum required Python version from the project configuration.
 requires_python = re.search(
     r"\d+(\.\d+)*",
-    config['project']['requires-python']).group()
+    config["project"]["requires-python"]).group()
 
-project = config['project']['name']
-copyright = '2024, Jason Valenzuela'
-author = ''
+project = config["project"]["name"]
+copyright = "2024, Jason Valenzuela"
+author = ""
 release = atform.version.VERSION
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.napoleon',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.napoleon",
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 
 rst_prolog = f"""
@@ -54,18 +54,18 @@ numfig = True
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
-html_static_path = ['_static']
+html_theme = "alabaster"
+html_static_path = ["_static"]
 
 
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
-    'extraclassoptions': 'oneside',
-    'pointsize': '12pt',
-    'printindex': '', # Exclude index in PDF output.
+    "extraclassoptions": "oneside",
+    "pointsize": "12pt",
+    "printindex": "", # Exclude index in PDF output.
 
-    'preamble': r"""
+    "preamble": r"""
     \usepackage{embedfile} % For attaching examples.
     \setlength{\headheight}{15pt}
     \usepackage{changelog}
@@ -79,7 +79,7 @@ latex_additional_files = [
 
 # Example files that will not be embedded in the output PDF.
 EXCLUDE_FROM_EMBED = [
-    'snip.py',
+    "snip.py",
 ]
 
 
@@ -92,12 +92,12 @@ def add_example_embeds(app, config):
     latex_elements definition.
     """
     global latex_elements
-    path = os.path.join(app.srcdir, 'examples')
+    path = os.path.join(app.srcdir, "examples")
     files = set([e.name for e in os.scandir(path) if e.is_file()])
     files.difference_update(EXCLUDE_FROM_EMBED)
     cmds = ["\\embedfile[filespec={0}]{{examples/{0}}}".format(f)
             for f in files]
-    latex_elements['atendofbody'] = '\n'.join(cmds)
+    latex_elements["atendofbody"] = "\n".join(cmds)
 
 
 def copy_examples(app, exception):
@@ -105,18 +105,18 @@ def copy_examples(app, exception):
     Copies all example files to the LaTeX output path so they can be
     embedded into the output PDF.
     """
-    src = os.path.join(app.srcdir, 'examples')
-    dst = os.path.join(app.outdir, 'examples')
+    src = os.path.join(app.srcdir, "examples")
+    dst = os.path.join(app.outdir, "examples")
     shutil.rmtree(dst, ignore_errors=True)
     shutil.copytree(src, dst)
 
 
 def setup(app):
-    app.connect('config-inited', add_example_embeds)
+    app.connect("config-inited", add_example_embeds)
 
     # Copying examples into the build folder after the build is finshed
     # works because the Sphinx build only generates the LaTeX source files;
     # running LaTeX, which reads these copies, to construct the PDF is
     # actually part of the make process that runs after Sphinx is
     # completely finished.
-    app.connect('build-finished', copy_examples)
+    app.connect("build-finished", copy_examples)

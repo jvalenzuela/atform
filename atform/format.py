@@ -10,15 +10,15 @@ import xml.etree.ElementTree as ElementTree
 # attributes. The size value is optional to adjust height relative to
 # normal text.
 FONTS = {
-    ('normal', 'normal'): ('Times-Roman',),
-    ('normal', 'bold'): ('Times-Bold',),
-    ('normal', 'italic'): ('Times-Italic',),
-    ('monospace', 'normal'): ('Courier', 14),
-    ('monospace', 'bold'): ('Courier-Bold', 14),
-    ('monospace', 'italic'): ('Courier-Oblique', 14),
-    ('sansserif', 'normal'): ('Helvetica', 11),
-    ('sansserif', 'bold'): ('Helvetica-Bold', 11),
-    ('sansserif', 'italic'): ('Helvetica-Oblique', 11),
+    ("normal", "normal"): ("Times-Roman",),
+    ("normal", "bold"): ("Times-Bold",),
+    ("normal", "italic"): ("Times-Italic",),
+    ("monospace", "normal"): ("Courier", 14),
+    ("monospace", "bold"): ("Courier-Bold", 14),
+    ("monospace", "italic"): ("Courier-Oblique", 14),
+    ("sansserif", "normal"): ("Helvetica", 11),
+    ("sansserif", "bold"): ("Helvetica-Bold", 11),
+    ("sansserif", "italic"): ("Helvetica-Oblique", 11),
 }
 
 
@@ -42,7 +42,7 @@ def bullet_list(*items):
     Args:
         *items (str): The bullet list items. This is *not* a Python list of
             items, but rather each item passed as a separate parameter.
-            E.g., ``'Item 1', 'Item 2'``, not ``['Item 1', 'Item 2']``.
+            E.g., ``"Item 1", "Item 2"``, not ``["Item 1", "Item 2"]``.
 
     Returns:
         str: The entire list with embedded formatting that can be incorporated
@@ -54,7 +54,7 @@ def bullet_list(*items):
 
     # The character used at the beginning of each item. Chosen to be distinct
     # from the bullet used by ReportLab ListItem().
-    symbol = '&diams;'
+    symbol = "&diams;"
 
     stripped = []
     for i in items:
@@ -63,7 +63,7 @@ def bullet_list(*items):
         except AttributeError:
             raise error.UserScriptError(
                 f"Invalid bullet list item type: {i}",
-                'Bullet list items must be strings.',
+                "Bullet list items must be strings.",
             )
         else:
             stripped.append(item)
@@ -77,14 +77,14 @@ def bullet_list(*items):
     # Add empty leading and trailing strings so items get surrounded by double
     # newlines by the final join(), ensuring the list is separated from
     # adjacent paragraphs.
-    bullet_items.insert(0, '')
-    bullet_items.append('')
+    bullet_items.insert(0, "")
+    bullet_items.append("")
 
-    return '\n\n'.join(bullet_items)
+    return "\n\n".join(bullet_items)
 
 
 @error.exit_on_script_error
-def format_text(text, typeface='normal', font='normal'):
+def format_text(text, typeface="normal", font="normal"):
     """Applies special formatting attributes to text.
 
     The returned string can be incorporated into strings passed to the
@@ -95,9 +95,9 @@ def format_text(text, typeface='normal', font='normal'):
 
     Args:
         text (str): The content to format.
-        typeface (str, optional): Typeface name: ``'monospace'`` or
-            ``'sansserif'``.
-        font (str, optional): Font style: ``'bold'`` or ``'italic'``.
+        typeface (str, optional): Typeface name: ``"monospace"`` or
+            ``"sansserif"``.
+        font (str, optional): Font style: ``"bold"`` or ``"italic"``.
 
     Returns:
         str: The original text with embedded formatting information.
@@ -105,7 +105,7 @@ def format_text(text, typeface='normal', font='normal'):
     if not isinstance(text, str):
         raise error.UserScriptError(
             f"Invalid formatted text type: {text}",
-            'Text to be formatted must be a string.',
+            "Text to be formatted must be a string.",
         )
 
     typefaces = set([k[0] for k in FONTS.keys()])
@@ -121,13 +121,13 @@ def format_text(text, typeface='normal', font='normal'):
         )
 
     font_values = FONTS[(typeface, font)]
-    attrib = {'face':font_values[0]}
+    attrib = {"face":font_values[0]}
     try:
-        attrib['size'] = str(font_values[1])
+        attrib["size"] = str(font_values[1])
     except IndexError:
         pass
 
     # Enclose the string in a intra-paragraph XML markup element.
-    e = ElementTree.Element('font', attrib=attrib)
+    e = ElementTree.Element("font", attrib=attrib)
     e.text = text
-    return ElementTree.tostring(e, encoding='unicode')
+    return ElementTree.tostring(e, encoding="unicode")

@@ -27,7 +27,7 @@ def add(label, id):
     global labels
 
     if not isinstance(label, str):
-        raise error.UserScriptError('Label must be a string.')
+        raise error.UserScriptError("Label must be a string.")
 
     if not valid_label_pattern.match(label):
         raise error.UserScriptError(
