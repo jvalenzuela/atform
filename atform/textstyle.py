@@ -80,6 +80,13 @@ stylesheet.add(ParagraphStyle(
 
 
 stylesheet.add(ParagraphStyle(
+    name="HeaderRight",
+    parent=stylesheet["Header"],
+    alignment=TA_RIGHT,
+))
+
+
+stylesheet.add(ParagraphStyle(
     name="Footer",
     parent=stylesheet["Normal"],
 ))

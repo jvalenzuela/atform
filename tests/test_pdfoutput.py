@@ -5,6 +5,7 @@
 from tests import utils
 import atform
 import functools
+import os
 import string
 import unittest
 from unittest.mock import patch
@@ -399,23 +400,27 @@ class Approval(Base, unittest.TestCase):
 class ProjectInfo(Base, unittest.TestCase):
     """Tests for header project information."""
 
+    # Dummy content to force multiple pages because the header is only
+    # applied after the first page.
+    procedure = ["step"] * 30
+
     def test_project(self):
-        """Verify only project name in the header."""
+        """Verify only project name in the title block and header."""
         atform.set_project_info(project="The Project Name")
-        self.make_test()
+        self.make_test(procedure=self.procedure)
 
     def test_system(self):
-        """Verify only system name in the header."""
+        """Verify only system name in the title block and header."""
         atform.set_project_info(system="The System Name")
-        self.make_test()
+        self.make_test(procedure=self.procedure)
 
     def test_project_and_system(self):
-        """Verify project and system names in the header."""
+        """Verify project and system names in the title block and header."""
         atform.set_project_info(
             project="The Project Name",
             system="The System Name",
         )
-        self.make_test()
+        self.make_test(procedure=self.procedure)
 
 
 class Format(Base, unittest.TestCase):
@@ -482,3 +487,39 @@ class PageCount(Base, unittest.TestCase):
     def test_page_count_multi(self):
         """Verify correct footer page count for a multi-page document."""
         self.make_test(procedure=["Lots of steps"] * 60)
+
+
+class Logo(Base, unittest.TestCase):
+    """Tests for the logo image."""
+
+    def setUp(self):
+        utils.reset()
+        atform.set_project_info(project="The Project", system="The System")
+
+    def make_logo(self, name):
+        """Creates a test with a given logo image."""
+        path = os.path.join("tests", "images", "logo", f"{name}.jpg")
+        atform.add_logo(path)
+        self.make_test(
+            preconditions=[
+                "Verify the logo has a red border.",
+                "Verify the shape in the middle is a circle.",
+                "Verify the logo is centered in the upper-left corner.",
+                ]
+        )
+
+    def test_full_size(self):
+        """Verify appearance of a logo that is both maximum height and width."""
+        self.make_logo("full")
+
+    def test_full_width(self):
+        """Verify appearance of a logo that is maximum width."""
+        self.make_logo("width")
+
+    def test_full_height(self):
+        """Verify appearance of a logo that is maximum height."""
+        self.make_logo("height")
+
+    def test_small(self):
+        """Verify appearance of a logo smaller than the maximum height and width."""
+        self.make_logo("small")

@@ -18,6 +18,7 @@ def reset():
     atform.content.tests = []
     atform.id.current_id = [0]
     atform.id.section_titles = {}
+    atform.image.logo = None
     atform.misc.project_info = {}
     atform.sig.titles = []
     atform.field.fields = collections.OrderedDict()

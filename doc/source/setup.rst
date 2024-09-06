@@ -6,6 +6,11 @@ test documents to a specific project. Unless otherwise noted,
 these options can *only* be
 specified in the setup area, and affect all tests equally.
 
+A graphic image, such as a project or company logo,
+can be placed in the title block of each test document using
+:py:func:`atform.add_logo`. Refer to the API reference
+documentation for supported image formats.
+
 The environment in which a test is executed often needs to be recorded
 when the procedure is performed. Common examples of this type of
 information are software version or vehicle number. The

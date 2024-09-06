@@ -19,6 +19,10 @@ from atform.id import (
     skip_test,
 )
 
+from atform.image import (
+    add_logo,
+)
+
 from atform.misc import (
     set_project_info,
 )

@@ -4,6 +4,7 @@
 from . import (
     field,
     id,
+    image,
     ref,
     sig,
 )
@@ -19,6 +20,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
+    Image,
     ListFlowable,
     ListItem,
     Paragraph,
@@ -223,8 +225,8 @@ class TestDocument(object):
             self.doc = self._get_doc(dst)
             self.doc.build(
                 self._build_body(),
-                onFirstPage=self._on_every_page,
-                onLaterPages=self._on_every_page,
+                onFirstPage=self._on_first_page,
+                onLaterPages=self._on_later_pages,
             )
 
             # Capture the final page count for the next build.
@@ -252,13 +254,17 @@ class TestDocument(object):
             bottomMargin=BOTTOM_MARGIN,
         )
 
-    def _on_every_page(self, canvas, doc):
-        """Document template callback applied to all pages."""
+    def _on_first_page(self, canvas, doc):
+        """Document template callback for the first page."""
         if self.draft:
             self._draftmark(canvas, doc)
 
-        self._header(canvas, doc)
         self._footer(canvas, doc)
+
+    def _on_later_pages(self, canvas, doc):
+        """Document template callback for all pages after the first."""
+        self._on_first_page(canvas, doc)
+        self._header(canvas, doc)
 
     def _header(self, canvas, doc):
         """Draws the page header."""
@@ -330,6 +336,7 @@ class TestDocument(object):
         than the header and footer.
         """
         flowables = [
+            self._title_block(),
             self._objective(),
             self._references(),
             self._environment(),
@@ -341,6 +348,115 @@ class TestDocument(object):
         ]
 
         return [f for f in flowables if f]
+
+    @property
+    def _body_width(self):
+        """Horizontal space available for body content."""
+        return self.doc.pagesize[0] - LEFT_MARGIN - RIGHT_MARGIN
+
+    def _title_block(self):
+        """
+        Creates title information on the top of the first page containing
+        project information, test number & title, and logo. Constructed
+        as a table with one row; the logo, if any, is the first column,
+        and a nested table for the information fields occupies the
+        second column.
+        """
+        rows = [[
+            image.logo,
+            self._title_block_fields()
+        ]]
+
+        style =[
+            # Center the logo.
+            ("ALIGN", (0, 0), (0, 0), "CENTER"),
+
+            # Both the logo and fields table are vertically centered.
+            ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
+
+            # Remove right padding from the fields table as it goes all
+            # the way to the right margin.
+            ("RIGHTPADDING", (-1, 0), (-1, 0), 0),
+
+            # Remove all vertical padding.
+            ("TOPPADDING", (0, 0), (-1, -1), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        ]
+
+        # Remove the left padding from the column containing the fields table
+        # if no logo is present, allowing the fields table to abut the
+        # left margin.
+        if not image.logo:
+            style.append(("LEFTPADDING", (1, 0), (1, 0), 0))
+
+        # The image width is fixed to the maximum allowable logo size
+        # regardless of the actual image size. If no logo is being used,
+        # the image column width is set to zero.
+        image_width = (image.MAX_LOGO_SIZE.width * inch) if image.logo else 0
+
+        widths = [
+            image_width,
+
+            # The fields table occupies all remaining horizontal space.
+            self._body_width - image_width
+        ]
+
+        return Table(
+            rows,
+            style=style,
+            colWidths=widths,
+        )
+
+    def _title_block_fields(self):
+        """Builds a table containing the title block fields."""
+        items = []
+
+        # Add optional project information fields.
+        try:
+            items.append(("Project", self.test.project_info["project"]))
+        except KeyError:
+            pass
+        try:
+            items.append(("System", self.test.project_info["system"]))
+        except KeyError:
+            pass
+
+        # Add test identification fields.
+        items.append(("Number", id.to_string(self.test.id)))
+        items.append(("Title", self.test.title))
+
+        # Add a colon after each field name.
+        items = [(f"{i[0]}:", i[1]) for i in items]
+
+        rows = [[
+            Paragraph(title, stylesheet["HeaderRight"]),
+            Paragraph(value, stylesheet["Header"]),
+        ] for title, value in items]
+
+        style = [
+            # Remove horizontal padding from the field name column.
+            ("LEFTPADDING", (0, 0), (0, -1), 0),
+            ("RIGHTPADDING", (0, 0), (0, -1), 0),
+        ]
+
+        widths = [
+            max_width(
+                [i[0] for i in items],
+                "HeaderRight",
+                left_pad=0,
+                right_pad=0,
+            ),
+
+            # The value column is left unspecified as the parent title block
+            # table will be stretched to fill.
+            None,
+        ]
+
+        return Table(
+            rows,
+            style=style,
+            colWidths=widths,
+        )
 
     def _objective(self):
         """Generates Objective section."""

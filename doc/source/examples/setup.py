@@ -7,6 +7,9 @@ import atform
 # Setup
 ######################################################################
 
+# Place a logo in the title block.
+atform.add_logo("python.jpg")
+
 # Create some fields to enter software version and system name.
 atform.add_field("Software Version", 20, "ver")
 atform.add_field("System Name", 10, "sys")

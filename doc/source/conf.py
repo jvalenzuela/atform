@@ -47,6 +47,8 @@ exclude_patterns = []
 rst_prolog = f"""
 .. |project_name| replace:: {project}
 .. |requires_python| replace:: {requires_python}
+.. |max_logo_width| replace:: {atform.image.MAX_LOGO_SIZE.width}
+.. |max_logo_height| replace:: {atform.image.MAX_LOGO_SIZE.height}
 """
 
 numfig = True

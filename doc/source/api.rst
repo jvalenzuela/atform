@@ -15,6 +15,7 @@ Setup
    :toctree: generated
 
    atform.add_field
+   atform.add_logo
    atform.add_reference_category
    atform.add_signature
    atform.require_version
