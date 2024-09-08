@@ -616,23 +616,19 @@ class TestDocument(object):
         Adjusts section table column widths to fill all available
         horizontal space.
         """
-        # Target table width is the size of the paper less left and
-        # right margins.
-        table_width = (self.doc.pagesize[0] - LEFT_MARGIN - RIGHT_MARGIN)
-
         try:
             widths = table_args["colWidths"]
 
         # Sections with a single column do not specify widths, so that
         # column occupies the entire width.
         except KeyError:
-            table_args["colWidths"] = [table_width]
+            table_args["colWidths"] = [self._body_width]
 
         # Sections with multiple one columns will have one column that
         # will be streteched to occupy all remaining space.
         else:
             stretch_col = widths.index(None)
-            remain = table_width - sum([w for w in widths if w])
+            remain = self._body_width - sum([w for w in widths if w])
             widths[stretch_col] = remain
 
     def _bullet_list_section(self, title, items):
