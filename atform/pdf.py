@@ -624,7 +624,7 @@ class TestDocument(object):
         except KeyError:
             table_args["colWidths"] = [self._body_width]
 
-        # Sections with multiple one columns will have one column that
+        # Sections with multiple columns will have one column that
         # will be streteched to occupy all remaining space.
         else:
             stretch_col = widths.index(None)
