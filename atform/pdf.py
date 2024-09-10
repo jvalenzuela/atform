@@ -881,16 +881,17 @@ class Approval(object):
 
     # Number of characters the name text entry fields should be sized to
     # accommodate.
-    NAME_WIDTH = 15
+    NAME_WIDTH = 12
 
     # Vertical distance between field names and the data entry fields.
     FIELD_TITLE_SEP = 1 * point
 
     # Column indices.
     TITLE_COL = 0
-    NAME_COL = 1
-    SIG_COL = 2
-    DATE_COL = 3
+    NAME_COL = TITLE_COL + 1
+    SIG_COL = NAME_COL + 1
+    INITIAL_COL = SIG_COL + 1
+    DATE_COL = INITIAL_COL + 1
 
     def __init__(self):
         self.rows = []
@@ -903,9 +904,10 @@ class Approval(object):
         # Top row has the signature and field titles.
         self.rows.append([
             Paragraph(title, stylesheet["NormalRight"]),
-            Paragraph("Name", field_style),
-            Paragraph("Signature", field_style),
-            Paragraph("Date", field_style),
+            Preformatted("Name", field_style),
+            Preformatted("Signature", field_style),
+            Preformatted("Initials", field_style),
+            Preformatted("Date", field_style),
         ])
 
         # Lower row contains the text entry fields.
@@ -913,6 +915,7 @@ class Approval(object):
             None, # Title column in empty in this row.
             self._name_entry_field(),
             None, # Signature column is blank.
+            None, # Initial column is blank.
             self._date_entry_field(),
         ])
 
@@ -1023,6 +1026,10 @@ class Approval(object):
 
             self._name_col_width(),
             None, # Signature occupies all remaining width.
+
+            # The Initials column is sized to hold the title.
+            max_width(["Initials"], "SignatureFieldTitle"),
+
             self._date_col_width(),
         ]
 
