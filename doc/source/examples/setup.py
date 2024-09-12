@@ -10,6 +10,16 @@ import atform
 # Place a logo in the title block.
 atform.add_logo("python.jpg")
 
+atform.add_copyright(
+    """
+    This function adds a copyright, confidentiality, or other
+    similar notice. The copyright symbol can be included directly
+    in the string, like ©, but the script file must be UTF-8
+    encoded as this example is. The Python Unicode literal \u00a9
+    can also be used, and does not require UTF-8 encoding.
+    """
+    )
+
 # Create some fields to enter software version and system name.
 atform.add_field("Software Version", 20, "ver")
 atform.add_field("System Name", 10, "sys")

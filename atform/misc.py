@@ -1,11 +1,16 @@
 from . import error
 from . import id
+from . import misc
 import functools
 
 
 # The current project information set by the most recent call to
 # set_project_info().
 project_info = {}
+
+
+# The user-defined copyright notice string.
+copyright = None
 
 
 def setup_only(func):
@@ -66,6 +71,31 @@ def validate_field_length(length):
 #
 # Items in this area are documented and exported for use by end users.
 ################################################################################
+
+
+@error.exit_on_script_error
+@misc.setup_only
+def add_copyright(notice):
+    """Defines a copyright notice that will appear on each test document.
+
+    May only be called once in the setup area.
+
+    Args:
+        notice (str): The copyright notice text; must be a single
+            paragraph.
+    """
+    global copyright
+
+    if copyright:
+        raise error.UserScriptError(
+            "A copyright notice has already been defined.",
+            """
+            This function can only be called once to define a single
+            copyright notice.
+            """,
+        )
+
+    copyright = misc.nonempty_string("copyright notice", notice)
 
 
 @error.exit_on_script_error

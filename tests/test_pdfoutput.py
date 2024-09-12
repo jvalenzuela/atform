@@ -523,3 +523,34 @@ class Logo(Base, unittest.TestCase):
     def test_small(self):
         """Verify appearance of a logo smaller than the maximum height and width."""
         self.make_logo("small")
+
+
+class Copyright(Base, unittest.TestCase):
+    """Tests for copyright notices."""
+
+    def setUp(self):
+        utils.reset()
+
+    def make_test(self):
+        """Fills the first page so the bottom margin can be verified."""
+        super().make_test(procedure=["foo"] * 30)
+
+    def test_single_line(self):
+        """Verify appearance of a single-line copyright notice."""
+        atform.add_copyright("\u00a9 Spam Eggs")
+        self.make_test()
+
+    def test_multi_line(self):
+        """Verify appearance of a multi-line copyright notice."""
+        atform.add_copyright(
+            """
+            Lorem ipsum odor amet, consectetuer adipiscing elit. Quis platea est
+            non, volutpat vulputate luctus nullam. Dolor ligula rhoncus,
+            malesuada nascetur senectus donec erat? Adipiscing et dignissim
+            euismod cursus rutrum morbi parturient tempor elit. Nec imperdiet
+            dictum lobortis, tristique commodo quis imperdiet suscipit ornare.
+            Cubilia ligula id consectetur mattis duis elit tristique dis. Mus
+            hac proin quis bibendum sapien ultrices erat.
+            """
+        )
+        self.make_test()

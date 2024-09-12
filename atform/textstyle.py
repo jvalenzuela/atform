@@ -12,6 +12,7 @@
 
 from reportlab.lib.enums import (
     TA_CENTER,
+    TA_JUSTIFY,
     TA_RIGHT,
 )
 from reportlab.lib.styles import (
@@ -122,4 +123,13 @@ stylesheet.add(ParagraphStyle(
     name="TextField",
     parent=stylesheet["Normal"],
     fontName="Helvetica",
+))
+
+
+stylesheet.add(ParagraphStyle(
+    name="CopyrightNotice",
+    fontSize=8 * point,
+    leading=8 * point,
+    parent=stylesheet["Normal"],
+    alignment=TA_JUSTIFY,
 ))

@@ -5,6 +5,7 @@ from . import (
     field,
     id,
     image,
+    misc,
     ref,
     sig,
 )
@@ -16,10 +17,11 @@ import functools
 import io
 import os
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import LETTER
 from reportlab.lib.units import inch
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
+    Frame,
     Image,
     ListFlowable,
     ListItem,
@@ -33,9 +35,14 @@ from reportlab.platypus import (
 from reportlab.platypus.flowables import Flowable
 
 
+PAGE_SIZE = LETTER
 LEFT_MARGIN = 0.75 * inch
 RIGHT_MARGIN = LEFT_MARGIN
 TOP_MARGIN = 0.75 * inch
+
+# This initial value is based on the single-line footer containing the
+# page number and possibly version ID; it will be increased to accommodate
+# a user-provided copyright notice.
 BOTTOM_MARGIN = 0.5 * inch
 
 
@@ -218,6 +225,26 @@ class TestDocument(object):
         # identifier and title.
         self.full_name = " ".join((id.to_string(test.id), test.title))
 
+        self.bottom_margin = BOTTOM_MARGIN
+
+        if misc.copyright:
+            self.copyright = Paragraph(
+                misc.copyright,
+                stylesheet["CopyrightNotice"],
+            )
+
+            # Compute the vertical height needed to hold the copyright
+            # notice when wrapped to within the document body width.
+            self.copyright_height = (
+                self.copyright.wrap(self._body_width, 0)[1]
+
+                # Additional space for descenders on the bottom line.
+                + stylesheet["CopyrightNotice"].fontSize * 0.25
+            )
+
+            # Enlarge the bottom margin to accommodate the copyright notice.
+            self.bottom_margin += self.copyright_height
+
         # The document is built twice; the first time to a dummy memory
         # buffer in order to determine the total page count, and the
         # second time to the output PDF file.
@@ -247,11 +274,11 @@ class TestDocument(object):
 
         return SimpleDocTemplate(
             filename,
-            pagesize=letter,
+            pagesize=PAGE_SIZE,
             leftMargin=LEFT_MARGIN,
             rightMargin=RIGHT_MARGIN,
             topMargin=TOP_MARGIN,
-            bottomMargin=BOTTOM_MARGIN,
+            bottomMargin=self.bottom_margin,
         )
 
     def _on_first_page(self, canvas, doc):
@@ -305,10 +332,28 @@ class TestDocument(object):
 
     def _footer(self, canvas, doc):
         """Draws the page footer."""
+        baseline = self.bottom_margin
+
+        # The copyright notice is placed in a dedicated frame so the text
+        # can be wrapped as necessary.
+        if misc.copyright:
+            baseline -= self.copyright_height
+            frame = Frame(
+                LEFT_MARGIN,
+                baseline,
+                self._body_width,
+                self.copyright_height,
+                leftPadding=0,
+                rightPadding=0,
+                topPadding=0,
+                bottomPadding=0,
+            )
+            frame.addFromList([self.copyright], canvas)
+
         self._set_canvas_text_style(canvas, "Footer")
 
-        # Offset text below the margin relative to the font size.
-        baseline = BOTTOM_MARGIN - (stylesheet["Footer"].fontSize * 1.2)
+        # Offset text relative to the font size.
+        baseline -= stylesheet["Footer"].fontSize * 1.2
 
         # See if a total page count is available.
         try:
@@ -324,6 +369,7 @@ class TestDocument(object):
             x = doc.pagesize[0] - RIGHT_MARGIN
             version_text = "Document Version: {0}".format(self.version)
             canvas.drawRightString(x, baseline, version_text)
+
 
     def _set_canvas_text_style(self, canvas, style):
         """Sets the current canvas font to a given style."""
@@ -352,7 +398,7 @@ class TestDocument(object):
     @property
     def _body_width(self):
         """Horizontal space available for body content."""
-        return self.doc.pagesize[0] - LEFT_MARGIN - RIGHT_MARGIN
+        return PAGE_SIZE[0] - LEFT_MARGIN - RIGHT_MARGIN
 
     def _title_block(self):
         """

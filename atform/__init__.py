@@ -24,6 +24,7 @@ from atform.image import (
 )
 
 from atform.misc import (
+    add_copyright,
     set_project_info,
 )
 

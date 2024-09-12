@@ -14,6 +14,7 @@ Setup
 .. autosummary::
    :toctree: generated
 
+   atform.add_copyright
    atform.add_field
    atform.add_logo
    atform.add_reference_category
