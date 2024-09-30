@@ -164,6 +164,7 @@ to this PDF so they may be
 used as initial templates for writing actual test procedures.
 
 .. literalinclude:: examples/minimal.py
+   :caption: minimal.py
 
 This example contains three tests, containing only a
 title and automatically-assigned number, yet is sufficient to demonstrate

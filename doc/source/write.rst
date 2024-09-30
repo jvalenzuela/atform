@@ -70,6 +70,7 @@ The procedure list may contain both string and dictionary items as the
 following example illustrates:
 
 .. literalinclude:: examples/procedure.py
+   :caption: procedure.py
 
 
 .. _labels:
@@ -125,6 +126,7 @@ content:
 This next example demonstrates use of labels and placeholders.
 
 .. literalinclude:: examples/label.py
+   :caption: label.py
 
 
 .. _format:
@@ -196,3 +198,4 @@ secondary list is necessary.
 This following sample script demonstrates these formatting concepts:
 
 .. literalinclude:: examples/format.py
+   :caption: format.py

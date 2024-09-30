@@ -1,5 +1,3 @@
-# button.py
-
 # All scripts using atform functions must import the atform package.
 # The import statement in main.py does not propagate to scripts
 # imported by main.py.

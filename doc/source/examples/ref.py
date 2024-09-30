@@ -1,5 +1,3 @@
-# ref.py
-
 import atform
 
 

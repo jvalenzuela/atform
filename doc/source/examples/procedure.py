@@ -1,5 +1,3 @@
-# procedure.py
-
 import atform
 
 

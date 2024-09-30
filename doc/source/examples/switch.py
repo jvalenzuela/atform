@@ -1,5 +1,3 @@
-# switch.py
-
 import atform
 
 

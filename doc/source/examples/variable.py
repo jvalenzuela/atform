@@ -1,6 +1,3 @@
-# variable.py
-
-
 import atform
 
 

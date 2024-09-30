@@ -1,5 +1,3 @@
-# setup.py
-
 import atform
 
 

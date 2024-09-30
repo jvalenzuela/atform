@@ -1,5 +1,3 @@
-# section.py
-
 import atform
 
 

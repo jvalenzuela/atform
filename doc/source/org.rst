@@ -27,6 +27,7 @@ into sections:
 :py:func:`atform.section`:
 
 .. literalinclude:: examples/section.py
+   :caption: section.py
 
 
 Skipping Tests
@@ -40,6 +41,7 @@ defunct test without affecting later ones. The following example illustrates
 some different methods of skipping numbers:
 
 .. literalinclude:: examples/skip.py
+   :caption: skip.py
 
 
 Source Files
@@ -63,13 +65,16 @@ imported from one or more lower-level scripts. The example below shows
 a top-level script that imports content from two, separate files:
 
 .. literalinclude:: examples/main.py
+   :caption: main.py
 
 Next are the scripts imported from the main script, illustrating how
 content can be distributed into the lower-level scripts:
 
 .. literalinclude:: examples/button.py
+   :caption: button.py
 
 .. literalinclude:: examples/switch.py
+   :caption: switch.py
 
 When generating PDF output for tests in multiple files, execute the top-level
 script only, which will automatically incorporate any imported scripts.

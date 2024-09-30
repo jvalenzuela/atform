@@ -1,5 +1,3 @@
-# skip.py
-
 import atform
 
 

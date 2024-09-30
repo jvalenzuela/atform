@@ -1,6 +1,3 @@
-# xref.py
-
-
 # Python's built-in CSV module will be used to export a
 # cross-reference file.
 import csv

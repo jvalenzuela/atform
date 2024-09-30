@@ -21,6 +21,7 @@ text are identical, and requiring only a single modification if the
 step needs to be altered.
 
 .. literalinclude:: examples/variable.py
+   :caption: variable.py
 
 Another case for automation is a system containing several
 instances of a common component, each of which needs to be tested separately.
@@ -35,6 +36,7 @@ is then called in the content area to generate a uniform test for each
 component.
 
 .. literalinclude:: examples/iterate.py
+   :caption: iterate.py
 
 Test procedures often need to incorporate content from an external
 source. A common example is alarm messages, where messages are defined
@@ -56,6 +58,7 @@ some tests including alarm messages from the csv file. The script and csv
 file need to reside in the same folder.
 
 .. literalinclude:: examples/alarm.py
+   :caption: alarm.py
 
 For the sake of brevity these examples are each a single file
 with features such as variables or functions that help automate
@@ -73,7 +76,8 @@ in multiple scripts, move the following content from alarm.py
 into a separate file called :file:`common.py`:
 
 .. literalinclude:: examples/alarm.py
-   :lines: 6-28
+   :caption: alarm.py
+   :lines: 3-25
 
 Every script needing to call ``verify_alarm()`` would then import it in addition
 to |project_name| at the top.

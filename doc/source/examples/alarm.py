@@ -1,6 +1,3 @@
-# alarm.py
-
-
 import atform
 
 # Import Python's built-in CSV module to read the external alarm file.

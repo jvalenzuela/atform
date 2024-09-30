@@ -1,6 +1,3 @@
-# label.py
-
-
 import atform
 
 

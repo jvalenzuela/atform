@@ -1,6 +1,3 @@
-# iterate.py
-
-
 import atform
 
 

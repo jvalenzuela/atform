@@ -1,6 +1,3 @@
-# minimal.py
-
-
 # Import atform package.
 import atform
 

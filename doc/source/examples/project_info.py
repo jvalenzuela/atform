@@ -1,6 +1,3 @@
-# project_info.py
-
-
 import atform
 
 

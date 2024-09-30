@@ -34,6 +34,7 @@ in the Approval section where the person performing that role
 can provide their name, signature, etc.
 
 .. literalinclude:: examples/setup.py
+   :caption: setup.py
 
 
 .. _project_info:
@@ -55,3 +56,4 @@ includes a call to :py:func:`atform.set_project_info`
 to update the system name.
 
 .. literalinclude:: examples/project_info.py
+   :caption: project_info.py

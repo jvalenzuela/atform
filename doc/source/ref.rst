@@ -13,6 +13,7 @@ to specify references for each test procedure. The sample below shows
 test procedures with two reference categories:
 
 .. literalinclude:: examples/ref.py
+   :caption: ref.py
 
 
 .. _xref:
@@ -57,3 +58,4 @@ The following :file:`xref.py` listing illustrates a simple example
 where cross-references are written to a CSV file:
 
 .. literalinclude:: examples/xref.py
+   :caption: xref.py
