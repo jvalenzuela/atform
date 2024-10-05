@@ -28,6 +28,8 @@ def add_reference_category(title, label):
     :py:class:`atform.Test`. This function is only available in the setup
     area of the script before any tests or sections are created.
 
+    .. seealso:: :ref:`ref`
+
     Args:
         title (str): The full name of the category that will be displayed
             on the test documents.

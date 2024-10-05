@@ -74,6 +74,8 @@ def section(level, id=None, title=None):
     an optional title. All subsections after the target level and individual
     test numbers will be reset back to one.
 
+    .. seealso:: :ref:`section`
+
     Args:
         level (int): Target identifier level in which to start a new section;
             must be greater than zero and less than the number of levels
@@ -157,6 +159,8 @@ def set_id_depth(levels):
     three numeric fields, like 2.1.1 or 4.2.3. This should be called once
     before any tests or sections are created.
 
+    .. seealso:: :ref:`section`
+
     Args:
         levels (int): Number of identifier levels.
     """
@@ -181,6 +185,8 @@ def skip_test(id=None):
     This function can only skip tests within the current section, i.e.,
     it will only affect the last identifier field. Typical usage is to
     reserve a range of IDs or maintain numbering if a test is removed.
+
+    .. seealso:: :ref:`skip`
 
     Args:
         id (int, optional): ID of the next test. If omitted, one test will

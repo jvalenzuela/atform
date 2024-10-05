@@ -80,6 +80,8 @@ def add_copyright(notice):
 
     May only be called once in the setup area.
 
+    .. seealso:: :ref:`setup`
+
     Args:
         notice (str): The copyright notice text; must be a single
             paragraph.

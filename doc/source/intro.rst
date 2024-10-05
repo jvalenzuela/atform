@@ -64,6 +64,8 @@ Testing to ensure git is properly installed can be done by running
 something like :samp:`git version {x.y.z}`.
 
 
+.. _upgrade:
+
 Upgrading
 ---------
 

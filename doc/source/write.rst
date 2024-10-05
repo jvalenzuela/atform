@@ -1,3 +1,5 @@
+.. _write:
+
 Writing Tests
 =============
 

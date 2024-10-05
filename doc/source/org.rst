@@ -1,6 +1,8 @@
 Organization
 ============
 
+.. _section:
+
 Sectioning
 ----------
 
@@ -29,6 +31,8 @@ into sections:
 .. literalinclude:: examples/section.py
    :caption: section.py
 
+
+.. _skip:
 
 Skipping Tests
 --------------

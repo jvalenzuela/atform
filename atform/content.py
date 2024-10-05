@@ -194,6 +194,8 @@ class Test(object):
     Numeric identifiers will be incrementally assigned to each test in the
     order they appear.
 
+    .. seealso:: :ref:`write`
+
     Args:
         title (str): A short phrase describing the test procedure, that is
             combined with the automatically-assigned numeric ID to identify

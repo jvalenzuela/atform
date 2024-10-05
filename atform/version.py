@@ -23,6 +23,8 @@ def require_version(major, minor=0):
     Aborts the script if the installed version does not match the major
     version, or is less than the minor version.
 
+    .. seealso:: :ref:`upgrade`
+
     Args:
         major (int): The required major version.
         minor (int, optional): The required minor version.

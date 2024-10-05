@@ -43,6 +43,8 @@ def add_logo(path):
     on the user to construct a logo suitable for presentation within
     the allowable area.
 
+    .. seealso:: :ref:`setup`
+
     Args:
         path (str): Path to the image file.
     """

@@ -25,6 +25,8 @@ def add_signature(title):
     fields that will appear at the conclusion of every test. Signatures
     will be presented in the order they are defined.
 
+    .. seealso:: :ref:`setup`
+
     Args:
         title (str): A short description of the person signing.
     """
