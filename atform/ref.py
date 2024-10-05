@@ -69,8 +69,8 @@ def get_xref():
         passed to the ``references`` argument of :py:class:`atform.Test`.
         Final values of the inner dictionary are lists of test identifiers,
         formatted as strings, assigned to that reference. As an example,
-        the keys for all tests assigned ``"SF42"`` in the ``"sf"`` category
-        would be by ``["sf"]["SF42"]``.
+        the keys yielding a list of all tests assigned ``"SF42"`` in the
+        ``"sf"`` category would be ``["sf"]["SF42"]``.
     """
     global titles
 
