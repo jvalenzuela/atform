@@ -11,22 +11,6 @@ can be placed in the title block of each test document using
 :py:func:`atform.add_logo`. Refer to the API reference
 documentation for supported image formats.
 
-The environment in which a test is executed often needs to be recorded
-when the procedure is performed. Common examples of this type of
-information are software version or vehicle number. The
-:py:func:`atform.add_field` function creates a field
-where such contextual data may be entered.
-
-By default, every field will be present on all tests, but it is also
-possible to customize the fields applied to each test procedure.
-Every field must first be defined with :py:func:`atform.add_field`,
-regardless of how many tests it will be applied to. Once defined, the
-``include_fields``, ``exclude_fields``, and ``active_fields`` parameters
-of :py:class:`atform.Test` can be used to adjust the fields
-listed on a single test. To change the fields on a number of consecutive
-tests, :py:func:`atform.set_active_fields` can be used throughout the
-content area to alter the default fields.
-
 Test procedures can be configured to include an area to record personnel
 involved with the execution, review, or approval of a completed procedure.
 The :py:func:`atform.add_signature` function creates a set of fields
@@ -57,3 +41,31 @@ to update the system name.
 
 .. literalinclude:: examples/project_info.py
    :caption: project_info.py
+
+
+.. _env_fields:
+
+Environment Fields
+------------------
+
+It is often necessary to record information about the environment in which
+the test procedure is performed. Common examples of this type of
+contextual data are software version, machine number, or facility area.
+Data entry fields for the test executor to enter this type of information
+can be added to test procedures with the :py:func:`atform.add_field`
+function.
+
+By default, every field will be present on all tests, but it is also
+possible to customize the fields applied to each test procedure.
+Every field must first be defined with :py:func:`atform.add_field`,
+regardless of how many tests it will be applied to. Once defined, the
+``include_fields``, ``exclude_fields``, and ``active_fields`` parameters
+of :py:class:`atform.Test` can be used to adjust the fields
+listed on a single test. To change the fields on a number of consecutive
+tests, :py:func:`atform.set_active_fields` can be used throughout the
+content area to alter the default fields. The :file:`field.py` example
+demonstrates how to define fields and alter the fields appearing on
+each test procedure.
+
+.. literalinclude:: examples/field.py
+   :caption: field.py

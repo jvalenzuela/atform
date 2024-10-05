@@ -81,6 +81,8 @@ def add_field(title, length, name, active=True):
     This function can only be used in the setup area of the script,
     before any tests or sections are created.
 
+    .. seealso:: :ref:`env_fields`
+
     Args:
         title (str): Text to serve as the field's prompt; must not be blank.
         length (int): Maximum number of characters the field should be sized
@@ -125,6 +127,8 @@ def set_active_fields(include=[], exclude=[], active=None):
     tests. The fields set by this function can also be overridden by
     the ``include_fields``, ``exclude_fields``, and ``active_fields``
     arguments of :py:class:`atform.Test`.
+
+    .. seealso:: :ref:`env_fields`
 
     Args:
         include (list[str], optional): Names of fields to add to later
