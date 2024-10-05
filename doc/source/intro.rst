@@ -82,6 +82,11 @@ that do not affect existing functionality, but require script changes to
 use the new features. New minor versions may also introduce changes altering
 the output format.
 
+.. note::
+
+   Releases preceeding 1.0 do not adhere to the minor version regimen,
+   and may include changes incompatible with previous 0.\ *x* versions.
+
 The following commands can be used to manage, upgrade, or revert
 |project_name| installations:
 
