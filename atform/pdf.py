@@ -302,34 +302,6 @@ class TestDocument(object):
                           baseline,
                           self.full_name)
 
-        self._header_project_info(canvas, doc, baseline)
-
-    def _header_project_info(self, canvas, doc, baseline):
-        """Draws project information in the header.
-
-        All project information fields are located on the right side
-        of the header, however, the vertical order in which they are
-        presented is dynamically adjusted to avoid empty lines between
-        the text and header rule. E.g., if the project information
-        dictionary has only one key, it will always rest directly on
-        the header rule.
-        """
-
-        # Assemble the content of each line, ordered from bottom up.
-        lines = [self.test.project_info.get(key)
-                 for key in [
-                         "system",
-                         "project",
-                 ]]
-
-        right_margin = doc.pagesize[0] - RIGHT_MARGIN
-
-        # Draw available lines, starting from the bottom.
-        for line in lines:
-            if line:
-                canvas.drawRightString(right_margin, baseline, line)
-                baseline += stylesheet["Header"].fontSize * 1.2
-
     def _footer(self, canvas, doc):
         """Draws the page footer."""
         baseline = self.bottom_margin

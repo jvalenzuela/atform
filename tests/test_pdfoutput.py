@@ -400,27 +400,23 @@ class Approval(Base, unittest.TestCase):
 class ProjectInfo(Base, unittest.TestCase):
     """Tests for header project information."""
 
-    # Dummy content to force multiple pages because the header is only
-    # applied after the first page.
-    procedure = ["step"] * 30
-
     def test_project(self):
-        """Verify only project name in the title block and header."""
+        """Verify only project name in the title block."""
         atform.set_project_info(project="The Project Name")
-        self.make_test(procedure=self.procedure)
+        self.make_test()
 
     def test_system(self):
-        """Verify only system name in the title block and header."""
+        """Verify only system name in the title block."""
         atform.set_project_info(system="The System Name")
-        self.make_test(procedure=self.procedure)
+        self.make_test()
 
     def test_project_and_system(self):
-        """Verify project and system names in the title block and header."""
+        """Verify project and system names in the title block."""
         atform.set_project_info(
             project="The Project Name",
             system="The System Name",
         )
-        self.make_test(procedure=self.procedure)
+        self.make_test()
 
 
 class Format(Base, unittest.TestCase):
