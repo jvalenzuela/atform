@@ -20,7 +20,7 @@ Release Procedure
 
 - Add an entry describing the new version in doc/source/changelog.sty.
 
-- Commit changes from steps 1 and 2.
+- Commit changes.
 
 - Push the new release branch to GitHub.
 
@@ -43,6 +43,11 @@ Release Procedure
 
      python -m build --wheel
 
+  * If rebuilding a release due to a problem found after uploading to
+    TestPyPI, rename the wheel to include a build tag:
+
+    https://peps.python.org/pep-0427/#file-name-convention
+
 - Inspect the PDF manual in build/latex/, verifying the new version appears
   correctly in the release history.
 
@@ -58,7 +63,9 @@ Release Procedure
 
      pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ atform
 
-- Push tags to GitHub.
+- Merge the new release branch into master and delete the release branch.
+
+- Push master branch and tags to GitHub.
 
 - Create a new GitHub release for the new tagged commit.
 
