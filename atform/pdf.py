@@ -395,10 +395,6 @@ class TestDocument(object):
             # Remove right padding from the fields table as it goes all
             # the way to the right margin.
             ("RIGHTPADDING", (-1, 0), (-1, 0), 0),
-
-            # Remove all vertical padding.
-            ("TOPPADDING", (0, 0), (-1, -1), 0),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
         ]
 
         # Remove the left padding from the column containing the fields table
@@ -625,7 +621,7 @@ class TestDocument(object):
         return Table(
             rows,
             style=style,
-            spaceBefore=SECTION_SEP,
+            spaceAfter=SECTION_SEP,
             **kwargs,
         )
 

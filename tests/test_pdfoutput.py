@@ -39,7 +39,7 @@ def nosplit(method):
     then only needs to make the section being tested suitably long enough
     that it would be split across the page break.
     """
-    @patch.object(atform.pdf, "SECTION_SEP", new=550)
+    @patch.object(atform.pdf, "SECTION_SEP", new=530)
     @functools.wraps(method)
     def wrapper(self):
         method(self)
