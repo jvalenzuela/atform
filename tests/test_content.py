@@ -623,3 +623,28 @@ class Generate(unittest.TestCase):
         """Confirm exception if path is not a string."""
         with self.assertRaises(SystemExit):
             atform.generate(42)
+
+
+class GenerateFolderDepth(unittest.TestCase):
+    """Unit tests for the folder_depth parameter of generate()."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_invalid_type(self):
+        """Confirm exception for a non-integer argument."""
+        with self.assertRaises(SystemExit):
+            atform.generate(folder_depth="foo")
+
+    def test_negative(self):
+        """Confirm exception for a negative argument."""
+        with self.assertRaises(SystemExit):
+            atform.generate(folder_depth=-1)
+
+    def test_too_large(self):
+        """Confirm exception for values greater than or equal to the id depth."""
+        atform.set_id_depth(3)
+        for i in [3, 4]:
+            with self.subTest(i=i):
+                with self.assertRaises(SystemExit):
+                    atform.generate(folder_depth=i)

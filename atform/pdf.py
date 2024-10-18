@@ -122,17 +122,17 @@ def make_paragraphs(text):
     return flowables
 
 
-def build_path(tid, root):
+def build_path(tid, root, depth):
     """Constructs a path where a test's output PDF will be written.
 
     The path will consist of the root, followed by a folder per
-    section number, e.g., <root>/<x>/<y> for an ID x.y.z. The final
-    number in an ID is not translated to a folder.
+    section number limited to depth, e.g., <root>/<x>/<y> for an ID x.y.z
+    and depth 2. The final number in an ID is not translated to a folder.
     """
     folders = [root]
 
     # Append a folder for each section level.
-    for i in range(len(tid) - 1):
+    for i in range(len(tid[0:depth])):
 
         # Include the section number and title if the section has a title.
         try:
@@ -216,7 +216,7 @@ class TableFormat(object):
 class TestDocument(object):
     """This class creates a PDF for a single Test instance."""
 
-    def __init__(self, test, root, draft, version):
+    def __init__(self, test, root, folder_depth, draft, version):
         self.test = test
         self.draft = draft
         self.version = version
@@ -249,7 +249,7 @@ class TestDocument(object):
         # buffer in order to determine the total page count, and the
         # second time to the output PDF file.
         for dst in [None, root]:
-            self.doc = self._get_doc(dst)
+            self.doc = self._get_doc(dst, folder_depth)
             self.doc.build(
                 self._build_body(),
                 onFirstPage=self._on_first_page,
@@ -259,12 +259,12 @@ class TestDocument(object):
             # Capture the final page count for the next build.
             self.total_pages = self.doc.page
 
-    def _get_doc(self, root):
+    def _get_doc(self, root, folder_depth):
         """Creates the document template."""
         # Output a PDF if root is a string containing a directory.
         if isinstance(root, str):
             pdfname = self.full_name + ".pdf"
-            path = build_path(self.test.id, root)
+            path = build_path(self.test.id, root, folder_depth)
             os.makedirs(path, exist_ok=True)
             filename = os.path.join(path, pdfname)
 
