@@ -28,6 +28,7 @@ def add_signature(title):
     .. seealso:: :ref:`setup`
 
     Args:
-        title (str): A short description of the person signing.
+        title (str): A short description of the person signing; may not
+            be blank.
     """
     titles.append(misc.nonempty_string("signature title", title))

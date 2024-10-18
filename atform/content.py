@@ -199,7 +199,7 @@ class Test(object):
     Args:
         title (str): A short phrase describing the test procedure, that is
             combined with the automatically-assigned numeric ID to identify
-            this specific test.
+            this specific test. Must not be blank.
         label (str, optional): An identifier for use in content strings to
             refer back to this test. See :ref:`labels`.
         include_fields (list[str], optional): Names of fields to add to
@@ -210,7 +210,7 @@ class Test(object):
             to this test. See :py:func:`atform.add_field`.
         objective (str, optional): A longer narrative, possibly spanning
             several sentences or paragraphs, describing the intent of the
-            test procedure.
+            test procedure. Must not be blank.
         references (dict, optional): A mapping from category labels
             defined with :py:func:`atform.add_reference_category`
             to lists of reference strings for that category.

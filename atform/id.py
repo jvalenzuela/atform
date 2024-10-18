@@ -162,7 +162,7 @@ def set_id_depth(levels):
     .. seealso:: :ref:`section`
 
     Args:
-        levels (int): Number of identifier levels.
+        levels (int): Number of identifier levels; must be greater than zero.
     """
     global current_id
     if not isinstance(levels, int):
@@ -189,7 +189,10 @@ def skip_test(id=None):
     .. seealso:: :ref:`skip`
 
     Args:
-        id (int, optional): ID of the next test. If omitted, one test will
+        id (int, optional): ID of the next test; must be greater than
+            what would otherwise be the next test ID. For example, if
+            the last test was 42.5 before this function is called,
+            ``id`` must be greater than 6. If omitted, one test will
             be skipped.
     """
     global current_id
