@@ -133,7 +133,7 @@ def section(level, id=None, title=None):
             )
         elif id <= current_id[id_index]:
             raise error.UserScriptError(
-                f"Invalid id value.",
+                "Invalid id value.",
                 f"Level {level} id must be greater than {current_id[id_index]}."
             )
         current_id[id_index] = id
