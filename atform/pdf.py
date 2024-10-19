@@ -137,7 +137,7 @@ def build_path(tid, root, depth):
         # Include the section number and title if the section has a title.
         try:
             section = id.section_titles[tid[:i + 1]]
-            section_folder = "{0} {1}".format(tid[i], section)
+            section_folder = f"{tid[i]} {section}"
 
         # Use only the section number if the section has no title.
         except KeyError:
@@ -333,13 +333,13 @@ class TestDocument:
         except AttributeError:
             total_pages = "?"
 
-        pages = "Page {0} of {1}".format(doc.page, total_pages)
+        pages = f"Page {doc.page} of {total_pages}"
         canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
 
         # Add version information if available.
         if not self.draft and self.version:
             x = doc.pagesize[0] - RIGHT_MARGIN
-            version_text = "Document Version: {0}".format(self.version)
+            version_text = f"Document Version: {self.version}"
             canvas.drawRightString(x, baseline, version_text)
 
 
