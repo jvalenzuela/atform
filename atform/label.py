@@ -63,7 +63,7 @@ def resolve(orig):
             f"Undefined label: {e}",
             "Select a label that has been defined.",
         )
-    except ValueError as e:
+    except ValueError:
         raise error.UserScriptError(
             "Invalid label replacement syntax.",
             "Labels are formatted as $<name>, where <name> begins with a "

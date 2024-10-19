@@ -43,7 +43,7 @@ def exit_on_script_error(api):
         except UserScriptError as e:
 
             try:
-                frame = e.call_frame
+                e.call_frame
 
             # Use the frame from this call if the exception does not
             # provide one.
