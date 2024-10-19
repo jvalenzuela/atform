@@ -35,7 +35,7 @@ def add(label, id):
     if not valid_label_pattern.match(label):
         raise error.UserScriptError(
             f"Invalid label: {label}",
-            f"Labels may contain only letters, numbers, and underscore."
+            "Labels may contain only letters, numbers, and underscore."
         )
 
     if label in labels:
@@ -65,7 +65,7 @@ def resolve(orig):
         )
     except ValueError as e:
         raise error.UserScriptError(
-            f"Invalid label replacement syntax.",
+            "Invalid label replacement syntax.",
             "Labels are formatted as $<name>, where <name> begins with a "
             "letter or underscore, followed by zero or more letters, "
             "numbers, or underscore.",
