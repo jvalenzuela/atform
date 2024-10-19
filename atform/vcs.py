@@ -14,7 +14,7 @@ class NoVersionControlError(Exception):
     pass
 
 
-class Git(object):
+class Git:
     """Interface to the git CLI.
 
     Implemented by running git in subprocess.

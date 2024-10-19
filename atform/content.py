@@ -17,7 +17,7 @@ import collections
 tests = []
 
 
-class ProcedureStep(object):
+class ProcedureStep:
     """Object containing all user-provided content for a single procedure step.
 
     This is not created directly by the user, but is instantiated using
@@ -188,7 +188,7 @@ ProcedureStepField = collections.namedtuple(
 
 
 @error.exit_on_script_error
-class Test(object):
+class Test:
     """Creates a single test procedure.
 
     Numeric identifiers will be incrementally assigned to each test in the
