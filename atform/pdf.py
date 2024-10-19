@@ -167,7 +167,7 @@ def max_width(
     return max(widths) + left_pad + right_pad
 
 
-class TableFormat(object):
+class TableFormat:
     """
     This class contains methods for generating table style commands (tuples)
     for common formatting elements.
@@ -213,7 +213,7 @@ class TableFormat(object):
         seq.append(colors.lightgrey)
 
 
-class TestDocument(object):
+class TestDocument:
     """This class creates a PDF for a single Test instance."""
 
     def __init__(self, test, root, folder_depth, draft, version):
@@ -684,7 +684,7 @@ class TestDocument(object):
         canvas.restoreState()
 
 
-class ProcedureList(object):
+class ProcedureList:
     """Constructs the flowable containing the entire procedure list.
 
     The procedure list is built as a table, with one row per step.
@@ -816,7 +816,7 @@ class ProcedureList(object):
         ]
 
 
-class ProcedureStepFields(object):
+class ProcedureStepFields:
     """Generates data entry fields for a single procedure step.
 
     Each field is implemented as a table with one row to permit varying
@@ -888,7 +888,7 @@ class ProcedureStepFields(object):
         )
 
 
-class Approval(object):
+class Approval:
     """Creates table content for the approval section.
 
     Each signature is built with two rows; the upper row carries the
