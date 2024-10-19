@@ -2,7 +2,6 @@
 
 
 from . import (
-    field,
     id,
     image,
     misc,
@@ -22,7 +21,6 @@ from reportlab.lib.units import inch
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
     Frame,
-    Image,
     ListFlowable,
     ListItem,
     Paragraph,
@@ -30,7 +28,6 @@ from reportlab.platypus import (
     SimpleDocTemplate,
     Spacer,
     Table,
-    TableStyle,
 )
 from reportlab.platypus.flowables import Flowable
 
