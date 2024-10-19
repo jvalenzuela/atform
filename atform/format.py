@@ -79,11 +79,8 @@ def bullet_list(*items):
         else:
             stripped.append(item)
 
-    bullet_items = ["<bullet indent='{0}'>{1}</bullet>{2}".format(
-        indent,
-        symbol,
-        i,
-    ) for i in stripped]
+    bullet_items = [f"<bullet indent='{indent}'>{symbol}</bullet>{i}"
+                    for i in stripped]
 
     # Add empty leading and trailing strings so items get surrounded by double
     # newlines by the final join(), ensuring the list is separated from

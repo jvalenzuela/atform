@@ -53,11 +53,10 @@ class ProcedureStep:
     def _check_undefined_keys(data):
         """Raises an exception for any unconsumed keys."""
         if data:
-            keys = [str(k) for k in data.keys()]
+            keys = ", ".join([str(k) for k in data.keys()])
             raise error.UserScriptError(
-                "Undefined procedure step dictionary key(s): {0}".format(
-                    ", ".join(keys)
-                ))
+                f"Undefined procedure step dictionary key(s): {keys}",
+                )
 
     @staticmethod
     def _validate_text(data):
