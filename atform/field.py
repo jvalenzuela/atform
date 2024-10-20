@@ -23,7 +23,9 @@ active_names = set()
 
 def validate_name_list(title, lst):
     """Verifies a list to confirm it contains only valid field names."""
-    if not isinstance(lst, list):
+    if lst is None:
+        lst = []
+    elif not isinstance(lst, list):
         raise error.UserScriptError(
             f"Invalid {title} data type: {type(lst).__name__}",
             f"{title} must be a list of field names.",
@@ -120,7 +122,7 @@ def add_field(title, length, name, active=True):
 
 
 @error.exit_on_script_error
-def set_active_fields(include=[], exclude=[], active=None):
+def set_active_fields(include=None, exclude=None, active=None):
     """Alters the fields applied to each test created after this function.
 
     May be called repeatedly to modify the fields applied to different

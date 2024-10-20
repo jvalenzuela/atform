@@ -593,13 +593,15 @@ class TestDocument:
                 colWidths=content.widths,
             )
 
-    def _section(self, title, rows, style=[], nosplit=True, **kwargs):
+    def _section(self, title, rows, style=None, nosplit=True, **kwargs):
         """Creates a table enclosing an entire top-level section."""
         # Add the title as the first row.
         rows.insert(0, [
             Preformatted(title, stylesheet["SectionHeading"])
         ])
 
+        if style is None:
+            style = []
         style.extend([
             # Border surrounding the entire section.
             TableFormat.section_rule("BOX", (0, 0), (-1, -1)),

@@ -228,14 +228,14 @@ class Test:
     def __init__(self,
                  title,
                  label=None,
-                 include_fields=[],
-                 exclude_fields=[],
+                 include_fields=None,
+                 exclude_fields=None,
                  active_fields=None,
                  objective=None,
-                 references={},
-                 equipment=[],
-                 preconditions=[],
-                 procedure=[],
+                 references=None,
+                 equipment=None,
+                 preconditions=None,
+                 procedure=None,
                  ):
         global tests
         self.id = id.get_id()
@@ -277,7 +277,9 @@ class Test:
 
     def _validate_refs(self, refs):
         """Validates the references parameter."""
-        if not isinstance(refs, dict):
+        if refs is None:
+            refs = {}
+        elif not isinstance(refs, dict):
             raise error.UserScriptError("References must be a dictionary.")
             raise error.UserScriptError(
                 f"Invalid references data type: {type(refs).__name__}",
@@ -353,7 +355,9 @@ class Test:
     @staticmethod
     def _validate_procedure(lst):
         """Validates the procedure parameter."""
-        if not isinstance(lst, list):
+        if lst is None:
+            lst = []
+        elif not isinstance(lst, list):
             raise error.UserScriptError("Procedure must be a list.")
         steps = []
         for i in range(len(lst)):
@@ -368,7 +372,9 @@ class Test:
     @staticmethod
     def _validate_string_list(name, lst):
         """Checks a list to ensure it contains only non-empty/blank strings."""
-        if not isinstance(lst, list):
+        if lst is None:
+            lst = []
+        elif not isinstance(lst, list):
             raise error.UserScriptError(
                 f"{name} must be a list of strings.",
             )
