@@ -51,10 +51,9 @@ def require_version(major, minor=0):
         )
     inst_major, inst_minor = [int(x) for x in VERSION.split(".")]
     if (inst_major != major) or (inst_minor < minor):
-        module_name = __name__.split(".")[0]
         raise error.UserScriptError(
-            f"""This script requires {module_name} version {major}.{minor} or
+            f"""This script requires atform version {major}.{minor} or
             later.""",
-            f"""Install {module_name} version {major}.{minor} or greater,
+            f"""Install atform version {major}.{minor} or greater,
             and less than {major+1}.0.""",
         )
