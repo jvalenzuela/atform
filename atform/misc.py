@@ -1,6 +1,5 @@
 from . import error
 from . import id
-from . import misc
 import functools
 
 
@@ -74,7 +73,7 @@ def validate_field_length(length):
 
 
 @error.exit_on_script_error
-@misc.setup_only
+@setup_only
 def add_copyright(notice):
     """Defines a copyright notice that will appear on each test document.
 
@@ -97,7 +96,7 @@ def add_copyright(notice):
             """,
         )
 
-    copyright = misc.nonempty_string("copyright notice", notice)
+    copyright = nonempty_string("copyright notice", notice)
 
 
 @error.exit_on_script_error
