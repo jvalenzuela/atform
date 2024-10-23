@@ -3,29 +3,22 @@
 
 from . import error
 from . import misc
+from . import state
 import pathlib
 import tempfile
 
 
-# Fields assigned to the most recent test.
-current_id = [0]
-
-
-# Section titles, keyed by ID tuple.
-section_titles = {}
-
-
 def get_id():
     """Returns the identifier to be used for the next test."""
-    global current_id
-    current_id[-1] = current_id[-1] + 1 # Increment last ID level for each test.
+    # Increment last ID level for each test.
+    state.current_id[-1] = state.current_id[-1] + 1
 
     # Initialize section levels that have been reset(0) to one.
-    for i in range(0, len(current_id)):
-        if current_id[i] == 0:
-            current_id[i] = 1
+    for i in range(0, len(state.current_id)):
+        if state.current_id[i] == 0:
+            state.current_id[i] = 1
 
-    return tuple(current_id)
+    return tuple(state.current_id)
 
 
 def to_string(id):
@@ -91,10 +84,7 @@ def section(level, id=None, title=None):
             characters allowed in file system folder names. If not provided,
             the section folder name will just be the section number.
     """
-    global current_id
-    global section_titles
-
-    if len(current_id) == 1:
+    if len(state.current_id) == 1:
         raise error.UserScriptError(
             "No section levels available",
             """This function cannot be used unless the test ID depth is
@@ -108,7 +98,7 @@ def section(level, id=None, title=None):
             "Section level must be an integer.",
         )
 
-    section_levels = range(1, len(current_id))
+    section_levels = range(1, len(state.current_id))
     if not level in section_levels:
         raise error.UserScriptError(
             f"Invalid section level: {level}",
@@ -122,7 +112,7 @@ def section(level, id=None, title=None):
 
     # Increment the target ID level.
     if id is None:
-        current_id[id_index] = current_id[id_index] + 1
+        state.current_id[id_index] = state.current_id[id_index] + 1
 
     # Jump to a specific number.
     else:
@@ -131,23 +121,26 @@ def section(level, id=None, title=None):
                 f"Invalid id data type: {type(id).__name__}",
                 "id must be an integer.",
             )
-        elif id <= current_id[id_index]:
+        elif id <= state.current_id[id_index]:
             raise error.UserScriptError(
                 "Invalid id value.",
-                f"Level {level} id must be greater than {current_id[id_index]}."
+                f"""
+                Level {level} id must be greater than
+                {state.current_id[id_index]}.
+                """
             )
-        current_id[id_index] = id
+        state.current_id[id_index] = id
 
     # Reset higher ID levels.
-    for i in range(id_index + 1, len(current_id)):
-        current_id[i] = 0
+    for i in range(id_index + 1, len(state.current_id)):
+        state.current_id[i] = 0
 
     if title is not None:
         validate_section_title(title)
-        section = tuple(current_id[:id_index + 1])
+        section = tuple(state.current_id[:id_index + 1])
         stripped = title.strip()
         if stripped:
-            section_titles[section] = stripped
+            state.section_titles[section] = stripped
 
 
 @error.exit_on_script_error
@@ -164,7 +157,6 @@ def set_id_depth(levels):
     Args:
         levels (int): Number of identifier levels.
     """
-    global current_id
     if not isinstance(levels, int):
         raise error.UserScriptError(
             f"Invalid ID levels data type: {type(levels).__name__}",
@@ -175,7 +167,7 @@ def set_id_depth(levels):
             f"Invalid identifier depth value: {levels}",
             "Select an identifier depth greater than zero."
         )
-    current_id = [0] * levels
+    state.current_id = [0] * levels
 
 
 @error.exit_on_script_error
@@ -192,8 +184,6 @@ def skip_test(id=None):
         id (int, optional): ID of the next test. If omitted, one test will
             be skipped.
     """
-    global current_id
-
     # Advance the test number normally without creating a test. This call
     # also supports the skip-forward validation below by initializing
     # any zero IDs to one.
@@ -205,14 +195,14 @@ def skip_test(id=None):
                 f"Invalid id data type: {type(id).__name__}",
                 "id must be an integer.",
             )
-        if id <= current_id[-1]:
+        if id <= state.current_id[-1]:
             raise error.UserScriptError(
                 f"Invalid id value: {id}",
-                f"Select an id greater than {current_id[-1]}."
+                f"Select an id greater than {state.current_id[-1]}."
             )
 
         # The current ID is set to one previous because the get_id() call
         # above already increments the ID. The next test will then be assigned
         # the given id value because get_id() increments before returning
         # the assigned ID.
-        current_id[-1] = id - 1
+        state.current_id[-1] = id - 1

@@ -31,7 +31,7 @@ class ParameterBase(object):
     def test_strip(self):
         """Confirm surrounding whitespace is removed the value."""
         self.do(string.whitespace + "foo" + string.whitespace)
-        self.assertEqual("foo", atform.misc.project_info[self.parameter])
+        self.assertEqual("foo", atform.state.project_info[self.parameter])
 
     def do(self, value):
         """Calls set_project_info() with a given parameter value."""

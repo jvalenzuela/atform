@@ -1,14 +1,10 @@
 # This module contains the implementation for listing external references.
 
 
-from . import content
 from . import error
 from . import id
 from . import misc
-
-
-# Category titles, keyed by label.
-titles = {}
+from . import state
 
 
 ################################################################################
@@ -37,20 +33,18 @@ def add_reference_category(title, label):
             when adding references to individual tests. Must be unique across
             all reference categories.
     """
-    global titles
-
     # Validate title.
     title_stripped = misc.nonempty_string("reference category title", title)
 
     # Validate label.
     label_stripped = misc.nonempty_string("reference category label", label)
-    if label_stripped in titles:
+    if label_stripped in state.ref_titles:
         raise error.UserScriptError(
             f"Duplicate reference label: {label_stripped}",
             f"Create a unique label for {title} references.",
         )
 
-    titles[label_stripped] = title_stripped
+    state.ref_titles[label_stripped] = title_stripped
 
 
 def get_xref():
@@ -72,14 +66,12 @@ def get_xref():
         the keys yielding a list of all tests assigned ``"SF42"`` in the
         ``"sf"`` category would be ``["sf"]["SF42"]``.
     """
-    global titles
-
     # Initialize all categories with empty dictionaries, i.e., no references.
-    xref = {label: {} for label in titles}
+    xref = {label: {} for label in state.ref_titles}
 
     # Iterate through all Test instances to populate second-level
     # reference dictionaries and test lists.
-    for test in content.tests:
+    for test in state.tests:
         test_id = id.to_string(test.id)
         for cat in test.references:
             for ref in test.references[cat]:

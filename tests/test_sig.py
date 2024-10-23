@@ -31,13 +31,13 @@ class AddSignature(unittest.TestCase):
     def test_title_strip(self):
         """Confirm surrounding whitespace is removed from the title."""
         atform.add_signature(string.whitespace + "spam" + string.whitespace)
-        self.assertEqual(["spam"], atform.sig.titles)
+        self.assertEqual(["spam"], atform.state.signatures)
 
     def test_title_order(self):
         """Confirm titles are added in the order defined."""
         expected = ["foo", "bar", "spam", "eggs"]
         [atform.add_signature(s) for s in expected]
-        self.assertEqual(expected, atform.sig.titles)
+        self.assertEqual(expected, atform.state.signatures)
 
 
 class AddSignatureContentArea(utils.ContentAreaException):

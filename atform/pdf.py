@@ -4,9 +4,7 @@
 from . import (
     id,
     image,
-    misc,
-    ref,
-    sig,
+    state,
 )
 from .textstyle import (
     point,
@@ -133,7 +131,7 @@ def build_path(tid, root, depth):
 
         # Include the section number and title if the section has a title.
         try:
-            section = id.section_titles[tid[:i + 1]]
+            section = state.section_titles[tid[:i + 1]]
             section_folder = f"{tid[i]} {section}"
 
         # Use only the section number if the section has no title.
@@ -224,9 +222,9 @@ class TestDocument:
 
         self.bottom_margin = BOTTOM_MARGIN
 
-        if misc.copyright:
+        if state.copyright:
             self.copyright = Paragraph(
-                misc.copyright,
+                state.copyright,
                 stylesheet["CopyrightNotice"],
             )
 
@@ -305,7 +303,7 @@ class TestDocument:
 
         # The copyright notice is placed in a dedicated frame so the text
         # can be wrapped as necessary.
-        if misc.copyright:
+        if state.copyright:
             baseline -= self.copyright_height
             frame = Frame(
                 LEFT_MARGIN,
@@ -378,7 +376,7 @@ class TestDocument:
         second column.
         """
         rows = [[
-            image.logo,
+            state.logo,
             self._title_block_fields()
         ]]
 
@@ -397,13 +395,13 @@ class TestDocument:
         # Remove the left padding from the column containing the fields table
         # if no logo is present, allowing the fields table to abut the
         # left margin.
-        if not image.logo:
+        if not state.logo:
             style.append(("LEFTPADDING", (1, 0), (1, 0), 0))
 
         # The image width is fixed to the maximum allowable logo size
         # regardless of the actual image size. If no logo is being used,
         # the image column width is set to zero.
-        image_width = (image.MAX_LOGO_SIZE.width * inch) if image.logo else 0
+        image_width = (image.MAX_LOGO_SIZE.width * inch) if state.logo else 0
 
         widths = [
             image_width,
@@ -483,7 +481,7 @@ class TestDocument:
         if self.test.references:
             # Generate a row for each reference category.
             rows = [
-                [Paragraph(ref.titles[label], stylesheet["NormalRight"]),
+                [Paragraph(state.ref_titles[label], stylesheet["NormalRight"]),
                  Paragraph(
                      ", ".join(self.test.references[label]),
                      stylesheet["Normal"]
@@ -491,7 +489,7 @@ class TestDocument:
                 for label in self.test.references
             ]
 
-            titles = [ref.titles[label]
+            titles = [state.ref_titles[label]
                       for label in self.test.references]
 
             column_widths = [
@@ -584,7 +582,7 @@ class TestDocument:
 
     def _approval(self):
         """Generates the Approval section."""
-        if sig.titles:
+        if state.signatures:
             content = Approval()
             return self._section(
                 "Approval",
@@ -911,7 +909,7 @@ class Approval:
 
     def __init__(self):
         self.rows = []
-        [self._make_sig_rows(title) for title in sig.titles]
+        [self._make_sig_rows(title) for title in state.signatures]
 
     def _make_sig_rows(self, title):
         """Generates a row for a given signature entry."""
@@ -966,7 +964,8 @@ class Approval:
             ("VALIGN", (self.TITLE_COL, 1), (self.TITLE_COL, -1), "MIDDLE"),
         ]
 
-        [style.extend(self._sig_row_style(i)) for i in range(len(sig.titles))]
+        [style.extend(self._sig_row_style(i))
+         for i in range(len(state.signatures))]
 
         return style
 
@@ -1005,7 +1004,7 @@ class Approval:
         ))
          for col in [self.NAME_COL, self.DATE_COL]]
 
-        last_row = i + 1 == len(sig.titles)
+        last_row = i + 1 == len(state.signatures)
         if not last_row:
             # Rule below all but the last row are subsection rules.
             hrule_weight = SUBSECTION_RULE_WEIGHT
@@ -1038,7 +1037,7 @@ class Approval:
         return [
             # Width of the first column is set to accommodate the
             # longest title.
-            max_width(sig.titles, "Normal"),
+            max_width(state.signatures, "Normal"),
 
             self._name_col_width(),
             None, # Signature occupies all remaining width.

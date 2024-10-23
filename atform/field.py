@@ -3,6 +3,7 @@
 
 from . import error
 from . import misc
+from . import state
 import collections
 
 
@@ -11,14 +12,6 @@ Field = collections.namedtuple(
     "Field",
     ["title", "length"],
 )
-
-
-# All defined fields, keyed by name, and ordered as added by add_field().
-fields = collections.OrderedDict()
-
-
-# Names identifying which fields will be applied to the next test.
-active_names = set()
 
 
 def validate_name_list(title, lst):
@@ -34,7 +27,7 @@ def validate_name_list(title, lst):
     for raw in lst:
         name = misc.nonempty_string("field name", raw)
         try:
-            fields[name]
+            state.fields[name]
         except KeyError:
             raise error.UserScriptError(
                 f"Undefined name in {title} list: {name}",
@@ -50,7 +43,7 @@ def get_active_names(include, exclude, active):
     exclude = validate_name_list("exclude fields", exclude)
     if active is not None:
         return validate_name_list("active fields", active)
-    return active_names.union(include).difference(exclude)
+    return state.active_fields.union(include).difference(exclude)
 
 
 def get_active_fields(include, exclude, active):
@@ -61,9 +54,9 @@ def get_active_fields(include, exclude, active):
     names = list(get_active_names(include, exclude, active))
 
     # Sort according to order defined by add_field().
-    names.sort(key=lambda n: list(fields.keys()).index(n))
+    names.sort(key=lambda n: list(state.fields.keys()).index(n))
 
-    return [fields[name] for name in names]
+    return [state.fields[name] for name in names]
 
 
 ################################################################################
@@ -102,9 +95,9 @@ def add_field(title, length, name, active=True):
 
     name = misc.nonempty_string("field name", name)
     try:
-        fields[name]
+        state.fields[name]
     except KeyError:
-        fields[name] = field
+        state.fields[name] = field
     else:
         raise error.UserScriptError(
             f"Duplicate field name: {name}",
@@ -118,7 +111,7 @@ def add_field(title, length, name, active=True):
         )
 
     if active:
-        active_names.add(name)
+        state.active_fields.add(name)
 
 
 @error.exit_on_script_error
@@ -140,5 +133,4 @@ def set_active_fields(include=None, exclude=None, active=None):
         active (list[str], optional): If provided, updates the fields
             in later tests with this list.
     """
-    global active_names
-    active_names = get_active_names(include, exclude, active)
+    state.active_fields = get_active_names(include, exclude, active)

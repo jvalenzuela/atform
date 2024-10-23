@@ -2,7 +2,6 @@
 
 
 from tests import utils
-import atform.id
 import atform.pdf
 import os
 import tempfile
@@ -86,7 +85,7 @@ class BuildPath(unittest.TestCase):
 
     def test_single_section_title(self):
         """Confirm path created for an ID with one section with a title."""
-        atform.id.section_titles[(42,)] = "Spam"
+        atform.state.section_titles[(42,)] = "Spam"
         self.assertEqual(os.path.join("root", "42 Spam"),
                          atform.pdf.build_path((42, 1), "root", 1))
 
@@ -97,14 +96,14 @@ class BuildPath(unittest.TestCase):
 
     def test_multi_section_some_titles(self):
         """Confirm path created for an ID with multiple sections, some with titles."""
-        atform.id.section_titles[(42, 99)] = "Spam"
+        atform.state.section_titles[(42, 99)] = "Spam"
         self.assertEqual(os.path.join("root", "42", "99 Spam"),
                          atform.pdf.build_path((42, 99, 1), "root", 2))
 
     def test_multi_section_all_titles(self):
         """Confirm path created for an ID with multiple sections, all with titles."""
-        atform.id.section_titles[(42,)] = "Foo"
-        atform.id.section_titles[(42, 99)] = "Bar"
+        atform.state.section_titles[(42,)] = "Foo"
+        atform.state.section_titles[(42, 99)] = "Bar"
         self.assertEqual(os.path.join("root", "42 Foo", "99 Bar"),
                          atform.pdf.build_path((42, 99, 1), "root", 2))
 

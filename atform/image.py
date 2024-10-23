@@ -3,6 +3,7 @@
 
 from . import error
 from . import misc
+from . import state
 import collections
 import io
 import PIL
@@ -16,10 +17,6 @@ ImageSize = collections.namedtuple('ImageSize', ['width', 'height'])
 
 # Largest allowable logo image size, in inches.
 MAX_LOGO_SIZE = ImageSize(2.0, 1.5)
-
-
-# ReportLab Image object containing the user-specified logo.
-logo = None
 
 
 ################################################################################
@@ -48,9 +45,7 @@ def add_logo(path):
     Args:
         path (str): Path to the image file.
     """
-    global logo
-
-    if logo:
+    if state.logo:
         raise error.UserScriptError(
             "Duplicate logo definition.",
             """
@@ -114,7 +109,7 @@ def add_logo(path):
         quality="keep",
         dpi=dpi,
     )
-    logo = Image(
+    state.logo = Image(
         buf,
         width=size.width*inch,
         height=size.height*inch,
