@@ -15,17 +15,7 @@ def reset():
     while unit test cases require this initial condition many times
     after a single import.
     """
-    atform.content.tests = []
-    atform.id.current_id = [0]
-    atform.id.section_titles = {}
-    atform.image.logo = None
-    atform.misc.copyright = None
-    atform.misc.project_info = {}
-    atform.sig.titles = []
-    atform.field.fields = collections.OrderedDict()
-    atform.field.active_names = set()
-    atform.ref.titles = {}
-    label.labels = {}
+    atform.state.init()
 
 
 class ContentAreaException(unittest.TestCase):

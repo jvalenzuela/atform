@@ -8,13 +8,9 @@ from . import field
 from . import label
 from . import misc
 from . import pdf
-from . import ref
+from . import state
 from . import vcs
 import collections
-
-
-# All Test() instances in the order they were created.
-tests = []
 
 
 class ProcedureStep:
@@ -237,7 +233,6 @@ class Test:
                  preconditions=None,
                  procedure=None,
                  ):
-        global tests
         self.id = id.get_id()
         try:
             self.title = misc.nonempty_string("Title", title)
@@ -259,9 +254,9 @@ class Test:
         # The current project information is captured using copy() because
         # the project information dictionary may change for later tests;
         # copy() ensures this instance's values are unaffected.
-        self.project_info = misc.project_info.copy()
+        self.project_info = state.project_info.copy()
 
-        tests.append(self)
+        state.tests.append(self)
 
     def _store_label(self, lbl):
         """Assigns this test to a given label."""
@@ -298,7 +293,7 @@ class Test:
 
         # Ensure the label has been defined by add_reference_category().
         try:
-            ref.titles[label]
+            state.ref_titles[label]
         except KeyError:
             raise error.UserScriptError(
                 f"Invalid reference label: {label}",
@@ -461,14 +456,14 @@ def generate(path="pdf", folder_depth=0):
         raise error.UserScriptError(
             "Output path must be a string.",
         )
-    [t._pregenerate() for t in tests]
+    [t._pregenerate() for t in state.tests]
 
     if not isinstance(folder_depth, int):
         raise error.UserScriptError(
             "Folder depth must be an integer.",
         )
 
-    max_depth = len(id.current_id) - 1
+    max_depth = len(state.current_id) - 1
     if (folder_depth < 0) or (folder_depth > max_depth):
         if max_depth:
             remedy = f"""
@@ -494,4 +489,5 @@ def generate(path="pdf", folder_depth=0):
         draft = not git.clean
         version = git.version
 
-    [pdf.TestDocument(t, path, folder_depth, draft, version) for t in tests]
+    [pdf.TestDocument(t, path, folder_depth, draft, version)
+     for t in state.tests]

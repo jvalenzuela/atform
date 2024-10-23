@@ -1,15 +1,6 @@
 from . import error
-from . import id
+from . import state
 import functools
-
-
-# The current project information set by the most recent call to
-# set_project_info().
-project_info = {}
-
-
-# The user-defined copyright notice string.
-copyright = None
 
 
 def setup_only(func):
@@ -21,7 +12,7 @@ def setup_only(func):
     def wrapper(*args, **kwargs):
         # Setup area is determined by the current ID containing all zeros as
         # any new test or section will increment the current ID.
-        in_setup = id.current_id.count(0) == len(id.current_id)
+        in_setup = state.current_id.count(0) == len(state.current_id)
 
         if not in_setup:
             raise error.UserScriptError(
@@ -85,9 +76,7 @@ def add_copyright(notice):
         notice (str): The copyright notice text; must be a single
             paragraph.
     """
-    global copyright
-
-    if copyright:
+    if state.copyright:
         raise error.UserScriptError(
             "A copyright notice has already been defined.",
             """
@@ -96,7 +85,7 @@ def add_copyright(notice):
             """,
         )
 
-    copyright = nonempty_string("copyright notice", notice)
+    state.copyright = nonempty_string("copyright notice", notice)
 
 
 @error.exit_on_script_error
@@ -112,8 +101,7 @@ def set_project_info(project=None, system=None):
         project (str, optional): Name or description of the project.
         system (str, optional): Name or description of the system being tested.
     """
-    global project_info
     params = locals()
     for arg in params:
         if params[arg] is not None:
-            project_info[arg] = nonempty_string(arg, params[arg])
+            state.project_info[arg] = nonempty_string(arg, params[arg])
