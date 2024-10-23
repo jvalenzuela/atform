@@ -3,12 +3,9 @@
 
 
 from . import error
+from . import state
 import re
 import string
-
-
-# Target ids keyed by label.
-labels = {}
 
 
 # Regular expression pattern to match a valid label, which is based on
@@ -24,8 +21,6 @@ def add(label, id):
     validated here. The id is generated internally by atform, e.g., a test
     number, and can be assumed appropriate.
     """
-    global labels
-
     if not isinstance(label, str):
         raise error.UserScriptError(
             f"Invalid label data type: {label}",
@@ -38,13 +33,13 @@ def add(label, id):
             "Labels may contain only letters, numbers, and underscore."
         )
 
-    if label in labels:
+    if label in state.labels:
         raise error.UserScriptError(
             f"Duplicate label: {label}",
             "Select a label that has not yet been used.",
         )
 
-    labels[label] = id
+    state.labels[label] = id
 
 
 def resolve(orig):
@@ -56,7 +51,7 @@ def resolve(orig):
     tpl = string.Template(orig)
 
     try:
-        return tpl.substitute(labels)
+        return tpl.substitute(state.labels)
 
     except KeyError as e:
         raise error.UserScriptError(

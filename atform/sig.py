@@ -3,10 +3,7 @@
 
 from . import error
 from . import misc
-
-
-# Signature titles, in the order they were defined.
-titles = []
+from . import state
 
 
 ################################################################################
@@ -30,4 +27,4 @@ def add_signature(title):
     Args:
         title (str): A short description of the person signing.
     """
-    titles.append(misc.nonempty_string("signature title", title))
+    state.signatures.append(misc.nonempty_string("signature title", title))
