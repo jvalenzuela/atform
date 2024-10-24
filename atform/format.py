@@ -72,11 +72,11 @@ def bullet_list(*items):
     for i in items:
         try:
             item = i.strip()
-        except AttributeError:
+        except AttributeError as e:
             raise error.UserScriptError(
                 f"Invalid bullet list item type: {type(i).__name__}",
                 "Bullet list items must be strings.",
-            )
+            ) from e
         else:
             stripped.append(item)
 

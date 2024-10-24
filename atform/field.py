@@ -29,11 +29,11 @@ def validate_name_list(title, lst):
         name = misc.nonempty_string("field name", raw)
         try:
             state.fields[name]
-        except KeyError:
+        except KeyError as e:
             raise error.UserScriptError(
                 f"Undefined name in {title} list: {name}",
                 "Use a name defined with atform.add_field().",
-            )
+            ) from e
         names.add(name)
     return names
 

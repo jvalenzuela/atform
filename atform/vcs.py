@@ -34,6 +34,8 @@ class Git:
         try:
             self._run_git("status")
         except subprocess.CalledProcessError:
+            # This raise is not intended to chain the original exception.
+            # pylint: disable=raise-missing-from
             raise NoVersionControlError()
 
     @property
