@@ -2,6 +2,8 @@
 # created.
 
 
+import collections
+
 from . import error
 from . import id
 from . import field
@@ -10,7 +12,6 @@ from . import misc
 from . import pdf
 from . import state
 from . import vcs
-import collections
 
 
 class ProcedureStep:

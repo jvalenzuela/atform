@@ -1,6 +1,7 @@
+import functools
+
 from . import error
 from . import state
-import functools
 
 
 def setup_only(func):

@@ -2,10 +2,11 @@
 # a user-provided label.
 
 
-from . import error
-from . import state
 import re
 import string
+
+from . import error
+from . import state
 
 
 # Regular expression pattern to match a valid label, which is based on

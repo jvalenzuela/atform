@@ -1,18 +1,10 @@
 # This module implements generating PDF output.
 
 
-from . import (
-    id,
-    image,
-    state,
-)
-from .textstyle import (
-    point,
-    stylesheet,
-)
 import functools
 import io
 import os
+
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib.units import inch
@@ -28,6 +20,16 @@ from reportlab.platypus import (
     Table,
 )
 from reportlab.platypus.flowables import Flowable
+
+from . import (
+    id,
+    image,
+    state,
+)
+from .textstyle import (
+    point,
+    stylesheet,
+)
 
 
 PAGE_SIZE = LETTER
