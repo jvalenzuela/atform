@@ -1,11 +1,12 @@
 # This module manages the numeric identifiers assigned to each test.
 
 
+import pathlib
+import tempfile
+
 from . import error
 from . import misc
 from . import state
-import pathlib
-import tempfile
 
 
 def get_id():
