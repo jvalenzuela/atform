@@ -1,14 +1,16 @@
 # This module handles processing user-provided images.
 
 
-from . import error
-from . import misc
-from . import state
 import collections
 import io
+
 import PIL
 from reportlab.lib.units import inch
 from reportlab.platypus import Image
+
+from . import error
+from . import misc
+from . import state
 
 
 # Data type for storing two-dimensional sizes.

@@ -1,8 +1,9 @@
 # This module contains the text formatting API.
 
 
-from . import error
 import xml.etree.ElementTree as ElementTree
+
+from . import error
 
 
 # Mapping between typeface and font parameters of format_text() to

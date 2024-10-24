@@ -1,10 +1,11 @@
 # This module maintains user-defined form field configuration.
 
 
+import collections
+
 from . import error
 from . import misc
 from . import state
-import collections
 
 
 # Object used to store the definition of each field.
