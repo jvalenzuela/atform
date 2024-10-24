@@ -116,14 +116,14 @@ def format_text(text, typeface="normal", font="normal"):
             "Text to be formatted must be a string.",
         )
 
-    typefaces = set([k[0] for k in FONTS.keys()])
+    typefaces = set([k[0] for k in FONTS])
     if not typeface in typefaces:
         raise error.UserScriptError(
             f"Invalid text format typeface: {typeface}",
             f"Select {allowed_format(0)} as a typeface.",
         )
 
-    fonts = set([k[1] for k in FONTS.keys()])
+    fonts = set([k[1] for k in FONTS])
     if not font in fonts:
         raise error.UserScriptError(
             f"Invalid text format font: {font}",
