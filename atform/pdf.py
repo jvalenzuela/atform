@@ -711,8 +711,8 @@ class ProcedureList:
     def _add_steps(self):
         """Adds rows for all steps."""
         step_style = stylesheet["ProcedureTableHeading"]
-        for i in range(len(self.steps)):
-            desc = self._step_body(self.steps[i])
+        for i, step in enumerate(self.steps):
+            desc = self._step_body(step)
             step_num = Paragraph(str(i + 1), step_style)
             self.rows.append([step_num, desc, Checkbox()])
 
