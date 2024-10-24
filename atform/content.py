@@ -275,7 +275,6 @@ class Test:
         if refs is None:
             refs = {}
         elif not isinstance(refs, dict):
-            raise error.UserScriptError("References must be a dictionary.")
             raise error.UserScriptError(
                 f"Invalid references data type: {type(refs).__name__}",
                 "References must be a dictionary.",
