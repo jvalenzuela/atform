@@ -269,6 +269,7 @@ class Test:
         """Validates the objective parameter."""
         if obj is not None:
             return misc.nonempty_string("Objective", obj)
+        return None
 
     def _validate_refs(self, refs):
         """Validates the references parameter."""

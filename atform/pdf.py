@@ -472,79 +472,88 @@ class TestDocument:
 
     def _objective(self):
         """Generates Objective section."""
-        if self.test.objective:
-            rows = [[make_paragraphs(self.test.objective)]]
-            return self._section("Objective", rows)
+        if not self.test.objective:
+            return None
+
+        rows = [[make_paragraphs(self.test.objective)]]
+        return self._section("Objective", rows)
 
     def _references(self):
         """Generates References flowables."""
-        if self.test.references:
-            # Generate a row for each reference category.
-            rows = [
-                [Paragraph(state.ref_titles[label], stylesheet["NormalRight"]),
-                 Paragraph(
-                     ", ".join(self.test.references[label]),
-                     stylesheet["Normal"]
-                 )]
-                for label in self.test.references
-            ]
+        if not self.test.references:
+            return None
 
-            titles = [state.ref_titles[label]
-                      for label in self.test.references]
+        # Generate a row for each reference category.
+        rows = [
+            [Paragraph(state.ref_titles[label], stylesheet["NormalRight"]),
+             Paragraph(
+                 ", ".join(self.test.references[label]),
+                 stylesheet["Normal"]
+             )]
+            for label in self.test.references
+        ]
 
-            column_widths = [
-                # First column is sized to fit the longest category title.
-                max_width(titles, "NormalRight"),
+        titles = [state.ref_titles[label] for label in self.test.references]
 
-                # Second column gets all remaining space.
-                None,
-            ]
+        column_widths = [
+            # First column is sized to fit the longest category title.
+            max_width(titles, "NormalRight"),
 
-            # Include LEFTPADDING and RIGHTPADDING.
-            column_widths[0] = column_widths[0] + (2 * DEFAULT_TABLE_HORIZ_PAD)
+            # Second column gets all remaining space.
+            None,
+        ]
 
-            table_style = [
-                TableFormat.subsection_rule("LINEBEFORE", (1, 1), (1, -1)),
-                TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
+        # Include LEFTPADDING and RIGHTPADDING.
+        column_widths[0] = column_widths[0] + (2 * DEFAULT_TABLE_HORIZ_PAD)
 
-                # Category column vertical alignment.
-                ("VALIGN", (0, 1), (0, -1), "MIDDLE"),
-            ]
+        table_style = [
+            TableFormat.subsection_rule("LINEBEFORE", (1, 1), (1, -1)),
+            TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
 
-            return self._section(
-                "References",
-                rows,
-                style=table_style,
-                colWidths=column_widths,
-            )
+            # Category column vertical alignment.
+            ("VALIGN", (0, 1), (0, -1), "MIDDLE"),
+        ]
+
+        return self._section(
+            "References",
+            rows,
+            style=table_style,
+            colWidths=column_widths,
+        )
 
     def _equipment(self):
         """Generates the Required Equipment section."""
-        if self.test.equipment:
-            return self._bullet_list_section(
-                "Required Equipment",
-                self.test.equipment
-                )
+        if not self.test.equipment:
+            return None
+
+        return self._bullet_list_section(
+            "Required Equipment",
+            self.test.equipment
+        )
 
     def _preconditions(self):
         """Generates Preconditions section."""
-        if self.test.preconditions:
-            return self._bullet_list_section(
-                "Preconditions",
-                self.test.preconditions)
+        if not self.test.preconditions:
+            return None
+
+        return self._bullet_list_section(
+            "Preconditions",
+            self.test.preconditions)
 
     def _procedure(self):
         """Creates the Procedure section."""
-        if self.test.procedure:
-            proc = ProcedureList(self.test.procedure)
-            return self._section(
-                "Procedure",
-                proc.rows,
-                style=proc.style,
-                nosplit=False,
-                colWidths=proc.widths,
-                repeatRows=(1,),
-            )
+        if not self.test.procedure:
+            return None
+
+        proc = ProcedureList(self.test.procedure)
+        return self._section(
+            "Procedure",
+            proc.rows,
+            style=proc.style,
+            nosplit=False,
+            colWidths=proc.widths,
+            repeatRows=(1,),
+        )
 
     def _notes(self):
         """Generates the Notes section."""
@@ -552,44 +561,48 @@ class TestDocument:
 
     def _environment(self):
         """Generates the Environment section."""
-        if self.test.fields:
-            rows = [[Paragraph(f.title, stylesheet["NormalRight"]),
-                     TextEntryField(f.length)]
-                    for f in self.test.fields]
+        if not self.test.fields:
+            return None
 
-            # Field title widths for column 0.
-            widths = [
-                max_width(
-                    [f.title for f in self.test.fields],
-                    "NormalRight",
-                ),
+        rows = [[Paragraph(f.title, stylesheet["NormalRight"]),
+                 TextEntryField(f.length)]
+                for f in self.test.fields]
 
-                # All remaining width to the text entry column.
-                None,
-            ]
+        # Field title widths for column 0.
+        widths = [
+            max_width(
+                [f.title for f in self.test.fields],
+                "NormalRight",
+            ),
 
-            table_style = [
-                # Horiziontal rule between each item.
-                TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
-            ]
+            # All remaining width to the text entry column.
+            None,
+        ]
 
-            return self._section(
-                "Environment",
-                rows,
-                colWidths=widths,
-                style=table_style,
-            )
+        table_style = [
+            # Horiziontal rule between each item.
+            TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
+        ]
+
+        return self._section(
+            "Environment",
+            rows,
+            colWidths=widths,
+            style=table_style,
+        )
 
     def _approval(self):
         """Generates the Approval section."""
-        if state.signatures:
-            content = Approval()
-            return self._section(
-                "Approval",
-                content.rows,
-                style=content.style,
-                colWidths=content.widths,
-            )
+        if not state.signatures:
+            return None
+
+        content = Approval()
+        return self._section(
+            "Approval",
+            content.rows,
+            style=content.style,
+            colWidths=content.widths,
+        )
 
     def _section(self, title, rows, style=None, nosplit=True, **kwargs):
         """Creates a table enclosing an entire top-level section."""
