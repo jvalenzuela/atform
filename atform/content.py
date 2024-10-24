@@ -121,12 +121,12 @@ class ProcedureStep:
                 must have at least two members: title and length.
                 """,
             ) from e
-        else:
-            title = misc.nonempty_string(
-                "Procedure step field title",
-                raw_title
-            )
-            length = misc.validate_field_length(raw_length)
+
+        title = misc.nonempty_string(
+            "Procedure step field title",
+            raw_title
+        )
+        length = misc.validate_field_length(raw_length)
 
         # Validate suffix, providing a default value if omitted.
         try:
