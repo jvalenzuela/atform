@@ -26,6 +26,9 @@ from reportlab.lib.units import inch
 # is because points are the default unit for ReportLab, so a conversion
 # constant is not strictly necessary, however, this provides an explicit
 # notation consistent with other units imported from reportlab.lib.units.
+#
+# This constant is lower-case to conform with similar reportlab constants.
+# pylint: disable=invalid-name
 point = 1
 
 
