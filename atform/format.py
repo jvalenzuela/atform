@@ -77,8 +77,8 @@ def bullet_list(*items):
                 f"Invalid bullet list item type: {type(i).__name__}",
                 "Bullet list items must be strings.",
             ) from e
-        else:
-            stripped.append(item)
+
+        stripped.append(item)
 
     bullet_items = [f"<bullet indent='{indent}'>{symbol}</bullet>{i}"
                     for i in stripped]

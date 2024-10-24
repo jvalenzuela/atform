@@ -56,8 +56,7 @@ def exit_on_script_error(api):
 
             # Translate the original exception to SystemExit, which doesn't
             # print the stack trace.
-            else:
-                raise SystemExit(e) from e
+            raise SystemExit(e) from e
 
         # For API classes, store the call frame where the object was created
         # in the instance. This attribute is needed by the

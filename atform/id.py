@@ -122,7 +122,7 @@ def section(level, id=None, title=None):
                 f"Invalid id data type: {type(id).__name__}",
                 "id must be an integer.",
             )
-        elif id <= state.current_id[id_index]:
+        if id <= state.current_id[id_index]:
             raise error.UserScriptError(
                 "Invalid id value.",
                 f"""
