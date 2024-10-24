@@ -14,8 +14,8 @@ def get_id():
     state.current_id[-1] = state.current_id[-1] + 1
 
     # Initialize section levels that have been reset(0) to one.
-    for i in range(0, len(state.current_id)):
-        if state.current_id[i] == 0:
+    for i, x in enumerate(state.current_id):
+        if x == 0:
             state.current_id[i] = 1
 
     return tuple(state.current_id)

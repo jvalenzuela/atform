@@ -80,9 +80,9 @@ class ProcedureStep:
             )
 
         fields = []
-        for i in range(len(tpls)):
+        for i, field in enumerate(tpls):
             try:
-                fields.append(self._create_field(tpls[i]))
+                fields.append(self._create_field(field))
             except error.UserScriptError as e:
                 e.add_field("Procedure Step Field #", i+1)
                 raise
@@ -355,10 +355,10 @@ class Test:
         elif not isinstance(lst, list):
             raise error.UserScriptError("Procedure must be a list.")
         steps = []
-        for i in range(len(lst)):
+        for i, step in enumerate(lst):
             num = i + 1 # Step numbers are one-based.
             try:
-                steps.append(ProcedureStep(lst[i], num))
+                steps.append(ProcedureStep(step, num))
             except error.UserScriptError as e:
                 e.add_field("Procedure Step", num)
                 raise
@@ -374,9 +374,9 @@ class Test:
                 f"{name} must be a list of strings.",
             )
         items = []
-        for i in range(len(lst)):
+        for i, s in enumerate(lst):
             try:
-                items.append(misc.nonempty_string(f"{name} list item", lst[i]))
+                items.append(misc.nonempty_string(f"{name} list item", s))
             except error.UserScriptError as e:
                 e.add_field(f"{name} item #", i+1)
                 raise
@@ -402,16 +402,16 @@ class Test:
                 e.add_field("Test Section", "Objective")
                 raise
 
-        for i in range(len(self.preconditions)):
+        for i, item in enumerate(self.preconditions):
             try:
-                self.preconditions[i] = label.resolve(self.preconditions[i])
+                self.preconditions[i] = label.resolve(item)
             except error.UserScriptError as e:
                 e.add_field("Precondition Item", i+1)
                 raise
 
-        for i in range(len(self.procedure)):
+        for i, step in enumerate(self.procedure):
             try:
-                self.procedure[i].resolve_labels()
+                step.resolve_labels()
             except error.UserScriptError as e:
                 e.add_field("Procedure Step", i+1)
                 raise
