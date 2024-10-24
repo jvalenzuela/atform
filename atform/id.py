@@ -43,14 +43,14 @@ def validate_section_title(title):
         path = pathlib.Path(tdir, title)
         try:
             path.mkdir()
-        except OSError:
+        except OSError as e:
             raise error.UserScriptError(
                 f"Invalid section title: '{title}'",
                 """
                 Use a section title that is also a valid file system
                 folder name.
                 """,
-            )
+            ) from e
 
 
 ################################################################################

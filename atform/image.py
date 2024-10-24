@@ -65,22 +65,22 @@ def add_logo(path):
 
     try:
         image = PIL.Image.open(path, formats=["JPEG"])
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         raise error.UserScriptError(
             f"Logo image file not found: {path}",
-        )
-    except PIL.UnidentifiedImageError:
+        ) from e
+    except PIL.UnidentifiedImageError as e:
         raise error.UserScriptError(
             f"Unsupported logo image format: {path}",
             "Logo image file must be a JPEG.",
-        )
+        ) from e
     try:
         dpi_raw = image.info["dpi"]
-    except KeyError:
+    except KeyError as e:
         raise error.UserScriptError(
             "No DPI information found in logo image file.",
             "Ensure the logo image file has embedded DPI metadata."
-        )
+        ) from e
 
     # Ensure DPI values are floats.
     dpi = ImageSize(*[float(i) for i in dpi_raw])

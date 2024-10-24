@@ -60,12 +60,12 @@ class ProcedureStep:
         """Validates the text key."""
         try:
             text = data.pop("text")
-        except KeyError:
+        except KeyError as e:
             raise error.UserScriptError(
                 'A procedure step dictionary must have a "text" key.',
                 """Add a "text" key with a string value containing
                 instructions for the step.""",
-            )
+            ) from e
         return misc.nonempty_string("Procedure step text", text)
 
     def _validate_fields(self, data):
@@ -111,7 +111,7 @@ class ProcedureStep:
         try:
             raw_title = tpl[0]
             raw_length = tpl[1]
-        except IndexError:
+        except IndexError as e:
             raise error.UserScriptError(
                 """
                 Procedure step field tuple is too short.
@@ -120,7 +120,7 @@ class ProcedureStep:
                 A tuple defining a data entry field for a procedure step
                 must have at least two members: title and length.
                 """,
-            )
+            ) from e
         else:
             title = misc.nonempty_string(
                 "Procedure step field title",
@@ -295,12 +295,12 @@ class Test:
         # Ensure the label has been defined by add_reference_category().
         try:
             state.ref_titles[label]
-        except KeyError:
+        except KeyError as e:
             raise error.UserScriptError(
                 f"Invalid reference label: {label}",
                 """Use a reference label that has been previously defined
                 with atform.add_reference_category.""",
-            )
+            ) from e
 
         # Check the list of references for this category.
         validated_refs = []
