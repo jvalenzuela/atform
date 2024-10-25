@@ -3,6 +3,7 @@
 
 import functools
 import io
+import itertools
 import os
 
 from reportlab.lib import colors
@@ -924,7 +925,8 @@ class Approval:
 
     def __init__(self):
         self.rows = []
-        [self._make_sig_rows(title) for title in state.signatures]
+        for title in state.signatures:
+            self._make_sig_rows(title)
 
     def _make_sig_rows(self, title):
         """Generates a row for a given signature entry."""
@@ -962,7 +964,11 @@ class Approval:
     @property
     def style(self):
         """Generates style commands for the entire table."""
-        style = [
+        style = list(itertools.chain.from_iterable(
+            [self._sig_row_style(i) for i, sig in enumerate(state.signatures)]
+            ))
+
+        style.extend([
             # Vertical rules.
             TableFormat.subsection_rule(
                 "LINEBEFORE",
@@ -977,10 +983,7 @@ class Approval:
 
             # Vertically center the title column.
             ("VALIGN", (self.TITLE_COL, 1), (self.TITLE_COL, -1), "MIDDLE"),
-        ]
-
-        [style.extend(self._sig_row_style(i))
-         for i in range(len(state.signatures))]
+        ])
 
         return style
 
@@ -1009,16 +1012,6 @@ class Approval:
             ("TOPPADDING", (0, lower), (-1, lower), 0),
         ]
 
-        # Set left padding for the name and date entry fields so the text
-        # entry field abuts the subsection rule to the left.
-        [style.append((
-            "LEFTPADDING",
-            (col, lower),
-            (col, lower),
-            SUBSECTION_RULE_WEIGHT / 2
-        ))
-         for col in [self.NAME_COL, self.DATE_COL]]
-
         last_row = i + 1 == len(state.signatures)
         if not last_row:
             # Rule below all but the last row are subsection rules.
@@ -1035,14 +1028,24 @@ class Approval:
             # Rule below the last row is a section rule.
             hrule_weight = SECTION_RULE_WEIGHT
 
-        # Set padding below the data entry fields so they rest on the
-        # rule below them.
-        [style.append((
-            "BOTTOMPADDING",
-            (col, lower),
-            (col, lower),
-            hrule_weight / 2))
-         for col in [self.NAME_COL, self.DATE_COL]]
+        # Adjust padding around the data entry fields(name and date).
+        for col in [self.NAME_COL, self.DATE_COL]:
+            # Set left padding so the entry fields abut the subsection rule
+            # to the left.
+            style.append((
+                "LEFTPADDING",
+                (col, lower),
+                (col, lower),
+                SUBSECTION_RULE_WEIGHT / 2
+            ))
+
+            # Set bottom padding so the fields rest on the rule below them.
+            style.append((
+                "BOTTOMPADDING",
+                (col, lower),
+                (col, lower),
+                hrule_weight / 2
+            ))
 
         return style
 

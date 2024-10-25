@@ -282,10 +282,8 @@ class Test:
                 "References must be a dictionary.",
             )
 
-        validated = {}
-        [validated.update(self._validate_ref_category(label, refs[label]))
-         for label in refs]
-        return validated
+        return dict([self._validate_ref_category(label, refs[label])
+                     for label in refs])
 
     @staticmethod
     def _validate_ref_category(label, refs):
@@ -342,7 +340,7 @@ class Test:
                 validated_refs.append(reference)
 
 
-        return {label: validated_refs}
+        return label, validated_refs
 
     def _validate_equipment(self, equip):
         """Validates the equipment parameter."""
@@ -457,7 +455,9 @@ def generate(path="pdf", folder_depth=0):
         raise error.UserScriptError(
             "Output path must be a string.",
         )
-    [t._pregenerate() for t in state.tests]
+
+    for t in state.tests:
+        t._pregenerate()
 
     if not isinstance(folder_depth, int):
         raise error.UserScriptError(
@@ -490,5 +490,5 @@ def generate(path="pdf", folder_depth=0):
         draft = not git.clean
         version = git.version
 
-    [pdf.TestDocument(t, path, folder_depth, draft, version)
-     for t in state.tests]
+    for t in state.tests:
+        pdf.TestDocument(t, path, folder_depth, draft, version)
