@@ -121,7 +121,6 @@ class Section(unittest.TestCase):
         systems, so this test uses a single character universally
         rejected.
         """
-        utils.reset()
         atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
             atform.section(1, title="/")
