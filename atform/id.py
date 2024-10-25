@@ -138,10 +138,10 @@ def section(level, id=None, title=None):
 
     if title is not None:
         validate_section_title(title)
-        section = tuple(state.current_id[:id_index + 1])
         stripped = title.strip()
         if stripped:
-            state.section_titles[section] = stripped
+            section_key = tuple(state.current_id[:id_index + 1])
+            state.section_titles[section_key] = stripped
 
 
 @error.exit_on_script_error
