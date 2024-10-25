@@ -81,9 +81,9 @@ class ProcedureStep:
             )
 
         fields = []
-        for i, field in enumerate(tpls):
+        for i, tpl in enumerate(tpls):
             try:
-                fields.append(self._create_field(field))
+                fields.append(self._create_field(tpl))
             except error.UserScriptError as e:
                 e.add_field("Procedure Step Field #", i+1)
                 raise
