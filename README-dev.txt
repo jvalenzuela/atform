@@ -5,10 +5,11 @@ maintenance; refer to the main README.md for end user documentation.
 Prerequisites
 =============
 
-Items required to build a release, separate from those listed in
-pyproject.toml:
+Dependencies other from those listed in pyproject.toml:
 
+- Sphinx, for building PDF manual.
 - LaTeX, for building PDF manual with Sphinx.
+- twine, for uploading release to PyPI.
 
 
 Release Procedure
@@ -22,40 +23,26 @@ Release Procedure
 
 - Commit changes.
 
-- Push the new release branch to GitHub.
-
-- Create a virtual environment for each Python minor version and
-  dependency listed in pyproject.toml.
-
-- Execute unit tests in each virtual environment; preferably repeat with
-  other operating systems.
-
-- Evaluate the output files in pdf/ and example_output/ from one run
-  of unit tests.
-
 - Tag the commit to be released as "release/major.minor".
 
-- Create a new git worktree with the release tag checked out.
+- Push the new release tag to GitHub and wait for the release action
+  to complete.
 
-- Switch to a Python 3.11 environment with the following packages:
-    * build
-    * twine
+- Download and inspect the PDF manual in the draft GitHub release,
+  verifying the new version appears correctly in the release history.
 
-- Build the distribution:
+- Download and visually inspect the output files in one of the
+  unittest_output artifacts created by the release action.
 
-     python -m build --wheel
+- Download the distribution .whl from the draft GitHub release and
+  upload it to TestPyPI:
+
+     twine upload --repository testpypi <whl file>
 
   * If rebuilding a release due to a problem found after uploading to
     TestPyPI, rename the wheel to include a build tag:
 
     https://peps.python.org/pep-0427/#file-name-convention
-
-- Inspect the PDF manual in build/latex/, verifying the new version appears
-  correctly in the release history.
-
-- Upload the package to TestPyPI:
-
-     twine upload --repository testpypi dist/*
 
 - Verify the package at https://test.pypi.org/project/atform.
 
@@ -65,18 +52,11 @@ Release Procedure
 
      pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ atform
 
-- Merge the new release branch into master and delete the release branch.
-
-- Push master branch and tags to GitHub.
-
-- Create a new GitHub release for the new tagged commit.
-
-- Upload the whl in dist/ and PDF manual in build/latex/ to the new GitHub
-  release.
+- Publish the GitHub release.
 
 - Upload the package to PyPI:
 
-     twine upload dist/*
+     twine upload <whl file>
 
 
 Docstring Format

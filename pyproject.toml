@@ -1,14 +1,6 @@
 [build-system]
 requires = [
     "hatchling",
-    "hatch-build-scripts",
-    "sphinx",
-
-    # Needed because Sphinx autodoc imports atform, which in turn imports
-    # reportlab. The version specifier is omitted because only importing
-    # is necessary, allowing the required version to be specified solely in
-    # dependencies.
-    "reportlab",
 ]
 build-backend = "hatchling.build"
 
@@ -23,8 +15,8 @@ authors = [
 license = {file = "LICENSE.txt"}
 dynamic = ["version"]
 
-# Update doc/source/intro.rst to match this. Range of versions is equivalent
-# to those supported by Reportlab.
+# doc/source/intro.rst and .github/workflow/release.yaml need to match this.
+# Range of versions is equivalent to those supported by Reportlab.
 requires-python = ">= 3.7, < 3.14"
 
 dependencies = [
@@ -58,13 +50,3 @@ Issues = "https://github.com/jvalenzuela/atform/issues"
 
 [tool.hatch.version]
 path = "atform/version.py"
-
-
-# Generate PDF manual.
-[[tool.hatch.build.hooks.build-scripts.scripts]]
-work_dir = "doc"
-commands = [
-    "make clean",
-    "make latexpdf",
-]
-artifacts = ["atform.pdf"]
