@@ -658,7 +658,7 @@ class TestDocument:
         # will be streteched to occupy all remaining space.
         else:
             stretch_col = widths.index(None)
-            remain = self._body_width - sum([w for w in widths if w])
+            remain = self._body_width - sum(w for w in widths if w)
             widths[stretch_col] = remain
 
     def _bullet_list_section(self, title, items):
