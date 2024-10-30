@@ -132,7 +132,7 @@ class UserScriptError(Exception):
         self.fields["File"] = self.call_frame.filename
 
         # Compute the indentation required to right-align all field names.
-        indent = max([len(s) for s in self.fields.keys()])
+        indent = max(len(s) for s in self.fields.keys())
 
         lines = ["The following error was encountered:"]
         lines.append("")
