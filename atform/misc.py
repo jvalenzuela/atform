@@ -77,7 +77,7 @@ def add_copyright(notice):
         notice (str): The copyright notice text; must be a single
             paragraph.
     """
-    if state.copyright:
+    if state.copyright_:
         raise error.UserScriptError(
             "A copyright notice has already been defined.",
             """
@@ -86,7 +86,7 @@ def add_copyright(notice):
             """,
         )
 
-    state.copyright = nonempty_string("copyright notice", notice)
+    state.copyright_ = nonempty_string("copyright notice", notice)
 
 
 @error.exit_on_script_error
