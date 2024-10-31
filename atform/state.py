@@ -36,8 +36,8 @@ def init():
     active_fields = set()
 
     # The user-defined copyright notice string.
-    global copyright
-    copyright = None
+    global copyright_
+    copyright_ = None
 
     # Fields assigned to the most recent test.
     global current_id

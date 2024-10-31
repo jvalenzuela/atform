@@ -225,9 +225,9 @@ class TestDocument:
 
         self.bottom_margin = BOTTOM_MARGIN
 
-        if state.copyright:
+        if state.copyright_:
             self.copyright = Paragraph(
-                state.copyright,
+                state.copyright_,
                 stylesheet["CopyrightNotice"],
             )
 
@@ -306,7 +306,7 @@ class TestDocument:
 
         # The copyright notice is placed in a dedicated frame so the text
         # can be wrapped as necessary.
-        if state.copyright:
+        if state.copyright_:
             baseline -= self.copyright_height
             frame = Frame(
                 LEFT_MARGIN,
