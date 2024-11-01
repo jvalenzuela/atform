@@ -1,7 +1,7 @@
 # This module contains the text formatting API.
 
 
-import xml.etree.ElementTree as ElementTree
+from xml.etree import ElementTree
 
 from . import error
 
