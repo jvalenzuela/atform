@@ -28,7 +28,7 @@ def allowed_format(i):
     Formats a list of allowable format selectors into a string for use in
     error messages.
     """
-    uniq = set([f[i] for f in FONTS])
+    uniq = {f[i] for f in FONTS}
     quoted = [f"'{s}'" for s in uniq]
     quoted.sort()
     return ", ".join(quoted[:-1]) + f", or {quoted[-1]}"
@@ -117,14 +117,14 @@ def format_text(text, typeface="normal", font="normal"):
             "Text to be formatted must be a string.",
         )
 
-    typefaces = set([k[0] for k in FONTS])
+    typefaces = {k[0] for k in FONTS}
     if not typeface in typefaces:
         raise error.UserScriptError(
             f"Invalid text format typeface: {typeface}",
             f"Select {allowed_format(0)} as a typeface.",
         )
 
-    fonts = set([k[1] for k in FONTS])
+    fonts = {k[1] for k in FONTS}
     if not font in fonts:
         raise error.UserScriptError(
             f"Invalid text format font: {font}",
