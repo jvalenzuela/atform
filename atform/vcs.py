@@ -11,7 +11,6 @@ class NoVersionControlError(Exception):
     This may be due to git not being installed or not running in a
     git repository.
     """
-    pass
 
 
 class Git:
