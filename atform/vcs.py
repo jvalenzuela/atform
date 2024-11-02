@@ -1,4 +1,4 @@
-# This module contains the version control system interface.
+"""Version control system interface."""
 
 
 import shutil

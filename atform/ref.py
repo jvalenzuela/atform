@@ -1,4 +1,8 @@
-# This module contains the implementation for listing external references.
+"""External reference management.
+
+This module implements handling for external references, i.e., setup for
+content passed to the Test.__init__() references parameter.
+"""
 
 
 from . import error

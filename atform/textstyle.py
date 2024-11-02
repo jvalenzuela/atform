@@ -1,13 +1,14 @@
-# This module contains the stylesheet defining PDF text styles.
-#
-# All fonts are chosen from the 14 standard PDF fonts to ensure
-# maximum compatibility with PDF readers, without embedding font
-# encodings. Reference PDF 1.7, Adobe Systems, First Edition 2008-7-1,
-# section 9.6.2.2.
-#
-# Use of a serifed typeface, Times Roman, as the default is per
-# typographical convention, and leaves sans-serif available
-# for use with setting verbatim text.
+"""Reportlab stylesheet defining PDF text styles.
+
+All fonts are chosen from the 14 standard PDF fonts to ensure
+maximum compatibility with PDF readers, without embedding font
+encodings. Reference PDF 1.7, Adobe Systems, First Edition 2008-7-1,
+section 9.6.2.2.
+
+Use of a serifed typeface, Times Roman, as the default is per
+typographical convention, and leaves sans-serif available
+for use with setting verbatim text.
+"""
 
 
 from reportlab.lib.enums import (

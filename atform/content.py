@@ -1,5 +1,4 @@
-# This module implements the objects storing test procedure content as it is
-# created.
+"""Objects to store test procedure content."""
 
 
 import collections

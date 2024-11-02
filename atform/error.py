@@ -1,10 +1,12 @@
-# This module implements handling errors with the user script. Nothing in this
-# module is exported to the public API because script errors are not intended
-# to be caught with try/except blocks, but rather simply exit with a
-# message describing the problem. Furthermore, this implementation is
-# intended to generate a simplified message, as opposed to the normal
-# stack trace which is unnecessary and possibly confusing for users new
-# to programming or Python.
+"""User script error handling.
+
+Nothing in this module is exported to the public API because script errors
+are not intended to be caught with try/except blocks, but rather simply
+exit with a message describing the problem. Furthermore, this implementation is
+intended to generate a simplified message, as opposed to the normal
+stack trace which is unnecessary and possibly confusing for users new
+to programming or Python.
+"""
 
 
 import collections

@@ -1,4 +1,4 @@
-# This module implements the API for defining approval signatures.
+"""Approval sigature API."""
 
 
 from . import error
