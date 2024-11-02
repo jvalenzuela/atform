@@ -7,7 +7,7 @@ import collections
 from . import error
 from . import id
 from . import field
-from . import label
+from . import label as label_
 from . import misc
 from . import pdf
 from . import state
@@ -160,11 +160,11 @@ class ProcedureStep:
             pass
 
         else:
-            label.add(lbl, str(num))
+            label_.add(lbl, str(num))
 
     def resolve_labels(self):
         """Replaces label placeholders with their target IDs."""
-        self.text = label.resolve(self.text)
+        self.text = label_.resolve(self.text)
 
 
 # Container to hold normalized procedure step field definitions. This is
@@ -263,7 +263,7 @@ class Test:
         """Assigns this test to a given label."""
         if lbl is not None:
             id_string = id.to_string(self.id)
-            label.add(lbl, id_string)
+            label_.add(lbl, id_string)
 
     @staticmethod
     def _validate_objective(obj):
@@ -396,14 +396,14 @@ class Test:
         """Replaces label placeholders with their target IDs."""
         if self.objective:
             try:
-                self.objective = label.resolve(self.objective)
+                self.objective = label_.resolve(self.objective)
             except error.UserScriptError as e:
                 e.add_field("Test Section", "Objective")
                 raise
 
         for i, item in enumerate(self.preconditions):
             try:
-                self.preconditions[i] = label.resolve(item)
+                self.preconditions[i] = label_.resolve(item)
             except error.UserScriptError as e:
                 e.add_field("Precondition Item", i+1)
                 raise
