@@ -1,4 +1,8 @@
-# This module implements generating PDF output.
+"""PDF output generation.
+
+This module handles processing content stored in Test() instances to
+generate PDF output files with ReportLab.
+"""
 
 
 import io

@@ -1,4 +1,8 @@
-# This module maintains user-defined form field configuration.
+"""User-defined data entry fields.
+
+This module implements the API to create data entry fields and select
+which tests they appear on.
+"""
 
 
 import collections

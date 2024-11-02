@@ -1,4 +1,10 @@
-# This module manages the numeric identifiers assigned to each test.
+"""Test identifier management.
+
+This module manages the numeric identifiers assigned to each test.
+Identifiers are presented in string form as a series of integers
+delimited by period, and are internally represented as a tuple
+of integers.
+"""
 
 
 import pathlib

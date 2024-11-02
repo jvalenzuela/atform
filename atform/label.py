@@ -1,5 +1,9 @@
-# This module implements storage of IDs, such as a test number, referenced by
-# a user-provided label.
+"""Label storage and replacement.
+
+This module implements storing identifiers, such as a test numbers or
+procedure step, referenced by a user-provided label. Labels found within
+strings are then replaced with their assigned identifier.
+"""
 
 
 import re

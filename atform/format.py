@@ -1,4 +1,4 @@
-# This module contains the text formatting API.
+"""Text formatting API available to user scripts."""
 
 
 from xml.etree import ElementTree

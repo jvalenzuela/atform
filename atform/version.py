@@ -1,4 +1,8 @@
-# Module versioning, not the version control interface.
+"""Package versioning.
+
+This module handles versioning the atform package, not the version control
+interface available to end users.
+"""
 
 
 from . import error

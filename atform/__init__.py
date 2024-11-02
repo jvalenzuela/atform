@@ -1,3 +1,10 @@
+"""Package public API definition.
+
+This module imports all public API objects so they are accessible from the
+atform namespace.
+"""
+
+
 from atform.content import (
     generate,
     Test,

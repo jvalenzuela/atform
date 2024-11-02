@@ -1,4 +1,4 @@
-# This module handles processing user-provided images.
+"""Handling for user-provided image files."""
 
 
 import collections

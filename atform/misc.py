@@ -1,3 +1,6 @@
+"""Miscellaneous stuff."""
+
+
 import functools
 
 from . import error
