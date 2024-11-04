@@ -14,7 +14,7 @@ from . import state
 valid_label_pattern = re.compile(r"\w+$")
 
 
-def add(label, id):
+def add(label, id_):
     """Assigns an identifier to a label.
 
     This function is not exposed in the public API, however, the label
@@ -40,7 +40,7 @@ def add(label, id):
             "Select a label that has not yet been used.",
         )
 
-    state.labels[label] = id
+    state.labels[label] = id_
 
 
 def resolve(orig):

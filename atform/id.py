@@ -22,9 +22,9 @@ def get_id():
     return tuple(state.current_id)
 
 
-def to_string(id):
+def to_string(id_):
     """Generates a presentation string for a given ID tuple."""
-    return ".".join([str(x) for x in id])
+    return ".".join([str(x) for x in id_])
 
 
 def validate_section_title(title):
@@ -61,6 +61,8 @@ def validate_section_title(title):
 
 
 @error.exit_on_script_error
+# Allow id parameter to shadow id() built-in.
+# pylint: disable-next=redefined-builtin
 def section(level, id=None, title=None):
     """Creates a new section or subsection.
 
@@ -172,6 +174,8 @@ def set_id_depth(levels):
 
 
 @error.exit_on_script_error
+# Allow id parameter to shadow id() built-in.
+# pylint: disable-next=redefined-builtin
 def skip_test(id=None):
     """Omits one or more tests.
 

@@ -5,7 +5,7 @@
 import collections
 
 from . import error
-from . import id
+from . import id as id_
 from . import field
 from . import label as label_
 from . import misc
@@ -234,7 +234,7 @@ class Test:
                  preconditions=None,
                  procedure=None,
                  ):
-        self.id = id.get_id()
+        self.id = id_.get_id()
         try:
             self.title = misc.nonempty_string("Title", title)
             self._store_label(label)
@@ -262,7 +262,7 @@ class Test:
     def _store_label(self, lbl):
         """Assigns this test to a given label."""
         if lbl is not None:
-            id_string = id.to_string(self.id)
+            id_string = id_.to_string(self.id)
             label_.add(lbl, id_string)
 
     @staticmethod
@@ -424,7 +424,7 @@ class Test:
         else:
             e.add_field("Test Title", self.title)
 
-        e.add_field("Test ID", id.to_string(self.id))
+        e.add_field("Test ID", id_.to_string(self.id))
         raise e
 
 
