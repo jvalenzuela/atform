@@ -2,7 +2,7 @@
 
 
 from . import error
-from . import id
+from . import id as id_
 from . import misc
 from . import state
 
@@ -72,7 +72,7 @@ def get_xref():
     # Iterate through all Test instances to populate second-level
     # reference dictionaries and test lists.
     for test in state.tests:
-        test_id = id.to_string(test.id)
+        test_id = id_.to_string(test.id)
         for cat in test.references:
             for ref in test.references[cat]:
                 xref[cat].setdefault(ref, []).append(test_id)

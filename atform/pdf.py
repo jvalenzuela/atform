@@ -22,8 +22,8 @@ from reportlab.platypus import (
 )
 from reportlab.platypus.flowables import Flowable
 
+from . import id as id_
 from . import (
-    id,
     image,
     state,
 )
@@ -221,7 +221,7 @@ class TestDocument:
 
         # The full name is the combination of the test's numeric
         # identifier and title.
-        self.full_name = " ".join((id.to_string(test.id), test.title))
+        self.full_name = " ".join((id_.to_string(test.id), test.title))
 
         self.bottom_margin = BOTTOM_MARGIN
 
@@ -434,7 +434,7 @@ class TestDocument:
             pass
 
         # Add test identification fields.
-        items.append(("Number", id.to_string(self.test.id)))
+        items.append(("Number", id_.to_string(self.test.id)))
         items.append(("Title", self.test.title))
 
         # Add a colon after each field name.
