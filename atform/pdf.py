@@ -451,6 +451,9 @@ class TestDocument(object):
             # Remove horizontal padding from the field name column.
             ("LEFTPADDING", (0, 0), (0, -1), 0),
             ("RIGHTPADDING", (0, 0), (0, -1), 0),
+
+            # Vertically align titles with the first line of each field.
+            ('VALIGN', (0, 0), (0, -1), 'TOP'),
         ]
 
         widths = [

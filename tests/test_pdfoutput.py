@@ -410,11 +410,14 @@ class ProjectInfo(Base, unittest.TestCase):
         atform.set_project_info(system="The System Name")
         self.make_test()
 
-    def test_project_and_system(self):
-        """Verify project and system names in the title block."""
+    def test_project_and_system_a_very_long_name_to_generate_a_multiline_title(self):
+        """Verify project and system names in the title block, and confirm all titles are aligned with the top line of each field."""
+        # Generate long project and system strings to ensure they require
+        # multiple lines in order to verify vertical alignment between the
+        # title and field.
         atform.set_project_info(
-            project="The Project Name",
-            system="The System Name",
+            project="The Project Name " + "foo " * 30,
+            system="The System Name " + "spam " * 30,
         )
         self.make_test()
 
