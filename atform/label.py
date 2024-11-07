@@ -14,7 +14,7 @@ from . import state
 valid_label_pattern = re.compile(r"\w+$")
 
 
-def add(label, id_):
+def add(label, id_, mapping=None):
     """Assigns an identifier to a label.
 
     This function is not exposed in the public API, however, the label
@@ -34,16 +34,33 @@ def add(label, id_):
             "Labels may contain only letters, numbers, and underscore."
         )
 
-    if label in state.labels:
+    # Labels unavailable to be defined in the target mapping because they
+    # have already been defined.
+    used = set(state.labels)
+
+    # If adding to the global mapping, the used labels include every
+    # local scope to prevent adding a global label which would conflict
+    # with a previously-defined local label.
+    if mapping is None:
+        mapping = state.labels
+        used.update(state.all_local_labels)
+
+    # If adding to a local mapping, the used labels are a combination of
+    # the local mapping and global labels.
+    else:
+        used.update(mapping)
+
+    if label in used:
         raise error.UserScriptError(
             f"Duplicate label: {label}",
             "Select a label that has not yet been used.",
         )
 
-    state.labels[label] = id_
+    state.all_local_labels.add(label)
+    mapping[label] = id_
 
 
-def resolve(orig):
+def resolve(orig, mapping):
     """Replaces label placeholders with the target IDs.
 
     The public API already validates the original string to ensure it is
@@ -52,7 +69,7 @@ def resolve(orig):
     tpl = string.Template(orig)
 
     try:
-        return tpl.substitute(state.labels)
+        return tpl.substitute(mapping)
 
     except KeyError as e:
         raise error.UserScriptError(

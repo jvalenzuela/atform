@@ -21,11 +21,11 @@ class ProcedureStep:
     an item, string or dict, from the procedure parameter list of Test.
     """
 
-    def __init__(self, raw, num):
+    def __init__(self, raw, num, label_mapping):
         data = self._normalize_type(raw)
         self.text = self._validate_text(data)
         self.fields = self._validate_fields(data)
-        self._validate_label(data, num)
+        self._validate_label(data, num, label_mapping)
         self._check_undefined_keys(data)
 
     @staticmethod
@@ -150,7 +150,7 @@ class ProcedureStep:
         return ProcedureStepField(title, length, suffix)
 
     @staticmethod
-    def _validate_label(data, num):
+    def _validate_label(data, num, label_mapping):
         """Creates a label referencing this step."""
         try:
             lbl = data.pop("label")
@@ -160,11 +160,11 @@ class ProcedureStep:
             pass
 
         else:
-            label_.add(lbl, str(num))
+            label_.add(lbl, str(num), label_mapping)
 
-    def resolve_labels(self):
+    def resolve_labels(self, mapping):
         """Replaces label placeholders with their target IDs."""
-        self.text = label_.resolve(self.text)
+        self.text = label_.resolve(self.text, mapping)
 
 
 # Container to hold normalized procedure step field definitions. This is
@@ -235,6 +235,7 @@ class Test:
                  procedure=None,
                  ):
         self.id = id_.get_id()
+        self.labels = {}
         try:
             self.title = misc.nonempty_string("Title", title)
             self._store_label(label)
@@ -260,7 +261,7 @@ class Test:
         state.tests.append(self)
 
     def _store_label(self, lbl):
-        """Assigns this test to a given label."""
+        """Assigns this test's ID to a global label."""
         if lbl is not None:
             id_string = id_.to_string(self.id)
             label_.add(lbl, id_string)
@@ -346,8 +347,7 @@ class Test:
         """Validates the equipment parameter."""
         return self._validate_string_list("Equipment", equip)
 
-    @staticmethod
-    def _validate_procedure(lst):
+    def _validate_procedure(self, lst):
         """Validates the procedure parameter."""
         if lst is None:
             lst = []
@@ -357,7 +357,7 @@ class Test:
         for i, step in enumerate(lst):
             num = i + 1 # Step numbers are one-based.
             try:
-                steps.append(ProcedureStep(step, num))
+                steps.append(ProcedureStep(step, num, self.labels))
             except error.UserScriptError as e:
                 e.add_field("Procedure Step", num)
                 raise
@@ -394,23 +394,28 @@ class Test:
 
     def _resolve_labels(self):
         """Replaces label placeholders with their target IDs."""
+        # Merge the local and global labels. The overwriting nature of
+        # update() is moot because there are no conflicts between
+        # local and global keys.
+        self.labels.update(state.labels)
+
         if self.objective:
             try:
-                self.objective = label_.resolve(self.objective)
+                self.objective = label_.resolve(self.objective, self.labls)
             except error.UserScriptError as e:
                 e.add_field("Test Section", "Objective")
                 raise
 
         for i, item in enumerate(self.preconditions):
             try:
-                self.preconditions[i] = label_.resolve(item)
+                self.preconditions[i] = label_.resolve(item. self.labels)
             except error.UserScriptError as e:
                 e.add_field("Precondition Item", i+1)
                 raise
 
         for i, step in enumerate(self.procedure):
             try:
-                step.resolve_labels()
+                step.resolve_labels(self.labels)
             except error.UserScriptError as e:
                 e.add_field("Procedure Step", i+1)
                 raise

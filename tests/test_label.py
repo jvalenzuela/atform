@@ -2,6 +2,7 @@
 
 
 from tests import utils
+import atform
 from atform import label
 from atform.error import UserScriptError
 import string
@@ -85,3 +86,51 @@ class Resolve(unittest.TestCase):
         label.add("spam", "foo")
         label.add("eggs", "bar")
         self.assertEqual("foo bar", label.resolve("$spam $eggs"))
+
+
+class Scope(unittest.TestCase):
+    """Unit tests for different label scopes."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_global_duplicate(self):
+        """Confirm exception for duplicate labels in the global scope."""
+        atform.Test("T1", label="foo")
+        with self.assertRaises(SystemExit):
+            atform.Test("T2", label="foo")
+
+    def test_local_duplicate(self):
+        """Confirm exception for duplicate labels in a local scope."""
+        with self.assertRaises(SystemExit):
+            atform.Test("Test",
+                        procedure=[
+                            {"label": "foo", "text": "spam"},
+                            {"label": "foo", "text": "eggs"}
+                        ])
+
+    def test_local_shadow_global(self):
+        """Confirm exception for a local label shadowing a global label."""
+        atform.Test("Global", label="foo")
+
+        with self.assertRaises(SystemExit):
+            atform.Test("Local",
+                        procedure=[
+                            {
+                                "label": "foo", # Local label
+                                "text": "spam"
+                            }
+                        ])
+
+    def test_global_shadow_local(self):
+        """Confirm exception for a global label shadowing a local label."""
+        atform.Test("Local",
+                    procedure=[
+                        {
+                            "label": "foo", # Local label
+                            "text": "spam"
+                        }
+                    ])
+
+        with self.assertRaises(SystemExit):
+            atform.Test("Global", label="foo")

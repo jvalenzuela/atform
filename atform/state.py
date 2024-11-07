@@ -48,9 +48,13 @@ def init():
     global fields
     fields = collections.OrderedDict()
 
-    # Target ids keyed by label.
+    # Labels globally accessible to all tests.
     global labels
     labels = {}
+
+    # Labels defined in any local scope.
+    global all_local_labels
+    all_local_labels = set()
 
     # ReportLab Image object containing the user-specified logo.
     global logo
