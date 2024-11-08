@@ -1,7 +1,6 @@
 # This module implements generating PDF output.
 
 
-import functools
 import io
 import itertools
 import os
@@ -57,6 +56,14 @@ SUBSECTION_RULE_WEIGHT = 0.5 * point
 
 # Color for all rules(lines).
 RULE_COLOR = colors.black
+
+
+# Background color for table cells containing top-level section headings.
+SECTION_BACKGROUND = colors.lightsteelblue
+
+
+# Background color for table cells representing divisions within a section.
+SUBSECTION_BACKGROUND = colors.lightgrey
 
 
 # Vertical space between each top-level section.
@@ -163,52 +170,6 @@ def max_width(
 
     # The final width includes left and right table padding.
     return max(widths) + left_pad + right_pad
-
-
-class TableFormat:
-    """
-    This class contains methods for generating table style commands (tuples)
-    for common formatting elements.
-    """
-
-    def table_style_cmd(method):
-        """Decorator for methods that create a table style command."""
-        @functools.wraps(method)
-        def wrapper(*seq):
-            # Convert the given arguments into a mutable list.
-            items = list(seq)
-
-            # Wrapped method will alter the argument list.
-            method(items)
-
-            # Return the completed list of arguments as a tuple.
-            return tuple(items)
-
-        return staticmethod(wrapper)
-
-    @table_style_cmd
-    def section_rule(seq):
-        """Line separating the top-level section tables."""
-        seq.append(SECTION_RULE_WEIGHT)
-        seq.append(RULE_COLOR)
-
-    @table_style_cmd
-    def subsection_rule(seq):
-        """Line separating content within a section."""
-        seq.append(SUBSECTION_RULE_WEIGHT)
-        seq.append(RULE_COLOR)
-
-    @table_style_cmd
-    def section_background(seq):
-        """Background for top-level section titles."""
-        seq.insert(0, "BACKGROUND")
-        seq.append(colors.lightsteelblue)
-
-    @table_style_cmd
-    def subsection_background(seq):
-        """Background for divisions within a section."""
-        seq.insert(0, "BACKGROUND")
-        seq.append(colors.lightgrey)
 
 
 class TestDocument:
@@ -510,8 +471,8 @@ class TestDocument:
         column_widths[0] = column_widths[0] + (2 * DEFAULT_TABLE_HORIZ_PAD)
 
         table_style = [
-            TableFormat.subsection_rule("LINEBEFORE", (1, 1), (1, -1)),
-            TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
+            ("LINEBEFORE", (1, 1), (1, -1), SUBSECTION_RULE_WEIGHT, RULE_COLOR),
+            ("LINEABOVE", (0, 2), (-1, -1), SUBSECTION_RULE_WEIGHT, RULE_COLOR),
 
             # Category column vertical alignment.
             ("VALIGN", (0, 1), (0, -1), "MIDDLE"),
@@ -584,7 +545,7 @@ class TestDocument:
 
         table_style = [
             # Horiziontal rule between each item.
-            TableFormat.subsection_rule("LINEABOVE", (0, 2), (-1, -1)),
+            ("LINEABOVE", (0, 2), (-1, -1), SUBSECTION_RULE_WEIGHT, RULE_COLOR),
         ]
 
         return self._section(
@@ -618,10 +579,10 @@ class TestDocument:
             style = []
         style.extend([
             # Border surrounding the entire section.
-            TableFormat.section_rule("BOX", (0, 0), (-1, -1)),
+            ("BOX", (0, 0), (-1, -1), SECTION_RULE_WEIGHT, RULE_COLOR),
 
             # Title row background.
-            TableFormat.section_background((0, 0), (0, 0)),
+            ("BACKGROUND", (0, 0), (0, 0), SECTION_BACKGROUND),
 
             # The title spans all columns.
             ("SPAN", (0, 0), (-1, 0)),
@@ -790,13 +751,13 @@ class ProcedureList:
         """Style applied to the entire procedure list table."""
         return [
             # Header row shading.
-            TableFormat.subsection_background((0, 1), (-1, 1)),
+            ("BACKGROUND", (0, 1), (-1, 1), SUBSECTION_BACKGROUND),
 
             # Add a section rule above the header row. This is unnecessary
             # on the initial page, however, it's the only way to get
             # a rule on the top of following pages because the 'splitfirst'
             # index doesn't apply to repeated rows.
-            TableFormat.section_rule("LINEABOVE", (0, 1), (-1, 1)),
+            ("LINEABOVE", (0, 1), (-1, 1), SECTION_RULE_WEIGHT, RULE_COLOR),
 
             # Do not split between the section header row and first step.
             ("NOSPLIT", (0, 0), (-1, 2)),
@@ -805,7 +766,7 @@ class ProcedureList:
             ("NOSPLIT", (0, -2), (0, -1)),
 
             # Horizontal rules between each step.
-            TableFormat.subsection_rule("LINEBELOW", (0, 2), (-1, -3)),
+            ("LINEBELOW", (0, 2), (-1, -3), SUBSECTION_RULE_WEIGHT, RULE_COLOR),
 
             # Step number column
             ("VALIGN", (self.STEP_COL, 2), (self.STEP_COL, -2), "MIDDLE"),
@@ -815,16 +776,18 @@ class ProcedureList:
             ("VALIGN", (self.PASS_COL, 2), (self.PASS_COL, -2), "MIDDLE"),
 
             # Last row shading.
-            TableFormat.subsection_background((0, -1), (-1, -1)),
+            ("BACKGROUND", (0, -1), (-1, -1), SUBSECTION_BACKGROUND),
 
             # Last row spans all columns.
             ("SPAN", (0, -1), (-1, -1)),
 
             # Add a section rule at the bottom of every page break.
-            TableFormat.section_rule(
+            (
                 "LINEBELOW",
                 (0, "splitlast"),
-                (-1, "splitlast")
+                (-1, "splitlast"),
+                SECTION_RULE_WEIGHT,
+                RULE_COLOR
             ),
         ]
 
@@ -970,10 +933,12 @@ class Approval:
 
         style.extend([
             # Vertical rules.
-            TableFormat.subsection_rule(
+            (
                 "LINEBEFORE",
                 (self.NAME_COL, 1),
-                (-1, -1)
+                (-1, -1),
+                SUBSECTION_RULE_WEIGHT,
+                RULE_COLOR
             ),
 
             # Remove all vertical padding around title column as it
@@ -1019,10 +984,12 @@ class Approval:
 
             # Horizontal rule beween each signature, except below the last
             # row because it's closed by a section rule.
-            style.append(TableFormat.subsection_rule(
+            style.append((
                 "LINEBELOW",
                 (0, lower),
-                (-1, lower)
+                (-1, lower),
+                SUBSECTION_RULE_WEIGHT,
+                RULE_COLOR
             ))
         else:
             # Rule below the last row is a section rule.
