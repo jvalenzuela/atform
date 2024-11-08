@@ -1074,7 +1074,7 @@ class Checkbox(Flowable):
     # Height and width of the box.
     SIZE = 0.25 * inch
 
-    def wrap(self, *args):
+    def wrap(self, *_args):
         return (self.SIZE, self.SIZE)
 
     def draw(self):
@@ -1124,7 +1124,7 @@ class TextEntryField(Flowable):
             self.style.fontSize,
         )
 
-    def wrap(self, *args):
+    def wrap(self, *_args):
         return (self.width, self.height)
 
     def draw(self):
