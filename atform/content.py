@@ -483,11 +483,9 @@ def generate(path="pdf", folder_depth=0):
     try:
         git = vcs.Git()
     except vcs.NoVersionControlError:
-        draft = False
         version = None
     else:
-        draft = not git.clean
-        version = git.version
+        version = git.version if git.clean else "draft"
 
     for t in state.tests:
-        pdf.TestDocument(t, path, folder_depth, draft, version)
+        pdf.TestDocument(t, path, folder_depth, version)
