@@ -1079,9 +1079,17 @@ class Checkbox(Flowable):
     SIZE = 0.25 * inch
 
     def wrap(self, *_args):
+        """Returns the size of the flowable.
+
+        Callback method required for Flowables; called by Platypus.
+        """
         return (self.SIZE, self.SIZE)
 
     def draw(self):
+        """Places the flowable onto the canvas.
+
+        Callback method required for Flowables; called by Platypus.
+        """
         self.canv.acroForm.checkbox(
             size=self.SIZE,
             relative=True,
@@ -1129,9 +1137,17 @@ class TextEntryField(Flowable):
         )
 
     def wrap(self, *_args):
+        """Returns the size of the flowable.
+
+        Callback method required for Flowables; called by Platypus.
+        """
         return (self.width, self.height)
 
     def draw(self):
+        """Places the flowable onto the canvas.
+
+        Callback method required for Flowables; called by Platypus.
+        """
         self.canv.acroForm.textfield(
             width = self.width,
             height = self.height,
