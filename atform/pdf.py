@@ -179,9 +179,8 @@ def max_width(
 class TestDocument:
     """This class creates a PDF for a single Test instance."""
 
-    def __init__(self, test, root, folder_depth, draft, version):
+    def __init__(self, test, root, folder_depth, version):
         self.test = test
-        self.draft = draft
         self.version = version
 
         # The full name is the combination of the test's numeric
@@ -246,7 +245,7 @@ class TestDocument:
 
     def _on_first_page(self, canvas, doc):
         """Document template callback for the first page."""
-        if self.draft:
+        if self.version == "draft":
             self._draftmark(canvas, doc)
 
         self._footer(canvas, doc)
@@ -300,7 +299,7 @@ class TestDocument:
         canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
 
         # Add version information if available.
-        if not self.draft and self.version:
+        if self.version and (self.version != "draft"):
             x = doc.pagesize[0] - RIGHT_MARGIN
             version_text = f"Document Version: {self.version}"
             canvas.drawRightString(x, baseline, version_text)
