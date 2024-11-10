@@ -111,7 +111,7 @@ class UserScriptError(Exception):
         "Remedy",
     ])
 
-    def __init__(self, desc, remedy=None, *args, **kwargs):
+    def __init__(self, desc, *args, remedy=None, **kwargs):
         super().__init__(*args)
         self.fields = collections.OrderedDict()
         if remedy:
