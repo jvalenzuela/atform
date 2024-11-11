@@ -183,6 +183,9 @@ ProcedureStepField = collections.namedtuple(
 
 
 @error.exit_on_script_error
+# This class intentionally offers many keyword arguments to allow the
+# resulting test document to be completely populated via __init__().
+# pylint: disable=too-many-arguments
 class Test:
     """Creates a single test procedure.
 
