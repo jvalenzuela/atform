@@ -226,6 +226,7 @@ class Test:
 
     def __init__(self,
                  title,
+                 *,
                  label=None,
                  include_fields=None,
                  exclude_fields=None,
