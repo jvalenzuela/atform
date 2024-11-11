@@ -33,6 +33,11 @@ class Title(unittest.TestCase):
         t = atform.Test(string.whitespace + "Spam" + string.whitespace)
         self.assertEqual("Spam", t.title)
 
+    def test_keyword_only(self):
+        """Confirm any argument after title must be via keyword."""
+        with self.assertRaises(TypeError):
+            atform.Test("title", "foo")
+
 
 class LabelReplacement(object):
     """
