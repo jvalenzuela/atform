@@ -385,7 +385,7 @@ class Test:
         return items
 
     @error.external_call
-    def _pregenerate(self):
+    def pregenerate(self):
         """
         Performs tasks that need to occur after all tests have been defined,
         but before actual output is generated.
@@ -460,7 +460,7 @@ def generate(path="pdf", folder_depth=0):
         )
 
     for t in state.tests:
-        t._pregenerate()
+        t.pregenerate()
 
     if not isinstance(folder_depth, int):
         raise error.UserScriptError(
