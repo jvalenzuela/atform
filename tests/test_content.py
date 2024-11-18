@@ -61,25 +61,25 @@ class LabelReplacement(object):
     def test_objective(self):
         """Confirm placeholder is replaced in the objective."""
         t = atform.Test("title", objective=self.PLACEHOLDER)
-        t._pregenerate()
+        t.pregenerate()
         self.assertReplacement(t.objective)
 
     def test_precondition(self):
         """Confirm placeholder is replaced in the preconditions."""
         t = atform.Test("title", preconditions=[self.PLACEHOLDER])
-        t._pregenerate()
+        t.pregenerate()
         self.assertReplacement(t.preconditions[0])
 
     def test_procedure_step_string(self):
         """Confirm placeholder is replaced in string procedure steps."""
         t = atform.Test("title", procedure=[self.PLACEHOLDER])
-        t._pregenerate()
+        t.pregenerate()
         self.assertReplacement(t.procedure[0].text)
 
     def test_procedure_step_dict(self):
         """Confirm placeholder is replaced in dict procedure steps."""
         t = atform.Test("title", procedure=[{"text":self.PLACEHOLDER}])
-        t._pregenerate()
+        t.pregenerate()
         self.assertReplacement(t.procedure[0].text)
 
 
@@ -119,7 +119,7 @@ class ForwardLabelReplacement(unittest.TestCase):
         """Confirm replacement for a labeled test."""
         t = atform.Test("title", objective="$TheLabel")
         atform.Test("target", label="TheLabel")
-        t._pregenerate()
+        t.pregenerate()
         self.assertEqual("2", t.objective)
 
     def test_procedure_step(self):
@@ -128,7 +128,7 @@ class ForwardLabelReplacement(unittest.TestCase):
             "$TheLabel",
             {"text":"foo", "label":"TheLabel"}
         ])
-        t._pregenerate()
+        t.pregenerate()
         self.assertEqual("2", t.procedure[0].text)
 
 
