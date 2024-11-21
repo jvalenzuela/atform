@@ -80,11 +80,11 @@ class ProcedureStep:
             )
 
         fields = []
-        for i, tpl in enumerate(tpls):
+        for i, tpl in enumerate(tpls, start=1):
             try:
                 fields.append(self._create_field(tpl))
             except error.UserScriptError as e:
-                e.add_field("Procedure Step Field #", i+1)
+                e.add_field("Procedure Step Field #", i)
                 raise
         return fields
 
@@ -357,12 +357,11 @@ class Test:
         elif not isinstance(lst, list):
             raise error.UserScriptError("Procedure must be a list.")
         steps = []
-        for i, step in enumerate(lst):
-            num = i + 1 # Step numbers are one-based.
+        for i, step in enumerate(lst, start=1):
             try:
-                steps.append(ProcedureStep(step, num))
+                steps.append(ProcedureStep(step, i))
             except error.UserScriptError as e:
-                e.add_field("Procedure Step", num)
+                e.add_field("Procedure Step", i)
                 raise
         return steps
 
@@ -376,11 +375,11 @@ class Test:
                 f"{name} must be a list of strings.",
             )
         items = []
-        for i, s in enumerate(lst):
+        for i, s in enumerate(lst, start=1):
             try:
                 items.append(misc.nonempty_string(f"{name} list item", s))
             except error.UserScriptError as e:
-                e.add_field(f"{name} item #", i+1)
+                e.add_field(f"{name} item #", i)
                 raise
         return items
 
@@ -411,11 +410,11 @@ class Test:
                 e.add_field("Precondition Item", i+1)
                 raise
 
-        for i, step in enumerate(self.procedure):
+        for i, step in enumerate(self.procedure, start=1):
             try:
                 step.resolve_labels()
             except error.UserScriptError as e:
-                e.add_field("Procedure Step", i+1)
+                e.add_field("Procedure Step", i)
                 raise
 
     def _add_exception_context(self, e):
