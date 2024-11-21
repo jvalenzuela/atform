@@ -643,9 +643,9 @@ class ProcedureList:
     def _add_steps(self):
         """Adds rows for all steps."""
         step_style = stylesheet["ProcedureTableHeading"]
-        for i, step in enumerate(self.steps):
+        for i, step in enumerate(self.steps, start=1):
             desc = self._step_body(step)
-            step_num = Paragraph(str(i + 1), step_style)
+            step_num = Paragraph(str(i), step_style)
             self.rows.append([step_num, desc, acroform.Checkbox()])
 
     def _step_body(self, step):
