@@ -11,7 +11,7 @@ import os
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import LETTER
-from reportlab.lib.units import inch
+from reportlab.lib.units import toLength
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
     Frame,
@@ -31,32 +31,29 @@ from . import (
     paragraph,
     state,
 )
-from .textstyle import (
-    point,
-    stylesheet,
-)
+from .textstyle import stylesheet
 
 
 PAGE_SIZE = LETTER
-LEFT_MARGIN = 0.75 * inch
+LEFT_MARGIN = toLength("0.75 in")
 RIGHT_MARGIN = LEFT_MARGIN
-TOP_MARGIN = 0.75 * inch
+TOP_MARGIN = toLength("0.75 in")
 
 # This initial value is based on the single-line footer containing the
 # page number and possibly version ID; it will be increased to accommodate
 # a user-provided copyright notice.
-BOTTOM_MARGIN = 0.5 * inch
+BOTTOM_MARGIN = toLength("0.5 in")
 
 
 # Default left and right padding for table cells, i.e., default value for
 # LEFTPADDING and RIGHTPADDING table style commands.
-DEFAULT_TABLE_HORIZ_PAD = 6 * point
+DEFAULT_TABLE_HORIZ_PAD = toLength("6 pt")
 
 
 # Thickness of lines separating top-level sections and divisions within
 # each section.
-SECTION_RULE_WEIGHT = 1 * point
-SUBSECTION_RULE_WEIGHT = 0.5 * point
+SECTION_RULE_WEIGHT = toLength("1 pt")
+SUBSECTION_RULE_WEIGHT = toLength("0.5 pt")
 
 
 # Color for all rules(lines).
@@ -72,11 +69,11 @@ SUBSECTION_BACKGROUND = colors.lightgrey
 
 
 # Vertical space between each top-level section.
-SECTION_SEP = 5 * point
+SECTION_SEP = toLength("5 pt")
 
 
 # Vertical space allotted for the Notes section.
-NOTES_AREA_SIZE = 2 * inch
+NOTES_AREA_SIZE = toLength("2 in")
 
 
 # Text color for the draft watermark.
@@ -320,7 +317,9 @@ class TestDocument:
         # The image width is fixed to the maximum allowable logo size
         # regardless of the actual image size. If no logo is being used,
         # the image column width is set to zero.
-        image_width = (image.MAX_LOGO_SIZE.width * inch) if state.logo else 0
+        image_width = toLength(
+            f"{image.MAX_LOGO_SIZE.width} in"
+        ) if state.logo else 0
 
         widths = [
             image_width,
@@ -755,7 +754,7 @@ class ProcedureStepFields:
     """
 
     # Vertical space between the procedure step text and data entry fields.
-    FIELD_TABLE_SEP = 12 * point
+    FIELD_TABLE_SEP = toLength("12 pt")
 
     # Table column indices.
     TITLE_COL = 0
@@ -832,7 +831,7 @@ class Approval:
     NAME_WIDTH = 12
 
     # Vertical distance between field names and the data entry fields.
-    FIELD_TITLE_SEP = 1 * point
+    FIELD_TITLE_SEP = toLength("1 pt")
 
     # Column indices.
     TITLE_COL = 0
