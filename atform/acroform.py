@@ -3,22 +3,19 @@
 This module implements ReportLab Flowables containing an AcroForm field.
 """
 
-from reportlab.lib.units import inch
+from reportlab.lib.units import toLength
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus.flowables import Flowable
 
 
-from .textstyle import (
-    point,
-    stylesheet,
-)
+from .textstyle import stylesheet
 
 
 class Checkbox(Flowable):
     """A custom flowable that generates a form checkbox."""
 
     # Height and width of the box.
-    SIZE = 0.25 * inch
+    SIZE = toLength("0.25 in")
 
     def wrap(self, *_args):
         """Returns the size of the flowable.
@@ -47,7 +44,7 @@ class TextEntry(Flowable):
 
     # Additional horizontal size to account for the non-adjustable padding
     # integral to the field.
-    EXTRA_WIDTH = 4 * point
+    EXTRA_WIDTH = toLength("4 pt")
 
     def __init__(self, width, tooltip=None):
         super().__init__()

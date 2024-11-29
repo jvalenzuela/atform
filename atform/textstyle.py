@@ -20,24 +20,14 @@ from reportlab.lib.styles import (
     getSampleStyleSheet,
     ParagraphStyle,
 )
-from reportlab.lib.units import inch
-
-
-# Constant denoting the point unit of measure(1/72 inch). The unity value
-# is because points are the default unit for ReportLab, so a conversion
-# constant is not strictly necessary, however, this provides an explicit
-# notation consistent with other units imported from reportlab.lib.units.
-#
-# This constant is lower-case to conform with similar reportlab constants.
-# pylint: disable=invalid-name
-point = 1
+from reportlab.lib.units import toLength
 
 
 stylesheet = getSampleStyleSheet()
 
 
 stylesheet["Normal"].fontName = "Times-Roman"
-stylesheet["Normal"].fontSize = 12 * point
+stylesheet["Normal"].fontSize = toLength("12 pt")
 
 
 stylesheet.add(ParagraphStyle(
@@ -72,8 +62,8 @@ stylesheet.add(ParagraphStyle(
 stylesheet.add(ParagraphStyle(
     name="NextParagraph",
     parent=stylesheet["FirstParagraph"],
-    spaceBefore=4 * point,
-    firstLineIndent=0.25 * inch,
+    spaceBefore=toLength("4 pt"),
+    firstLineIndent=toLength("0.25 in"),
 ))
 
 
@@ -108,8 +98,8 @@ stylesheet.add(ParagraphStyle(
 stylesheet.add(ParagraphStyle(
     name="SignatureFieldTitle",
     parent=stylesheet["Normal"],
-    fontSize=8 * point,
-    leading=8 * point,
+    fontSize=toLength("8 pt"),
+    leading=toLength("8 pt"),
 ))
 
 
@@ -118,7 +108,7 @@ stylesheet.add(ParagraphStyle(
 stylesheet.add(ParagraphStyle(
     name="Draftmark",
     fontName="Helvetica-Bold",
-    fontSize=200 * point,
+    fontSize=toLength("200 pt"),
 ))
 
 
@@ -132,8 +122,8 @@ stylesheet.add(ParagraphStyle(
 
 stylesheet.add(ParagraphStyle(
     name="CopyrightNotice",
-    fontSize=8 * point,
-    leading=8 * point,
+    fontSize=toLength("8 pt"),
+    leading=toLength("8 pt"),
     parent=stylesheet["Normal"],
     alignment=TA_JUSTIFY,
 ))
