@@ -5,7 +5,6 @@ generate PDF output files with ReportLab.
 """
 
 
-import io
 import itertools
 import os
 
@@ -15,6 +14,7 @@ from reportlab.lib.units import toLength
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
     Frame,
+    IndexingFlowable,
     ListFlowable,
     ListItem,
     Paragraph,
@@ -125,6 +125,34 @@ def max_width(
     return max(widths) + left_pad + right_pad
 
 
+class PageCount(IndexingFlowable):
+    """Total page count accumulator.
+
+    This object captures the total number of pages. It is implemented as an
+    IndexingFlowable so document template multiBuild() can handle runnning
+    multiple build passes to determine the total number of pages.
+    """
+
+    def __init__(self, doc):
+        super().__init__()
+        self.doc = doc
+        self.last_page = 1
+
+    def isSatisfied(self):
+        """Document template multiBuild() hook to enable another build pass."""
+        # The build is complete if the page number equals the cached last
+        # page number.
+        if self.last_page == self.doc.page:
+            return True
+
+        # Update cached last page and build again.
+        self.last_page = self.doc.page
+        return False
+
+    def draw(self):
+        """This flowable doesn't draw anything."""
+
+
 class TestDocument:
     """This class creates a PDF for a single Test instance."""
 
@@ -156,33 +184,23 @@ class TestDocument:
             # Enlarge the bottom margin to accommodate the copyright notice.
             self.bottom_margin += self.copyright_height
 
-        # The document is built twice; the first time to a dummy memory
-        # buffer in order to determine the total page count, and the
-        # second time to the output PDF file.
-        for dst in [None, root]:
-            self.doc = self._get_doc(dst, folder_depth)
-            self.doc.build(
-                self._build_body(),
-                onFirstPage=self._on_first_page,
-                onLaterPages=self._on_later_pages,
-            )
-
-            # Capture the final page count for the next build.
-            self.total_pages = self.doc.page
+        doc = self._get_doc(root, folder_depth)
+        self.page_count = PageCount(doc)
+        body = [self.page_count]
+        body.extend(self._build_body())
+        doc.multiBuild(
+            body,
+            maxPasses=1, # Page count takes up to two, zero-based count.
+            onFirstPage=self._on_first_page,
+            onLaterPages=self._on_later_pages,
+        )
 
     def _get_doc(self, root, folder_depth):
         """Creates the document template."""
-        # Output a PDF if root is a string containing a directory.
-        if isinstance(root, str):
-            pdfname = self.full_name + ".pdf"
-            path = build_path(self.test.id, root, folder_depth)
-            os.makedirs(path, exist_ok=True)
-            filename = os.path.join(path, pdfname)
-
-        # Target a dummy buffer if no directory was provided.
-        else:
-            filename = io.BytesIO()
-
+        pdfname = self.full_name + ".pdf"
+        path = build_path(self.test.id, root, folder_depth)
+        os.makedirs(path, exist_ok=True)
+        filename = os.path.join(path, pdfname)
         return SimpleDocTemplate(
             filename,
             pagesize=PAGE_SIZE,
@@ -238,13 +256,7 @@ class TestDocument:
         # Offset text relative to the font size.
         baseline -= stylesheet["Footer"].fontSize * 1.2
 
-        # See if a total page count is available.
-        try:
-            total_pages = self.total_pages
-        except AttributeError:
-            total_pages = "?"
-
-        pages = f"Page {doc.page} of {total_pages}"
+        pages = f"Page {doc.page} of {self.page_count.last_page}"
         canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
 
         # Add version information if available.
