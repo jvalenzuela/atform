@@ -138,6 +138,8 @@ class PageCount(IndexingFlowable):
         self.doc = doc
         self.last_page = 1
 
+    # Method name is defined by ReportLab IndexingFlowable interface.
+    # pylint: disable=invalid-name
     def isSatisfied(self):
         """Document template multiBuild() hook to enable another build pass."""
         # The build is complete if the page number equals the cached last
