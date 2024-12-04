@@ -62,5 +62,5 @@ class SplitParagraphs(unittest.TestCase):
 
     def assert_result(self, raw, expected):
         """Asserts a given string is split into expected paragraphs."""
-        paras = atform.paragraph.split_paragraphs(raw)
+        paras = atform.pdf.paragraph.split_paragraphs(raw)
         self.assertEqual(expected, paras)
