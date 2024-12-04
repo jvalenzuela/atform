@@ -2,6 +2,7 @@
 
 
 import collections
+import os
 
 from . import error
 from . import id as id_
@@ -173,6 +174,32 @@ ProcedureStepField = collections.namedtuple(
     "ProcedureStepField",
     ["title", "length", "suffix"],
 )
+
+
+def build_path(tid, root, depth):
+    """Constructs a path where a test's output PDF will be written.
+
+    The path will consist of the root, followed by a folder per
+    section number limited to depth, e.g., <root>/<x>/<y> for an ID x.y.z
+    and depth 2. The final number in an ID is not translated to a folder.
+    """
+    folders = [root]
+
+    # Append a folder for each section level.
+    for i in range(len(tid[0:depth])):
+
+        # Include the section number and title if the section has a title.
+        try:
+            section = state.section_titles[tid[: i + 1]]
+            section_folder = f"{tid[i]} {section}"
+
+        # Use only the section number if the section has no title.
+        except KeyError:
+            section_folder = str(tid[i])
+
+        folders.append(section_folder)
+
+    return os.path.join(*folders)
 
 
 ################################################################################
@@ -491,4 +518,5 @@ def generate(path="pdf", folder_depth=0):
         version = git.version if git.clean else "draft"
 
     for t in state.tests:
-        pdf.TestDocument(t, path, folder_depth, version)
+        test_path = build_path(t.id, path, folder_depth)
+        pdf.TestDocument(t, test_path, version)

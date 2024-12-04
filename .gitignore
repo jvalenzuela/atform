@@ -8,5 +8,5 @@ doc/source/generated
 dist/
 
 # Unit test PDF output.
-pdf/
+/pdf/
 example_output/
