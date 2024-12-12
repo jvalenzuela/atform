@@ -12,7 +12,7 @@ import csv
 # Load alarms.csv using the Python csv module, creating a dictionary
 # mapping alarm number to its respective message, so the text for
 # any alarm can be acquired by alarms[num].
-with open("alarms.csv", newline="") as f:
+with open("alarms.csv", encoding="utf-8", newline="") as f:
     reader = csv.reader(f)
     alarms = dict([(int(row[0]), row[1]) for row in reader])
 

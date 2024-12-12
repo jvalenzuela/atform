@@ -44,7 +44,7 @@ xrefs = atform.get_xref()
 
 # Export safety function cross-reference to a CSV file.
 sf_refs = xrefs["sf"]  # Get all references in the "sf" category.
-with open("safetyfunctions.csv", "w", newline="") as f:
+with open("sf-xref.csv", "w", encoding="utf-8", newline="") as f:
     writer = csv.writer(f)
 
     # Generate a row for each safety function. Dictionary keys,
