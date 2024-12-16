@@ -29,28 +29,54 @@ class Add(unittest.TestCase):
         with self.assertRaises(UserScriptError):
             label.add(string.whitespace, "id")
 
-    def test_leading_whitespace(self):
-        """Confirm exception for a label containing leading whitespace."""
-        with self.assertRaises(UserScriptError):
-            label.add(string.whitespace + "foo", "id")
+    def test_invalid_first_character(self):
+        """Confirm exception for a label with an invalid first character."""
+        invalid = set(string.printable)
 
-    def test_trailing_whitespace(self):
-        """Confirm exception for a label containing trailing whitespace."""
-        with self.assertRaises(UserScriptError):
-            label.add("foo" + string.whitespace, "id")
+        # Exclude valid characters.
+        invalid.difference_update(string.ascii_letters)
+        invalid.remove("_")
 
-    def test_middle_whitespace(self):
-        """Confirm exception for a label with whitespace in the middle."""
-        with self.assertRaises(UserScriptError):
-            label.add("foo" + string.whitespace + "bar", "id")
+        for c in invalid:
+            with self.subTest(c=c), self.assertRaises(UserScriptError):
+                label.add(c + "foo", "id")
 
-    def test_punctuation(self):
-        """Confirm exception for a label with punctuation other than underscore."""
-        punc = set(string.punctuation)
-        punc.remove("_")
-        for p in punc:
-            with self.subTest(p=p), self.assertRaises(UserScriptError):
-                label.add("foo" + p, "id")
+    def test_invalid_following_character(self):
+        """Confirm exception for a label with an invalid character after the first."""
+        invalid = set(string.printable)
+
+        # Exclude valid characters.
+        invalid.difference_update(string.ascii_letters)
+        invalid.difference_update(string.digits)
+        invalid.difference_update("_")
+
+        for c in invalid:
+            with self.subTest(c=c), self.assertRaises(UserScriptError):
+                label.add("foo" + c, "id")
+
+    def test_nonascii(self):
+        """Confirm exception for a label containing non-ASCII characters."""
+        with self.assertRaises(UserScriptError):
+            label.add("foo\u00dfar", "id")
+
+    def test_valid_single_character(self):
+        """Confirm a valid single-character label is accepted."""
+        valid = set(string.ascii_letters)
+        valid.add("_")
+
+        for c in valid:
+            with self.subTest(c=c):
+                label.add(c, "id")
+
+    def test_valid_multi_character(self):
+        """Confirm a valid multi-character label is accepted."""
+        valid = set(string.ascii_letters)
+        valid.update(string.digits)
+        valid.add("_")
+
+        for c in valid:
+            with self.subTest(c=c):
+                label.add("foo" + c, "id")
 
     def test_duplicate(self):
         """Confirm exception for duplicate labels."""

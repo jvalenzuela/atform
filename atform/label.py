@@ -15,7 +15,7 @@ from . import state
 
 # Regular expression pattern to match a valid label, which is based on
 # allowable identifiers for template strings.
-valid_label_pattern = re.compile(r"\w+$")
+valid_label_pattern = re.compile(r"(?ai:[_a-z][_a-z0-9]*)$")
 
 
 def add(label, id_):
@@ -32,7 +32,9 @@ def add(label, id_):
             "Label must be a string.",
         )
 
-    if not valid_label_pattern.match(label):
+    # The strip() inequality catches trailing newlines permitted by the
+    # pattern's "$" suffix.
+    if not valid_label_pattern.match(label) or (label != label.strip()):
         raise error.UserScriptError(
             f"Invalid label: {label}",
             "Labels may contain only letters, numbers, and underscore."
