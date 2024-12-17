@@ -37,7 +37,10 @@ def add(label, id_):
     if not valid_label_pattern.match(label) or (label != label.strip()):
         raise error.UserScriptError(
             f"Invalid label: {label}",
-            "Labels may contain only letters, numbers, and underscore."
+            """
+            Labels must begin with a letter or underscore, optionally
+            followed by additional letters, numbers, or underscore.
+            """,
         )
 
     if label in state.labels:
