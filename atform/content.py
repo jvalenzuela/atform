@@ -1,7 +1,6 @@
 """Objects to store test procedure content."""
 
 
-import collections
 import os
 
 from . import error
@@ -10,170 +9,9 @@ from . import field
 from . import label as label_
 from . import misc
 from . import pdf
+from . import procedure as procedure_
 from . import state
 from . import vcs
-
-
-class ProcedureStep:
-    """Object containing all user-provided content for a single procedure step.
-
-    This is not created directly by the user, but is instantiated using
-    an item, string or dict, from the procedure parameter list of Test.
-    """
-
-    def __init__(self, raw, num):
-        data = self._normalize_type(raw)
-        self.text = self._validate_text(data)
-        self.fields = self._validate_fields(data)
-        self._validate_label(data, num)
-        self._check_undefined_keys(data)
-
-    @staticmethod
-    def _normalize_type(raw):
-        """Normalizes the raw data into a dict."""
-        # Convert a string to a dict with text key.
-        if isinstance(raw, str):
-            normalized = {"text": raw}
-
-        elif isinstance(raw, dict):
-            normalized = raw
-
-        else:
-            raise error.UserScriptError(
-                f"Invalid procedure step data type: {type(raw).__name__}",
-                "A procedure step must be a string or dictionary.",
-            )
-
-        return normalized
-
-    @staticmethod
-    def _check_undefined_keys(data):
-        """Raises an exception for any unconsumed keys."""
-        if data:
-            keys = ", ".join([str(k) for k in data.keys()])
-            raise error.UserScriptError(
-                f"Undefined procedure step dictionary key(s): {keys}",
-                )
-
-    @staticmethod
-    def _validate_text(data):
-        """Validates the text key."""
-        try:
-            text = data.pop("text")
-        except KeyError as e:
-            raise error.UserScriptError(
-                'A procedure step dictionary must have a "text" key.',
-                """Add a "text" key with a string value containing
-                instructions for the step.""",
-            ) from e
-        return misc.nonempty_string("Procedure step text", text)
-
-    def _validate_fields(self, data):
-        """Validates the fields key."""
-        tpls = data.pop("fields", [])
-        if not isinstance(tpls, list):
-            raise error.UserScriptError(
-                f"""
-                Invalid procedure step fields data type:
-                {type(tpls).__name__}
-                """,
-                "Procedure step fields must be a list.",
-            )
-
-        fields = []
-        for i, tpl in enumerate(tpls, start=1):
-            try:
-                fields.append(self._create_field(tpl))
-            except error.UserScriptError as e:
-                e.add_field("Procedure Step Field #", i)
-                raise
-        return fields
-
-    @staticmethod
-    def _create_field(tpl):
-        """
-        Converts a raw procedure step field definition tuple into a
-        named tuple.
-        """
-        if not isinstance(tpl, tuple):
-            raise error.UserScriptError(
-                f"""
-                Invalid procedure step field list item data type:
-                {type(tpl).__name__}
-                """,
-                """
-                Each item in the list of fields for a procedure step must
-                be a tuple.
-                """,
-            )
-
-        # Validate the required items: title and length.
-        try:
-            raw_title = tpl[0]
-            raw_length = tpl[1]
-        except IndexError as e:
-            raise error.UserScriptError(
-                """
-                Procedure step field tuple is too short.
-                """,
-                """
-                A tuple defining a data entry field for a procedure step
-                must have at least two members: title and length.
-                """,
-            ) from e
-
-        title = misc.nonempty_string(
-            "Procedure step field title",
-            raw_title
-        )
-        length = misc.validate_field_length(raw_length)
-
-        # Validate suffix, providing a default value if omitted.
-        try:
-            raw = tpl[2]
-        except IndexError:
-            suffix = ""
-        else:
-            suffix = misc.nonempty_string("Procedure step field suffix", raw)
-
-        if len(tpl) > 3:
-            raise error.UserScriptError(
-                """
-                Procedure step field tuple is too long.
-                """,
-                """
-                A tuple defining a data entry field for a procedure step
-                may not exceed three members: title, length, and suffix.
-                """,
-            )
-
-        return ProcedureStepField(title, length, suffix)
-
-    @staticmethod
-    def _validate_label(data, num):
-        """Creates a label referencing this step."""
-        try:
-            lbl = data.pop("label")
-
-        # Label is optional; do nothing if omitted.
-        except KeyError:
-            pass
-
-        else:
-            label_.add(lbl, str(num))
-
-    def resolve_labels(self):
-        """Replaces label placeholders with their target IDs."""
-        self.text = label_.resolve(self.text)
-
-
-# Container to hold normalized procedure step field definitions. This is
-# not part of the public API as fields are defined via normal tuples, which
-# are then validated to create instances of this named tuple.
-ProcedureStepField = collections.namedtuple(
-    "ProcedureStepField",
-    ["title", "length", "suffix"],
-)
 
 
 def build_path(tid, root, depth):
@@ -278,7 +116,7 @@ class Test:
             self.equipment = self._validate_equipment(equipment)
             self.preconditions = self._validate_string_list("Preconditions",
                                                             preconditions)
-            self.procedure = self._validate_procedure(procedure)
+            self.procedure = procedure_.validate(procedure)
         except error.UserScriptError as e:
             self._add_exception_context(e)
 
@@ -376,21 +214,6 @@ class Test:
         """Validates the equipment parameter."""
         return self._validate_string_list("Equipment", equip)
 
-    @staticmethod
-    def _validate_procedure(lst):
-        """Validates the procedure parameter."""
-        if lst is None:
-            lst = []
-        elif not isinstance(lst, list):
-            raise error.UserScriptError("Procedure must be a list.")
-        steps = []
-        for i, step in enumerate(lst, start=1):
-            try:
-                steps.append(ProcedureStep(step, i))
-            except error.UserScriptError as e:
-                e.add_field("Procedure Step", i)
-                raise
-        return steps
 
     @staticmethod
     def _validate_string_list(name, lst):
