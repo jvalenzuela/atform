@@ -56,7 +56,7 @@ class OutputSectionPathDepth(unittest.TestCase):
     def setUp(self):
         utils.reset()
         atform.set_id_depth(self.ID_DEPTH)
-        atform.Test("Foo")
+        atform.add_test("Foo")
 
     def test_default(self):
         """Verify no section folders with the default folder depth."""

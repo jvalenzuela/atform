@@ -4,10 +4,12 @@ This module imports all public API objects so they are accessible from the
 atform namespace.
 """
 
+from atform.addtest import (
+    add_test,
+)
 
 from atform.content import (
     generate,
-    Test,
 )
 
 from atform.field import (

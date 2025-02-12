@@ -24,9 +24,9 @@ atform.section(1, title="System A")
 atform.set_project_info(system="System A")
 
 # These tests will be 1.x, and bear "System A" as the system name.
-atform.Test("Button 1 Test")
-atform.Test("Button 2 Test")
-atform.Test("Button 3 Test")
+atform.add_test("Button 1 Test")
+atform.add_test("Button 2 Test")
+atform.add_test("Button 3 Test")
 
 
 # Start the next section and update the system name.
@@ -34,9 +34,9 @@ atform.section(1, title="System B")
 atform.set_project_info(system="System B")
 
 # These tests will be 2.x, and bear "System B" as the system name.
-atform.Test("Switch 1 Test")
-atform.Test("Switch 2 Test")
-atform.Test("Switch 3 Test")
+atform.add_test("Switch 1 Test")
+atform.add_test("Switch 2 Test")
+atform.add_test("Switch 3 Test")
 
 
 ######################################################################

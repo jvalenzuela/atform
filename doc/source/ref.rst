@@ -8,7 +8,7 @@ or drawings, and should bear some identifying link
 to these resources. Adding references to tests is a two-step
 process, starting with defining reference categories using
 :py:func:`atform.add_reference_category` in the setup area. With categories
-defined, the ``references`` argument of :py:class:`atform.Test` is then available
+defined, the ``references`` argument of :py:func:`atform.add_test` is then available
 to specify references for each test procedure. The sample below shows
 test procedures with two reference categories:
 
@@ -39,14 +39,14 @@ The cross-reference dictionary is acquired by calling the
 :py:func:`atform.get_xref` function in the output section of the script.
 It may be called before or after :py:func:`atform.generate`, but
 must appear after all tests are defined with
-:py:class:`atform.Test`.
+:py:func:`atform.add_test`.
 
 Cross-references are structured into two levels. Keys for the top-level
 dictionary returned by :py:func:`atform.get_xref` are labels identifying
 the reference category as defined with
 :py:func:`atform.add_reference_category`. Values are second-level
 dictionaries keyed by references applied via the
-:code:`references` parameteter of :py:class:`atform.Test`.
+:code:`references` parameteter of :py:func:`atform.add_test`.
 Values of the final dictionary are lists of test ID numbers given that
 reference. Here is an example of querying the cross-reference dictionary:
 

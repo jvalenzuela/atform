@@ -30,9 +30,9 @@ Content
 .. autosummary::
    :toctree: generated
 
+   atform.add_test
    atform.bullet_list
    atform.format_text
-   atform.Test
    atform.section
    atform.set_active_fields
    atform.skip_test

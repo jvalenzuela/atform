@@ -18,20 +18,20 @@ atform.add_reference_category("Safety Functions", "sf")
 ######################################################################
 
 # Test 1 with several "sf" references.
-atform.Test("Button 3",
-            references={
-                "sf": ["SF7", "SF42", "SF99"]
-            })
+atform.add_test("Button 3",
+                references={
+                    "sf": ["SF7", "SF42", "SF99"]
+                })
 
 
 # Test 2 with no references.
-atform.Test("Relay 66")
+atform.add_test("Relay 66")
 
 # Test 3 with a single "sf" reference.
-atform.Test("Zone 4",
-            references={
-                "sf": ["SF42"]
-            })
+atform.add_test("Zone 4",
+                references={
+                    "sf": ["SF42"]
+                })
 
 
 ######################################################################

@@ -18,6 +18,11 @@ def reset():
     atform.state.init()
 
 
+def get_test_content():
+    """Retrieves the content of the most recently created test."""
+    return atform.state.tests[-1]
+
+
 class ContentAreaException(unittest.TestCase):
     """
     Base class for testing functions only available in the setup area to
@@ -29,7 +34,7 @@ class ContentAreaException(unittest.TestCase):
 
     def test_after_test_created(self):
         """Confirm exception if called after a test is created."""
-        atform.Test("title")
+        atform.add_test("title")
         with self.assertRaises(SystemExit):
             self.call()
 

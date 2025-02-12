@@ -177,7 +177,7 @@ This example contains three tests, containing only a
 title and automatically-assigned number, yet is sufficient to demonstrate
 the entire workflow from source script to output PDF.
 Obviously, test procedures will require much more detail,
-which can be provided by additional parameters to :py:class:`atform.Test`.
+which can be provided by additional parameters to :py:func:`atform.add_test`.
 
 Executing this script with Python will yield the output files, one PDF per
 test procedure. Most Python editors or integrated development

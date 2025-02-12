@@ -18,19 +18,19 @@ atform.add_field("Machine Number", 3, "machine", active=False)
 ######################################################################
 
 # This will have the "Software Version" and "IP Address" fields.
-atform.Test("Function A")
+atform.add_test("Function A")
 
 # This test excludes the "Software Version" field, so it will only
 # have the "IP Address" field.
-atform.Test("Function B",
-            exclude_fields=["ver"]
-            )
+atform.add_test("Function B",
+                exclude_fields=["ver"]
+                )
 
 # Change the fields applied to any further tests.
 atform.set_active_fields(active=["machine"])
 
 # This test will only have a "Machine Number" field.
-atform.Test("Function C")
+atform.add_test("Function C")
 
 
 ######################################################################

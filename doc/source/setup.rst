@@ -62,7 +62,7 @@ possible to customize the fields applied to each test procedure.
 Every field must first be defined with :py:func:`atform.add_field`,
 regardless of how many tests it will be applied to. Once defined, the
 ``include_fields``, ``exclude_fields``, and ``active_fields`` parameters
-of :py:class:`atform.Test` can be used to adjust the fields
+of :py:func:`atform.add_test` can be used to adjust the fields
 listed on a single test. To change the fields on a number of consecutive
 tests, :py:func:`atform.set_active_fields` can be used throughout the
 content area to alter the default fields. The :file:`field.py` example

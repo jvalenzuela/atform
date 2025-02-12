@@ -20,13 +20,13 @@ import atform
 ######################################################################
 
 # This will be test 1.
-atform.Test("The First Test")
+atform.add_test("The First Test")
 
 # This will be test 2.
-atform.Test("The Second Test")
+atform.add_test("The Second Test")
 
 # This will be test 3.
-atform.Test("The Third Test")
+atform.add_test("The Third Test")
 
 
 ######################################################################

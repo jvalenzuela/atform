@@ -18,14 +18,14 @@ class Base(object):
         utils.reset()
 
     def make_test(self, generate=True, **kwargs):
-        """atform.Test() wrapper to assign a title and default objective."""
+        """atform.add_test() wrapper to assign a title and default objective."""
         # Generate a title that is class_name.method_name.
         title = ".".join(self.id().split(".")[-2:])
 
         # Use the test's docstring as the default objective.
         kwargs.setdefault("objective", self.shortDescription())
 
-        atform.Test(title, **kwargs)
+        atform.add_test(title, **kwargs)
         if generate:
             atform.generate()
 

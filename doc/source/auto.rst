@@ -2,7 +2,7 @@ Automation
 ==========
 
 The examples thus far have been written so each appearance of
-:py:class:`atform.Test` yields a single test procedure populated with
+:py:func:`atform.add_test` yields a single test procedure populated with
 the content of literal strings given as arguments. This approach
 is often sufficient, however, the Python environment offers
 many options that become especially powerful when tasked with
@@ -30,7 +30,7 @@ to accommodate unique parameters of each component.
 Python and |project_name| can be used to compose a single template that
 automatically outputs tests tailored for each component. To accomplish this,
 a function is defined with parameters for items that differ in each
-instance, with the call to :py:class:`atform.Test` contained inside
+instance, with the call to :py:func:`atform.add_test` contained inside
 the function using content created from those parameters. The function
 is then called in the content area to generate a uniform test for each
 component.

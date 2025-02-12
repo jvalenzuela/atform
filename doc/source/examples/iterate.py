@@ -11,11 +11,11 @@ def button_test(button):
     customizing the test content for the button provided in the
     argument.
     """
-    atform.Test(f"{button} Button Test",
-                procedure=[
-                    f"Press the {button} button.",
-                    f"Release the {button} button."
-                ])
+    atform.add_test(f"{button} Button Test",
+                    procedure=[
+                        f"Press the {button} button.",
+                        f"Release the {button} button."
+                    ])
 
 
 ######################################################################

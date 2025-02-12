@@ -18,7 +18,8 @@ class AddField(unittest.TestCase):
         atform.add_field("spam", 42, "a")
         atform.add_field("eggs", 5, "b")
         atform.add_field("foo", 99, "c")
-        t = atform.Test("title")
+        atform.add_test("title")
+        t = utils.get_test_content()
         self.assertEqual([
             ("spam", 42),
             ("eggs", 5),
@@ -65,7 +66,8 @@ class AddFieldTitle(unittest.TestCase):
             1,
             "f",
         )
-        t = atform.Test("title")
+        atform.add_test("title")
+        t = utils.get_test_content()
         self.assertEqual("foo bar", t.fields[0].title)
 
 
@@ -130,13 +132,15 @@ class AddFieldActive(unittest.TestCase):
     def test_default(self):
         """Verify field is active if omitted."""
         atform.add_field("f1", 1, "f1")
-        t = atform.Test("title")
+        atform.add_test("title")
+        t = utils.get_test_content()
         self.assertEqual([("f1", 1)], t.fields)
 
     def test_false(self):
         """Verify field is inactive if false."""
         atform.add_field("f1", 1, "f1", False)
-        t = atform.Test("title")
+        atform.add_test("title")
+        t = utils.get_test_content()
         self.assertEqual([], t.fields)
 
 
@@ -151,7 +155,8 @@ class SetActiveFieldsBase(object):
 
     def assert_test_fields(self, *args):
         """Confirms fields assigned to the next test."""
-        t = atform.Test("title")
+        atform.add_test("title")
+        t = utils.get_test_content()
         self.assertEqual(args, tuple([f.title for f in t.fields]))
 
     def test_type(self):

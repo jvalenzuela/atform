@@ -16,24 +16,24 @@ RESET_STEP = "Do something important to try and reset."
 ######################################################################
 
 
-atform.Test("The First Test",
+atform.add_test("The First Test",
 
-            procedure=[
-                "Perform some initial setup.",
-                "Create a problem.",
-                RESET_STEP,
-                "Validate some response."
-            ])
+                procedure=[
+                    "Perform some initial setup.",
+                    "Create a problem.",
+                    RESET_STEP,
+                    "Validate some response."
+                ])
 
 
-atform.Test("The Second Test",
+atform.add_test("The Second Test",
 
-            procedure=[
-                "Do the setup again.",
-                "Create a different problem.",
-                RESET_STEP,
-                "Validate another response."
-            ])
+                procedure=[
+                    "Do the setup again.",
+                    "Create a different problem.",
+                    RESET_STEP,
+                    "Validate another response."
+                ])
 
 
 ######################################################################

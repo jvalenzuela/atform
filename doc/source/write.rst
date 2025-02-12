@@ -9,7 +9,7 @@ Writing Tests
 Procedure
 ---------
 
-The :code:`procedure` parameter of :py:class:`atform.Test` contains the
+The :code:`procedure` parameter of :py:func:`atform.add_test` contains the
 main content of a test: the steps that must be performed and validated.
 These actions are organized into a list which will be automatically
 enumerated in the output; do not incorporate step numbers into
@@ -95,7 +95,7 @@ therefore using a label always yields a correct reference,
 even if the labeled test is reassigned a different number.
 
 The first step in this approach is to assign a label to a test with
-the :code:`label` parameter of :py:class:`atform.Test`.
+the :code:`label` parameter of :py:func:`atform.add_test`.
 Labels are strings, typically an abbreviated description of the test.
 As an example, for a test titled "Zone 42 Contactor",
 a suitable label may be ``z42ctr``. Labels must begin with a letter
@@ -192,7 +192,7 @@ Item lists can be created with :py:func:`atform.bullet_list`.
 This function is not needed to arrange items normally presented as bullet
 lists, such as the those passed to the :code:`preconditions` or
 :code:`equipment`
-parameters of :py:class:`atform.Test`; |project_name| automatically
+parameters of :py:func:`atform.add_test`; |project_name| automatically
 formats that content in an appropriate list.
 The :py:func:`atform.bullet_list` function should only be used where a
 secondary list is necessary.

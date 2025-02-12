@@ -27,7 +27,7 @@ atform.add_signature("Approved By")
 # Content
 ######################################################################
 
-atform.Test("Setup Example")
+atform.add_test("Setup Example")
 
 
 ######################################################################

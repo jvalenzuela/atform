@@ -99,7 +99,7 @@ class GetXRef(unittest.TestCase):
         """Confirm tests are listed in sorted order."""
         atform.add_reference_category("References", "refs")
         for i in range(10):
-            atform.Test("Test X", references={"refs":["A"]})
+            atform.add_test("Test X", references={"refs":["A"]})
         self.assertEqual({"refs": {"A": [str(i + 1) for i in range(10)]}},
                          atform.get_xref())
 
@@ -108,21 +108,21 @@ class GetXRef(unittest.TestCase):
         atform.add_reference_category("Numbers", "num")
         atform.add_reference_category("Letters", "alpha")
 
-        atform.Test("only numbers",
-                    references={
-                        "num": ["1", "2"],
-                    })
+        atform.add_test("only numbers",
+                        references={
+                            "num": ["1", "2"],
+                        })
 
-        atform.Test("numbers & letters",
-                    references={
-                        "num": ["2", "3"],
-                        "alpha": ["a", "b"],
-                    })
+        atform.add_test("numbers & letters",
+                        references={
+                            "num": ["2", "3"],
+                            "alpha": ["a", "b"],
+                        })
 
-        atform.Test("only letters",
-                    references={
-                        "alpha": ["b", "c"],
-                    })
+        atform.add_test("only letters",
+                        references={
+                            "alpha": ["b", "c"],
+                        })
 
         self.assertEqual({
             "num": {

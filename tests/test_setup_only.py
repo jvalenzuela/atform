@@ -30,7 +30,7 @@ class SetupOnly(unittest.TestCase):
 
     def test_call_after_test(self):
         """Confirm exception when calling a decorated function after Test()."""
-        atform.Test("title")
+        atform.add_test("title")
         with self.assertRaises(atform.error.UserScriptError):
             func(0)
 

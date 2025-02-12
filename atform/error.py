@@ -11,7 +11,6 @@ to programming or Python.
 
 import collections
 import functools
-import inspect
 import textwrap
 import traceback
 
@@ -19,6 +18,11 @@ import traceback
 # Setting to true will revert to normal Python exception handling,
 # generating a complete traceback.
 DEBUG = False
+
+
+# Call frame of the current API being called.
+# Pylint invalid-name is disabled because this is not a constant.
+api_call_frame = None # pylint: disable=invalid-name
 
 
 def exit_on_script_error(api):
@@ -30,6 +34,7 @@ def exit_on_script_error(api):
     """
     @functools.wraps(api)
     def wrapper(*args, **kwargs):
+        global api_call_frame # pylint: disable=global-statement
 
         # Capture the location where this API was called from the
         # user script. The normal exception traceback is not used
@@ -37,20 +42,19 @@ def exit_on_script_error(api):
         # the departure from the user script, whereas it is always
         # in the same location in a traceback relative to this wrapper
         # function.
-        call_frame = traceback.extract_stack(limit=2)[0]
+        api_call_frame = traceback.extract_stack(limit=2)[0]
 
         try:
             result = api(*args, **kwargs)
 
         except UserScriptError as e:
-
             try:
                 e.call_frame
 
             # Use the frame from this call if the exception does not
             # provide one.
             except AttributeError:
-                e.call_frame = call_frame
+                e.call_frame = api_call_frame
                 e.api = api
 
             if DEBUG:
@@ -60,36 +64,7 @@ def exit_on_script_error(api):
             # print the stack trace.
             raise SystemExit(e) from e
 
-        # For API classes, store the call frame where the object was created
-        # in the instance. This attribute is needed by the
-        # @external_call decorator.
-        if inspect.isclass(api):
-            result._call_frame = call_frame
-
         return result
-
-    return wrapper
-
-
-def external_call(method):
-    """Decorator for methods called after an object is created.
-
-    Methods that can raise UserScriptError to indicate a problem with
-    data provided when the object was initially created, but are called
-    after the instance was created, i.e., indirectly by some other API,
-    need to have the traceback point back to where the instance was created,
-    not the API that called the method. This decorator adds the call frame
-    stored in the object, which was cached by @exit_on_script_error
-    when the object was originally created, to a raised UserScriptError,
-    overriding the call frame from the top-level API that called this method.
-    """
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        try:
-            return method(self, *args, **kwargs)
-        except UserScriptError as e:
-            e.call_frame = self._call_frame
-            raise
 
     return wrapper
 
