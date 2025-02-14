@@ -9,4 +9,4 @@ import atform
 atform.section(1, title="Buttons")
 
 
-atform.add_test("The First Button Test") # This will be 1.1.
+atform.add_test("The First Button Test")  # This will be 1.1.

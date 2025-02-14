@@ -1,6 +1,5 @@
 """Text formatting API available to user scripts."""
 
-
 from xml.etree import ElementTree
 
 from . import error
@@ -62,7 +61,7 @@ def bullet_list(*items):
         ``preconditions``, and ``procedure`` parameters of
         :py:class:`atform.Test`.
     """
-    indent = 12 # Horizontal indentation in points applied to each item.
+    indent = 12  # Horizontal indentation in points applied to each item.
 
     # The character used at the beginning of each item. Chosen to be distinct
     # from the bullet used by ReportLab ListItem().
@@ -80,8 +79,7 @@ def bullet_list(*items):
 
         stripped.append(item)
 
-    bullet_items = [f"<bullet indent='{indent}'>{symbol}</bullet>{i}"
-                    for i in stripped]
+    bullet_items = [f"<bullet indent='{indent}'>{symbol}</bullet>{i}" for i in stripped]
 
     # Add empty leading and trailing strings so items get surrounded by double
     # newlines by the final join(), ensuring the list is separated from
@@ -132,7 +130,7 @@ def format_text(text, typeface="normal", font="normal"):
         )
 
     font_values = FONTS[(typeface, font)]
-    attrib = {"face":font_values[0]}
+    attrib = {"face": font_values[0]}
     try:
         attrib["size"] = str(font_values[1])
     except IndexError:

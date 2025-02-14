@@ -22,13 +22,13 @@ atform.section(1, title="The First Section")
 # Starts a new level 2 subsection called "The First Subsection".
 atform.section(2, title="The First Subsection")
 
-atform.add_test("The First Test") # This will be test 1.1.1.
+atform.add_test("The First Test")  # This will be test 1.1.1.
 
 # Additional tests will automatically increment the last field,
 # so further tests will be 1.1.z.
 
-atform.add_test("The Next Test") # 1.1.2
-atform.add_test("An Important Test") # 1.1.3
+atform.add_test("The Next Test")  # 1.1.2
+atform.add_test("An Important Test")  # 1.1.3
 
 # Begin a new, level 2 subsection, 1.2.z. Section names are optional,
 # so this subsection will only bear a numeric identifier.
@@ -44,7 +44,7 @@ atform.add_test("Test Something Different")
 # so tests after this command will begin at 2.1.1.
 atform.section(1, title="Another Section")
 
-atform.add_test("Failure Test A") # 2.1.1
+atform.add_test("Failure Test A")  # 2.1.1
 
 
 ######################################################################

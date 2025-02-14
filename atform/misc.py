@@ -1,6 +1,5 @@
 """Miscellaneous stuff."""
 
-
 import functools
 
 from . import error
@@ -12,6 +11,7 @@ def setup_only(func):
     Decorator for public API functions that can only be called during setup,
     i.e., before any test or sections.
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # Setup area is determined by the current ID containing all zeros as
@@ -21,7 +21,7 @@ def setup_only(func):
         if not in_setup:
             raise error.UserScriptError(
                 f"atform.{func.__name__} can only be used in the setup area.",
-                "Call this function before any tests or sections are created."
+                "Call this function before any tests or sections are created.",
             )
 
         return func(*args, **kwargs)
@@ -40,7 +40,7 @@ def nonempty_string(name, s):
     if not stripped:
         raise error.UserScriptError(
             f"{name} cannot be empty.",
-            f"Add content to the {name} string, or remove it altogether."
+            f"Add content to the {name} string, or remove it altogether.",
         )
     return stripped
 

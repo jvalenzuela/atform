@@ -33,14 +33,14 @@ class Clean(unittest.TestCase):
     @patch.object(atform.vcs.Git, "_run_git")
     def test_uncommitted_changes(self, mock):
         """Confirm clean returns False if uncommitted changes exist."""
-        mock.return_value = " M foo\0?? bar\0" # Non-empty result of git status.
+        mock.return_value = " M foo\0?? bar\0"  # Non-empty result of git status.
         git = atform.vcs.Git()
         self.assertFalse(git.clean)
 
     @patch.object(atform.vcs.Git, "_run_git")
     def test_no_uncommitted_changes(self, mock):
         """Confirm clean returns True if no uncommitted changes exist."""
-        mock.return_value = "" # Empty result of git status.
+        mock.return_value = ""  # Empty result of git status.
         git = atform.vcs.Git()
         self.assertTrue(git.clean)
 
@@ -54,7 +54,7 @@ class Version(unittest.TestCase):
     @patch.object(atform.vcs.Git, "_run_git")
     def test_version(self, mock):
         """Confirm version returns a string containing the HEAD SHA1."""
-        mock.return_value = "spam" # Simulate result of git log.
+        mock.return_value = "spam"  # Simulate result of git log.
         self.assertEqual("spam", self.git.version)
 
     @patch.object(atform.vcs.Git, "_run_git")

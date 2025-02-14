@@ -8,7 +8,6 @@ stack trace which is unnecessary and possibly confusing for users new
 to programming or Python.
 """
 
-
 import collections
 import functools
 import textwrap
@@ -22,7 +21,7 @@ DEBUG = False
 
 # Call frame of the current API being called.
 # Pylint invalid-name is disabled because this is not a constant.
-api_call_frame = None # pylint: disable=invalid-name
+api_call_frame = None  # pylint: disable=invalid-name
 
 
 def exit_on_script_error(api):
@@ -32,9 +31,10 @@ def exit_on_script_error(api):
     is added to the original exception. When stacked with other decorators
     it must be outermost, i.e., listed first.
     """
+
     @functools.wraps(api)
     def wrapper(*args, **kwargs):
-        global api_call_frame # pylint: disable=global-statement
+        global api_call_frame  # pylint: disable=global-statement
 
         # Capture the location where this API was called from the
         # user script. The normal exception traceback is not used
@@ -78,12 +78,18 @@ class UserScriptError(Exception):
 
     # These fields may contain lengthy strings, and are therefore line wrapped
     # in the string output.
-    MULTILINE_FIELDS = set([
-        "Description",
-        "Remedy",
-    ])
+    MULTILINE_FIELDS = set(
+        [
+            "Description",
+            "Remedy",
+        ]
+    )
 
-    def __init__(self, desc, remedy=None,):
+    def __init__(
+        self,
+        desc,
+        remedy=None,
+    ):
         self.fields = collections.OrderedDict()
         if remedy:
             self.fields["Remedy"] = remedy
@@ -117,14 +123,12 @@ class UserScriptError(Exception):
 
             # Wrap multiline fields.
             if field in self.MULTILINE_FIELDS:
-                collapsed = " ".join(value.split()) # Collapse whitespace.
+                collapsed = " ".join(value.split())  # Collapse whitespace.
                 line = textwrap.fill(
                     self.FIELD_SEP.join((field, collapsed)),
-
                     # Indent first line so the field name is right-aligned
                     # with other field names.
                     initial_indent=" " * (indent - len(field)),
-
                     # Remaining lines are indented to align with other
                     # field values.
                     subsequent_indent=" " * (indent + len(self.FIELD_SEP)),
@@ -139,8 +143,6 @@ class UserScriptError(Exception):
         # Add API docstring.
         if self.api:
             lines.append("")
-            lines.append(
-                f"atform.{self.api.__name__} help: {self.api.__doc__}"
-            )
+            lines.append(f"atform.{self.api.__name__} help: {self.api.__doc__}")
 
         return "\n".join(lines)

@@ -32,28 +32,34 @@ def verify_alarm(num):
 # argument to include a step verifying an alarm with the message
 # text acquired from the external CSV file.
 
-atform.add_test("Test Alarm 42",
-                procedure=[
-                    "Verify normal operation.",
-                    "Introduce some fault condition.",
-                    verify_alarm(42)
-                ])
+atform.add_test(
+    "Test Alarm 42",
+    procedure=[
+        "Verify normal operation.",
+        "Introduce some fault condition.",
+        verify_alarm(42),
+    ],
+)
 
 
-atform.add_test("Test Alarm 15",
-                procedure=[
-                    "Verify normal operation.",
-                    "Introduce some fault condition.",
-                    verify_alarm(15)
-                ])
+atform.add_test(
+    "Test Alarm 15",
+    procedure=[
+        "Verify normal operation.",
+        "Introduce some fault condition.",
+        verify_alarm(15),
+    ],
+)
 
 
-atform.add_test("Test Alarm 99",
-                procedure=[
-                    "Verify normal operation.",
-                    "Introduce some fault condition.",
-                    verify_alarm(99)
-                ])
+atform.add_test(
+    "Test Alarm 99",
+    procedure=[
+        "Verify normal operation.",
+        "Introduce some fault condition.",
+        verify_alarm(99),
+    ],
+)
 
 
 ######################################################################

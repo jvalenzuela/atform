@@ -24,8 +24,8 @@ with open(os.path.join("..", "..", "pyproject.toml"), "rb") as f:
 
 # Extract the minimum required Python version from the project configuration.
 requires_python = re.search(
-    r"\d+(\.\d+)*",
-    config["project"]["requires-python"]).group()
+    r"\d+(\.\d+)*", config["project"]["requires-python"]
+).group()
 
 project = config["project"]["name"]
 copyright = "2024, Jason Valenzuela"
@@ -65,8 +65,7 @@ html_static_path = ["_static"]
 latex_elements = {
     "extraclassoptions": "oneside",
     "pointsize": "12pt",
-    "printindex": "", # Exclude index in PDF output.
-
+    "printindex": "",  # Exclude index in PDF output.
     "preamble": r"""
     \usepackage{embedfile} % For attaching examples.
     \setlength{\headheight}{15pt}
@@ -97,8 +96,7 @@ def add_example_embeds(app, config):
     path = os.path.join(app.srcdir, "examples")
     files = set([e.name for e in os.scandir(path) if e.is_file()])
     files.difference_update(EXCLUDE_FROM_EMBED)
-    cmds = ["\\embedfile[filespec={0}]{{examples/{0}}}".format(f)
-            for f in files]
+    cmds = ["\\embedfile[filespec={0}]{{examples/{0}}}".format(f) for f in files]
     latex_elements["atendofbody"] = "\n".join(cmds)
 
 

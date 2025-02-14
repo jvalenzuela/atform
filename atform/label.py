@@ -5,7 +5,6 @@ procedure step, referenced by a user-provided label. Labels found within
 strings are then replaced with their assigned identifier.
 """
 
-
 import re
 import string
 

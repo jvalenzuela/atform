@@ -20,32 +20,41 @@ class BuildPath(unittest.TestCase):
 
     def test_single_section_no_title(self):
         """Confirm path created for an ID with one section and no title."""
-        self.assertEqual(os.path.join("root", "42"),
-                         atform.content.build_path((42, 1), "root", 1))
+        self.assertEqual(
+            os.path.join("root", "42"), atform.content.build_path((42, 1), "root", 1)
+        )
 
     def test_single_section_title(self):
         """Confirm path created for an ID with one section with a title."""
         atform.state.section_titles[(42,)] = "Spam"
-        self.assertEqual(os.path.join("root", "42 Spam"),
-                         atform.content.build_path((42, 1), "root", 1))
+        self.assertEqual(
+            os.path.join("root", "42 Spam"),
+            atform.content.build_path((42, 1), "root", 1),
+        )
 
     def test_multi_section_no_title(self):
         """Confirm path created for an ID with multiple sections with titles."""
-        self.assertEqual(os.path.join("root", "42", "99"),
-                         atform.content.build_path((42, 99, 1), "root", 2))
+        self.assertEqual(
+            os.path.join("root", "42", "99"),
+            atform.content.build_path((42, 99, 1), "root", 2),
+        )
 
     def test_multi_section_some_titles(self):
         """Confirm path created for an ID with multiple sections, some with titles."""
         atform.state.section_titles[(42, 99)] = "Spam"
-        self.assertEqual(os.path.join("root", "42", "99 Spam"),
-                         atform.content.build_path((42, 99, 1), "root", 2))
+        self.assertEqual(
+            os.path.join("root", "42", "99 Spam"),
+            atform.content.build_path((42, 99, 1), "root", 2),
+        )
 
     def test_multi_section_all_titles(self):
         """Confirm path created for an ID with multiple sections, all with titles."""
         atform.state.section_titles[(42,)] = "Foo"
         atform.state.section_titles[(42, 99)] = "Bar"
-        self.assertEqual(os.path.join("root", "42 Foo", "99 Bar"),
-                         atform.content.build_path((42, 99, 1), "root", 2))
+        self.assertEqual(
+            os.path.join("root", "42 Foo", "99 Bar"),
+            atform.content.build_path((42, 99, 1), "root", 2),
+        )
 
 
 class OutputSectionPathDepth(unittest.TestCase):

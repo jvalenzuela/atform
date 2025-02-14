@@ -28,7 +28,7 @@ class GetId(unittest.TestCase):
     def test_level_initialization(self):
         """Confirm levels that have been reset are initialized to 1."""
         atform.id.set_id_depth(3)
-        atform.state.current_id = [2, 0, 0] # Simulate a level 1 increment.
+        atform.state.current_id = [2, 0, 0]  # Simulate a level 1 increment.
         self.assertEqual((2, 1, 1), atform.id.get_id())
 
 
@@ -190,19 +190,25 @@ class SkipTest(unittest.TestCase):
 
     def test_zero_distance(self):
         """Confirm exception when skipping to what would be the next test."""
-        atform.state.current_id = [42,]
+        atform.state.current_id = [
+            42,
+        ]
         with self.assertRaises(SystemExit):
             atform.skip_test(43)
 
     def test_back_one(self):
         """Confirm exception when skipping to the immediately-previous test."""
-        atform.state.current_id = [42,]
+        atform.state.current_id = [
+            42,
+        ]
         with self.assertRaises(SystemExit):
             atform.skip_test(42)
 
     def test_back_multipe(self):
         """Confirm exception when trying to skip back multiple tests."""
-        atform.state.current_id = [42,]
+        atform.state.current_id = [
+            42,
+        ]
         with self.assertRaises(SystemExit):
             atform.skip_test(10)
 
@@ -218,13 +224,17 @@ class SkipTest(unittest.TestCase):
 
     def test_middle_implicit(self):
         """Confirm implicitly skipping one test from the middle of a section."""
-        atform.state.current_id = [42,]
+        atform.state.current_id = [
+            42,
+        ]
         atform.skip_test()
         self.assertEqual((44,), atform.id.get_id())
 
     def test_middle_explicit(self):
         """Confirm skipping to a specific test from the middle of a section."""
-        atform.state.current_id = [42,]
+        atform.state.current_id = [
+            42,
+        ]
         atform.skip_test(50)
         self.assertEqual((50,), atform.id.get_id())
 

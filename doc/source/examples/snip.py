@@ -16,7 +16,7 @@ import atform
 
 # Setup for the xref dictionary listing.
 atform.add_reference_category("fmea", "fmea")
-atform.add_test("xref", references={"fmea":["fm42"]})
+atform.add_test("xref", references={"fmea": ["fm42"]})
 
 # xref_dict_start
 xref = atform.get_xref()

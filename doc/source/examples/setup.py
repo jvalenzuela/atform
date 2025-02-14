@@ -16,7 +16,7 @@ atform.add_copyright(
     encoded as this example is. The Python Unicode literal \u00a9
     can also be used, and does not require UTF-8 encoding.
     """
-    )
+)
 
 # Add signatures for executor and approver.
 atform.add_signature("Executed By")

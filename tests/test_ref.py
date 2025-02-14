@@ -31,8 +31,8 @@ class TestAddReferenceCategory(unittest.TestCase):
     def test_title_strip(self):
         """Confirm surrounding whitespace is removed from the title."""
         atform.add_reference_category(
-            string.whitespace + "foo" + string.whitespace,
-            "label")
+            string.whitespace + "foo" + string.whitespace, "label"
+        )
         self.assertIn("foo", atform.state.ref_titles.values())
 
     def test_label_type(self):
@@ -59,14 +59,14 @@ class TestAddReferenceCategory(unittest.TestCase):
     def test_label_strip(self):
         """Confirm surrounding whitespace is removed from the label."""
         atform.add_reference_category(
-            "foo",
-            string.whitespace + "label" + string.whitespace)
+            "foo", string.whitespace + "label" + string.whitespace
+        )
         self.assertIn("label", atform.state.ref_titles)
 
     def test_storage(self):
         """Confirm title is properly stored keyed by label."""
         atform.add_reference_category("foo", "bar")
-        self.assertEqual({"bar":"foo"}, atform.state.ref_titles)
+        self.assertEqual({"bar": "foo"}, atform.state.ref_titles)
 
 
 class AddReferenceCategoryContentAreaException(utils.ContentAreaException):
@@ -99,40 +99,50 @@ class GetXRef(unittest.TestCase):
         """Confirm tests are listed in sorted order."""
         atform.add_reference_category("References", "refs")
         for i in range(10):
-            atform.add_test("Test X", references={"refs":["A"]})
-        self.assertEqual({"refs": {"A": [str(i + 1) for i in range(10)]}},
-                         atform.get_xref())
+            atform.add_test("Test X", references={"refs": ["A"]})
+        self.assertEqual(
+            {"refs": {"A": [str(i + 1) for i in range(10)]}}, atform.get_xref()
+        )
 
     def test_multi_categories(self):
         """Confirm correct cross-reference with multiple categories."""
         atform.add_reference_category("Numbers", "num")
         atform.add_reference_category("Letters", "alpha")
 
-        atform.add_test("only numbers",
-                        references={
-                            "num": ["1", "2"],
-                        })
+        atform.add_test(
+            "only numbers",
+            references={
+                "num": ["1", "2"],
+            },
+        )
 
-        atform.add_test("numbers & letters",
-                        references={
-                            "num": ["2", "3"],
-                            "alpha": ["a", "b"],
-                        })
+        atform.add_test(
+            "numbers & letters",
+            references={
+                "num": ["2", "3"],
+                "alpha": ["a", "b"],
+            },
+        )
 
-        atform.add_test("only letters",
-                        references={
-                            "alpha": ["b", "c"],
-                        })
+        atform.add_test(
+            "only letters",
+            references={
+                "alpha": ["b", "c"],
+            },
+        )
 
-        self.assertEqual({
-            "num": {
-                "1": ["1"],
-                "2": ["1", "2"],
-                "3": ["2"],
+        self.assertEqual(
+            {
+                "num": {
+                    "1": ["1"],
+                    "2": ["1", "2"],
+                    "3": ["2"],
                 },
-            "alpha": {
-                "a": ["2"],
-                "b": ["2", "3"],
-                "c": ["3"],
-                }
-            }, atform.get_xref())
+                "alpha": {
+                    "a": ["2"],
+                    "b": ["2", "3"],
+                    "c": ["3"],
+                },
+            },
+            atform.get_xref(),
+        )

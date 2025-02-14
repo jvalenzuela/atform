@@ -22,9 +22,7 @@ atform.add_test("Function A")
 
 # This test excludes the "Software Version" field, so it will only
 # have the "IP Address" field.
-atform.add_test("Function B",
-                exclude_fields=["ver"]
-                )
+atform.add_test("Function B", exclude_fields=["ver"])
 
 # Change the fields applied to any further tests.
 atform.set_active_fields(active=["machine"])

@@ -4,7 +4,6 @@ This module implements the API to create data entry fields and select
 which tests they appear on.
 """
 
-
 import collections
 
 from . import error
@@ -106,7 +105,7 @@ def add_field(title, length, name, active=True):
     else:
         raise error.UserScriptError(
             f"Duplicate field name: {name}",
-            "Select a unique field name."
+            "Select a unique field name.",
         )
 
     if not isinstance(active, bool):

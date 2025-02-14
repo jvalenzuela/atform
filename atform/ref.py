@@ -4,7 +4,6 @@ This module implements handling for external references, i.e., setup for
 content passed to the Test.__init__() references parameter.
 """
 
-
 from . import error
 from . import id as id_
 from . import misc

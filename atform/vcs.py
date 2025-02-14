@@ -1,6 +1,5 @@
 """Version control system interface."""
 
-
 import shutil
 import subprocess
 

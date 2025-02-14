@@ -39,10 +39,12 @@ def nosplit(method):
     then only needs to make the section being tested suitably long enough
     that it would be split across the page break.
     """
+
     @patch.object(atform.pdf.layout, "SECTION_SEP", new=530)
     @functools.wraps(method)
     def wrapper(self):
         method(self)
+
     return wrapper
 
 
@@ -73,17 +75,20 @@ class Objective(Base, unittest.TestCase):
 
     def test_single_paragraph(self):
         """Verify layout of a single paragraph."""
-        self.make_test(objective="""
+        self.make_test(
+            objective="""
         Verify layout of a single paragraph.
         Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
         nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
         reprehenderit in voluptate velit esse cillum dolore eu fugiat
         nulla pariatur.
-        """)
+        """
+        )
 
     def test_multi_paragraph(self):
         """Verify layout of multiple paragraphs."""
-        self.make_test(objective="""
+        self.make_test(
+            objective="""
         This is the first paragraph. Lorem ipsum dolor sit amet, consectetur
         adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
         magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
@@ -98,7 +103,8 @@ class Objective(Base, unittest.TestCase):
         aliquet bibendum enim facilisis gravida neque convallis. Tempor orci
         eu lobortis elementum nibh tellus molestie nunc. Porttitor rhoncus
         dolor purus non enim praesent elementum facilisis leo.
-        """)
+        """
+        )
 
 
 class References(Base, unittest.TestCase):
@@ -107,9 +113,7 @@ class References(Base, unittest.TestCase):
     def test_single(self):
         """Verify table layout with a single reference category."""
         atform.add_reference_category("Single Reference", "single")
-        self.make_test(
-            references={"single":["spam"]}
-        )
+        self.make_test(references={"single": ["spam"]})
 
     def test_multiple(self):
         """Verify table layout with multiple reference categories."""
@@ -118,23 +122,20 @@ class References(Base, unittest.TestCase):
         atform.add_reference_category("Long List", "long")
         self.make_test(
             references={
-                "single":["spam"],
-                "multi":["foo", "bar"],
-
+                "single": ["spam"],
+                "multi": ["foo", "bar"],
                 # Long enough to require breaking across multiple lines.
-                "long":[str(x) for x in range(50)],
-        })
+                "long": [str(x) for x in range(50)],
+            }
+        )
 
     @nosplit
     def test_nosplit(self):
         """Verify references section is on the top of the second page."""
         num_refs = 10
-        [atform.add_reference_category(f"r{i}", f"r{i}")
-         for i in range(num_refs)]
+        [atform.add_reference_category(f"r{i}", f"r{i}") for i in range(num_refs)]
 
-        self.make_test(
-            references=dict([(f"r{i}", ["spam"]) for i in range(num_refs)])
-        )
+        self.make_test(references=dict([(f"r{i}", ["spam"]) for i in range(num_refs)]))
 
 
 class Equipment(Base, unittest.TestCase):
@@ -147,7 +148,8 @@ class Equipment(Base, unittest.TestCase):
                 """Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                 sed do eiusmod tempor incididunt ut labore et dolore
                 magna aliqua."""
-            ])
+            ]
+        )
 
     def test_multiple(self):
         """Verify layout of multiple equipment items."""
@@ -169,15 +171,14 @@ class Equipment(Base, unittest.TestCase):
                 adipiscing at. Amet consectetur adipiscing elit ut aliquam
                 purus. Magna sit amet purus gravida.
                 """,
-                "The last equipment."
-            ])
+                "The last equipment.",
+            ]
+        )
 
     @nosplit
     def test_nosplit(self):
         """Verify Equipment section is at the top of the second page."""
-        self.make_test(
-            equipment=[str(i) for i in range(10)]
-        )
+        self.make_test(equipment=[str(i) for i in range(10)])
 
 
 class Fields(Base, unittest.TestCase):
@@ -210,17 +211,20 @@ class Preconditions(Base, unittest.TestCase):
 
     def test_single(self):
         """Verify layout of a single item."""
-        self.make_test(preconditions=[
-            """Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+        self.make_test(
+            preconditions=[
+                """Lorem ipsum dolor sit amet, consectetur adipiscing elit,
             sed do eiusmod tempor incididunt ut labore et dolore
             magna aliqua."""
-        ])
+            ]
+        )
 
     def test_multiple(self):
         """Verify layout of multiple items."""
-        self.make_test(preconditions=[
-            "The first precondition.",
-            """The second precondition with multiple paragraphs. Lorem ipsum
+        self.make_test(
+            preconditions=[
+                "The first precondition.",
+                """The second precondition with multiple paragraphs. Lorem ipsum
             dolor sit amet, consectetur adipiscing elit, sed do eiusmod
             tempor incididunt ut labore et dolore magna aliqua. Eros in
             cursus turpis massa tincidunt dui ut ornare lectus. Fringilla
@@ -235,15 +239,14 @@ class Preconditions(Base, unittest.TestCase):
             Amet consectetur adipiscing elit ut aliquam purus. Magna sit amet
             purus gravida.
             """,
-            "The last precondition."
-        ])
+                "The last precondition.",
+            ]
+        )
 
     @nosplit
     def test_nosplit(self):
         """Verify Preconditions starts at the top of the second page."""
-        self.make_test(
-            preconditions=[str(i) for i in range(10)]
-        )
+        self.make_test(preconditions=[str(i) for i in range(10)])
 
 
 class Procedure(Base, unittest.TestCase):
@@ -251,7 +254,7 @@ class Procedure(Base, unittest.TestCase):
 
     def test_steps(self):
         """Verify procedure step table layout."""
-        procedure=[
+        procedure = [
             """
             This is a procedure step with a single paragraph created
             as a simple string. Lorem ipsum dolor sit amet,
@@ -261,7 +264,6 @@ class Procedure(Base, unittest.TestCase):
             lorem dolor sed viverra ipsum. Libero justo laoreet sit
             amet cursus sit amet dictum sit. In dictum non consectetur a.
             """,
-
             """
             This is a procedure step with multiple paragraphs created
             as a simple string. Lorem ipsum dolor sit amet,
@@ -278,9 +280,8 @@ class Procedure(Base, unittest.TestCase):
             at volutpat diam ut venenatis tellus. Nisi porta lorem
             mollis aliquam.
             """,
-
             {
-                "text":"""
+                "text": """
                 This is a procedure step with a single paragraph created
                 as a dictionary. Lorem ipsum dolor sit amet,
                 consectetur adipiscing elit, sed do eiusmod tempor
@@ -288,9 +289,8 @@ class Procedure(Base, unittest.TestCase):
                 aliquet eget sit amet tellus.
                 """
             },
-
             {
-                "text":"""
+                "text": """
                 This is a procedure step with multiple paragraphs created
                 as a dictionary. Lorem ipsum dolor sit amet,
                 consectetur adipiscing elit, sed do eiusmod tempor
@@ -305,38 +305,35 @@ class Procedure(Base, unittest.TestCase):
                 lorem mollis aliquam.
                 """
             },
-
             {
-                "text":"""
+                "text": """
                 This is a procedure step with a single data entry field
                 with no suffix.
                 """,
-                "fields":[
+                "fields": [
                     ("A Field", 10),
-                ]
+                ],
             },
-
             {
-                "text":"""
+                "text": """
                 This is a procedure step with a single data entry field
                 with a suffix.
                 """,
-                "fields":[
+                "fields": [
                     ("Spam Eggs", 10, "Foo Bar"),
-                ]
+                ],
             },
-
             {
-                "text":"""
+                "text": """
                 This is a procedure step with multiple data entry fields,
                 all with suffixes. Ensure field titles are right-justified
                 and suffixes are left-justified against the text entry
                 field.
                 """,
-                "fields":[
+                "fields": [
                     ("Spam", 10, "Eggs"),
                     ("A Long Title", 3, "Bar"),
-                ]
+                ],
             },
         ]
 
@@ -357,9 +354,7 @@ class Procedure(Base, unittest.TestCase):
     @nosplit
     def test_nosplit_last_row(self):
         """Verify the second page starts with the last step."""
-        self.make_test(
-            procedure=["step"] * 2
-        )
+        self.make_test(procedure=["step"] * 2)
 
 
 class Notes(Base, unittest.TestCase):
@@ -430,11 +425,13 @@ class Format(Base, unittest.TestCase):
         # List of lines for all format combinations.
         cases = [
             "Leading text. "
-            + atform.format_text("This is {0} {1}.".format(typeface, font),
-                                 typeface, font)
+            + atform.format_text(
+                "This is {0} {1}.".format(typeface, font), typeface, font
+            )
             + " Trailing text. X"
             + atform.format_text("X", typeface, font)
-            for typeface, font in atform.format.FONTS.keys()]
+            for typeface, font in atform.format.FONTS.keys()
+        ]
 
         self.make_test(
             objective="""
@@ -445,7 +442,6 @@ class Format(Base, unittest.TestCase):
             \n
             """
             + "\n\n".join(cases),
-
             preconditions=cases,
             equipment=cases,
             procedure=cases,
@@ -453,23 +449,18 @@ class Format(Base, unittest.TestCase):
 
     def test_bullet_list(self):
         """Verify bullet list appearance."""
-        single = "This is a single-item list:" + atform.bullet_list(
-            "The only item.")
+        single = "This is a single-item list:" + atform.bullet_list("The only item.")
         multi = "A multi-item list with formatted items:" + atform.bullet_list(
             "First item",
-
             "An " + atform.format_text("italic", font="italic") + " item",
-
-            string.whitespace
-            + "Item surrounded by whitespace."
-            + string.whitespace,
-
-            "Last item")
+            string.whitespace + "Item surrounded by whitespace." + string.whitespace,
+            "Last item",
+        )
 
         self.make_test(
             objective="Verify appearance of bullet lists in various contexts."
-            + single + multi,
-
+            + single
+            + multi,
             equipment=[single, multi],
             preconditions=[single, multi],
             procedure=[single, multi],
@@ -504,7 +495,7 @@ class Logo(Base, unittest.TestCase):
                 "Verify the logo has a red border.",
                 "Verify the shape in the middle is a circle.",
                 "Verify the logo is centered in the upper-left corner.",
-                ]
+            ]
         )
 
     def test_full_size(self):

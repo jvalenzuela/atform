@@ -6,7 +6,6 @@ delimited by period, and are internally represented as a tuple
 of integers.
 """
 
-
 import pathlib
 import tempfile
 
@@ -98,7 +97,7 @@ def section(level, id=None, title=None):
             "No section levels available",
             """This function cannot be used unless the test ID depth is
             first increased with atform.set_id_depth to allow tests to be
-            divided into sections."""
+            divided into sections.""",
         )
 
     if not isinstance(level, int):
@@ -111,8 +110,7 @@ def section(level, id=None, title=None):
     if not level in section_levels:
         raise error.UserScriptError(
             f"Invalid section level: {level}",
-            f"Use a section level between 1 and {section_levels[-1]}, "
-            "inclusive."
+            f"Use a section level between 1 and {section_levels[-1]}, inclusive.",
         )
 
     # Convert the one-based level to a zero-based index suitable for
@@ -136,7 +134,7 @@ def section(level, id=None, title=None):
                 f"""
                 Level {level} id must be greater than
                 {state.current_id[id_index]}.
-                """
+                """,
             )
         state.current_id[id_index] = id
 
@@ -148,7 +146,7 @@ def section(level, id=None, title=None):
         validate_section_title(title)
         stripped = title.strip()
         if stripped:
-            section_key = tuple(state.current_id[:id_index + 1])
+            section_key = tuple(state.current_id[: id_index + 1])
             state.section_titles[section_key] = stripped
 
 
@@ -174,7 +172,7 @@ def set_id_depth(levels):
     if levels < 1:
         raise error.UserScriptError(
             f"Invalid identifier depth value: {levels}",
-            "Select an identifier depth greater than zero."
+            "Select an identifier depth greater than zero.",
         )
     state.current_id = [0] * levels
 
@@ -209,7 +207,7 @@ def skip_test(id=None):
         if id <= state.current_id[-1]:
             raise error.UserScriptError(
                 f"Invalid id value: {id}",
-                f"Select an id greater than {state.current_id[-1]}."
+                f"Select an id greater than {state.current_id[-1]}.",
             )
 
         # The current ID is set to one previous because the get_id() call

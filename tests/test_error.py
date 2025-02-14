@@ -10,6 +10,7 @@ class ExitOnScriptError(unittest.TestCase):
 
     def test_convert_user_script_error(self):
         """Confirm a UserScriptError is converted to SystemExit."""
+
         @atform.error.exit_on_script_error
         def func():
             raise atform.error.UserScriptError("foo")
@@ -19,6 +20,7 @@ class ExitOnScriptError(unittest.TestCase):
 
     def test_non_user_script_error(self):
         """Confirm exceptions other than UserScriptError pass unaffected."""
+
         @atform.error.exit_on_script_error
         def func():
             raise KeyError
@@ -28,6 +30,7 @@ class ExitOnScriptError(unittest.TestCase):
 
     def test_parameters(self):
         """Confirm positional and keyword arguments are passed to the wrapped function."""
+
         @atform.error.exit_on_script_error
         def func(a, b=0):
             self.assertEqual(1, a)
@@ -37,6 +40,7 @@ class ExitOnScriptError(unittest.TestCase):
 
     def test_return_value(self):
         """Confirm return value of wrapped function is preserved."""
+
         @atform.error.exit_on_script_error
         def func():
             return "spam"
@@ -45,6 +49,7 @@ class ExitOnScriptError(unittest.TestCase):
 
     def test_traceback_file(self):
         """Confirm the traceback points to the call of the wrapped function."""
+
         @atform.error.exit_on_script_error
         def func():
             raise atform.error.UserScriptError("foo")

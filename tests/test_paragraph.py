@@ -31,8 +31,7 @@ class SplitParagraphs(unittest.TestCase):
 
     def test_multiple_CRLF(self):
         """Confirm lines separated by more than two CRLFs are split."""
-        self.assert_result("foo bar\r\n\r\n\r\nspam eggs",
-                           ["foo bar", "spam eggs"])
+        self.assert_result("foo bar\r\n\r\n\r\nspam eggs", ["foo bar", "spam eggs"])
 
     def test_leading_LF(self):
         """Confirm leading newlines do not create blank paragraphs."""
@@ -52,13 +51,11 @@ class SplitParagraphs(unittest.TestCase):
 
     def test_whitespace_between_LF(self):
         """Confirm intervening whitespace between newlines is ignored."""
-        self.assert_result("foo bar\n \t\nspam eggs",
-                           ["foo bar", "spam eggs"])
+        self.assert_result("foo bar\n \t\nspam eggs", ["foo bar", "spam eggs"])
 
     def test_whitespace_between_CRLF(self):
         """Confirm intervening whitespace between CRLFs is ignored."""
-        self.assert_result("foo bar\r\n \t\r\nspam eggs",
-                           ["foo bar", "spam eggs"])
+        self.assert_result("foo bar\r\n \t\r\nspam eggs", ["foo bar", "spam eggs"])
 
     def assert_result(self, raw, expected):
         """Asserts a given string is split into expected paragraphs."""

@@ -1,6 +1,5 @@
 """Objects to store test procedure content."""
 
-
 import os
 
 from . import error

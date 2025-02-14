@@ -5,17 +5,20 @@ import atform
 # Setup
 ######################################################################
 
+
 def button_test(button):
     """
     This function serves as a template for a button test procedure,
     customizing the test content for the button provided in the
     argument.
     """
-    atform.add_test(f"{button} Button Test",
-                    procedure=[
-                        f"Press the {button} button.",
-                        f"Release the {button} button."
-                    ])
+    atform.add_test(
+        f"{button} Button Test",
+        procedure=[
+            f"Press the {button} button.",
+            f"Release the {button} button.",
+        ],
+    )
 
 
 ######################################################################

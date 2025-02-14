@@ -20,11 +20,14 @@ class AddField(unittest.TestCase):
         atform.add_field("foo", 99, "c")
         atform.add_test("title")
         t = utils.get_test_content()
-        self.assertEqual([
-            ("spam", 42),
-            ("eggs", 5),
-            ("foo", 99),
-            ], t.fields)
+        self.assertEqual(
+            [
+                ("spam", 42),
+                ("eggs", 5),
+                ("foo", 99),
+            ],
+            t.fields,
+        )
 
 
 class AddFieldContentAreaException(utils.ContentAreaException):

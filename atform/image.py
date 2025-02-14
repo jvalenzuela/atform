@@ -1,6 +1,5 @@
 """Handling for user-provided image files."""
 
-
 import collections
 import io
 
@@ -14,7 +13,7 @@ from . import state
 
 
 # Data type for storing two-dimensional sizes.
-ImageSize = collections.namedtuple('ImageSize', ['width', 'height'])
+ImageSize = collections.namedtuple("ImageSize", ["width", "height"])
 
 
 # Largest allowable logo image size, in inches.
@@ -79,19 +78,15 @@ def add_logo(path):
     except KeyError as e:
         raise error.UserScriptError(
             "No DPI information found in logo image file.",
-            "Ensure the logo image file has embedded DPI metadata."
+            "Ensure the logo image file has embedded DPI metadata.",
         ) from e
 
     # Ensure DPI values are floats.
     dpi = ImageSize(*[float(i) for i in dpi_raw])
 
-    size = ImageSize(
-        image.width / dpi.width,
-        image.height / dpi.height
-    )
+    size = ImageSize(image.width / dpi.width, image.height / dpi.height)
 
-    if ((size.width > MAX_LOGO_SIZE.width)
-        or (size.height > MAX_LOGO_SIZE.height)):
+    if (size.width > MAX_LOGO_SIZE.width) or (size.height > MAX_LOGO_SIZE.height):
         raise error.UserScriptError(
             f"""
             Logo image is too large:
@@ -113,6 +108,6 @@ def add_logo(path):
     )
     state.logo = Image(
         buf,
-        width=size.width*inch,
-        height=size.height*inch,
+        width=size.width * inch,
+        height=size.height * inch,
     )

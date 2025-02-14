@@ -4,7 +4,6 @@ This module handles versioning the atform package, not the version control
 interface available to end users.
 """
 
-
 from . import error
 
 

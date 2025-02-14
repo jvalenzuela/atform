@@ -1,6 +1,5 @@
 """Approval sigature API."""
 
-
 from . import error
 from . import misc
 from . import state
