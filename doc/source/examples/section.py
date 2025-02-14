@@ -46,13 +46,6 @@ atform.section(1, title="Another Section")
 
 atform.add_test("Failure Test A") # 2.1.1
 
-# The id parameter can be used to jump to a specific section number,
-# instead of incrementing to the next number. This command advances
-# the level 2 field to 5, so the tests will begin at 2.5.1.
-atform.section(2, id=5)
-
-atform.add_test("Functional Test G") # 2.5.1
-
 
 ######################################################################
 # Output
