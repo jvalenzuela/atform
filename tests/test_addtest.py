@@ -345,7 +345,7 @@ class References(unittest.TestCase):
     def test_ref_type(self):
         """Confirm exception for a non-list reference value."""
         atform.add_reference_category("refs", "refs")
-        with self.assertRaises(TypeError):
+        with self.assertRaises(SystemExit):
             atform.add_test("title", references={"refs": "spam"})
 
     def test_ref_item_type(self):

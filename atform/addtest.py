@@ -106,8 +106,9 @@ def validate_ref_category(label, refs):
     validated_refs = []
 
     if not isinstance(refs, list):
-        raise TypeError(
-            f'Reference items for "{label}" category must be contained in a list'
+        raise error.UserScriptError(
+            f'Invalid type for "{label}" references: {type(refs).__name__}',
+            "References for a given category must be contained in a list.",
         )
 
     for reference in refs:
