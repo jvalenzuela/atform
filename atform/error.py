@@ -48,12 +48,9 @@ def exit_on_script_error(api):
             result = api(*args, **kwargs)
 
         except UserScriptError as e:
-            try:
-                e.call_frame
-
             # Use the frame from this call if the exception does not
             # provide one.
-            except AttributeError:
+            if not e.call_frame:
                 e.call_frame = api_call_frame
                 e.api = api
 
@@ -91,6 +88,8 @@ class UserScriptError(Exception):
         if remedy:
             self.fields["Remedy"] = remedy
         self.fields["Description"] = desc
+        self.call_frame = None
+        self.api = None
 
     def add_field(self, key, value):
         """Appends an item describing the context of the error."""
@@ -98,10 +97,7 @@ class UserScriptError(Exception):
 
     def __str__(self):
         """Formats all fields into a simple key: value table."""
-
-        has_api = hasattr(self, "api")
-
-        if has_api:
+        if self.api:
             self.fields["In Call To"] = f"atform.{self.api.__name__}"
 
         self.fields["Line Number"] = self.call_frame.lineno
@@ -141,7 +137,7 @@ class UserScriptError(Exception):
             lines.append(line)
 
         # Add API docstring.
-        if has_api:
+        if self.api:
             lines.append("")
             lines.append(
                 f"atform.{self.api.__name__} help: {self.api.__doc__}"
