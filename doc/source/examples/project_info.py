@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -37,6 +38,7 @@ atform.set_project_info(system="System B")
 atform.add_test("Switch 1 Test")
 atform.add_test("Switch 2 Test")
 atform.add_test("Switch 3 Test")
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

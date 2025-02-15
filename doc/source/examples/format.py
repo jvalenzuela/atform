@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -47,6 +48,7 @@ atform.add_test(
         + atform.bullet_list(tag_name("Tag1"), tag_name("Tag2")),
     ],
 )
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

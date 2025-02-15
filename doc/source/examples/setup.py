@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -21,6 +22,7 @@ atform.add_copyright(
 # Add signatures for executor and approver.
 atform.add_signature("Executed By")
 atform.add_signature("Approved By")
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

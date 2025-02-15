@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -37,6 +38,7 @@ atform.add_test("Verify Something")  # This will be 5.3.
 atform.skip_test(10)
 
 atform.add_test("Verify Another")  # This will be 5.10.
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

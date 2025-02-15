@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -37,6 +38,7 @@ atform.add_test(
 
 # Tests with no references can simply omit the references parameter.
 atform.add_test("A Test Without References")
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

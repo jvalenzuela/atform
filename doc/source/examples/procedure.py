@@ -5,6 +5,7 @@ import atform
 # Content
 ######################################################################
 
+# begin-listing <<< Marker comment for documentation code listing.
 atform.add_test(
     "A Procedure Example",
     procedure=[
@@ -27,6 +28,7 @@ atform.add_test(
         },
     ],
 )
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

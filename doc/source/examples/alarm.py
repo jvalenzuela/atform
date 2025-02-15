@@ -1,5 +1,6 @@
 import atform
 
+# begin-listing <<< Marker comment for documentation code listing.
 # Import Python's built-in CSV module to read the external alarm file.
 import csv
 
@@ -60,6 +61,7 @@ atform.add_test(
         verify_alarm(99),
     ],
 )
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

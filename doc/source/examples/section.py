@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -45,6 +46,7 @@ atform.add_test("Test Something Different")
 atform.section(1, title="Another Section")
 
 atform.add_test("Failure Test A")  # 2.1.1
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

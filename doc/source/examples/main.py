@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -21,6 +22,7 @@ import button
 import switch
 
 # Any number of import statements may follow for additional content.
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

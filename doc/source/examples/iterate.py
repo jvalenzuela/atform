@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -29,6 +30,7 @@ def button_test(button):
 button_test("Left")
 button_test("Center")
 button_test("Right")
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

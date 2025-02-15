@@ -13,7 +13,9 @@ to specify references for each test procedure. The sample below shows
 test procedures with two reference categories:
 
 .. literalinclude:: examples/ref.py
-   :caption: ref.py
+   :caption: Excerpt of ref.py
+   :start-after: # begin-listing
+   :end-before: # end-listing
 
 
 .. _xref:

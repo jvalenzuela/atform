@@ -20,7 +20,9 @@ in the Approval section where the person performing that role
 can provide their name, signature, etc.
 
 .. literalinclude:: examples/setup.py
-   :caption: setup.py
+   :caption: Excerpt of setup.py
+   :start-after: # begin-listing
+   :end-before: # end-listing
 
 
 .. _project_info:
@@ -42,7 +44,9 @@ includes a call to :py:func:`atform.set_project_info`
 to update the system name.
 
 .. literalinclude:: examples/project_info.py
-   :caption: project_info.py
+   :caption: Excerpt of project_info.py
+   :start-after: # begin-listing
+   :end-before: # end-listing
 
 
 .. _env_fields:
@@ -70,4 +74,6 @@ demonstrates how to define fields and alter the fields appearing on
 each test procedure.
 
 .. literalinclude:: examples/field.py
-   :caption: field.py
+   :caption: Excerpt of field.py
+   :start-after: # begin-listing
+   :end-before: # end-listing

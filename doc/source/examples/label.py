@@ -6,6 +6,7 @@ import atform
 ######################################################################
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 # This test is referenced by another test.
 atform.add_test(
     "Validate A",
@@ -33,6 +34,7 @@ atform.add_test(
     "Validate X",
     label="doX",  # Assign a label.
 )
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

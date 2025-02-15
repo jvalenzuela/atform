@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -36,6 +37,7 @@ atform.add_test(
         "Validate another response.",
     ],
 )
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################

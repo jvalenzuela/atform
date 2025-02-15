@@ -1,6 +1,7 @@
 import atform
 
 
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
@@ -29,6 +30,7 @@ atform.set_active_fields(active=["machine"])
 
 # This test will only have a "Machine Number" field.
 atform.add_test("Function C")
+# end-listing <<< Marker comment for documentation code listing.
 
 
 ######################################################################
