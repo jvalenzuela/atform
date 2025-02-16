@@ -29,6 +29,7 @@ class TestContent:
     procedure: list
     project_info: dict
     call_frame: types.FrameType
+    labels: dict
 
     def pregenerate(self):
         """
@@ -36,6 +37,7 @@ class TestContent:
         but before actual output is generated.
         """
         try:
+            self._build_label_mapping()
             self._resolve_labels()
         except error.UserScriptError as e:
             # Set the exception's call frame to the call to add_test() where
@@ -48,24 +50,44 @@ class TestContent:
         """Replaces label placeholders with their target IDs."""
         if self.objective:
             try:
-                self.objective = label_.resolve(self.objective)
+                self.objective = label_.resolve(self.objective, self.labels)
             except error.UserScriptError as e:
                 e.add_field("Test Section", "Objective")
                 raise
 
         for i, item in enumerate(self.preconditions):
             try:
-                self.preconditions[i] = label_.resolve(item)
+                self.preconditions[i] = label_.resolve(item, self.labels)
             except error.UserScriptError as e:
                 e.add_field("Precondition Item", i + 1)
                 raise
 
         for i, step in enumerate(self.procedure, start=1):
             try:
-                step.resolve_labels()
+                step.resolve_labels(self.labels)
             except error.UserScriptError as e:
                 e.add_field("Procedure Step", i)
                 raise
+
+    def _build_label_mapping(self):
+        """Updates label mapping to include globally-defined labels."""
+        # Check for duplicate labels defined in the global scope.
+        globals_ = set(state.labels.keys())
+        locals_ = set(self.labels.keys())
+        dups = globals_.intersection(locals_)
+        try:
+            dup = dups.pop()
+        except KeyError:
+            self.labels.update(state.labels)
+        else:
+            raise error.UserScriptError(
+                f"Duplicate label: {dup}",
+                f"""
+                The label "{dup}" has been defined in multiple places, with the
+                values "{state.labels[dup]}" and "{self.labels[dup]}".
+                Select a label name that is not used elsewhere.
+                """,
+            )
 
 
 def validate_objective(obj):
@@ -232,6 +254,7 @@ def add_test(
     content["call_frame"] = error.api_call_frame
 
     content["id"] = id_.get_id()
+    content["labels"] = {}
 
     # The current project information is captured using copy() because
     # the project information dictionary may change for later tests;
@@ -249,7 +272,7 @@ def add_test(
         content["references"] = validate_refs(references)
         content["equipment"] = validate_string_list("Equipment", equipment)
         content["preconditions"] = validate_string_list("Preconditions", preconditions)
-        content["procedure"] = procedure_.validate(procedure)
+        content["procedure"] = procedure_.validate(procedure, content["labels"])
         content["project_info"] = project_info
 
         if label is not None:

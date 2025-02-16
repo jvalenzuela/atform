@@ -111,9 +111,18 @@ Procedure step labels use the same format as test labels, and are
 replaced with the procedure step number.
 See :ref:`procedure` for details on applying labels to procedure steps.
 
-All labels, regardless of what they are applied to, must be unique
+Labels given to entire tests and individual procedure steps are identical
+in syntax, yet differ in the scope where they may be referenced, i.e., where
+a placeholder for a given label can be used.
+Labels assigned to a test via the :code:`label` parameter of
+:py:func:`atform.add_test` can be used globally, and must be unique
 throughout the entire project. For example, a label assigned to a test
-cannot be used for another test *or* procedure step.
+cannot be used for another test *or* procedure step. Labels applied to
+procedure steps, however, are local to the single test where they are
+defined; a procedure step label can only be used in the test
+containing the labeled procedure step. This also means separate tests
+may utilize the same name for a procedure step label without interfering
+with each other.
 
 Once assigned, a label can be used in content strings by
 inserting a placeholder where the label's replacement text

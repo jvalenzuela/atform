@@ -47,7 +47,7 @@ def init():
     global fields
     fields = collections.OrderedDict()
 
-    # Target ids keyed by label.
+    # Globally accessible labels.
     global labels
     labels = {}
 

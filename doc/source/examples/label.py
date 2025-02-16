@@ -21,10 +21,10 @@ atform.add_test(
     procedure=[
         # Create a labeled procedure step.
         {
-            "label": "ps_verify",
+            "label": "ps_label",
             "text": "Verify something important.",
         },
-        "Repeat step $ps_verify.",  # Reference the labeled step.
+        "Repeat step $ps_label.",  # Reference the labeled step.
     ],
 )
 
@@ -33,6 +33,16 @@ atform.add_test(
 atform.add_test(
     "Validate X",
     label="doX",  # Assign a label.
+    # The same procedure step label from the previous test,
+    # ps_label, is reused here, yet the labels remain independent
+    # because procedure step labels are local to each test.
+    procedure=[
+        "Refer to step $ps_label.",
+        {
+            "label": "ps_label",
+            "text": "The labeled step.",
+        },
+    ],
 )
 # end-listing <<< Marker comment for documentation code listing.
 

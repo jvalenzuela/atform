@@ -17,7 +17,7 @@ from . import state
 valid_label_pattern = re.compile(r"(?ai:[_a-z][_a-z0-9]*)$")
 
 
-def add(label, id_):
+def add(label, id_, mapping=None):
     """Assigns an identifier to a label.
 
     This function is not exposed in the public API, however, the label
@@ -42,16 +42,22 @@ def add(label, id_):
             """,
         )
 
-    if label in state.labels:
+    # Default to global labels if a target mapping is omitted.
+    if mapping is None:
+        mapping = state.labels
+
+    try:
+        mapping[label]
+    except KeyError:
+        mapping[label] = id_
+    else:
         raise error.UserScriptError(
             f"Duplicate label: {label}",
             "Select a label that has not yet been used.",
         )
 
-    state.labels[label] = id_
 
-
-def resolve(orig):
+def resolve(orig, mapping):
     """Replaces label placeholders with the target IDs.
 
     The public API already validates the original string to ensure it is
@@ -60,7 +66,7 @@ def resolve(orig):
     tpl = string.Template(orig)
 
     try:
-        return tpl.substitute(state.labels)
+        return tpl.substitute(mapping)
 
     except KeyError as e:
         raise error.UserScriptError(

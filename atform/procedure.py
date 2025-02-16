@@ -37,12 +37,12 @@ class Step:
     text: str
     fields: list[Field]
 
-    def resolve_labels(self):
+    def resolve_labels(self, mapping):
         """Replaces label placeholders with their target IDs."""
-        self.text = label.resolve(self.text)
+        self.text = label.resolve(self.text, mapping)
 
 
-def validate(lst):
+def validate(lst, label_mapping):
     """Validates a user-provided list containing procedure steps."""
     if lst is None:
         lst = []
@@ -51,21 +51,21 @@ def validate(lst):
     steps = []
     for i, step in enumerate(lst, start=1):
         try:
-            steps.append(make_step(step, i))
+            steps.append(make_step(step, i, label_mapping))
         except error.UserScriptError as e:
             e.add_field("Procedure Step", i)
             raise
     return steps
 
 
-def make_step(raw, num):
+def make_step(raw, num, label_mapping):
     """Validates a single procedure step."""
     data = normalize_type(raw)
     step = Step(
         text=validate_text(data),
         fields=validate_fields(data),
     )
-    validate_label(data, num)
+    validate_label(data, num, label_mapping)
     check_undefined_keys(data)
     return step
 
@@ -168,7 +168,7 @@ def create_field(tpl):
     return Field(title, length, suffix)
 
 
-def validate_label(data, num):
+def validate_label(data, num, mapping):
     """Creates a label referencing the step."""
     try:
         lbl = data.pop("label")
@@ -178,7 +178,7 @@ def validate_label(data, num):
         pass
 
     else:
-        label.add(lbl, str(num))
+        label.add(lbl, str(num), mapping)
 
 
 def check_undefined_keys(data):
