@@ -5,6 +5,7 @@ instances.
 
 import collections
 import dataclasses
+import typing
 
 from . import (
     error,
@@ -35,7 +36,7 @@ class Step:
     """
 
     text: str
-    fields: list[Field]
+    fields: typing.List[Field]
 
     def resolve_labels(self, mapping):
         """Replaces label placeholders with their target IDs."""

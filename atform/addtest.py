@@ -22,7 +22,7 @@ class TestContent:
     id: tuple
     title: str
     fields: list
-    objective: str | None
+    objective: str
     references: dict
     equipment: list
     preconditions: list
