@@ -72,7 +72,7 @@ def get_active_fields(include, exclude, active):
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_field(title, length, name, active=True):
+def add_field(title, length, name, *, active=True):
     """Adds a user entry field to capture test execution information.
 
     Form fields are suitable for entering a single line of text at the beginning
@@ -119,7 +119,7 @@ def add_field(title, length, name, active=True):
 
 
 @error.exit_on_script_error
-def set_active_fields(include=None, exclude=None, active=None):
+def set_active_fields(*, include=None, exclude=None, active=None):
     """Alters the fields applied to each test created after this function.
 
     May be called repeatedly to modify the fields applied to different

@@ -12,7 +12,7 @@ class Generate(unittest.TestCase):
     def test_path_type(self):
         """Confirm exception if path is not a string."""
         with self.assertRaises(SystemExit):
-            atform.generate(42)
+            atform.generate(path=42)
 
 
 class GenerateFolderDepth(unittest.TestCase):

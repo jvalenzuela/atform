@@ -91,7 +91,7 @@ def bullet_list(*items):
 
 
 @error.exit_on_script_error
-def format_text(text, typeface="normal", font="normal"):
+def format_text(text, *, typeface="normal", font="normal"):
     """Applies special formatting attributes to text.
 
     The returned string can be incorporated into strings passed to the

@@ -48,7 +48,7 @@ class FieldBase(object):
     def setUp(self):
         utils.reset()
         atform.add_field("f1", 42, "f1")
-        atform.add_field("f2", 99, "f2", False)
+        atform.add_field("f2", 99, "f2", active=False)
         atform.add_field("f3", 10, "f3")
 
     def verify_next_test(self):

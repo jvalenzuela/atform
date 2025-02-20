@@ -42,7 +42,7 @@ def build_path(tid, root, depth):
 
 
 @error.exit_on_script_error
-def generate(path="pdf", folder_depth=0):
+def generate(*, path="pdf", folder_depth=0):
     """Builds PDF output files for all defined tests.
 
     Should be called once near the end of the script after tests have been

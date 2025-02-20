@@ -95,7 +95,7 @@ def add_copyright(notice):
 @error.exit_on_script_error
 # Avoid Pylint false-positive as function arguments are accessed via locals().
 # pylint: disable=unused-argument
-def set_project_info(project=None, system=None):
+def set_project_info(*, project=None, system=None):
     """Assigns project metadata.
 
     Information set by this function is used to populate the headers

@@ -130,7 +130,7 @@ class AddFieldActive(unittest.TestCase):
         for i in [0, 1, ""]:
             utils.reset()
             with self.subTest(i=i), self.assertRaises(SystemExit):
-                atform.add_field("title", 1, "foo", i)
+                atform.add_field("title", 1, "foo", active=i)
 
     def test_default(self):
         """Verify field is active if omitted."""
@@ -141,7 +141,7 @@ class AddFieldActive(unittest.TestCase):
 
     def test_false(self):
         """Verify field is inactive if false."""
-        atform.add_field("f1", 1, "f1", False)
+        atform.add_field("f1", 1, "f1", active=False)
         atform.add_test("title")
         t = utils.get_test_content()
         self.assertEqual([], t.fields)
@@ -153,7 +153,7 @@ class SetActiveFieldsBase(object):
     def setUp(self):
         utils.reset()
         atform.add_field("f1", 1, "f1")
-        atform.add_field("f2", 1, "f2", False)
+        atform.add_field("f2", 1, "f2", active=False)
         atform.add_field("f3", 1, "f3")
 
     def assert_test_fields(self, *args):

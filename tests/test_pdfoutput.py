@@ -426,10 +426,16 @@ class Format(Base, unittest.TestCase):
         cases = [
             "Leading text. "
             + atform.format_text(
-                "This is {0} {1}.".format(typeface, font), typeface, font
+                "This is {0} {1}.".format(typeface, font),
+                typeface=typeface,
+                font=font,
             )
             + " Trailing text. X"
-            + atform.format_text("X", typeface, font)
+            + atform.format_text(
+                "X",
+                typeface=typeface,
+                font=font,
+            )
             for typeface, font in atform.format.FONTS.keys()
         ]
 

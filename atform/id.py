@@ -68,7 +68,7 @@ def validate_section_title(title):
 @error.exit_on_script_error
 # Allow id parameter to shadow id() built-in.
 # pylint: disable-next=redefined-builtin
-def section(level, id=None, title=None):
+def section(level, *, id=None, title=None):
     """Creates a new section or subsection.
 
     The target section level is incremented, and the new section can be given
