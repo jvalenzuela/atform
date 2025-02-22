@@ -1,37 +1,12 @@
-"""Objects to store test procedure content."""
+"""API to generate output PDFs."""
 
-import os
+import concurrent.futures
+import functools
 
 from . import error
 from . import pdf
 from . import state
 from . import vcs
-
-
-def build_path(tid, root, depth):
-    """Constructs a path where a test's output PDF will be written.
-
-    The path will consist of the root, followed by a folder per
-    section number limited to depth, e.g., <root>/<x>/<y> for an ID x.y.z
-    and depth 2. The final number in an ID is not translated to a folder.
-    """
-    folders = [root]
-
-    # Append a folder for each section level.
-    for i, section_id in enumerate(tid[:depth]):
-
-        # Include the section number and title if the section has a title.
-        try:
-            section = state.section_titles[tid[: i + 1]]
-            section_folder = f"{section_id} {section}"
-
-        # Use only the section number if the section has no title.
-        except KeyError:
-            section_folder = str(section_id)
-
-        folders.append(section_folder)
-
-    return os.path.join(*folders)
 
 
 ################################################################################
@@ -101,6 +76,17 @@ def generate(*, path="pdf", folder_depth=0):
     else:
         version = git.version if git.clean else "draft"
 
-    for t in state.tests:
-        test_path = build_path(t.id, path, folder_depth)
-        pdf.TestDocument(t, test_path, version)
+    # Create a partial function wrapping the PDF builder function with
+    # parameters constant for all PDFs.
+    builder = functools.partial(pdf.build, path, folder_depth, version)
+
+    # Use of the ProcessPoolExecutor was based on empirical testing by
+    # measuring the amount of time required to generate a large number
+    # of mock test documents. The process-based executor yielded a
+    # significant improvement, while the thread-based executor was
+    # worse than the original, serial implementation.
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        try:
+            list(executor.map(builder, state.tests))
+        except pdf.BuildError as e:
+            print(e)

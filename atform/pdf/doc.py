@@ -30,6 +30,46 @@ from .. import state
 from .textstyle import stylesheet
 
 
+class BuildError(Exception):
+    """Exception chained from a PDF generation failure."""
+
+
+def build(root, folder_depth, version, test):
+    """Builds a PDF document for a given test instance."""
+    path = build_path(test.id, root, folder_depth)
+    try:
+        TestDocument(test, path, version)
+    except Exception as e:
+        tid = id_.to_string(test.id)
+        raise BuildError(f"Failed to build PDF for {tid} {test.title}: {e}") from e
+
+
+def build_path(tid, root, depth):
+    """Constructs a path where a test's output PDF will be written.
+
+    The path will consist of the root, followed by a folder per
+    section number limited to depth, e.g., <root>/<x>/<y> for an ID x.y.z
+    and depth 2. The final number in an ID is not translated to a folder.
+    """
+    folders = [root]
+
+    # Append a folder for each section level.
+    for i, section_id in enumerate(tid[:depth]):
+
+        # Include the section number and title if the section has a title.
+        try:
+            section = state.section_titles[tid[: i + 1]]
+            section_folder = f"{section_id} {section}"
+
+        # Use only the section number if the section has no title.
+        except KeyError:
+            section_folder = str(section_id)
+
+        folders.append(section_folder)
+
+    return os.path.join(*folders)
+
+
 class TestDocument:
     """This class creates a PDF for a single Test instance."""
 

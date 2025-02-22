@@ -8,10 +8,6 @@ from atform.addtest import (
     add_test,
 )
 
-from atform.content import (
-    generate,
-)
-
 from atform.field import (
     add_field,
     set_active_fields,
@@ -20,6 +16,10 @@ from atform.field import (
 from atform.format import (
     bullet_list,
     format_text,
+)
+
+from atform.gen import (
+    generate,
 )
 
 from atform.id import (
