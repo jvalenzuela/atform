@@ -14,7 +14,7 @@ import csv
 # any alarm can be acquired by alarms[num].
 with open("alarms.csv", encoding="utf-8", newline="") as f:
     reader = csv.reader(f)
-    alarms = dict([(int(row[0]), row[1]) for row in reader])
+    alarms = {int(row[0]): row[1] for row in reader}
 
 
 def verify_alarm(num):
