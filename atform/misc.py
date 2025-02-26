@@ -78,7 +78,7 @@ def add_copyright(notice):
 
     Args:
         notice (str): The copyright notice text; must be a single
-            paragraph.
+            paragraph and may not be blank.
     """
     if state.copyright_:
         raise error.UserScriptError(
@@ -104,8 +104,10 @@ def set_project_info(*, project=None, system=None):
     .. seealso:: :ref:`project_info`
 
     Args:
-        project (str, optional): Name or description of the project.
-        system (str, optional): Name or description of the system being tested.
+        project (str, optional): Name or description of the project; must
+            not be blank.
+        system (str, optional): Name or description of the system being tested;
+            must not be blank.
     """
     params = locals()
     for arg in params:

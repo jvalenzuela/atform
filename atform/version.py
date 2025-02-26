@@ -29,8 +29,10 @@ def require_version(major, minor=0):
     .. seealso:: :ref:`upgrade`
 
     Args:
-        major (int): The required major version.
-        minor (int, optional): The required minor version.
+        major (int): The required major version; must be greater than or
+            equal to 1.
+        minor (int, optional): The required minor version; must be greater
+            than or equal to 0.
     """
     if not isinstance(major, int):
         raise error.UserScriptError(

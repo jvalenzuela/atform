@@ -86,8 +86,8 @@ def add_field(title, length, name, *, active=True):
         title (str): Text to serve as the field's prompt; must not be blank.
         length (int): Maximum number of characters the field should be sized
             to accommodate; must be greater than zero.
-        name (str): A tag used to identify this field; must be unique and
-            not blank.
+        name (str): A tag used to identify this field; must be unique across
+            names given to other fields and not blank.
         active (bool, optional): Set to ``False`` if this field should not
             be included in tests until explicitly activated at a later time,
             such as with :py:func:`atform.set_active_fields`.
@@ -134,7 +134,7 @@ def set_active_fields(*, include=None, exclude=None, active=None):
             tests.
         exclude (list[str], optional): Names of fields to remove from
             later tests.
-        active (list[str], optional): If provided, updates the fields
-            in later tests with this list.
+        active (list[str], optional): If provided, only fields in this
+            list will appear in later tests.
     """
     state.active_fields = get_active_names(include, exclude, active)

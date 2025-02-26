@@ -31,10 +31,10 @@ def add_reference_category(title, label):
 
     Args:
         title (str): The full name of the category that will be displayed
-            on the test documents.
+            on the test documents; must not be blank.
         label (str): A shorthand abbreviation to identify this category
             when adding references to individual tests. Must be unique across
-            all reference categories.
+            all reference categories, and may not be blank.
     """
     # Validate title.
     title_stripped = misc.nonempty_string("reference category title", title)

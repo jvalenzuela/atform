@@ -220,18 +220,24 @@ def add_test(
     Args:
         title (str): A short phrase describing the test procedure, that is
             combined with the automatically-assigned numeric ID to identify
-            this specific test.
+            this specific test. Must not be blank.
         label (str, optional): An identifier for use in content strings to
-            refer back to this test. See :ref:`labels`.
+            refer back to this test; may not be blank. See :ref:`labels`.
         include_fields (list[str], optional): Names of fields to add to
+            this test; provides the same behavior as the ``include`` parameter
+            of :py:func:`atform.set_active_fields` while only affecting
             this test. See :py:func:`atform.add_field`.
         exclude_fields (list[str], optional): Names of fields to remove
-            from this test. See :py:func:`atform.add_field`.
+            from this test; provides the same behavior as the ``exclude`` parameter
+            of :py:func:`atform.set_active_fields` while only affecting
+            this test. See :py:func:`atform.add_field`.
         active_fields (list[str], optional): Names of fields to apply
-            to this test. See :py:func:`atform.add_field`.
+            to this test; provides the same behavior as the ``active`` parameter
+            of :py:func:`atform.set_active_fields` while only affecting
+            this test. See :py:func:`atform.add_field`.
         objective (str, optional): A longer narrative, possibly spanning
             several sentences or paragraphs, describing the intent of the
-            test procedure.
+            test procedure. Must not be blank.
         references (dict, optional): A mapping from category labels
             defined with :py:func:`atform.add_reference_category`
             to lists of reference strings for that category.

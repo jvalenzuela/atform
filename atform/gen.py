@@ -30,7 +30,8 @@ def generate(*, path="pdf", folder_depth=0):
         must be copied elsewhere before generating output documents.
 
     Args:
-        path (str, optional): Output directory where PDFs will be saved.
+        path (str, optional): Output directory where PDFs will be saved,
+            relative to the location where the top-level script resides.
         folder_depth (int, optional): The number of test ID levels used to
             create section folders. For example, if ``folder_depth`` is 2,
             all PDFs will be output into section subfolders two deep,

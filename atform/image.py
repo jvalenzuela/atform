@@ -44,7 +44,8 @@ def add_logo(path):
     .. seealso:: :ref:`setup`
 
     Args:
-        path (str): Path to the image file.
+        path (str): Path to the image file relative to the top-level script
+            executed to generate test documents.
     """
     if state.logo:
         raise error.UserScriptError(

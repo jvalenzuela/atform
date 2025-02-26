@@ -162,7 +162,7 @@ def set_id_depth(levels):
     .. seealso:: :ref:`section`
 
     Args:
-        levels (int): Number of identifier levels.
+        levels (int): Number of identifier levels; must be greater than zero.
     """
     if not isinstance(levels, int):
         raise error.UserScriptError(
@@ -190,8 +190,11 @@ def skip_test(id=None):
     .. seealso:: :ref:`skip`
 
     Args:
-        id (int, optional): ID of the next test. If omitted, one test will
-            be skipped.
+        id (int, optional): ID of the next test; must be greater than
+            what would otherwise be the next test ID. For example, if
+            the test immediately before this function is called was 42.5,
+            ``id`` must be greater than 6 because 42.6 would already be
+            the next test. If omitted, one test will be skipped.
     """
     # Advance the test number normally without creating a test. This call
     # also supports the skip-forward validation below by initializing
