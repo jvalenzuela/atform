@@ -29,7 +29,13 @@ DESC_COL = 1
 PASS_COL = 2
 
 
-# Vertical space between the procedure step text and data entry fields.
+# Vertical space inserted between step text and the image; inserted only
+# when an image is present, and selected to provide sufficient space
+# for descenders on the bottom row of text.
+IMAGE_SEP = toLength("12 pt")
+
+
+# Vertical space above the data entry fields.
 FIELD_TABLE_SEP = toLength("12 pt")
 
 
@@ -140,6 +146,9 @@ def step_body(step):
     # Begin with the step instruction text.
     flowables = paragraph.make_paragraphs(step.text)
 
+    if step.image:
+        flowables.append(Spacer(0, IMAGE_SEP))
+        flowables.append(step.image)
     if step.fields:
         flowables.extend(make_fields(step.fields))
 

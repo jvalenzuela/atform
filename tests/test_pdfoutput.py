@@ -335,12 +335,52 @@ class Procedure(Base, unittest.TestCase):
                     ("A Long Title", 3, "Bar"),
                 ],
             },
+            self.make_image_step("full"),
+            self.make_image_step("width"),
+            self.make_image_step("height"),
+            self.make_image_step("small"),
         ]
 
         # Add enough steps to force the table to span muliple pages.
         [procedure.append("Dummy step") for i in range(10)]
 
         self.make_test(procedure=procedure)
+
+    def make_image_step(self, size):
+        """Creates a procedure step verifying an optional image."""
+        return {
+            "text": f"""
+            Verify procedure step layout with image size: {size}
+
+            Confirm image has a red border, the shape in the middle is a circle, and
+            clearance from surrounding text and fields.
+
+            jpqy Bottom text line with descenders.
+            """,
+            "image": os.path.join("tests", "images", "procedure", f"{size}.jpg"),
+            "fields": [
+                ("field", 1),
+            ],
+        }
+
+    def test_dup_image(self):
+        """Confirm the same image can be used in separate tests.
+
+        The intent is to verify the same ReportLab Image flowable can be used
+        multiple times.
+        """
+        step = {
+            "text": "Step with image.",
+            "image": os.path.join("tests", "images", "procedure", "small.jpg"),
+        }
+        self.make_test(
+            objective="Confirm the same image appearing in multiple procedure steps.",
+            procedure=[step] * 2,
+        )
+        self.make_test(
+            objective="Confirm the same image used in multiple tests.",
+            procedure=[step],
+        )
 
     def test_nosplit_first_step(self):
         """Verify Procedure section starts at the top of the second page.

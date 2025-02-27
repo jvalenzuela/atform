@@ -49,6 +49,8 @@ rst_prolog = f"""
 .. |requires_python| replace:: {requires_python}
 .. |max_logo_width| replace:: {atform.image.MAX_LOGO_SIZE.width}
 .. |max_logo_height| replace:: {atform.image.MAX_LOGO_SIZE.height}
+.. |max_step_image_width| replace:: {atform.procedure.MAX_IMAGE_SIZE.width}
+.. |max_step_image_height| replace:: {atform.procedure.MAX_IMAGE_SIZE.height}
 """
 
 numfig = True

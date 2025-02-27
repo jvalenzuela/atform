@@ -7,8 +7,11 @@ import collections
 import dataclasses
 import typing
 
+from reportlab.platypus import Image
+
 from . import (
     error,
+    image,
     label,
     misc,
 )
@@ -21,6 +24,12 @@ Field = collections.namedtuple(
     "Field",
     ["title", "length", "suffix"],
 )
+
+
+# Largest allowable procedure step image size, in inches. The width is
+# selected to fit within the allowable horizontal space allotted to the
+# procedure table's Description column; the height chosen arbitrarily.
+MAX_IMAGE_SIZE = image.ImageSize(5, 3)
 
 
 @dataclasses.dataclass(
@@ -37,6 +46,7 @@ class Step:
 
     text: str
     fields: typing.List[Field]
+    image: Image
 
     def resolve_labels(self, mapping):
         """Replaces label placeholders with their target IDs."""
@@ -65,6 +75,7 @@ def make_step(raw, num, label_mapping):
     step = Step(
         text=validate_text(data),
         fields=validate_fields(data),
+        image=validate_image(data),
     )
     validate_label(data, num, label_mapping)
     check_undefined_keys(data)
@@ -169,6 +180,18 @@ def create_field(tpl):
         )
 
     return Field(title, length, suffix)
+
+
+def validate_image(data):
+    """Loads the file referenced by the image key."""
+    try:
+        path = data.pop("image")
+
+    # Image is optional, do nothing if omitted.
+    except KeyError:
+        return None
+
+    return image.load(path, MAX_IMAGE_SIZE)
 
 
 def validate_label(data, num, mapping):

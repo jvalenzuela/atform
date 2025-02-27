@@ -39,6 +39,13 @@ to be included along with the main text.
      - string
      - The instructions for the step.
      - Yes
+   * - ``"image"``
+     - string
+     - Path to an image file to include in this step.
+       Maximum image size is |max_step_image_width| inches wide by
+       |max_step_image_height| inches high.
+       See :ref:`image`.
+     - No
    * - ``"fields"``
      - list(tuple)
      - Data entry fields, one tuple per field, to record information

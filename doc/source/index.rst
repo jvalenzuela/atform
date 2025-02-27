@@ -9,6 +9,7 @@ Welcome to atform's documentation!
    org
    setup
    write
+   image
    ref
    auto
    vcs

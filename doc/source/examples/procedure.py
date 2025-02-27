@@ -19,8 +19,9 @@ atform.add_test(
         {
             "text": """
             This is a step given as a dictionary that includes
-            data entry fields.
+            an image and data entry fields.
             """,
+            "image": "python.jpg",
             "fields": [  # The "fields" key adds data entry fields.
                 ("Error Code", 10),  # A field with no suffix.
                 ("Line Voltage", 5, "VAC"),  # A field with a suffix.

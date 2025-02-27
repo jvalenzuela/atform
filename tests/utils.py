@@ -17,6 +17,10 @@ def reset():
     """
     atform.state.init()
 
+    # The image cache needs to be reset separately as it is not stored
+    # in the state module.
+    atform.image.load.cache_clear()
+
 
 def get_test_content():
     """Retrieves the content of the most recently created test."""
