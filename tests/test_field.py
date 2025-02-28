@@ -177,6 +177,13 @@ class SetActiveFieldsBase(object):
         with self.assertRaises(SystemExit):
             self.call(["foo"])
 
+    def test_argument_unchanged(self):
+        """Confirm the list provided to the argument remains unchanged."""
+        arg = ["f1", "f2", "f3"]
+        cpy = list(arg)
+        self.call(arg)
+        self.assertEqual(arg, cpy)
+
 
 class SetActiveFieldsInclude(SetActiveFieldsBase, unittest.TestCase):
     """Tests for the include argument of set_active_fields()."""

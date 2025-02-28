@@ -1,5 +1,6 @@
 """Tests for the add_test() API."""
 
+import copy
 import string
 import traceback
 import unittest
@@ -71,6 +72,13 @@ class FieldBase(object):
         """Verify exception if an item is not a defined field name."""
         with self.assertRaises(SystemExit):
             self.make_test(["foo"])
+
+    def test_argument_unchanged(self):
+        """Confirm the list provided to the argument remains unchanged."""
+        arg = ["f1", "f2", "f3"]
+        cpy = list(arg)
+        self.make_test(arg)
+        self.assertEqual(arg, cpy)
 
 
 class IncludeFields(FieldBase, unittest.TestCase):
@@ -303,6 +311,14 @@ class References(unittest.TestCase):
         self.assertEqual(["1", "2", "3"], t.references["num"])
         self.assertEqual(["a", "b", "c"], t.references["alpha"])
 
+    def test_argument_unchanged(self):
+        """Confirm the given dictionary remains unchanged."""
+        atform.add_reference_category("ref", "ref")
+        arg = {"ref": ["spam", "eggs"]}
+        cpy = copy.deepcopy(arg)  # Deep copy to capture nested compound objects.
+        atform.add_test("title", references=arg)
+        self.assertEqual(arg, cpy)
+
 
 class StringList(object):
     """Base class for testing a parameter that accepts a list of strings."""
@@ -336,6 +352,13 @@ class StringList(object):
         t = utils.get_test_content()
         self.assertEqual("Foo", getattr(t, self.parameter_name)[0])
 
+    def test_list_unchanged(self):
+        """Confirm the given list is not modified."""
+        arg = ["foo", "bar"]
+        cpy = list(arg)
+        self.call(arg)
+        self.assertEqual(arg, cpy)
+
     def call(self, value):
         """Calls Test() with a given parameter value."""
         args = {self.parameter_name: value}
@@ -364,6 +387,22 @@ class ProcedureList(unittest.TestCase):
         """Confirm exception for a non-list.."""
         with self.assertRaises(SystemExit):
             atform.add_test("test", procedure="spam")
+
+    def test_argument_unchanged(self):
+        """Confirm the given list and included objects remain unchanged."""
+        arg = [
+            "foo",
+            {
+                "text": "spam",
+                "fields": [
+                    ("f1", 1),
+                    ("f2", 2),
+                ],
+            },
+        ]
+        cpy = copy.deepcopy(arg)  # Deep copy to capture nested compound objects.
+        atform.add_test("test", procedure=arg)
+        self.assertEqual(arg, cpy)
 
 
 class ProcedureStepBase(object):

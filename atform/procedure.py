@@ -78,7 +78,9 @@ def normalize_type(raw):
         normalized = {"text": raw}
 
     elif isinstance(raw, dict):
-        normalized = raw
+        # Keys are removed during the validation process so a shallow copy is
+        # made to ensure the original argument remains unchanged.
+        normalized = dict(raw)
 
     else:
         raise error.UserScriptError(
