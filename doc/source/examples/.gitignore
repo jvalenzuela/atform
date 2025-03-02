@@ -3,3 +3,6 @@ __pycache__/
 
 # Default PDF output directory.
 pdf/
+
+# Cache file.
+atform.cache

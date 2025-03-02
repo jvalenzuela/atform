@@ -10,3 +10,6 @@ dist/
 # Unit test PDF output.
 /pdf/
 example_output/
+
+# Cache file.
+atform.cache

@@ -1,8 +1,8 @@
 """API to generate output PDFs."""
 
 import concurrent.futures
-import functools
 
+from . import cache
 from . import error
 from . import pdf
 from . import state
@@ -77,9 +77,7 @@ def generate(*, path="pdf", folder_depth=0):
     else:
         version = git.version if git.clean else "draft"
 
-    # Create a partial function wrapping the PDF builder function with
-    # parameters constant for all PDFs.
-    builder = functools.partial(pdf.build, path, folder_depth, version)
+    cache.load()
 
     # Use of the ProcessPoolExecutor was based on empirical testing by
     # measuring the amount of time required to generate a large number
@@ -87,7 +85,16 @@ def generate(*, path="pdf", folder_depth=0):
     # significant improvement, while the thread-based executor was
     # worse than the original, serial implementation.
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        try:
-            list(executor.map(builder, state.tests))
-        except pdf.BuildError as e:
-            print(e)
+        futures = [
+            executor.submit(pdf.build, path, folder_depth, version, t)
+            for t in state.tests
+        ]
+        for f in concurrent.futures.as_completed(futures):
+            try:
+                tid, data = f.result()
+            except pdf.BuildError as e:
+                print(e)
+            else:
+                cache.set_test_data(tid, data)
+
+    cache.save()

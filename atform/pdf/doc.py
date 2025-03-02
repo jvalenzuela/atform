@@ -13,6 +13,7 @@ from reportlab.platypus import (
     SimpleDocTemplate,
 )
 
+from .. import cache
 from .. import id as id_
 from . import (
     approval,
@@ -38,10 +39,15 @@ def build(root, folder_depth, version, test):
     """Builds a PDF document for a given test instance."""
     path = build_path(test.id, root, folder_depth)
     try:
-        TestDocument(test, path, version)
+        doc = TestDocument(test, path, version)
     except Exception as e:
         tid = id_.to_string(test.id)
         raise BuildError(f"Failed to build PDF for {tid} {test.title}: {e}") from e
+
+    # Return data to be written to the cache file.
+    return test.id, {
+        "page count": doc.page_count.last_page,
+    }
 
 
 def build_path(tid, root, depth):
@@ -76,6 +82,7 @@ class TestDocument:
     def __init__(self, test, path, version):
         self.test = test
         self.version = version
+        cache_data = cache.get_test_data(test.id)
 
         # The full name is the combination of the test's numeric
         # identifier and title.
@@ -101,7 +108,11 @@ class TestDocument:
             self.bottom_margin += self.copyright_height
 
         doc = self._get_doc(path)
-        self.page_count = PageCount(doc)
+        try:
+            cached_page_count = cache_data["page count"]
+        except TypeError:
+            cached_page_count = 1
+        self.page_count = PageCount(doc, cached_page_count)
         body = [self.page_count]
         body.extend(self._build_body(test))
         doc.multiBuild(
@@ -236,10 +247,10 @@ class PageCount(IndexingFlowable):
     multiple build passes to determine the total number of pages.
     """
 
-    def __init__(self, doc):
+    def __init__(self, doc, page_count):
         super().__init__()
         self.doc = doc
-        self.last_page = 1
+        self.last_page = page_count
 
     def isSatisfied(self):
         """Document template multiBuild() hook to enable another build pass."""

@@ -194,3 +194,11 @@ the script is stored, then execute the following command:
 If the requisite software was installed successfully, the output PDFs will
 be created in the :file:`pdf` folder within the same location as the
 source script.
+
+In addition to test procedure PDFs, |project_name| will generate a
+cache file named |cache_filename|. This file contains data used to accelerate
+execution when the script is run again, such as during editing and proofreading
+cycles. All operations on the cache file are handled automatically by
+|project_name|. The only accommodation required of the user is to ensure
+the cache file is not tracked if a version control system is used;
+the attached :file:`.gitignore` example includes this requirement.
