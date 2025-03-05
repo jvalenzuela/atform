@@ -21,7 +21,7 @@ ImageSize = collections.namedtuple("ImageSize", ["width", "height"])
 MAX_LOGO_SIZE = ImageSize(2.0, 1.5)
 
 
-@functools.cache
+@functools.lru_cache(maxsize=None)
 def load(path, max_size):
     """Loads and validates an image file."""
     # BytesIO are allowed to support unit testing.
