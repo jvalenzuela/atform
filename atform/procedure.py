@@ -1,7 +1,4 @@
-"""
-This module implements validation of the procedure list provided to Test()
-instances.
-"""
+"""This module implements procedure list validation and storage."""
 
 import collections
 import dataclasses

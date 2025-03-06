@@ -39,7 +39,9 @@ def init():
     global copyright_
     copyright_ = None
 
-    # Fields assigned to the most recent test.
+    # Numeric ID assigned to the most recent test; stored as a list instead
+    # of a tuple because items in this list are incremented as tests and
+    # sections are created.
     global current_id
     current_id = [0]
 
@@ -55,7 +57,7 @@ def init():
     global logo_hash
     logo_hash = None
 
-    # All Test() instances in the order they were created.
+    # All tests in the order they were created.
     global tests
     tests = []
 
