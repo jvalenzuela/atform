@@ -35,8 +35,9 @@ class BuildError(Exception):
     """Exception chained from a PDF generation failure."""
 
 
-def build(root, folder_depth, version, test):
+def build(root, folder_depth, version, index):
     """Builds a PDF document for a given test instance."""
+    test = state.tests[index]
     path = build_path(test.id, root, folder_depth)
     try:
         doc = TestDocument(test, path, version)

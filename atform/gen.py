@@ -86,8 +86,12 @@ def generate(*, path="pdf", folder_depth=0):
     # worse than the original, serial implementation.
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [
-            executor.submit(pdf.build, path, folder_depth, version, t)
-            for t in state.tests
+            # The test instance is selected via array index instead of the
+            # test object because the worker processes already have the
+            # entire test array from the state module, so using just the
+            # index avoids seralizing the entire test data.
+            executor.submit(pdf.build, path, folder_depth, version, i)
+            for i, test in enumerate(state.tests)
         ]
         for f in concurrent.futures.as_completed(futures):
             try:
