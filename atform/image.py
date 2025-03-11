@@ -21,6 +21,10 @@ ImageSize = collections.namedtuple("ImageSize", ["width", "height"])
 MAX_LOGO_SIZE = ImageSize(2.0, 1.5)
 
 
+# Allowable image formats.
+FORMATS = ["JPEG", "PNG"]
+
+
 @functools.lru_cache(maxsize=None)
 def load(path, max_size):
     """Loads and validates an image file."""
@@ -32,7 +36,7 @@ def load(path, max_size):
         )
 
     try:
-        image = PIL.Image.open(path, formats=["JPEG"])
+        image = PIL.Image.open(path, formats=FORMATS)
     except FileNotFoundError as e:
         raise error.UserScriptError(
             f"Image file not found: {path}",
@@ -40,8 +44,17 @@ def load(path, max_size):
     except PIL.UnidentifiedImageError as e:
         raise error.UserScriptError(
             f"Unsupported image format: {path}",
-            "Image file must be a JPEG.",
+            f"""
+            Image file must be one of the following
+            formats: {', '.join(FORMATS)}
+            """,
         ) from e
+
+    # PNG formats require calling load() to ensure EXIF data is available
+    # in the info attribute. The call is unconditional for simplicity as
+    # there's no downside to callling it regardless of format.
+    image.load()
+
     try:
         dpi_raw = image.info["dpi"]
     except KeyError as e:
@@ -57,24 +70,23 @@ def load(path, max_size):
 
     if (size.width > max_size.width) or (size.height > max_size.height):
         raise error.UserScriptError(
-            f"""
-            Image is too large:
-            {size.width:.3} x {size.height:.3} (inch)""",
+            f"Image is too large: {path}",
             f"""
             Reduce the image size to within {max_size.width} inch
             wide and {max_size.height} inch high.
             """,
         )
 
-    # Dump the JPEG data to an in-memory buffer and convert to a Reportlab
+    # Dump the image data to an in-memory buffer and convert to a Reportlab
     # Image object.
     buf = io.BytesIO()
-    image.save(
-        buf,
-        format="JPEG",
-        quality="keep",
-        dpi=dpi,
-    )
+    args = {
+        "format": image.format,
+        "dpi": dpi,
+    }
+    if image.format == "JPEG":
+        args["quality"] = "keep"
+    image.save(buf, **args)
     return Image(
         buf,
         width=size.width * inch,

@@ -34,33 +34,50 @@ class ErrorBase:
         with self.assertRaises(SystemExit):
             self.call("foo".encode())
 
-    def test_not_jpeg(self):
-        """Confirm exception if the image file is not a JPEG."""
+    def test_unsupported_format(self):
+        """Confirm exception if the image file is not a supported format."""
         img = PIL.Image.new(mode="RGB", size=(1, 1))
-        f = make_image_file(img, format="PNG", dpi=(100, 100))
+        f = make_image_file(img, format="BMP", dpi=(100, 100))
         with self.assertRaises(SystemExit):
             self.call(f)
+
+    def test_supported_formats(self):
+        """Confirm supported image formats are accepted."""
+        img = PIL.Image.new(mode="RGB", size=(1, 1))
+        for fmt in atform.image.FORMATS:
+            with self.subTest(fmt=fmt):
+                f = make_image_file(img, format=fmt, dpi=(100, 100))
+                utils.reset()
+                self.call(f)
 
     def test_no_dpi(self):
         """Confirm exception if the image file lacks DPI metadata."""
         img = PIL.Image.new(mode="RGB", size=(1, 1))
-        f = make_image_file(img, format="JPEG")
-        with self.assertRaises(SystemExit):
-            self.call(f)
+        for fmt in atform.image.FORMATS:
+            with self.subTest(fmt=fmt):
+                f = make_image_file(img, format=fmt)
+                utils.reset()
+                with self.assertRaises(SystemExit):
+                    self.call(f)
 
-    def test_too_wide(self):
-        """Confirm exception if the image is too wide."""
-        img = PIL.Image.new(mode="RGB", size=(self.TOO_WIDE, 1))
-        f = make_image_file(img, format="JPEG", dpi=(100, 100))
-        with self.assertRaises(SystemExit):
-            self.call(f)
+    def test_too_large(self):
+        """Confirm exception if the image is too large.
 
-    def test_too_high(self):
-        """Confirm exception of the image is too high."""
-        img = PIL.Image.new(mode="RGB", size=(1, self.TOO_HIGH))
-        f = make_image_file(img, format="JPEG", dpi=(100, 100))
-        with self.assertRaises(SystemExit):
-            self.call(f)
+        This test is only run with JPEG images because DPI information
+        for PNG images is metric, making it impossible to generate images
+        of max size + 1 pixel.
+        """
+        sizes = [
+            (self.TOO_WIDE, 1),
+            (1, self.TOO_HIGH),
+            (self.TOO_WIDE, self.TOO_HIGH),
+        ]
+        for size in sizes:
+            with self.subTest(size=size):
+                img = PIL.Image.new(mode="RGB", size=size)
+                f = make_image_file(img, format="JPEG", dpi=(100, 100))
+                with self.assertRaises(SystemExit):
+                    self.call(f)
 
 
 class AddLogo(unittest.TestCase, ErrorBase):

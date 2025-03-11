@@ -7,7 +7,7 @@ import atform
 ######################################################################
 
 # Place a logo in the title block.
-atform.add_logo("python.jpg")
+atform.add_logo("python.png")
 
 atform.add_copyright(
     """

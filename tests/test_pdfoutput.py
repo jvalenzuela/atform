@@ -339,6 +339,17 @@ class Procedure(Base, unittest.TestCase):
             self.make_image_step("width"),
             self.make_image_step("height"),
             self.make_image_step("small"),
+            {
+                # This step exists to verify correct operation with a PNG
+                # image. Testing image size limits is not done with PNG
+                # images; see test_image.ErrorBase.test_too_large for
+                # rationale.
+                "text": """
+                Procedure step with a PNG image. Verify a circle inscribed
+                by a square.
+                """,
+                "image": os.path.join("tests", "images", "procedure", "step.png"),
+            },
         ]
 
         # Add enough steps to force the table to span muliple pages.
