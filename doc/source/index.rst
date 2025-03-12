@@ -13,4 +13,5 @@ Welcome to atform's documentation!
    ref
    auto
    vcs
+   cli
    api

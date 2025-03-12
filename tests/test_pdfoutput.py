@@ -609,26 +609,22 @@ class CachePageCount(Base, unittest.TestCase):
     # add_test() arguments to produce a three-page document.
     TEST_ARGS = {"procedure": ["step"] * 60}
 
-    def test_no_cache(self):
+    @patch("atform.cache.load", return_value={})
+    def test_no_cache(self, mock):
         """Confirm correct page count(3) when no cache is available."""
-        with patch("atform.cache.get_test_data") as mock:
-            mock.return_value = None
-            self.make_test(**self.TEST_ARGS)
+        self.make_test(**self.TEST_ARGS)
 
-    def test_stale_low(self):
+    @patch("atform.cache.load", return_value={(1,): {"page count": 1}})
+    def test_stale_low(self, mock):
         """Confirm correct page count(3) when the cached page count is too low."""
-        with patch("atform.cache.get_test_data") as mock:
-            mock.return_value = {"page count": 1}
-            self.make_test(**self.TEST_ARGS)
+        self.make_test(**self.TEST_ARGS)
 
-    def test_stale_high(self):
+    @patch("atform.cache.load", return_value={(1,): {"page count": 99}})
+    def test_stale_high(self, mock):
         """Confirm correct page count(3) when the cached page count is too high."""
-        with patch("atform.cache.get_test_data") as mock:
-            mock.return_value = {"page count": 42}
-            self.make_test(**self.TEST_ARGS)
+        self.make_test(**self.TEST_ARGS)
 
-    def test_correct(self):
+    @patch("atform.cache.load", return_value={(1,): {"page count": 3}})
+    def test_correct(self, mock):
         """Confirm correct page count(3) when the cached page count is right."""
-        with patch("atform.cache.get_test_data") as mock:
-            mock.return_value = {"page count": 3}
-            self.make_test(**self.TEST_ARGS)
+        self.make_test(**self.TEST_ARGS)

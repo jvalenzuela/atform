@@ -2,11 +2,72 @@
 
 import concurrent.futures
 
+from . import arg
 from . import cache
 from . import error
 from . import pdf
 from . import state
 from . import vcs
+
+
+def get_tests_to_build():
+    """Assembles the test instances that will be generated.
+
+    Returns a list of test instances matching IDs from command line arguments.
+    """
+    arg_ids = arg.parse()
+
+    # Default to build all tests if no IDs were selected.
+    if not arg_ids:
+        return state.tests
+
+    return [t for t in state.tests if id_match_args(t.id, arg_ids)]
+
+
+def id_match_args(tid, args):
+    """Determines if a test ID matches any ID or range from the command line."""
+    return next(filter(None, (id_match(tid, arg) for arg in args)), False)
+
+
+def id_match(tid, target):
+    """Determines if a test ID matches a single ID from the command line.
+
+    Comparison between the test and target ID(s) only evaluates the number of
+    target fields, allowing short IDs representing a section to match all
+    tests within that section, e.g, 4.2 will match 4.2.x because only the
+    first two fields are tested.
+    """
+    if isinstance(target[0], int):  # Target is a single ID.
+        return tid[: len(target)] == target
+
+    # Otherwise target is a range.
+    start, end = target
+    return (start <= tid[: len(start)]) and (end >= tid[: len(end)])
+
+
+def submit_tests_to_build(executor, cache_, *build_args):
+    """Submits test instances for output generation."""
+    futures = []
+    for t in get_tests_to_build():
+        try:
+            test_cache = cache_[t.id]
+        except KeyError:
+            test_cache = None
+        futures.append(executor.submit(pdf.build, t, test_cache, *build_args))
+    return futures
+
+
+def wait_build_complete(futures):
+    """Waits for all submitted build jobs to complete."""
+    results = {}
+    for f in concurrent.futures.as_completed(futures):
+        try:
+            tid, data = f.result()
+        except pdf.BuildError as e:
+            print(e)
+        else:
+            results[tid] = data
+    return results
 
 
 ################################################################################
@@ -77,7 +138,7 @@ def generate(*, path="pdf", folder_depth=0):
     else:
         version = git.version if git.clean else "draft"
 
-    cache.load()
+    cache_ = cache.load()
 
     # Use of the ProcessPoolExecutor was based on empirical testing by
     # measuring the amount of time required to generate a large number
@@ -85,16 +146,8 @@ def generate(*, path="pdf", folder_depth=0):
     # significant improvement, while the thread-based executor was
     # worse than the original, serial implementation.
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        futures = [
-            executor.submit(pdf.build, path, folder_depth, version, t)
-            for t in state.tests
-        ]
-        for f in concurrent.futures.as_completed(futures):
-            try:
-                tid, data = f.result()
-            except pdf.BuildError as e:
-                print(e)
-            else:
-                cache.set_test_data(tid, data)
+        futures = submit_tests_to_build(executor, cache_, path, folder_depth, version)
+        results = wait_build_complete(futures)
 
-    cache.save()
+    cache_.update(results)
+    cache.save(cache_)

@@ -13,7 +13,6 @@ from reportlab.platypus import (
     SimpleDocTemplate,
 )
 
-from .. import cache
 from .. import id as id_
 from . import (
     approval,
@@ -35,11 +34,11 @@ class BuildError(Exception):
     """Exception chained from a PDF generation failure."""
 
 
-def build(root, folder_depth, version, test):
+def build(test, cache, root, folder_depth, version):
     """Builds a PDF document for a given test instance."""
     path = build_path(test.id, root, folder_depth)
     try:
-        doc = TestDocument(test, path, version)
+        doc = TestDocument(test, cache, path, version)
     except Exception as e:
         tid = id_.to_string(test.id)
         raise BuildError(f"Failed to build PDF for {tid} {test.title}: {e}") from e
@@ -79,10 +78,9 @@ def build_path(tid, root, depth):
 class TestDocument:
     """This class creates a PDF for a single Test instance."""
 
-    def __init__(self, test, path, version):
+    def __init__(self, test, cache, path, version):
         self.test = test
         self.version = version
-        cache_data = cache.get_test_data(test.id)
 
         # The full name is the combination of the test's numeric
         # identifier and title.
@@ -109,7 +107,7 @@ class TestDocument:
 
         doc = self._get_doc(path)
         try:
-            cached_page_count = cache_data["page count"]
+            cached_page_count = cache["page count"]
         except TypeError:
             cached_page_count = 1
         self.page_count = PageCount(doc, cached_page_count)

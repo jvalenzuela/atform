@@ -20,39 +20,31 @@ class Load(unittest.TestCase):
         """Confirm default data when no cache file exists."""
         with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
             mock.side_effect = OSError
-            atform.cache.load()
-        self.assertIsNone(atform.cache.get_test_data((1,)))
+            self.assertEqual(atform.cache.load(), {})
 
     def test_invalid_file(self):
         """Confirm default data when an invalid file exists."""
         with patch("atform.cache.OPEN", mock_open(read_data=b"spam")):
-            atform.cache.load()
-        self.assertIsNone(atform.cache.get_test_data((1,)))
+            self.assertEqual(atform.cache.load(), {})
 
     def test_version_mismatch(self):
         """Confirm default data when loading a cache file from a different module version."""
         cache = pickle.dumps(
             {
                 "version": atform.version.VERSION + "spam",
-                "tests": {(1,): "foo"},
+                "data": {(1,): "foo"},
             }
         )
         with patch("atform.cache.OPEN", mock_open(read_data=cache)):
-            atform.cache.load()
-        self.assertIsNone(atform.cache.get_test_data((1,)))
+            self.assertEqual(atform.cache.load(), {})
 
-    def test_load(self):
+    @utils.no_pdf_output
+    @patch("atform.cache.load", return_value={})
+    def test_load_during_gen(self, mock_load):
         """Confirm cache is loaded during output generation."""
         atform.add_test("a test")
-        cache = pickle.dumps(
-            {
-                "version": atform.version.VERSION,
-                "tests": {(42, 99): {"page count": 123}},
-            }
-        )
-        with patch("atform.cache.OPEN", mock_open(read_data=cache)):
-            atform.generate()
-        self.assertEqual(atform.cache.get_test_data((42, 99)), {"page count": 123})
+        atform.generate()
+        mock_load.assert_called_once_with()
 
 
 class Save(unittest.TestCase):
@@ -63,14 +55,31 @@ class Save(unittest.TestCase):
 
     def test_version(self):
         """Confirm saved data includes the module version."""
-        atform.add_test("t1")
         with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
-            atform.generate()
+            atform.cache.save("spam")
         saved = self.get_saved_data(mock)
         self.assertEqual(saved["version"], atform.version.VERSION)
 
+    @utils.no_pdf_output
+    def test_retain_previous(self):
+        """Confirm data is retained from previous tests not built on this run."""
+        atform.add_test("t1")
+
+        prev = pickle.dumps(
+            {
+                "version": atform.version.VERSION,
+                "data": {(42,): {"page count": 99}},
+            }
+        )
+        with patch("atform.cache.OPEN", mock_open(read_data=prev)) as mock:
+            atform.generate()
+
+        saved = self.get_saved_data(mock)
+        self.assertEqual(saved["data"][(42,)], {"page count": 99})
+
+    @utils.no_pdf_output
     def test_overwrite_stale_data(self):
-        """Confirm saved data overwrites previously-cached data."""
+        """Confirm generated tests overwrite previous data from the same tests."""
 
         atform.add_test("t1")
         atform.add_test("t2")
@@ -78,9 +87,9 @@ class Save(unittest.TestCase):
         stale = pickle.dumps(
             {
                 "version": atform.version.VERSION,
-                "tests": {
-                    (42, 1): {"page count": 10},
-                    (42, 2): {"page count": 20},
+                "data": {
+                    (1,): {"page count": 10},
+                    (2,): {"page count": 20},
                 },
             }
         )
@@ -89,7 +98,7 @@ class Save(unittest.TestCase):
 
         saved = self.get_saved_data(mock)
         self.assertEqual(
-            saved["tests"],
+            saved["data"],
             {
                 (1,): {"page count": 1},
                 (2,): {"page count": 1},

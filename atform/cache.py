@@ -7,7 +7,8 @@ can be used to accelerate future runs. Operation consists of two phases:
    generating output.
 
 2. Data resulting from this run is collected and written to the cache file
-   when output generation is complete, overwriting all previous data.
+   when output generation is complete, overwriting previous data for
+   any tests generated on this run.
 """
 
 import pickle
@@ -25,19 +26,8 @@ FILENAME = "atform.cache"
 OPEN = open
 
 
-def default_data():
-    """Generates an empty cache data set."""
-    return {
-        "tests": {},  # Data specific to tests; keyed by test ID tuple.
-    }
-
-
 def load():
-    """Reads the cache file.
-
-    Defaults to an empty data set if the cache file could not be loaded, e.g.,
-    no cache file exists or is otherwise invalid.
-    """
+    """Reads the cache file."""
     try:
         with OPEN(FILENAME, "rb") as f:
             data = pickle.load(f)
@@ -48,18 +38,21 @@ def load():
 
     # The very broad set of exceptions is due to the fact that
     # unpickling can result in pretty much any exception.
+    # Defaults to an empty data set if the cache file could not be loaded,
+    # e.g., no cache file exists or is otherwise invalid.
     except Exception:  # pylint: disable=broad-exception-caught
-        pass
+        return {}
 
-    else:
-        global last_data  # pylint: disable=global-statement
-        last_data = data
+    return data["data"]
 
 
-def save():
+def save(data):
     """Writes the data from this run to the cache file."""
-    # Include module version information.
-    new_data["version"] = version.VERSION
+    # Include additional metadata used to validate the cache when loading.
+    cache = {
+        "version": version.VERSION,
+        "data": data,
+    }
 
     try:
         f = OPEN(FILENAME, "wb")
@@ -67,26 +60,4 @@ def save():
         print(f"Error writing cache file: {e}")
     else:
         with f:
-            pickle.dump(new_data, f)
-
-
-def get_test_data(tid):
-    """Retrieves cached data from the previous run for a given test."""
-    try:
-        data = last_data["tests"][tid]
-    except KeyError:
-        data = None
-    return data
-
-
-def set_test_data(tid, data):
-    """Stores data to be cached for a given test."""
-    new_data["tests"][tid] = data
-
-
-# Data from a previous run loaded from the cache file by load().
-last_data = default_data()
-
-
-# Data resulting from this run, which will be written to the cache file.
-new_data = default_data()
+            pickle.dump(cache, f)
