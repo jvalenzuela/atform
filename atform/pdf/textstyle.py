@@ -27,6 +27,7 @@ stylesheet = getSampleStyleSheet()
 
 stylesheet["Normal"].fontName = "Times-Roman"
 stylesheet["Normal"].fontSize = toLength("12 pt")
+stylesheet["Normal"].spaceAfter = toLength("10 pt")
 
 
 stylesheet.add(
@@ -52,26 +53,6 @@ stylesheet.add(
         name="SectionHeading",
         parent=stylesheet["Heading3"],
         fontName="Times-Bold",
-    )
-)
-
-
-# Leading paragraph in a body of text.
-stylesheet.add(
-    ParagraphStyle(
-        name="FirstParagraph",
-        parent=stylesheet["Normal"],
-    )
-)
-
-
-# Any additional paragraphs in a body of text.
-stylesheet.add(
-    ParagraphStyle(
-        name="NextParagraph",
-        parent=stylesheet["FirstParagraph"],
-        spaceBefore=toLength("4 pt"),
-        firstLineIndent=toLength("0.25 in"),
     )
 )
 

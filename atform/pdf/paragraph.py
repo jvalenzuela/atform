@@ -40,15 +40,5 @@ def make_paragraphs(text):
     Creates a set of flowables from a string containing one or
     more paragraphs.
     """
-    flowables = []
-
-    # Set style for the leading paragraph.
-    style = "FirstParagraph"
-
-    for ptext in split_paragraphs(text):
-        flowables.append(Paragraph(ptext, style=stylesheet[style]))
-
-        # Set style for all paragraphs after the first.
-        style = "NextParagraph"
-
-    return flowables
+    style = stylesheet["Normal"]
+    return [Paragraph(p, style=style) for p in split_paragraphs(text)]
