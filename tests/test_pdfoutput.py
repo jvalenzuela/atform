@@ -443,8 +443,19 @@ class Approval(Base, unittest.TestCase):
         self.make_test()
 
 
-class ProjectInfo(Base, unittest.TestCase):
-    """Tests for header project information."""
+class TitleBlock(Base, unittest.TestCase):
+    """Tests for title block on the first page."""
+
+    def test_none(self):
+        """Verify header when no logo or project information is present."""
+        procedure = [
+            "Verify first page has the same header as the second page.",
+        ]
+
+        # Add dummy content to generate multiple pages.
+        procedure.extend(["filler step"] * 50)
+
+        self.make_test(procedure=procedure)
 
     def test_project(self):
         """Verify only project name in the title block."""
@@ -456,16 +467,59 @@ class ProjectInfo(Base, unittest.TestCase):
         atform.set_project_info(system="The System Name")
         self.make_test()
 
-    def test_project_and_system_a_very_long_name_to_generate_a_multiline_title(self):
-        """Verify project and system names in the title block, and confirm all titles are aligned with the top line of each field."""
-        # Generate long project and system strings to ensure they require
-        # multiple lines in order to verify vertical alignment between the
-        # title and field.
-        atform.set_project_info(
-            project="The Project Name " + "foo " * 30,
-            system="The System Name " + "spam " * 30,
+    def test_logo_only(self):
+        """Verify layout with only a logo."""
+        atform.add_logo(os.path.join("tests", "images", "logo", "full.jpg"))
+        self.make_test(
+            procedure=[
+                "Verify title is in the lower-right corner of the title block.",
+            ],
         )
-        self.make_test()
+
+    def test_short_logo(self):
+        """Verify layout with a logo shorter than the text fields."""
+        atform.set_project_info(
+            project="The Project Name",
+            system="The System Name",
+        )
+        atform.add_logo(os.path.join("tests", "images", "logo", "width.jpg"))
+        self.make_test(
+            procedure=[
+                "Verify logo is vertically centered with text fields.",
+            ],
+        )
+
+    def test_tall_logo(self):
+        """Verify layout with a logo taller than the text fields."""
+        atform.set_project_info(
+            project="The Project Name",
+            system="The System Name",
+        )
+        atform.add_logo(os.path.join("tests", "images", "logo", "full.jpg"))
+        self.make_test(
+            procedure=[
+                """
+                Verify project and system names are together in the upper-right
+                corner of the title block.
+                """,
+                "Verify title is in the lower-right corner of the title block.",
+            ],
+        )
+
+    def test_project_and_system_a_very_long_name_to_generate_a_multiline_title(self):
+        """Verify layout of a title block with multi-line text."""
+        atform.add_logo(os.path.join("tests", "images", "logo", "full.jpg"))
+        # Generate long project and system strings to ensure they require
+        # multiple lines.
+        atform.set_project_info(
+            project="The Project Name " + "." * 100,
+            system="The System Name " + "." * 100,
+        )
+        self.make_test(
+            procedure=[
+                "Verify horizontal padding between logo and title block text.",
+            ],
+        )
 
 
 class Format(Base, unittest.TestCase):
@@ -541,7 +595,6 @@ class Logo(Base, unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        atform.set_project_info(project="The Project", system="The System")
 
     def make_logo(self, name):
         """Creates a test with a given logo image."""
@@ -551,7 +604,8 @@ class Logo(Base, unittest.TestCase):
             preconditions=[
                 "Verify the logo has a red border.",
                 "Verify the shape in the middle is a circle.",
-                "Verify the logo is centered in the upper-left corner.",
+                "Verify the logo abuts the left margin.",
+                "Verify the bottom of the logo clears the top of the first section.",
             ]
         )
 

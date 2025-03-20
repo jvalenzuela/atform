@@ -78,6 +78,28 @@ stylesheet.add(
 
 stylesheet.add(
     ParagraphStyle(
+        name="ProjectName",
+        parent=stylesheet["Heading1"],
+        fontSize=toLength("20 pt"),
+        leading=toLength("22 pt"),
+        alignment=TA_RIGHT,
+        fontName="Times-BoldItalic",
+    )
+)
+
+
+stylesheet.add(
+    ParagraphStyle(
+        name="SystemName",
+        parent=stylesheet["ProjectName"],
+        fontSize=toLength("16 pt"),
+        leading=toLength("18 pt"),
+    )
+)
+
+
+stylesheet.add(
+    ParagraphStyle(
         name="Header",
         parent=stylesheet["Heading2"],
         fontName="Times-Bold",

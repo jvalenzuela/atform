@@ -3,121 +3,116 @@
 This module creates the title block at the top of the first page.
 """
 
-from reportlab.lib.units import toLength
 from reportlab.platypus import (
     Paragraph,
     Table,
 )
 
-from .. import id as id_
 from . import layout
-from .. import (
-    image,
-    state,
-)
+from .. import state
 from .textstyle import stylesheet
 
 
+# Table coordinates.
+LOGO_COL = 0
+LOGO_ROW = 0
+LOGO_CELL = (LOGO_COL, LOGO_ROW)
+PRJ_INFO_COL = 1
+PRJ_INFO_ROW = 0
+PRJ_INFO_CELL = (PRJ_INFO_COL, PRJ_INFO_ROW)
+TITLE_COL = 1
+TITLE_ROW = 1
+TITLE_CELL = (TITLE_COL, TITLE_ROW)
+
+
+# Style for the entire title block table.
+TABLE_STYLE = [
+    ("SPAN", (LOGO_COL, LOGO_ROW), (LOGO_COL, -1)),
+    ("VALIGN", LOGO_CELL, LOGO_CELL, "MIDDLE"),
+    # Remove all padding surrounding the logo; padding between the logo
+    # and title block text is in the text column.
+    ("TOPPADDING", LOGO_CELL, LOGO_CELL, 0),
+    ("BOTTOMPADDING", LOGO_CELL, LOGO_CELL, 0),
+    ("LEFTPADDING", LOGO_CELL, LOGO_CELL, 0),
+    ("RIGHTPADDING", LOGO_CELL, LOGO_CELL, 0),
+    ("TOPPADDING", PRJ_INFO_CELL, PRJ_INFO_CELL, 0),
+    ("BOTTOMPADDING", PRJ_INFO_CELL, PRJ_INFO_CELL, 0),
+    ("VALIGN", PRJ_INFO_CELL, PRJ_INFO_CELL, "TOP"),
+    # Remove right padding to align all text with the right margin.
+    ("RIGHTPADDING", (-1, 0), (-1, -1), 0),
+    ("BOTTOMPADDING", TITLE_CELL, TITLE_CELL, 0),
+]
+
+
+# Style for the child table containing project information.
+PRJ_INFO_TABLE_STYLE = [
+    # Remove all padding; the parent title block table supplies any
+    # necessary padding surrounding this table.
+    ("TOPPADDING", (0, 0), (-1, -1), 0),
+    ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ("LEFTPADDING", (0, 0), (-1, -1), 0),
+    ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+]
+
+
 def make_title(test):
-    """
-    Creates title information on the top of the first page containing
-    project information, test number & title, and logo. Constructed
-    as a table with one row; the logo, if any, is the first column,
-    and a nested table for the information fields occupies the
-    second column.
-    """
+    """Creates title information on the top of the first page."""
+    prj_info = project_info_table(test)
+
+    # Disable the title block if no information was given other than the
+    # test title.
+    if not prj_info and not state.logo:
+        return None
+
     rows = [
-        [
-            state.logo,
-            make_fields(test),
-        ]
+        [state.logo, prj_info],
+        [None, Paragraph(test.full_name, stylesheet["HeaderRight"])],
     ]
 
-    style = [
-        # Center the logo.
-        ("ALIGN", (0, 0), (0, 0), "CENTER"),
-        # Both the logo and fields table are vertically centered.
-        ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
-        # Remove right padding from the fields table as it goes all
-        # the way to the right margin.
-        ("RIGHTPADDING", (-1, 0), (-1, 0), 0),
-    ]
+    widths = [0, 0]
 
-    # Remove the left padding from the column containing the fields table
-    # if no logo is present, allowing the fields table to abut the
-    # left margin.
-    if not state.logo:
-        style.append(("LEFTPADDING", (1, 0), (1, 0), 0))
+    if state.logo:
+        widths[LOGO_COL] = state.logo.drawWidth
 
-    # The image width is fixed to the maximum allowable logo size
-    # regardless of the actual image size. If no logo is being used,
-    # the image column width is set to zero.
-    image_width = toLength(f"{image.MAX_LOGO_SIZE.width} in") if state.logo else 0
-
-    widths = [
-        image_width,
-        # The fields table occupies all remaining horizontal space.
-        layout.BODY_WIDTH - image_width,
-    ]
+    # The text column occupies all remaining horizontal space left over
+    # from the logo.
+    widths[TITLE_COL] = layout.BODY_WIDTH - widths[LOGO_COL]
 
     return Table(
         rows,
-        style=style,
+        style=TABLE_STYLE,
         colWidths=widths,
+        spaceAfter=layout.SECTION_SEP,
     )
 
 
-def make_fields(test):
-    """Builds a table containing the title block fields."""
-    items = []
+def project_info_table(test):
+    """Builds the child table containing project information.
 
-    # Add optional project information fields.
+    Project information is contained in a dedicated child table to keep
+    the vertical space between rows constant, regardless of the total
+    height of the entire title block.
+    """
+    rows = []
+
     try:
-        items.append(("Project", test.project_info["project"]))
+        project = test.project_info["project"]
     except KeyError:
         pass
+    else:
+        rows.append(Paragraph(project, stylesheet["ProjectName"]))
+
     try:
-        items.append(("System", test.project_info["system"]))
+        system = test.project_info["system"]
     except KeyError:
         pass
+    else:
+        rows.append(Paragraph(system, stylesheet["SystemName"]))
 
-    # Add test identification fields.
-    items.append(("Number", id_.to_string(test.id)))
-    items.append(("Title", test.title))
+    if rows:
+        return Table(
+            [[r] for r in rows],
+            style=PRJ_INFO_TABLE_STYLE,
+        )
 
-    # Add a colon after each field name.
-    items = [(f"{i[0]}:", i[1]) for i in items]
-
-    rows = [
-        [
-            Paragraph(title, stylesheet["HeaderRight"]),
-            Paragraph(value, stylesheet["Header"]),
-        ]
-        for title, value in items
-    ]
-
-    style = [
-        # Remove horizontal padding from the field name column.
-        ("LEFTPADDING", (0, 0), (0, -1), 0),
-        ("RIGHTPADDING", (0, 0), (0, -1), 0),
-        # Vertically align titles with the first line of each field.
-        ("VALIGN", (0, 0), (0, -1), "TOP"),
-    ]
-
-    widths = [
-        layout.max_width(
-            [i[0] for i in items],
-            "HeaderRight",
-            left_pad=0,
-            right_pad=0,
-        ),
-        # The value column is left unspecified as the parent title block
-        # table will be stretched to fill.
-        None,
-    ]
-
-    return Table(
-        rows,
-        style=style,
-        colWidths=widths,
-    )
+    return None

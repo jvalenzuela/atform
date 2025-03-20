@@ -31,6 +31,11 @@ class TestContent:
     call_frame: types.FrameType
     labels: dict
 
+    @property
+    def full_name(self):
+        """String containing the combination of ID and title."""
+        return " ".join((id_.to_string(self.id), self.title))
+
     def pregenerate(self):
         """
         Performs tasks that need to occur after all tests have been defined,

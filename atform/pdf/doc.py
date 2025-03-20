@@ -82,10 +82,6 @@ class TestDocument:
         self.test = test
         self.version = version
 
-        # The full name is the combination of the test's numeric
-        # identifier and title.
-        self.full_name = " ".join((id_.to_string(test.id), test.title))
-
         self.bottom_margin = layout.BOTTOM_MARGIN
 
         if state.copyright_:
@@ -122,7 +118,7 @@ class TestDocument:
 
     def _get_doc(self, path):
         """Creates the document template."""
-        pdfname = self.full_name + ".pdf"
+        pdfname = self.test.full_name + ".pdf"
         os.makedirs(path, exist_ok=True)
         filename = os.path.join(path, pdfname)
         return SimpleDocTemplate(
@@ -137,6 +133,11 @@ class TestDocument:
     def on_first_page(self, canvas, doc):
         """Document template callback for the first page."""
         self._on_every_page(canvas, doc)
+
+        # Use a simple header on the first page if a full title block
+        # was not generated.
+        if self.no_title_block:
+            self._header(canvas, doc)
 
     def on_later_pages(self, canvas, doc):
         """Document template callback for all pages after the first."""
@@ -157,7 +158,7 @@ class TestDocument:
         canvas.drawString(
             layout.LEFT_MARGIN,
             baseline,
-            self.full_name,
+            self.test.full_name,
         )
 
     def _footer(self, canvas, doc):
@@ -215,6 +216,8 @@ class TestDocument:
             notes.make_notes(),
             approval.make_approval(),
         ]
+
+        self.no_title_block = flowables[0] is None
 
         return [f for f in flowables if f]
 
