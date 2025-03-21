@@ -9,6 +9,7 @@ import unittest
 class Generate(unittest.TestCase):
     """Unit tests for the generate() function."""
 
+    @utils.disable_idlock
     def test_path_type(self):
         """Confirm exception if path is not a string."""
         with self.assertRaises(SystemExit):
@@ -21,16 +22,19 @@ class GenerateFolderDepth(unittest.TestCase):
     def setUp(self):
         utils.reset()
 
+    @utils.disable_idlock
     def test_invalid_type(self):
         """Confirm exception for a non-integer argument."""
         with self.assertRaises(SystemExit):
             atform.generate(folder_depth="foo")
 
+    @utils.disable_idlock
     def test_negative(self):
         """Confirm exception for a negative argument."""
         with self.assertRaises(SystemExit):
             atform.generate(folder_depth=-1)
 
+    @utils.disable_idlock
     def test_too_large(self):
         """Confirm exception for values greater than or equal to the id depth."""
         atform.set_id_depth(3)

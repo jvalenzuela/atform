@@ -5,7 +5,7 @@ import atform
 from atform import label
 import collections
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 
 def reset():
@@ -39,6 +39,16 @@ def no_pdf_output(method):
     @patch("atform.gen.pdf.build", new=mock_build)
     def wrapper(self, *args, **kwargs):
         method(self, *args, **kwargs)
+
+    return wrapper
+
+
+def disable_idlock(method):
+    """Test case decorator to disable all ID lock file operations."""
+
+    def wrapper(self, *args, **kwargs):
+        with patch("atform.idlock.verify", return_value=None):
+            method(self, *args, **kwargs)
 
     return wrapper
 

@@ -175,6 +175,7 @@ class FilterId(unittest.TestCase):
         atform.set_id_depth(2)
 
     @utils.no_pdf_output
+    @utils.disable_idlock
 
     # Patch the cache load to always yield an empty cache. Note, the default
     # return value(empty dict) is created by a callable side effect, not
