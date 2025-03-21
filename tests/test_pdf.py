@@ -67,12 +67,14 @@ class OutputSectionPathDepth(unittest.TestCase):
         atform.set_id_depth(self.ID_DEPTH)
         atform.add_test("Foo")
 
+    @utils.disable_idlock
     def test_default(self):
         """Verify no section folders with the default folder depth."""
         with tempfile.TemporaryDirectory() as root:
             atform.generate(path=root)
             self.assert_path(root, 0)
 
+    @utils.disable_idlock
     def test_explicit(self):
         """Verify correct section folder depth with explicitly given depths."""
         for depth in range(0, self.ID_DEPTH):

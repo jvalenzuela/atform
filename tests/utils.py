@@ -43,6 +43,16 @@ def no_pdf_output(method):
     return wrapper
 
 
+def disable_idlock(method):
+    """Test case decorator to disable all ID lock file operations."""
+
+    def wrapper(self, *args, **kwargs):
+        with patch("atform.idlock.verify", return_value=None):
+            method(self, *args, **kwargs)
+
+    return wrapper
+
+
 class ContentAreaException(unittest.TestCase):
     """
     Base class for testing functions only available in the setup area to

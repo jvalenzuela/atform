@@ -1,9 +1,11 @@
 """API to generate output PDFs."""
 
 import concurrent.futures
+import sys
 
 from . import arg
 from . import cache
+from . import idlock
 from . import error
 from . import pdf
 from . import state
@@ -137,6 +139,13 @@ def generate(*, path="pdf", folder_depth=0):
         version = None
     else:
         version = git.version if git.clean else "draft"
+
+    try:
+        idlock.verify()
+    except idlock.ChangedTestError as e:
+        sys.exit(e)
+    except idlock.LockFileWarning as e:
+        print(e)
 
     cache_ = cache.load()
 

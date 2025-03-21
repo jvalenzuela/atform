@@ -39,6 +39,7 @@ class Load(unittest.TestCase):
             self.assertEqual(atform.cache.load(), {})
 
     @utils.no_pdf_output
+    @utils.disable_idlock
     @patch("atform.cache.load", return_value={})
     def test_load_during_gen(self, mock_load):
         """Confirm cache is loaded during output generation."""
@@ -61,6 +62,7 @@ class Save(unittest.TestCase):
         self.assertEqual(saved["version"], atform.version.VERSION)
 
     @utils.no_pdf_output
+    @utils.disable_idlock
     def test_retain_previous(self):
         """Confirm data is retained from previous tests not built on this run."""
         atform.add_test("t1")
@@ -78,6 +80,7 @@ class Save(unittest.TestCase):
         self.assertEqual(saved["data"][(42,)], {"page count": 99})
 
     @utils.no_pdf_output
+    @utils.disable_idlock
     def test_overwrite_stale_data(self):
         """Confirm generated tests overwrite previous data from the same tests."""
 

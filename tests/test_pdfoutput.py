@@ -17,6 +17,7 @@ class Base(object):
     def setUp(self):
         utils.reset()
 
+    @utils.disable_idlock
     def make_test(self, generate=True, **kwargs):
         """atform.add_test() wrapper to assign a title and default objective."""
         # Generate a title that is class_name.method_name.

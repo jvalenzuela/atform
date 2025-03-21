@@ -617,6 +617,7 @@ class CallFrame(unittest.TestCase):
     def setUp(self):
         utils.reset()
 
+    @utils.disable_idlock
     @patch("atform.error.DEBUG", True)
     def test_post_call_exception(self):
         """Confirm an exception due to test content raised after a test is defined points to the original add_test() call."""
