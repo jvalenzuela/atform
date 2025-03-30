@@ -61,18 +61,23 @@ def make_title(test):
 
     # Disable the title block if no information was given other than the
     # test title.
-    if not prj_info and not state.logo:
+    if not prj_info and not state.logo_hash:
         return None
 
+    try:
+        logo = state.images[state.logo_hash]
+    except KeyError:
+        logo = None
+
     rows = [
-        [state.logo, prj_info],
+        [logo, prj_info],
         [None, Paragraph(test.full_name, stylesheet["HeaderRight"])],
     ]
 
     widths = [0, 0]
 
-    if state.logo:
-        widths[LOGO_COL] = state.logo.drawWidth
+    if state.logo_hash:
+        widths[LOGO_COL] = logo.drawWidth
 
     # The text column occupies all remaining horizontal space left over
     # from the logo.

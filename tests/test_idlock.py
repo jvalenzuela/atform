@@ -101,7 +101,7 @@ class Save(unittest.TestCase):
         rm_lock_file()
 
     @utils.no_pdf_output
-    @patch("atform.arg.parse", return_value=[(1,)])
+    @patch("sys.argv", utils.mock_argv("1"))
     @patch("atform.idlock.load", return_value={})
     def test_no_filter(self, mock_lock_open, *args):
         """Confirm all tests are saved regardless of CLI ID filtering."""
@@ -183,7 +183,7 @@ class ProhibitedChanges(unittest.TestCase):
 
         self.check_changes(cm, (1,), "t1", (1, 1), "t1")
 
-    @patch("atform.arg.parse", return_value=[(1,)])
+    @patch("sys.argv", utils.mock_argv("1"))
     @patch("atform.idlock.load", return_value={(1,): "t1", (2,): "t2"})
     def test_no_filter(self, *args):
         """Confirm prohibited changes are detected for tests excluded by CLI ID filters."""
@@ -226,6 +226,7 @@ class Integration(unittest.TestCase):
     def setUp(self):
         utils.reset()
 
+    @utils.no_args
     @patch("atform.idlock.verify", side_effect=atform.idlock.ChangedTestError(["foo"]))
     @patch("atform.cache.save")  # Used to determine if generate() created any PDFs.
     def test_inhibit_build(self, mock_cache_save, *args):
@@ -238,6 +239,7 @@ class Integration(unittest.TestCase):
         mock_cache_save.assert_not_called()
 
     @utils.no_pdf_output
+    @utils.no_args
     @patch("atform.idlock.verify", side_effect=atform.idlock.LockFileWarning("spam"))
     @patch("atform.cache.save")  # Used to determine if generate() created any PDFs.
     def test_warning_message(self, mock_cache_save, *args):

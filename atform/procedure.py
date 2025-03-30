@@ -7,8 +7,6 @@ import collections
 import dataclasses
 import typing
 
-from reportlab.platypus import Image
-
 from . import (
     error,
     image,
@@ -34,7 +32,6 @@ MAX_IMAGE_SIZE = image.ImageSize(5, 3)
 
 @dataclasses.dataclass(
     repr=False,
-    eq=False,
     order=False,
 )
 class Step:
@@ -46,7 +43,7 @@ class Step:
 
     text: str
     fields: typing.List[Field]
-    image: Image
+    image_hash: bytes
 
     def resolve_labels(self, mapping):
         """Replaces label placeholders with their target IDs."""
@@ -75,7 +72,7 @@ def make_step(raw, num, label_mapping):
     step = Step(
         text=validate_text(data),
         fields=validate_fields(data),
-        image=validate_image(data),
+        image_hash=validate_image(data),
     )
     validate_label(data, num, label_mapping)
     check_undefined_keys(data)

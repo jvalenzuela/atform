@@ -242,7 +242,7 @@ class References(unittest.TestCase):
             "title", references={string.whitespace + "refs" + string.whitespace: ["a"]}
         )
         t = utils.get_test_content()
-        self.assertIn("refs", t.references)
+        self.assertEqual("refs", t.references[0].label)
 
     def test_undefined_label(self):
         """Confirm exception for an unknown label."""
@@ -272,7 +272,7 @@ class References(unittest.TestCase):
         atform.add_reference_category("refs", "refs")
         atform.add_test("title", references={"refs": ["a", "", ""]})
         t = utils.get_test_content()
-        self.assertEqual(["a"], t.references["refs"])
+        self.assertEqual(["a"], t.references[0].items)
 
     def test_ignore_blank_ref(self):
         """Confirm references containing only whitespace are ignored."""
@@ -281,7 +281,7 @@ class References(unittest.TestCase):
             "title", references={"refs": [string.whitespace, "spam", string.whitespace]}
         )
         t = utils.get_test_content()
-        self.assertEqual(["spam"], t.references["refs"])
+        self.assertEqual(["spam"], t.references[0].items)
 
     def test_strip_ref(self):
         """Confirm surrounding whitespace is removed from references."""
@@ -291,25 +291,44 @@ class References(unittest.TestCase):
             references={"refs": [string.whitespace + "foo" + string.whitespace]},
         )
         t = utils.get_test_content()
-        self.assertEqual(["foo"], t.references["refs"])
+        self.assertEqual(["foo"], t.references[0].items)
 
     def test_ref_order(self):
         """Confirm references are stored in original order."""
         atform.add_reference_category("refs", "refs")
         atform.add_test("title", references={"refs": ["a", "b", "c"]})
         t = utils.get_test_content()
-        self.assertEqual(["a", "b", "c"], t.references["refs"])
+        self.assertEqual(["a", "b", "c"], t.references[0].items)
 
     def test_multiple_categories(self):
-        """Confirm storage of multiple reference categories."""
+        """Confirm storage and order of multiple reference categories."""
         atform.add_reference_category("Numbers", "num")
         atform.add_reference_category("Letters", "alpha")
+        atform.add_reference_category("Stooges", "stg")
         atform.add_test(
-            "title", references={"num": ["1", "2", "3"], "alpha": ["a", "b", "c"]}
+            "title",
+            references={
+                # Categories in different order than definitions.
+                "stg": ["Larry", "Moe", "Curly"],
+                "num": ["1", "2", "3"],
+                "alpha": ["a", "b", "c"],
+            },
         )
         t = utils.get_test_content()
-        self.assertEqual(["1", "2", "3"], t.references["num"])
-        self.assertEqual(["a", "b", "c"], t.references["alpha"])
+
+        self.assertEqual(3, len(t.references))
+
+        self.assertEqual("num", t.references[0].label)
+        self.assertEqual("Numbers", t.references[0].title)
+        self.assertEqual(["1", "2", "3"], t.references[0].items)
+
+        self.assertEqual("alpha", t.references[1].label)
+        self.assertEqual("Letters", t.references[1].title)
+        self.assertEqual(["a", "b", "c"], t.references[1].items)
+
+        self.assertEqual("stg", t.references[2].label)
+        self.assertEqual("Stooges", t.references[2].title)
+        self.assertEqual(["Larry", "Moe", "Curly"], t.references[2].items)
 
     def test_argument_unchanged(self):
         """Confirm the given dictionary remains unchanged."""

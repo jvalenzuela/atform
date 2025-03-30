@@ -76,8 +76,8 @@ def get_xref():
     # reference dictionaries and test lists.
     for test in state.tests:
         test_id = id_.to_string(test.id)
-        for cat in test.references:
-            for ref in test.references[cat]:
-                xref[cat].setdefault(ref, []).append(test_id)
+        for ref in test.references:
+            for item in ref.items:
+                xref[ref.label].setdefault(item, []).append(test_id)
 
     return xref

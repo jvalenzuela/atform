@@ -19,7 +19,6 @@ from . import (
     section,
 )
 from .textstyle import stylesheet
-from .. import state
 
 
 # Number of characters the name text entry fields should be sized to
@@ -39,21 +38,19 @@ INITIAL_COL = SIG_COL + 1
 DATE_COL = INITIAL_COL + 1
 
 
-def make_approval():
+def make_approval(test):
     """Generates the approval section."""
-    if not state.signatures:
+    sigs = test.signatures
+
+    if not sigs:
         return None
 
-    rows = list(
-        itertools.chain.from_iterable(
-            [make_sig_rows(title) for title in state.signatures]
-        )
-    )
+    rows = list(itertools.chain.from_iterable([make_sig_rows(title) for title in sigs]))
     return section.make_section(
         "Approval",
         data=rows,
-        colWidths=widths(),
-        style=style(),
+        colWidths=widths(sigs),
+        style=style(sigs),
     )
 
 
@@ -91,11 +88,11 @@ def date_entry_field():
     return acroform.TextEntry("0000/00/00", "YYYY/MM/DD")
 
 
-def style():
+def style(sigs):
     """Generates style commands for the entire table."""
     sty = list(
         itertools.chain.from_iterable(
-            [sig_row_style(i) for i, sig in enumerate(state.signatures)]
+            [sig_row_style(i, sigs) for i, sig in enumerate(sigs)]
         )
     )
 
@@ -121,7 +118,7 @@ def style():
     return sty
 
 
-def sig_row_style(i):
+def sig_row_style(i, sigs):
     """Generates style commands for the two rows of a signature entry."""
     # Calculate the indices for the two rows assigned to this signature.
     upper = (i * 2) + 1
@@ -138,7 +135,7 @@ def sig_row_style(i):
         ("TOPPADDING", (0, lower), (-1, lower), 0),
     ]
 
-    last_row = i + 1 == len(state.signatures)
+    last_row = i + 1 == len(sigs)
     if not last_row:
         # Rule below all but the last row are subsection rules.
         hrule_weight = layout.SUBSECTION_RULE_WEIGHT
@@ -177,12 +174,12 @@ def sig_row_style(i):
     return sty
 
 
-def widths():
+def widths(sigs):
     """Computes the column widths of the entire table."""
     return [
         # Width of the first column is set to accommodate the
         # longest title.
-        layout.max_width(state.signatures, "Normal"),
+        layout.max_width(sigs, "Normal"),
         name_col_width(),
         None,  # Signature occupies all remaining width.
         # The Initials column is sized to hold the title.

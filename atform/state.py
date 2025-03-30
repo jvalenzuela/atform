@@ -51,9 +51,9 @@ def init():
     global labels
     labels = {}
 
-    # ReportLab Image object containing the user-specified logo.
-    global logo
-    logo = None
+    # Hash of the the user-specified logo image file.
+    global logo_hash
+    logo_hash = None
 
     # All Test() instances in the order they were created.
     global tests
@@ -64,9 +64,11 @@ def init():
     global project_info
     project_info = {}
 
-    # Reference category titles, keyed by label.
+    # Reference category titles, keyed by label. Stored as an ordered
+    # dictionary because the order the categories are created defines
+    # the order they are listed in the output documents.
     global ref_titles
-    ref_titles = {}
+    ref_titles = collections.OrderedDict()
 
     # Section titles, keyed by ID tuple.
     global section_titles
@@ -75,6 +77,10 @@ def init():
     # Signature titles, in the order they were defined.
     global signatures
     signatures = []
+
+    # Mapping of image hash to ReportLab Image object.
+    global images
+    images = {}
 
 
 init()

@@ -106,6 +106,7 @@ class ExampleRunner(object):
         return self
 
     @utils.disable_idlock
+    @utils.no_args
     def run(self):
         """Executes the target script."""
         runpy.run_path(self.script)

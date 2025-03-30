@@ -2,6 +2,7 @@
 
 import functools
 from itertools import chain, permutations
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -16,16 +17,18 @@ class InvalidId(unittest.TestCase):
     def setUp(self):
         utils.reset()
 
+    @patch("sys.argv", utils.mock_argv("foo"))
     def test_non_integer(self):
         """Confirm error if the entire ID string is not an integer."""
         with self.assertRaises(SystemExit):
-            arg.parse(["foo"])
+            arg.parse()
 
+    @patch("sys.argv", utils.mock_argv("1.spam"))
     def test_field_non_integer(self):
         """Confirm error if a single field is not an integer."""
         atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
-            arg.parse(["1.spam"])
+            arg.parse()
 
     def test_empty_field(self):
         """Confirm error for an empty field."""
@@ -33,19 +36,22 @@ class InvalidId(unittest.TestCase):
         for s in [".2.3", "1..3", "1.2."]:
             with self.subTest(s=s):
                 with self.assertRaises(SystemExit):
-                    arg.parse([s])
+                    with patch("sys.argv", utils.mock_argv(s)):
+                        arg.parse()
 
+    @patch("sys.argv", utils.mock_argv("0.1"))
     def test_out_of_range(self):
         """Confirm error for a field value less than one."""
         atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
-            arg.parse(["0.1"])
+            arg.parse()
 
+    @patch("sys.argv", utils.mock_argv("1.2.3"))
     def test_too_long(self):
         """Confirm error for too many fields."""
         atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
-            arg.parse(["1.2.3"])
+            arg.parse()
 
 
 class ValidId(unittest.TestCase):
@@ -55,14 +61,16 @@ class ValidId(unittest.TestCase):
         utils.reset()
         atform.set_id_depth(2)
 
+    @patch("sys.argv", utils.mock_argv("042.0099"))
     def test_leading_zero(self):
         """Confirm values with leading zeros are correctly parsed."""
-        ids = arg.parse(["042.0099"])
+        ids = arg.parse().id
         self.assertEqual(ids[0], (42, 99))
 
+    @patch("sys.argv", utils.mock_argv("42 88.99"))
     def test_fields(self):
         """Confirm IDs with fields up to the configured ID depth are correctly parsed."""
-        ids = arg.parse(["42", "88.99"])
+        ids = arg.parse().id
         self.assertEqual(ids, [(42,), (88, 99)])
 
 
@@ -88,7 +96,8 @@ class InvalidRange(unittest.TestCase):
         for s in cases:
             with self.subTest(s=s):
                 with self.assertRaises(SystemExit):
-                    arg.parse([s])
+                    with patch("sys.argv", utils.mock_argv(s)):
+                        arg.parse()
 
     def test_missing_id(self):
         """Confirm error for missing start or end IDs."""
@@ -99,12 +108,14 @@ class InvalidRange(unittest.TestCase):
         for s in cases:
             with self.subTest(s=s):
                 with self.assertRaises(SystemExit):
-                    arg.parse([s])
+                    with patch("sys.argv", utils.mock_argv(s)):
+                        arg.parse()
 
+    @patch("sys.argv", utils.mock_argv("1-2-3"))
     def test_extra_id(self):
         """Confirm error for more than two IDs."""
         with self.assertRaises(SystemExit):
-            arg.parse(["1-2-3"])
+            arg.parse()
 
 
 class ValidRange(unittest.TestCase):
@@ -116,17 +127,16 @@ class ValidRange(unittest.TestCase):
 
     def test_hyphen_spacing(self):
         """Confirm ranges with various spacing around the hyphen are correctly parsed."""
-        # Each case is a list of strings mimicking sys.argv where arguments are already
-        # separated on whitespace.
         cases = [
-            ["1.2-3.4"],  # No space
-            ["1.2", "-3.4"],  # Space before hyphen
-            ["1.2-", "3.4"],  # Space after hyphen
-            ["1.2", "-", "3.4"],  # Space before and after hyphen
+            "1.2-3.4",  # No space
+            "1.2 -3.4",  # Space before hyphen
+            "1.2- 3.4",  # Space after hyphen
+            "1.2 - 3.4",  # Space before and after hyphen
         ]
         for s in cases:
             with self.subTest(s=s):
-                ids = arg.parse(s)
+                with patch("sys.argv", utils.mock_argv(s)):
+                    ids = arg.parse().id
                 self.assertEqual(ids, [((1, 2), (3, 4))])
 
     def test_different_widths(self):
@@ -137,7 +147,8 @@ class ValidRange(unittest.TestCase):
         }
         for s in cases:
             with self.subTest(s=s):
-                ids = arg.parse([s])
+                with patch("sys.argv", utils.mock_argv(s)):
+                    ids = arg.parse().id
                 self.assertEqual(ids, [cases[s]])
 
 
@@ -148,14 +159,16 @@ class Misc(unittest.TestCase):
         utils.reset()
         atform.set_id_depth(2)
 
+    @utils.no_args
     def test_none(self):
         """Verify empty result if no arguments are given."""
-        ids = arg.parse([])
+        ids = arg.parse().id
         self.assertEqual(ids, [])
 
+    @patch("sys.argv", utils.mock_argv("1 2.1-3.1 4.1 5.1-6.1"))
     def test_multiple(self):
         """Verify a combination of IDs and ranges are parsed correctly."""
-        ids = arg.parse(["1", "2.1-3.1", "4.1", "5.1-6.1"])
+        ids = arg.parse().id
         self.assertEqual(
             ids,
             [
@@ -187,17 +200,15 @@ class FilterId(unittest.TestCase):
     @patch("atform.cache.save")
     def gen(self, args, expected, mock_save, mock_load):
         """Verifies generated tests match the expected tests."""
-        # Patch the argument parser to use the given string instead of sys.argv.
-        parse = functools.partial(atform.arg.parse, args.split())
-
-        with patch("atform.arg.parse", new=parse):
+        with patch("sys.argv", utils.mock_argv(args)):
             atform.generate()
 
         # Collect IDs from tests that have been built from the mock cache.
-        built = set(mock_save.call_args_list[0][0][0].keys())
+        built = set(mock_save.call_args_list[0][0][0]["page counts"])
 
         self.assertEqual(expected, built)
 
+    @utils.no_args
     def test_none(self):
         """Confirm all tests are built if no IDs are provided."""
         for sec in range(3):

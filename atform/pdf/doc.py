@@ -34,19 +34,17 @@ class BuildError(Exception):
     """Exception chained from a PDF generation failure."""
 
 
-def build(test, cache, root, folder_depth, version):
+def build(test, cached_page_count, root, folder_depth, version):
     """Builds a PDF document for a given test instance."""
     path = build_path(test.id, root, folder_depth)
     try:
-        doc = TestDocument(test, cache, path, version)
+        doc = TestDocument(test, cached_page_count, path, version)
     except Exception as e:
         tid = id_.to_string(test.id)
         raise BuildError(f"Failed to build PDF for {tid} {test.title}: {e}") from e
 
     # Return data to be written to the cache file.
-    return test.id, {
-        "page count": doc.page_count.last_page,
-    }
+    return test.id, doc.page_count.last_page
 
 
 def build_path(tid, root, depth):
@@ -78,15 +76,15 @@ def build_path(tid, root, depth):
 class TestDocument:
     """This class creates a PDF for a single Test instance."""
 
-    def __init__(self, test, cache, path, version):
+    def __init__(self, test, cached_page_count, path, version):
         self.test = test
         self.version = version
 
         self.bottom_margin = layout.BOTTOM_MARGIN
 
-        if state.copyright_:
+        if test.copyright:
             self.copyright = Paragraph(
-                state.copyright_,
+                test.copyright,
                 stylesheet["CopyrightNotice"],
             )
 
@@ -102,10 +100,6 @@ class TestDocument:
             self.bottom_margin += self.copyright_height
 
         doc = self._get_doc(path)
-        try:
-            cached_page_count = cache["page count"]
-        except TypeError:
-            cached_page_count = 1
         self.page_count = PageCount(doc, cached_page_count)
         body = [self.page_count]
         body.extend(self._build_body(test))
@@ -167,7 +161,7 @@ class TestDocument:
 
         # The copyright notice is placed in a dedicated frame so the text
         # can be wrapped as necessary.
-        if state.copyright_:
+        if self.test.copyright:
             baseline -= self.copyright_height
             frame = Frame(
                 layout.LEFT_MARGIN,
@@ -214,7 +208,7 @@ class TestDocument:
             precondition.make_preconditions(test.preconditions),
             procedure.make_procedure(test.procedure),
             notes.make_notes(),
-            approval.make_approval(),
+            approval.make_approval(test),
         ]
 
         self.no_title_block = flowables[0] is None

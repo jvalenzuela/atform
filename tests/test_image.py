@@ -6,14 +6,7 @@ import atform
 import io
 import os
 import unittest
-import PIL
-
-
-def make_image_file(img, **kwargs):
-    """Generates a buffer containing a mock image file."""
-    buf = io.BytesIO()
-    img.save(buf, **kwargs)
-    return buf
+from unittest.mock import patch
 
 
 class ErrorBase:
@@ -32,33 +25,32 @@ class ErrorBase:
     def test_non_image(self):
         """Confirm exception for a file that is not an image format."""
         with self.assertRaises(SystemExit):
-            self.call("foo".encode())
+            buf = io.BytesIO(b"foo bar")
+            with patch("atform.image.OPEN", return_value=buf):
+                self.call("")
 
     def test_unsupported_format(self):
         """Confirm exception if the image file is not a supported format."""
-        img = PIL.Image.new(mode="RGB", size=(1, 1))
-        f = make_image_file(img, format="BMP", dpi=(100, 100))
         with self.assertRaises(SystemExit):
-            self.call(f)
+            with utils.mock_image("BMP", (1, 1)):
+                self.call("")
 
     def test_supported_formats(self):
         """Confirm supported image formats are accepted."""
-        img = PIL.Image.new(mode="RGB", size=(1, 1))
         for fmt in atform.image.FORMATS:
             with self.subTest(fmt=fmt):
-                f = make_image_file(img, format=fmt, dpi=(100, 100))
                 utils.reset()
-                self.call(f)
+                with utils.mock_image(fmt, (1, 1)):
+                    self.call("")
 
     def test_no_dpi(self):
         """Confirm exception if the image file lacks DPI metadata."""
-        img = PIL.Image.new(mode="RGB", size=(1, 1))
         for fmt in atform.image.FORMATS:
             with self.subTest(fmt=fmt):
-                f = make_image_file(img, format=fmt)
                 utils.reset()
                 with self.assertRaises(SystemExit):
-                    self.call(f)
+                    with utils.mock_image(fmt, (1, 1), include_dpi=False):
+                        self.call("")
 
     def test_too_large(self):
         """Confirm exception if the image is too large.
@@ -74,10 +66,9 @@ class ErrorBase:
         ]
         for size in sizes:
             with self.subTest(size=size):
-                img = PIL.Image.new(mode="RGB", size=size)
-                f = make_image_file(img, format="JPEG", dpi=(100, 100))
                 with self.assertRaises(SystemExit):
-                    self.call(f)
+                    with utils.mock_image("JPEG", size):
+                        self.call("")
 
 
 class AddLogo(unittest.TestCase, ErrorBase):
@@ -96,11 +87,11 @@ class AddLogo(unittest.TestCase, ErrorBase):
 
     def test_multiple_call(self):
         """Confirm exception if called more than once."""
-        img = PIL.Image.new(mode="RGB", size=(1, 1))
-        f = make_image_file(img, format="JPEG", dpi=(100, 100))
-        atform.add_logo(f)
+        with utils.mock_image("JPEG", (1, 1)):
+            atform.add_logo("")
         with self.assertRaises(SystemExit):
-            atform.add_logo(f)
+            with utils.mock_image("JPEG", (1, 1)):
+                atform.add_logo("")
 
 
 class ProcedureStep(unittest.TestCase, ErrorBase):
@@ -138,8 +129,8 @@ class ProcedureStep(unittest.TestCase, ErrorBase):
         atform.add_test("t2", procedure=[step])
         t2 = utils.get_test_content()
 
-        self.assertIs(t1.procedure[0].image, t1.procedure[1].image)
-        self.assertIs(t1.procedure[0].image, t2.procedure[0].image)
+        self.assertIs(t1.procedure[0].image_hash, t1.procedure[1].image_hash)
+        self.assertIs(t1.procedure[0].image_hash, t2.procedure[0].image_hash)
 
 
 class AddLogoContentAreaException(utils.ContentAreaException):
@@ -150,6 +141,5 @@ class AddLogoContentAreaException(utils.ContentAreaException):
 
     @staticmethod
     def call():
-        img = PIL.Image.new(mode="RGB", size=(100, 100))
-        f = make_image_file(img, format="JPEG", dpi=(100, 100))
-        atform.add_logo(f)
+        with utils.mock_image("JPEG", (100, 100)):
+            atform.add_logo("")

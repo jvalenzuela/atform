@@ -4,6 +4,9 @@
 import atform
 from atform import label
 import collections
+import contextlib
+import io
+from PIL import Image
 import unittest
 from unittest.mock import patch
 
@@ -30,7 +33,7 @@ def get_test_content():
 
 def mock_build(test, *args):
     """Dummy PDF build function to inhibit generating actual output files."""
-    return test.id, {"page count": 1}
+    return test.id, 1
 
 
 def no_pdf_output(method):
@@ -51,6 +54,56 @@ def disable_idlock(method):
             method(self, *args, **kwargs)
 
     return wrapper
+
+
+def mock_argv(args):
+    """Generates a simulated set of command line arguments.
+
+    Typically used to patch sys.argv.
+    """
+    # A dummy script name is inserted as argv[0] to support tests that
+    # run the example scripts via runpy, which alters argv[0]. This first
+    # item is stripped off before actual argument parsing.
+    argv = [""]
+    argv.extend(args.split())
+    return argv
+
+
+def no_args(method):
+    """Test case decorator to simulate no command line arguments.
+
+    This needs to be used for tests that call generate() and are not otherwise
+    patching sys.argv with an explicit set of mock arguments because the
+    original sys.argv will not contain valid arguments during unit testing.
+    """
+
+    def wrapper(self, *args, **kwargs):
+        with patch("sys.argv", mock_argv("")):
+            method(self, *args, **kwargs)
+
+    return wrapper
+
+
+@contextlib.contextmanager
+def mock_image(fmt, size, include_dpi=True):
+    """Context manager for simulating a mock image file."""
+    # Generate an in-memory image.
+    img = Image.new(mode="RGB", size=size)
+    kwargs = {"format": fmt}
+    if include_dpi:
+        kwargs["dpi"] = (100, 100)
+    buf = io.BytesIO()
+    img.save(buf, **kwargs)
+    buf.seek(0)
+
+    # Path open() in the image module to return the in-memory image.
+    open_patch = patch("atform.image.OPEN", return_value=buf)
+    open_patch.start()
+
+    try:
+        yield
+    finally:
+        open_patch.stop()
 
 
 class ContentAreaException(unittest.TestCase):
@@ -74,31 +127,3 @@ class ContentAreaException(unittest.TestCase):
         atform.section(1)
         with self.assertRaises(SystemExit):
             self.call()
-
-
-def wrap_arg_parse(orig_func):
-    """Creates a wrapper for the command line argument parsing function.
-
-    This is intended to handle internal calls to the parser function
-    other than those directly testing the argument parser. By default,
-    the parser evaluates sys.argv, which will not contain valid arguments
-    during unit testing, so this provides a default argument to the original
-    function ensuring sys.argv is never parsed during unit tests.
-
-    Since the arg module's parse function needs to be replaced, this function
-    utilizes a closure to retain a reference to the original callable within
-    the returned wrapper function.
-    """
-
-    def wrapper(args=None):
-        if args is None:
-            args = []
-
-        return orig_func(args)
-
-    return wrapper
-
-
-# Replace the argument parser function with a wrapper; see wrapper function
-# comments for details.
-atform.arg.parse = wrap_arg_parse(atform.arg.parse)

@@ -12,18 +12,23 @@ from . import state
 from . import vcs
 
 
-def get_tests_to_build():
+def get_tests_to_build(cache_):
     """Assembles the test instances that will be generated.
 
-    Returns a list of test instances matching IDs from command line arguments.
+    Returns a list of test instances selected from command line arguments.
     """
-    arg_ids = arg.parse()
+    args = arg.parse()
+    ids = {t.id for t in state.tests}
 
-    # Default to build all tests if no IDs were selected.
-    if not arg_ids:
-        return state.tests
+    if args.id:
+        ids.intersection_update(
+            t.id for t in state.tests if id_match_args(t.id, args.id)
+        )
 
-    return [t for t in state.tests if id_match_args(t.id, arg_ids)]
+    if args.diff:
+        ids.intersection_update(get_changed_tests(cache_))
+
+    return [t for t in state.tests if t.id in ids]
 
 
 def id_match_args(tid, args):
@@ -47,29 +52,55 @@ def id_match(tid, target):
     return (start <= tid[: len(start)]) and (end >= tid[: len(end)])
 
 
+def get_changed_tests(cache_):
+    """Finds tests that differ from the cache."""
+    changed_ids = set()
+
+    try:
+        old_tests = cache_["tests"]
+    except KeyError:
+        old_tests = {}
+
+    for test in state.tests:
+        try:
+            if test != old_tests[test.id]:
+                raise KeyError
+
+        # Accumulate tests that differ from the cache and those that do not
+        # exist in the cache.
+        except KeyError:
+            changed_ids.add(test.id)
+
+    return changed_ids
+
+
 def submit_tests_to_build(executor, cache_, *build_args):
     """Submits test instances for output generation."""
     futures = []
-    for t in get_tests_to_build():
+    for t in get_tests_to_build(cache_):
         try:
-            test_cache = cache_[t.id]
+            pages = cache_["page counts"][t.id]
         except KeyError:
-            test_cache = None
-        futures.append(executor.submit(pdf.build, t, test_cache, *build_args))
+            pages = 1
+        futures.append(executor.submit(pdf.build, t, pages, *build_args))
     return futures
 
 
-def wait_build_complete(futures):
+def wait_build_complete(futures, cache_):
     """Waits for all submitted build jobs to complete."""
-    results = {}
+    try:
+        page_counts = cache_["page counts"]
+    except KeyError:
+        page_counts = {}
+        cache_["page counts"] = page_counts
+
     for f in concurrent.futures.as_completed(futures):
         try:
-            tid, data = f.result()
+            tid, pages = f.result()
         except pdf.BuildError as e:
             print(e)
         else:
-            results[tid] = data
-    return results
+            page_counts[tid] = pages
 
 
 ################################################################################
@@ -156,7 +187,6 @@ def generate(*, path="pdf", folder_depth=0):
     # worse than the original, serial implementation.
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = submit_tests_to_build(executor, cache_, path, folder_depth, version)
-        results = wait_build_complete(futures)
+        wait_build_complete(futures, cache_)
 
-    cache_.update(results)
     cache.save(cache_)

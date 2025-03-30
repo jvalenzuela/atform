@@ -17,6 +17,7 @@ from . import (
     section,
 )
 from .textstyle import stylesheet
+from .. import state
 
 
 # Header row text.
@@ -146,9 +147,9 @@ def step_body(step):
     # Begin with the step instruction text.
     flowables = paragraph.make_paragraphs(step.text)
 
-    if step.image:
+    if step.image_hash:
         flowables.append(Spacer(0, IMAGE_SEP))
-        flowables.append(step.image)
+        flowables.append(state.images[step.image_hash])
     if step.fields:
         flowables.extend(make_fields(step.fields))
 

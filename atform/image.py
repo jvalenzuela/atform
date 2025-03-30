@@ -1,7 +1,13 @@
-"""Handling for user-provided image files."""
+"""Handling for user-provided image files.
+
+All images are stored in the global state dictionary, keyed by the image
+file hash. Using a hash value allows the image to be stored in, and compared
+with the cache file without storing the entire image data in the cache file.
+"""
 
 import collections
 import functools
+import hashlib
 import io
 
 import PIL
@@ -25,6 +31,10 @@ MAX_LOGO_SIZE = ImageSize(2.0, 1.5)
 FORMATS = ["JPEG", "PNG"]
 
 
+# Alias so unit tests can patch open() just for this module.
+OPEN = open
+
+
 @functools.lru_cache(maxsize=None)
 def load(path, max_size):
     """Loads and validates an image file."""
@@ -36,7 +46,16 @@ def load(path, max_size):
         )
 
     try:
-        image = PIL.Image.open(path, formats=FORMATS)
+        with OPEN(path, "rb") as f:
+            img_hash = calc_hash(f)
+            image = PIL.Image.open(f, formats=FORMATS)
+
+            # PNG formats require calling load() to ensure EXIF data is available
+            # in the info attribute. The call is unconditional for simplicity as
+            # there's no downside to callling it regardless of format.
+            # This also ensures the entire image is loaded into memory so the
+            # source file object can be closed.
+            image.load()
     except FileNotFoundError as e:
         raise error.UserScriptError(
             f"Image file not found: {path}",
@@ -49,11 +68,6 @@ def load(path, max_size):
             formats: {', '.join(FORMATS)}
             """,
         ) from e
-
-    # PNG formats require calling load() to ensure EXIF data is available
-    # in the info attribute. The call is unconditional for simplicity as
-    # there's no downside to callling it regardless of format.
-    image.load()
 
     try:
         dpi_raw = image.info["dpi"]
@@ -77,8 +91,19 @@ def load(path, max_size):
             """,
         )
 
-    # Dump the image data to an in-memory buffer and convert to a Reportlab
-    # Image object.
+    state.images[img_hash] = to_rl_image(image, size, dpi)
+    return img_hash
+
+
+def calc_hash(file):
+    """Computes the hash of an image file."""
+    h = hashlib.blake2b()
+    h.update(file.read())
+    return h.digest()
+
+
+def to_rl_image(image, size, dpi):
+    """Converts a PIL Image to a ReportLab Image object."""
     buf = io.BytesIO()
     args = {
         "format": image.format,
@@ -116,7 +141,7 @@ def add_logo(path):
         path (str): Path to the image file relative to the top-level script
             executed to generate test documents.
     """
-    if state.logo:
+    if state.logo_hash:
         raise error.UserScriptError(
             "Duplicate logo definition.",
             """
@@ -125,4 +150,4 @@ def add_logo(path):
             """,
         )
 
-    state.logo = load(path, MAX_LOGO_SIZE)
+    state.logo_hash = load(path, MAX_LOGO_SIZE)

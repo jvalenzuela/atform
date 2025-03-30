@@ -1,18 +1,18 @@
 """Cache file management.
 
-The cache file stores certain parameters resulting from output generation that
-can be used to accelerate future runs. Operation consists of two phases:
+The cache file stores content between script runs. Operation consists of two
+phases:
 
 1. Cache file is loaded making data from the previous run available when
    generating output.
 
 2. Data resulting from this run is collected and written to the cache file
-   when output generation is complete, overwriting previous data for
-   any tests generated on this run.
+   when output generation is complete.
 """
 
 import pickle
 
+from . import state
 from . import version
 
 
@@ -43,16 +43,13 @@ def load():
     except Exception:  # pylint: disable=broad-exception-caught
         return {}
 
-    return data["data"]
+    return data
 
 
 def save(data):
     """Writes the data from this run to the cache file."""
-    # Include additional metadata used to validate the cache when loading.
-    cache = {
-        "version": version.VERSION,
-        "data": data,
-    }
+    data["version"] = version.VERSION
+    data["tests"] = {t.id: t for t in state.tests}
 
     try:
         f = OPEN(FILENAME, "wb")
@@ -60,4 +57,4 @@ def save(data):
         print(f"Error writing cache file: {e}")
     else:
         with f:
-            pickle.dump(cache, f)
+            pickle.dump(data, f)

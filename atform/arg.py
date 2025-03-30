@@ -11,21 +11,26 @@ class InvalidIdError(Exception):
     """Raised when an invalid ID or range is found in the argument list."""
 
 
-def parse(args=None):
-    """Top-level function for this module to process all arguments.
-
-    Returns a list of IDs and ranges listed in the arguments. A single ID
-    is presented as a tuple of integers, e.g., x.y.z is (x,y,z), and ranges
-    are represented as tuple of IDs, e.g., a.b-x.y is ((a,b), (x,y)).
-    """
+def parse():
+    """Top-level function for this module to process all arguments."""
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--diff",
+        help="Build only tests changed since last time the script was run.",
+        action="store_true",
+    )
     parser.add_argument(
         "id",
         help="Test ID(s) to generate; all tests will be generated if omitted.",
         nargs="*",
     )
-    ns = parser.parse_args(args)
-    return parse_ids(ns.id)
+
+    # sys.argv is explicitly passed to permit patching of sys.argv for
+    # unit testing, which requires the script name(argv[0]) to be removed.
+    ns = parser.parse_args(sys.argv[1:])
+
+    ns.id = parse_ids(ns.id)
+    return ns
 
 
 def parse_ids(args):
@@ -33,6 +38,10 @@ def parse_ids(args):
 
     Each ID must either be a single ID or a range consisting of two IDs
     separated by a hyphen.
+
+    Returns a list of IDs and ranges listed in the arguments. A single ID
+    is presented as a tuple of integers, e.g., x.y.z is (x,y,z), and ranges
+    are represented as tuple of IDs, e.g., a.b-x.y is ((a,b), (x,y)).
     """
     # Recombine all arguments into a single string so ranges that may include spaces
     # can be normalized.

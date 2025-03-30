@@ -40,6 +40,7 @@ class Load(unittest.TestCase):
 
     @utils.no_pdf_output
     @utils.disable_idlock
+    @utils.no_args
     @patch("atform.cache.load", return_value={})
     def test_load_during_gen(self, mock_load):
         """Confirm cache is loaded during output generation."""
@@ -57,32 +58,34 @@ class Save(unittest.TestCase):
     def test_version(self):
         """Confirm saved data includes the module version."""
         with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
-            atform.cache.save("spam")
+            atform.cache.save({})
         saved = self.get_saved_data(mock)
         self.assertEqual(saved["version"], atform.version.VERSION)
 
     @utils.no_pdf_output
     @utils.disable_idlock
-    def test_retain_previous(self):
-        """Confirm data is retained from previous tests not built on this run."""
+    @utils.no_args
+    def test_retain_previous_page_count(self):
+        """Confirm page counts from previous tests not built on this run are retained."""
         atform.add_test("t1")
 
         prev = pickle.dumps(
             {
                 "version": atform.version.VERSION,
-                "data": {(42,): {"page count": 99}},
+                "page counts": {(42,): 99},
             }
         )
         with patch("atform.cache.OPEN", mock_open(read_data=prev)) as mock:
             atform.generate()
 
         saved = self.get_saved_data(mock)
-        self.assertEqual(saved["data"][(42,)], {"page count": 99})
+        self.assertEqual(saved["page counts"][(42,)], 99)
 
     @utils.no_pdf_output
     @utils.disable_idlock
-    def test_overwrite_stale_data(self):
-        """Confirm generated tests overwrite previous data from the same tests."""
+    @utils.no_args
+    def test_overwrite_stale_page_count(self):
+        """Confirm page counts for generated tests overwrite page counts from the same tests."""
 
         atform.add_test("t1")
         atform.add_test("t2")
@@ -90,9 +93,9 @@ class Save(unittest.TestCase):
         stale = pickle.dumps(
             {
                 "version": atform.version.VERSION,
-                "data": {
-                    (1,): {"page count": 10},
-                    (2,): {"page count": 20},
+                "page counts": {
+                    (1,): 10,
+                    (2,): 20,
                 },
             }
         )
@@ -101,10 +104,10 @@ class Save(unittest.TestCase):
 
         saved = self.get_saved_data(mock)
         self.assertEqual(
-            saved["data"],
+            saved["page counts"],
             {
-                (1,): {"page count": 1},
-                (2,): {"page count": 1},
+                (1,): 1,
+                (2,): 1,
             },
         )
 

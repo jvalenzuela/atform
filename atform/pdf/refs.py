@@ -6,7 +6,6 @@ from . import (
     layout,
     section,
 )
-from .. import state
 from .textstyle import stylesheet
 
 
@@ -16,9 +15,9 @@ def make_references(refs):
         return None
 
     # Generate a row for each reference category.
-    rows = [make_row(label, refs[label]) for label in refs]
+    rows = [make_row(ref) for ref in refs]
 
-    titles = [state.ref_titles[label] for label in refs]
+    titles = [ref.title for ref in refs]
 
     style = [
         (
@@ -40,11 +39,11 @@ def make_references(refs):
     )
 
 
-def make_row(label, refs):
+def make_row(ref):
     """Creates the table for a single reference category."""
     return [
-        Paragraph(state.ref_titles[label], stylesheet["NormalRight"]),
-        Paragraph(", ".join(refs), stylesheet["Normal"]),
+        Paragraph(ref.title, stylesheet["NormalRight"]),
+        Paragraph(", ".join(ref.items), stylesheet["Normal"]),
     ]
 
 

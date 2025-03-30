@@ -17,19 +17,22 @@ from . import state
 # a single test document.
 # pylint: disable=too-many-instance-attributes
 class TestContent:
-    """Storage class containing content provided to add_test()."""
+    """Storage class containing test document content."""
 
     id: tuple
     title: str
     fields: list
     objective: str
-    references: dict
+    references: list
     equipment: list
     preconditions: list
     procedure: list
     project_info: dict
     call_frame: types.FrameType
     labels: dict
+    copyright: str
+    signatures: list
+    logo_hash: bytes
 
     @property
     def full_name(self):
@@ -94,6 +97,54 @@ class TestContent:
                 """,
             )
 
+    def __eq__(self, other):
+        """Equality implementation for detecting content differences.
+
+        This is used for the --diff option, and specifically excludes the
+        following fields:
+
+        call_frame: Used only for generating error messages; not relevant
+                    for comparing test content.
+
+        labels: Differences in labels are detected by evaluating the strings
+                where placeholders are used after placeholders are replaced
+                with their targets, so comparing the label mapping is unnecessary
+                and can yield false-positives, e.g., label name change but
+                still points to the same target.
+        """
+        return (
+            self.id == other.id
+            and self.title == other.title
+            and self.fields == other.fields
+            and self.objective == other.objective
+            and self.references == other.references
+            and self.equipment == other.equipment
+            and self.preconditions == other.preconditions
+            and self.procedure == other.procedure
+            and self.project_info == other.project_info
+            and self.copyright == other.copyright
+            and self.signatures == other.signatures
+            and self.logo_hash == other.logo_hash
+        )
+
+
+@dataclasses.dataclass
+class Reference:
+    """Storage for a single reference category and assigned items."""
+
+    label: str
+    title: str
+    items: list
+
+    def __eq__(self, other):
+        """Equality implementation for detecting differences.
+
+        Excludes the label as it is not included in the output PDF, avoiding
+        false-positive change detection if the label for a reference is changed but
+        the title and items remain the same.
+        """
+        return self.title == other.title and self.items == other.items
+
 
 def validate_objective(obj):
     """Validates the objective parameter."""
@@ -112,7 +163,14 @@ def validate_refs(refs):
             "References must be a dictionary.",
         )
 
-    return dict([validate_ref_category(label, refs[label]) for label in refs])
+    valid = [validate_ref_category(*ref) for ref in refs.items()]
+
+    # Once all categories and items have been validated, sort them
+    # them according to the order the categories were defined.
+    categories = list(state.ref_titles.keys())
+    valid.sort(key=lambda r: categories.index(r.label))
+
+    return valid
 
 
 def validate_ref_category(label, refs):
@@ -121,7 +179,7 @@ def validate_ref_category(label, refs):
 
     # Ensure the label has been defined by add_reference_category().
     try:
-        state.ref_titles[label]
+        title = state.ref_titles[label]
     except KeyError as e:
         raise error.UserScriptError(
             f"Invalid reference label: {label}",
@@ -162,7 +220,7 @@ def validate_ref_category(label, refs):
         if reference:
             validated_refs.append(reference)
 
-    return label, validated_refs
+    return Reference(label, title, validated_refs)
 
 
 def validate_string_list(name, lst):
@@ -258,6 +316,9 @@ def add_test(
             be output as an enumerated list. See :ref:`procedure`.
     """
     content = {}
+    content["copyright"] = state.copyright_
+    content["signatures"] = state.signatures
+    content["logo_hash"] = state.logo_hash
 
     # Capture the current API call frame so the location where this test was
     # defined can be referenced in exceptions raised in later API calls
