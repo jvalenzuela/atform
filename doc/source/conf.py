@@ -51,7 +51,7 @@ rst_prolog = f"""
 .. |max_logo_height| replace:: {atform.image.MAX_LOGO_SIZE.height}
 .. |max_step_image_width| replace:: {atform.procedure.MAX_IMAGE_SIZE.width}
 .. |max_step_image_height| replace:: {atform.procedure.MAX_IMAGE_SIZE.height}
-.. |cache_filename| replace:: {atform.cache.FILENAME}
+.. |cache_filename| replace:: :file:`{atform.cache.FILENAME}`
 .. |idlock_filename| replace:: :file:`{atform.idlock.FILENAME}`
 """
 
