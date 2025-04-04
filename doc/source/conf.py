@@ -5,7 +5,6 @@
 
 import os
 import pathlib
-import re
 import shutil
 import sys
 import tomllib
@@ -21,11 +20,6 @@ import atform.version
 # Load the top-level project configuration.
 with open(os.path.join("..", "..", "pyproject.toml"), "rb") as f:
     config = tomllib.load(f)
-
-# Extract the minimum required Python version from the project configuration.
-requires_python = re.search(
-    r"\d+(\.\d+)*", config["project"]["requires-python"]
-).group()
 
 project = config["project"]["name"]
 copyright = "2024, Jason Valenzuela"
@@ -46,7 +40,6 @@ exclude_patterns = []
 
 rst_prolog = f"""
 .. |project_name| replace:: {project}
-.. |requires_python| replace:: {requires_python}
 .. |max_logo_width| replace:: {atform.image.MAX_LOGO_SIZE.width}
 .. |max_logo_height| replace:: {atform.image.MAX_LOGO_SIZE.height}
 .. |max_step_image_width| replace:: {atform.procedure.MAX_IMAGE_SIZE.width}
