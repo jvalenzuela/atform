@@ -5,7 +5,7 @@ Images
 
 Graphical content included in the test document output, such as with
 the :py:func:`atform.add_logo` or :py:func:`atform.add_test` API functions,
-are stored in separate files and referenced by a path pointing to the source
+is stored in separate files and referenced by a path pointing to the source
 image file.
 Images must be either JPEG or PNG format. As a general rule,
 photographs or scans are best served by JPEG, while PNG is better for
