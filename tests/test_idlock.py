@@ -200,6 +200,7 @@ class AllowedChanges(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
+        rm_lock_file()
 
     @patch("atform.idlock.OPEN_LOCK_FILE", mock_open())
     @patch("atform.idlock.load", return_value={(1,): "t1"})
