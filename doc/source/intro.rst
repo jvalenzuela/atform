@@ -90,7 +90,7 @@ the output format.
 The following commands can be used to manage, upgrade, or revert
 |project_name| installations:
 
-.. code-block:: console
+.. code-block:: doscon
 
    # Display the currently installed version.
    pip show atform

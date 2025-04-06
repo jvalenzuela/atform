@@ -53,7 +53,7 @@ of tests to generate. All examples assume the top-level script is
 named :file:`main.py` and :py:func:`atform.set_id_depth` has been used to
 set the identifier depth to 3.
 
-.. code-block:: console
+.. code-block:: doscon
 
    # Generate a single test: 3.7.1
    python main.py 3.7.1
