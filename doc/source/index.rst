@@ -14,4 +14,5 @@ Welcome to atform's documentation!
    auto
    vcs
    cli
+   meta
    api

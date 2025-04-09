@@ -46,3 +46,4 @@ Output
 
    atform.generate
    atform.get_xref
+   atform.list_tests

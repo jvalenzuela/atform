@@ -32,6 +32,10 @@ from atform.image import (
     add_logo,
 )
 
+from atform.meta import (
+    list_tests,
+)
+
 from atform.misc import (
     add_copyright,
     set_project_info,
