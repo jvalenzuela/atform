@@ -12,7 +12,7 @@ class Generate(unittest.TestCase):
     @utils.disable_idlock
     def test_path_type(self):
         """Confirm exception if path is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.generate(path=42)
 
 
@@ -25,13 +25,13 @@ class GenerateFolderDepth(unittest.TestCase):
     @utils.disable_idlock
     def test_invalid_type(self):
         """Confirm exception for a non-integer argument."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.generate(folder_depth="foo")
 
     @utils.disable_idlock
     def test_negative(self):
         """Confirm exception for a negative argument."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.generate(folder_depth=-1)
 
     @utils.disable_idlock
@@ -40,5 +40,5 @@ class GenerateFolderDepth(unittest.TestCase):
         atform.set_id_depth(3)
         for i in [3, 4]:
             with self.subTest(i=i):
-                with self.assertRaises(SystemExit):
+                with self.assertRaises(atform.error.UserScriptError):
                     atform.generate(folder_depth=i)

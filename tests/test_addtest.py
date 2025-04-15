@@ -18,17 +18,17 @@ class Title(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for non-string title."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test(99)
 
     def test_empty(self):
         """Confirm exception for an empty title."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("")
 
     def test_blank(self):
         """Confirm exception for a title containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test(string.whitespace)
 
     def test_strip(self):
@@ -60,17 +60,17 @@ class FieldBase(object):
 
     def test_type(self):
         """Verify exception if the argument is not a list."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_test("f1")
 
     def test_item_type(self):
         """Verify exception if an item is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_test([99])
 
     def test_undefined_item(self):
         """Verify exception if an item is not a defined field name."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_test(["foo"])
 
     def test_argument_unchanged(self):
@@ -187,17 +187,17 @@ class Objective(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for non-string objective."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", objective=42)
 
     def test_empty(self):
         """Confirm exception for an empty objective."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", objective="")
 
     def test_blank(self):
         """Confirm exception for an objective containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", objective=string.whitespace)
 
     def test_strip(self):
@@ -217,22 +217,22 @@ class References(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for non-dict references."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references=[])
 
     def test_label_type(self):
         """Confirm exception for non-string labels."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references={42: ["a"]})
 
     def test_empty_label(self):
         """Confirm exception for an empty label."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references={"": ["a"]})
 
     def test_blank_label(self):
         """Confirm exception for a label containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references={string.whitespace: ["a"]})
 
     def test_label_strip(self):
@@ -246,25 +246,25 @@ class References(unittest.TestCase):
 
     def test_undefined_label(self):
         """Confirm exception for an unknown label."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references={"foo": ["a"]})
 
     def test_ref_type(self):
         """Confirm exception for a non-list reference value."""
         atform.add_reference_category("refs", "refs")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references={"refs": "spam"})
 
     def test_ref_item_type(self):
         """Confirm exception for a non-string reference items."""
         atform.add_reference_category("refs", "refs")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references={"refs": [42]})
 
     def test_duplicate_ref(self):
         """Confirm exception for duplicate references."""
         atform.add_reference_category("refs", "refs")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("title", references={"refs": ["a", "a"]})
 
     def test_ignore_empty_ref(self):
@@ -347,22 +347,22 @@ class StringList(object):
 
     def test_type(self):
         """Confirm exception for a non-list."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call("spam")
 
     def test_item_type(self):
         """Confirm exception for a non-string list item."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call([42])
 
     def test_empty(self):
         """Confirm exception for an empty item."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call([""])
 
     def test_blank(self):
         """Confirm exception for an item containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call([string.whitespace])
 
     def test_strip(self):
@@ -404,7 +404,7 @@ class ProcedureList(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-list.."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_test("test", procedure="spam")
 
     def test_argument_unchanged(self):
@@ -449,17 +449,17 @@ class ProcedureStepString(ProcedureStepBase, unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step(42)
 
     def test_empty(self):
         """Confirm exception for an empty string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step("")
 
     def test_blank(self):
         """Confirm exception for a string containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step(string.whitespace)
 
     def test_strip(self):
@@ -474,7 +474,7 @@ class ProcedureStepDict(ProcedureStepBase, unittest.TestCase):
 
     def test_unknown_key(self):
         """Confirm exception for an undefined key."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step({"text": "spam", "foo": "bar"})
 
 
@@ -483,22 +483,22 @@ class ProcedureStepDictText(ProcedureStepBase, unittest.TestCase):
 
     def test_missing(self):
         """Confirm exception if text key is missing."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step({})
 
     def test_type(self):
         """Confirm exception if text is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step({"text": 99})
 
     def test_empty(self):
         """Confirm exception if text is empty."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step({"text": ""})
 
     def test_blank(self):
         """Confirm exception if text contains only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step({"text": string.whitespace})
 
     def test_strip(self):
@@ -513,22 +513,22 @@ class ProcedureStepFields(ProcedureStepBase, unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-list fields key."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_step({"text": "text", "fields": "not a list"})
 
     def test_item_type(self):
         """Confirm exception for a non-tuple list item."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field("not a tuple")
 
     def test_empty_item(self):
         """Confirm exception for an empty field tuple."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(())
 
     def test_too_long(self):
         """Confirm exception for a field definition with too many items."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(("field", 1, "suffix", 42))
 
 
@@ -537,17 +537,17 @@ class ProcedureStepFieldTitle(ProcedureStepBase, unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-string field title."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field((None, 1))
 
     def test_empty(self):
         """Confirm exception for an empty field title."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(("", 1))
 
     def test_blank(self):
         """Confirm exception for a field title containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field((string.whitespace, 1))
 
     def test_strip(self):
@@ -562,18 +562,18 @@ class ProcedureStepFieldLength(ProcedureStepBase, unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-integer length."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(("field", "42"))
 
     def test_missing(self):
         """Confirm exception for a missing length."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(("field",))
 
     def test_invalid_length(self):
         """Confirm exception for a length less than one."""
         for i in [-1, 0]:
-            with self.subTest(i=i), self.assertRaises(SystemExit):
+            with self.subTest(i=i), self.assertRaises(atform.error.UserScriptError):
                 self.make_field(("field", i))
 
 
@@ -582,17 +582,17 @@ class ProcedureStepFieldSuffix(ProcedureStepBase, unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-string suffix."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(("field", 1, 42))
 
     def test_empty(self):
         """Confirm exception for an empty suffix."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(("field", 1, ""))
 
     def test_blank(self):
         """Confirm exception for a suffix containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.make_field(("field", 1, string.whitespace))
 
     def test_strip(self):
@@ -637,7 +637,6 @@ class CallFrame(unittest.TestCase):
         utils.reset()
 
     @utils.disable_idlock
-    @patch("atform.error.DEBUG", True)
     def test_post_call_exception(self):
         """Confirm an exception due to test content raised after a test is defined points to the original add_test() call."""
         # Define a test with an undefined label that will raise an

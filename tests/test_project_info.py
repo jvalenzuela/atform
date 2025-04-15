@@ -15,17 +15,17 @@ class ParameterBase(object):
 
     def test_type(self):
         """Confirm exception for a non-string argument."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.do(42)
 
     def test_empty(self):
         """Confirm exception for an empty parameter."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.do("")
 
     def test_blank(self):
         """Confirm exception for a parameter containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.do(string.whitespace)
 
     def test_strip(self):

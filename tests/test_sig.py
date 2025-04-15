@@ -15,17 +15,17 @@ class AddSignature(unittest.TestCase):
 
     def test_title_type(self):
         """Confirm exception for a non-string title."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_signature(99)
 
     def test_empty_title(self):
         """Confirm exception for an empty title."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_signature("")
 
     def test_blank_title(self):
         """Confirm exception for a title containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_signature(string.whitespace)
 
     def test_title_strip(self):

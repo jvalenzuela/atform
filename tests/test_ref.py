@@ -15,17 +15,17 @@ class TestAddReferenceCategory(unittest.TestCase):
 
     def test_title_type(self):
         """Confirm exception for a title that is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_reference_category(42, "label")
 
     def test_empty_title(self):
         """Confirm exception for an empty title."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_reference_category("", "label")
 
     def test_blank_title(self):
         """Confirm exception for a title containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_reference_category(string.whitespace, "label")
 
     def test_title_strip(self):
@@ -37,23 +37,23 @@ class TestAddReferenceCategory(unittest.TestCase):
 
     def test_label_type(self):
         """Confirm exception for a label that is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_reference_category("foo", None)
 
     def test_empty_label(self):
         """Confirm exception for an empty label."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_reference_category("foo", "")
 
     def test_blank_label(self):
         """Confirm exception for a label containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_reference_category("foo", string.whitespace)
 
     def test_duplicate_label(self):
         """Confirm exception for duplicate label."""
         atform.add_reference_category("foo", "bar")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_reference_category("spam", "bar")
 
     def test_label_strip(self):

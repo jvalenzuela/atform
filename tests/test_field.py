@@ -49,17 +49,17 @@ class AddFieldTitle(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception if title is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field(100, 1, "f")
 
     def test_empty(self):
         """Confirm exception if title is empty."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field("", 1, "f")
 
     def test_blank(self):
         """Confirm exception if title contains only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field(string.whitespace, 1, "f")
 
     def test_strip(self):
@@ -82,12 +82,12 @@ class AddFieldLength(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception if length is not an integer."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field("foo", "1", "f")
 
     def test_out_of_range(self):
         """Confirm exception for lengths less than one."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field("foo", 0, "f")
 
 
@@ -99,23 +99,23 @@ class AddFieldName(unittest.TestCase):
 
     def test_type(self):
         """Confirm exception for a non-string name."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field("title", 1, 0)
 
     def test_empty(self):
         """Confirm exception for an empty name."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field("title", 1, "")
 
     def test_blank(self):
         """Confirm exception for a name containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field("title", 1, string.whitespace)
 
     def test_duplicate(self):
         """Confirm exception for a duplicate name."""
         atform.add_field("title", 1, "foo")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_field("foo", 1, "foo")
 
 
@@ -129,7 +129,7 @@ class AddFieldActive(unittest.TestCase):
         """Verify exception if not a boolean."""
         for i in [0, 1, ""]:
             utils.reset()
-            with self.subTest(i=i), self.assertRaises(SystemExit):
+            with self.subTest(i=i), self.assertRaises(atform.error.UserScriptError):
                 atform.add_field("title", 1, "foo", active=i)
 
     def test_default(self):
@@ -164,17 +164,17 @@ class SetActiveFieldsBase(object):
 
     def test_type(self):
         """Verify exception if the argument is not a list."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call("f1")
 
     def test_item_type(self):
         """Verify exception if an item is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call([42])
 
     def test_undefined_item(self):
         """Verify exception if an item is not a defined field name."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call(["foo"])
 
     def test_argument_unchanged(self):

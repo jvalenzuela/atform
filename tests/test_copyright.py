@@ -14,23 +14,23 @@ class AddCopyright(unittest.TestCase):
 
     def test_notice_type(self):
         """Confirm exception for a non-string notice."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_copyright(42)
 
     def test_empty_notice(self):
         """Confirm exception for an empty notice string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_copyright("")
 
     def test_blank_notice(self):
         """Confirm exception for a notice containing only whitespace."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_copyright(string.whitespace)
 
     def test_multiple_call(self):
         """Confirm exception if function is called more than once."""
         atform.add_copyright("foo")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.add_copyright("bar")
 
 

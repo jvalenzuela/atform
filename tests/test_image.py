@@ -14,24 +14,24 @@ class ErrorBase:
 
     def test_path_type(self):
         """Confirm exception if path is not a string."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call(42)
 
     def test_file_not_found(self):
         """Confirm exception if path points to a nonexistent file."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             self.call("spam")
 
     def test_non_image(self):
         """Confirm exception for a file that is not an image format."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             buf = io.BytesIO(b"foo bar")
             with patch("atform.image.OPEN", return_value=buf):
                 self.call("")
 
     def test_unsupported_format(self):
         """Confirm exception if the image file is not a supported format."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             with utils.mock_image("BMP", (1, 1)):
                 self.call("")
 
@@ -48,7 +48,7 @@ class ErrorBase:
         for fmt in atform.image.FORMATS:
             with self.subTest(fmt=fmt):
                 utils.reset()
-                with self.assertRaises(SystemExit):
+                with self.assertRaises(atform.error.UserScriptError):
                     with utils.mock_image(fmt, (1, 1), include_dpi=False):
                         self.call("")
 
@@ -66,7 +66,7 @@ class ErrorBase:
         ]
         for size in sizes:
             with self.subTest(size=size):
-                with self.assertRaises(SystemExit):
+                with self.assertRaises(atform.error.UserScriptError):
                     with utils.mock_image("JPEG", size):
                         self.call("")
 
@@ -89,7 +89,7 @@ class AddLogo(unittest.TestCase, ErrorBase):
         """Confirm exception if called more than once."""
         with utils.mock_image("JPEG", (1, 1)):
             atform.add_logo("")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             with utils.mock_image("JPEG", (1, 1)):
                 atform.add_logo("")
 

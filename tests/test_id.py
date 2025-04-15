@@ -41,31 +41,31 @@ class Section(unittest.TestCase):
     def test_level_type(self):
         """Confirm an exception is raised for a non-integer level."""
         atform.set_id_depth(2)
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.section("0")
 
     def test_level_nonsection_single(self):
         """Confirm an exception is raised for a level that is not a section for single-level IDs."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.section(1)
 
     def test_level_nonsection_multi(self):
         """Confirm an exception is raised for a level that is not a section for multi-level IDs."""
         atform.set_id_depth(2)
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.section(2)
 
     def test_level_outside_depth(self):
         """Confirm an exception is raised for a level beyond the ID depth."""
         atform.set_id_depth(2)
         for level in [0, 3]:
-            with self.assertRaises(SystemExit):
+            with self.assertRaises(atform.error.UserScriptError):
                 atform.section(level)
 
     def test_id_type(self):
         """Confirm an exception is raised if id is not an integer."""
         atform.set_id_depth(2)
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.section(0, id="42")
 
     def test_id_backwards(self):
@@ -73,13 +73,13 @@ class Section(unittest.TestCase):
         atform.set_id_depth(2)
         atform.section(1, id=3)
         for id in range(-1, 4):
-            with self.subTest(id=id), self.assertRaises(SystemExit):
+            with self.subTest(id=id), self.assertRaises(atform.error.UserScriptError):
                 atform.section(1, id=id)
 
     def test_title_type(self):
         """Confirm an exception is raised if title is not a string."""
         atform.set_id_depth(2)
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.section(1, title=42)
 
     def test_level_increment(self):
@@ -122,7 +122,7 @@ class Section(unittest.TestCase):
         rejected.
         """
         atform.set_id_depth(2)
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.section(1, title="/")
 
     def test_title_store(self):
@@ -140,13 +140,15 @@ class SetIdDepth(unittest.TestCase):
 
     def test_non_integer_levels(self):
         """Confirm an exception is raised for non-integer argument."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.set_id_depth("1")
 
     def test_levels_leq_zero(self):
         """Confirm an exception is raised for arguments less than 1."""
         for level in [-1, 0]:
-            with self.subTest(level=level), self.assertRaises(SystemExit):
+            with self.subTest(level=level), self.assertRaises(
+                atform.error.UserScriptError
+            ):
                 atform.id.set_id_depth(level)
 
     def test_set_current_id(self):
@@ -174,18 +176,18 @@ class SkipTest(unittest.TestCase):
 
     def test_id_type(self):
         """Confirm exception if id is not an integer."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.skip_test("10")
 
     def test_invalid_id(self):
         """Confirm exception for invalid id values."""
         for id in [-1, 0]:
-            with self.subTest(id=id), self.assertRaises(SystemExit):
+            with self.subTest(id=id), self.assertRaises(atform.error.UserScriptError):
                 atform.skip_test(id)
 
     def test_zero_distance_first(self):
         """Confirm exception when skipping to the first test in a section."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.skip_test(1)
 
     def test_zero_distance(self):
@@ -193,7 +195,7 @@ class SkipTest(unittest.TestCase):
         atform.state.current_id = [
             42,
         ]
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.skip_test(43)
 
     def test_back_one(self):
@@ -201,7 +203,7 @@ class SkipTest(unittest.TestCase):
         atform.state.current_id = [
             42,
         ]
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.skip_test(42)
 
     def test_back_multipe(self):
@@ -209,7 +211,7 @@ class SkipTest(unittest.TestCase):
         atform.state.current_id = [
             42,
         ]
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(atform.error.UserScriptError):
             atform.skip_test(10)
 
     def test_first_implicit(self):

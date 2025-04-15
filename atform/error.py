@@ -12,11 +12,7 @@ import collections
 import functools
 import textwrap
 import traceback
-
-
-# Setting to true will revert to normal Python exception handling,
-# generating a complete traceback.
-DEBUG = False
+import sys
 
 
 # Call frame of the current API being called.
@@ -27,7 +23,7 @@ api_call_frame = None  # pylint: disable=invalid-name
 def exit_on_script_error(api):
     """Decorator to exit upon catching a ScriptError.
 
-    This must only be applied to public API objects to ensure all context
+    This must only be applied to public API functions to ensure all context
     is added to the original exception. When stacked with other decorators
     it must be outermost, i.e., listed first.
     """
@@ -54,12 +50,7 @@ def exit_on_script_error(api):
                 e.call_frame = api_call_frame
                 e.api = api
 
-            if DEBUG:
-                raise
-
-            # Translate the original exception to SystemExit, which doesn't
-            # print the stack trace.
-            raise SystemExit(e) from e
+            raise
 
         return result
 
@@ -112,8 +103,7 @@ class UserScriptError(Exception):
         # Compute the indentation required to right-align all field names.
         indent = max(len(s) for s in self.fields.keys())
 
-        lines = ["The following error was encountered:"]
-        lines.append("")
+        lines = []
 
         # Fields are added from most specific to most general as the
         # exception propagates up from its origin, so they are listed here
@@ -146,3 +136,15 @@ class UserScriptError(Exception):
             lines.append(f"atform.{self.api.__name__} help: {self.api.__doc__}")
 
         return "\n".join(lines)
+
+
+def handle_user_script_error(exc_type, exc_value, _traceback):
+    """Handler for UserScriptError exceptions."""
+    # Handle only UserScriptErrors; all other exceptions are passed unaltered.
+    if exc_type is not UserScriptError:
+        raise exc_value
+
+    sys.exit(f"The following error was encountered:\n\n{exc_value}")
+
+
+sys.excepthook = handle_user_script_error

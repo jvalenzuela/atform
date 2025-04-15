@@ -119,12 +119,12 @@ class Duplicate(unittest.TestCase):
     def test_id(self):
         """Confirm exception for duplicate test ID labels."""
         atform.add_test("t1", label="foo")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(UserScriptError):
             atform.add_test("t2", label="foo")
 
     def test_procedure_step(self):
         """Confirm exception for duplicate procedure step labels."""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(UserScriptError):
             atform.add_test(
                 "test",
                 procedure=[

@@ -2,31 +2,14 @@
 
 
 import atform
+from atform.error import UserScriptError
+import sys
+import traceback
 import unittest
 
 
 class ExitOnScriptError(unittest.TestCase):
     """Unit tests for the exit_on_script_error decorator."""
-
-    def test_convert_user_script_error(self):
-        """Confirm a UserScriptError is converted to SystemExit."""
-
-        @atform.error.exit_on_script_error
-        def func():
-            raise atform.error.UserScriptError("foo")
-
-        with self.assertRaises(SystemExit):
-            func()
-
-    def test_non_user_script_error(self):
-        """Confirm exceptions other than UserScriptError pass unaffected."""
-
-        @atform.error.exit_on_script_error
-        def func():
-            raise KeyError
-
-        with self.assertRaises(KeyError):
-            func()
 
     def test_parameters(self):
         """Confirm positional and keyword arguments are passed to the wrapped function."""
@@ -52,8 +35,24 @@ class ExitOnScriptError(unittest.TestCase):
 
         @atform.error.exit_on_script_error
         def func():
-            raise atform.error.UserScriptError("foo")
+            raise UserScriptError("foo")
 
-        with self.assertRaises(SystemExit) as e:
+        with self.assertRaises(UserScriptError) as cm:
             func()
-        self.assertEqual(__file__, e.exception.__context__.call_frame.filename)
+        self.assertEqual(__file__, cm.exception.call_frame.filename)
+
+
+class Excepthook(unittest.TestCase):
+    """Tests for the installed exception handler."""
+
+    def test_convert_user_script_error(self):
+        """Confirm a UserScriptError is converted to SystemExit."""
+        e = UserScriptError("foo")
+        e.call_frame = traceback.extract_stack()[-1]
+        with self.assertRaises(SystemExit):
+            sys.excepthook(UserScriptError, e, None)
+
+    def test_non_user_script_error(self):
+        """Confirm exceptions other than UserScriptError pass unaffected."""
+        with self.assertRaises(KeyError):
+            sys.excepthook(KeyError, KeyError(), None)
