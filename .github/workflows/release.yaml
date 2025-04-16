@@ -80,6 +80,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install latexmk
           sudo apt-get install texlive-latex-extra
+          sudo apt-get install texlive-font-utils
 
       - name: Checkout target commit
         uses: actions/checkout@v4
@@ -106,6 +107,6 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist/*, doc/build/latex/*.pdf
+          artifacts: dist/*, doc/build/latex/atform.pdf
           draft: true
           name: ${{ env.RELEASE_NAME }}

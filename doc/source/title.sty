@@ -1,0 +1,32 @@
+% Title page generation.
+\ProvidesPackage{title}
+
+\RequirePackage{graphicx}
+
+\newcommand{\atformtitle}{
+  \begin{titlepage}
+    \sffamily
+    \bfseries
+
+    \begin{center}
+      \vspace*{1cm}
+      {\Huge ATFORM}
+      \par
+      \bigskip
+      \mbox{\Large \slshape A System For Creating Acceptance Test Forms}
+    \end{center}
+
+    \vfill
+
+    \includegraphics[height=50pt]{python-powered.eps}
+    \hfill
+    \begin{minipage}[b]{0.5\textwidth}
+      \raggedleft
+      \Large
+      \mbox{User Manual}
+      \par
+      \mbox{Release~\version}
+    \end{minipage}
+
+  \end{titlepage}
+}

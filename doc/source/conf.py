@@ -62,15 +62,19 @@ latex_elements = {
     "extraclassoptions": "oneside",
     "pointsize": "12pt",
     "printindex": "",  # Exclude index in PDF output.
+    "maketitle": r"\atformtitle",
     "preamble": r"""
     \usepackage{embedfile} % For attaching examples.
     \setlength{\headheight}{15pt}
     \usepackage{changelog}
+    \usepackage{title}
     """,
 }
 
 latex_additional_files = [
     "changelog.sty",
+    "title.sty",
+    "images/python-powered.eps",
 ]
 
 
