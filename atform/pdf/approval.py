@@ -26,6 +26,10 @@ from .textstyle import stylesheet
 NAME_WIDTH = 12
 
 
+DATE_FORMAT = "YYYY/MM/DD"
+DATE_TITLE = f"Date ({DATE_FORMAT})"
+
+
 # Vertical distance between field names and the data entry fields.
 FIELD_TITLE_SEP = toLength("1 pt")
 
@@ -65,7 +69,7 @@ def make_sig_rows(title):
             Preformatted("Name", field_style),
             Preformatted("Signature", field_style),
             Preformatted("Initials", field_style),
-            Preformatted("Date", field_style),
+            Preformatted(DATE_TITLE, field_style),
         ],
         # Lower row contains the text entry fields.
         [
@@ -85,7 +89,7 @@ def name_entry_field():
 
 def date_entry_field():
     """Creates a date entry field."""
-    return acroform.TextEntry("0000/00/00", "YYYY/MM/DD")
+    return acroform.TextEntry(DATE_FORMAT, DATE_FORMAT)
 
 
 def style(sigs):
@@ -209,7 +213,7 @@ def name_col_width():
 def date_col_width():
     """Calculates the width of the date column."""
     sty = stylesheet["SignatureFieldTitle"]
-    title_width = stringWidth("Date", sty.fontName, sty.fontSize)
+    title_width = stringWidth(DATE_TITLE, sty.fontName, sty.fontSize)
 
     # The title cell includes default left and right padding.
     title_width += layout.DEFAULT_TABLE_HORIZ_PAD * 2
