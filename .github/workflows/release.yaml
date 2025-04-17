@@ -10,9 +10,7 @@ jobs:
     strategy:
       matrix:
         os:
-          # Latest Linux runner to support Python 3.7 per
-          # https://github.com/actions/python-versions/blob/main/versions-manifest.json commit e550a75
-          - ubuntu-22.04
+          - ubuntu-latest
 
           - windows-latest
 
@@ -23,7 +21,6 @@ jobs:
         # Python versions to run on; must match the requires-python in
         # pyproject.toml.
         python:
-          - '3.7'
           - '3.8'
           - '3.9'
           - '3.10'
