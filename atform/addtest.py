@@ -1,7 +1,6 @@
 """This module contains the add_test() API and ancilliary validation functions."""
 
 import dataclasses
-import types
 
 from . import error
 from . import field
@@ -28,7 +27,7 @@ class TestContent:
     preconditions: list
     procedure: list
     project_info: dict
-    call_frame: types.FrameType
+    call_frame: error.CallFrame
     labels: dict
     copyright: str
     signatures: list

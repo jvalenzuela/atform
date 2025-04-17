@@ -15,9 +15,22 @@ import traceback
 import sys
 
 
+# Container holding information pointing to the location of the most recent API
+# function call. Intended as a pickle-able container for specific
+# traceback.FrameSummary attributes because FrameSummary objects themselves cannot be
+# pickled.
+CallFrame = collections.namedtuple("CallFrame", ["filename", "lineno"])
+
+
 # Call frame of the current API being called.
 # Pylint invalid-name is disabled because this is not a constant.
 api_call_frame = None  # pylint: disable=invalid-name
+
+
+def set_call_frame(frame):
+    """Updates the current call frame."""
+    global api_call_frame  # pylint: disable=global-statement
+    api_call_frame = CallFrame(frame.filename, frame.lineno)
 
 
 def exit_on_script_error(api):
@@ -30,15 +43,13 @@ def exit_on_script_error(api):
 
     @functools.wraps(api)
     def wrapper(*args, **kwargs):
-        global api_call_frame  # pylint: disable=global-statement
-
         # Capture the location where this API was called from the
         # user script. The normal exception traceback is not used
         # because it is difficult to determine which frame represents
         # the departure from the user script, whereas it is always
         # in the same location in a traceback relative to this wrapper
         # function.
-        api_call_frame = traceback.extract_stack(limit=2)[0]
+        set_call_frame(traceback.extract_stack(limit=2)[0])
 
         try:
             result = api(*args, **kwargs)
