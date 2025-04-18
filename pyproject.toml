@@ -22,7 +22,7 @@ requires-python = ">= 3.8, < 3.14"
 
 dependencies = [
     "reportlab>=4.2.0",
-    # Pillow is explicitly omitted as it is already a reportlab requirement.
+    "pillow",
 ]
 
 classifiers = [
