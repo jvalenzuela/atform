@@ -10,7 +10,8 @@ name = "atform"
 description = "Acceptance test procedure form generator."
 readme = "README.md"
 authors = [
-    {name = "Jason Valenzuela", email = "jvalenzuela1977@gmail.com"},
+    {name = "Jason Valenzuela"},
+    {email = "jvalenzuela1977@gmail.com"},
 ]
 license = {file = "LICENSE.txt"}
 dynamic = ["version"]
