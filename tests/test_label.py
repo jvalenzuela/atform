@@ -9,8 +9,8 @@ import string
 import unittest
 
 
-class Add(unittest.TestCase):
-    """Tests for the add() function."""
+class LabelString:
+    """Base class for testing various label strings."""
 
     def setUp(self):
         utils.reset()
@@ -18,17 +18,17 @@ class Add(unittest.TestCase):
     def test_type(self):
         """Confirm exception for a non-string label."""
         with self.assertRaises(UserScriptError):
-            label.add(42, "id")
+            self.create_label(42)
 
     def test_empty(self):
         """Confirm exception for an empty label."""
         with self.assertRaises(UserScriptError):
-            label.add("", "id")
+            self.create_label("")
 
     def test_blank(self):
         """Confirm exception for a label containing only whitespace."""
         with self.assertRaises(UserScriptError):
-            label.add(string.whitespace, "id")
+            self.create_label(string.whitespace)
 
     def test_invalid_first_character(self):
         """Confirm exception for a label with an invalid first character."""
@@ -40,7 +40,7 @@ class Add(unittest.TestCase):
 
         for c in invalid:
             with self.subTest(c=c), self.assertRaises(UserScriptError):
-                label.add(c + "foo", "id")
+                self.create_label(c + "foo")
 
     def test_invalid_following_character(self):
         """Confirm exception for a label with an invalid character after the first."""
@@ -53,12 +53,12 @@ class Add(unittest.TestCase):
 
         for c in invalid:
             with self.subTest(c=c), self.assertRaises(UserScriptError):
-                label.add("foo" + c, "id")
+                self.create_label("foo" + c)
 
     def test_nonascii(self):
         """Confirm exception for a label containing non-ASCII characters."""
         with self.assertRaises(UserScriptError):
-            label.add("foo\u00dfar", "id")
+            self.create_label("foo\u00dfar")
 
     def test_valid_single_character(self):
         """Confirm a valid single-character label is accepted."""
@@ -66,8 +66,9 @@ class Add(unittest.TestCase):
         valid.add("_")
 
         for c in valid:
+            utils.reset()
             with self.subTest(c=c):
-                label.add(c, "id")
+                self.create_label(c)
 
     def test_valid_multi_character(self):
         """Confirm a valid multi-character label is accepted."""
@@ -76,8 +77,23 @@ class Add(unittest.TestCase):
         valid.add("_")
 
         for c in valid:
+            utils.reset()
             with self.subTest(c=c):
-                label.add("foo" + c, "id")
+                self.create_label("foo" + c)
+
+
+class TestId(LabelString, unittest.TestCase):
+    """Tests for labels assigned to a test."""
+
+    def create_label(self, lbl):
+        atform.add_test("title", label=lbl)
+
+
+class ProcedureStep(LabelString, unittest.TestCase):
+    """Tests for labels assigned to a procedure step."""
+
+    def create_label(self, lbl):
+        atform.add_test("title", procedure=[{"text": "step", "label": lbl}])
 
 
 class Resolve(unittest.TestCase):
