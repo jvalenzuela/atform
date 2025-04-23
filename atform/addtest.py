@@ -1,5 +1,6 @@
 """This module contains the add_test() API and ancilliary validation functions."""
 
+import collections
 import dataclasses
 
 from . import error
@@ -9,6 +10,17 @@ from . import label as label_
 from . import misc
 from . import procedure as procedure_
 from . import state
+from . import term
+
+
+# Information about a term used in a test via label placeholder.
+SupportedTerm = collections.namedtuple(
+    "SupportedTerm",
+    [
+        "text",  # Formatted term text.
+        "test_ids",  # Set of ID tuples of supporting tests.
+    ],
+)
 
 
 @dataclasses.dataclass
@@ -33,6 +45,11 @@ class TestContent:
     signatures: list
     logo_hash: bytes
 
+    # Terms with supporting tests that have been referenced by label
+    # placeholders in this test's content. Initially empty; populated
+    # by _build_terms().
+    supported_terms: list = dataclasses.field(init=False, default_factory=list)
+
     @property
     def full_name(self):
         """String containing the combination of ID and title."""
@@ -55,26 +72,32 @@ class TestContent:
 
     def _resolve_labels(self):
         """Replaces label placeholders with their target IDs."""
+        used_labels = set()
+
         if self.objective:
             try:
-                self.objective = label_.resolve(self.objective, self.labels)
+                self.objective = label_.resolve(
+                    self.objective, self.labels, used_labels
+                )
             except error.UserScriptError as e:
                 e.add_field("Test Section", "Objective")
                 raise
 
         for i, item in enumerate(self.preconditions):
             try:
-                self.preconditions[i] = label_.resolve(item, self.labels)
+                self.preconditions[i] = label_.resolve(item, self.labels, used_labels)
             except error.UserScriptError as e:
                 e.add_field("Precondition Item", i + 1)
                 raise
 
         for i, step in enumerate(self.procedure, start=1):
             try:
-                step.resolve_labels(self.labels)
+                step.resolve_labels(self.labels, used_labels)
             except error.UserScriptError as e:
                 e.add_field("Procedure Step", i)
                 raise
+
+        self._build_terms(used_labels)
 
     def _build_label_mapping(self):
         """Updates label mapping to include globally-defined labels."""
@@ -95,6 +118,37 @@ class TestContent:
                 Select a label name that is not used elsewhere.
                 """,
             )
+
+    def _build_terms(self, used_labels):
+        """Assembles tests supporting terms used in this test."""
+        # Supported terms are listed in the same order terms are defined, ensuring
+        # consistent order in the PDF output, so labels are evaluated in the same
+        # order as the global label dict.
+        order = list(state.labels.keys())
+
+        for lbl in sorted(used_labels, key=order.index):
+            try:
+                # A copy of the supporting test set is made because the
+                # resulting list of supporting tests needs to be altered for
+                # each test to prevent tests from listing themselves.
+                supporting_tests = set(state.labels[lbl].supporting_tests)
+
+            # Ignore labels that don't point to terms.
+            except (AttributeError, KeyError):
+                pass
+
+            else:
+                # Exclude this test from supporting tests so it doesn't list
+                # itself in Supporting Tests.
+                supporting_tests.discard(self.id)
+
+                # Add this as a supported term if any supporting tests exist
+                # aside from this test.
+                if supporting_tests:
+                    trm = SupportedTerm(
+                        str(state.labels[lbl]), frozenset(supporting_tests)
+                    )
+                    self.supported_terms.append(trm)
 
     def __eq__(self, other):
         """Equality implementation for detecting content differences.
@@ -124,6 +178,7 @@ class TestContent:
             and self.copyright == other.copyright
             and self.signatures == other.signatures
             and self.logo_hash == other.logo_hash
+            and self.supported_terms == other.supported_terms
         )
 
 
@@ -263,6 +318,7 @@ def add_test(
     title,
     *,
     label=None,
+    terms=None,
     include_fields=None,
     exclude_fields=None,
     active_fields=None,
@@ -285,6 +341,10 @@ def add_test(
             this specific test. Must not be blank.
         label (str, optional): An identifier for use in content strings to
             refer back to this test; may not be blank. See :ref:`labels`.
+        terms (list[str], optional): List of labels for terms supported by
+            this test, *not* term labels used in this test; the latter is
+            detected automatically. Other tests using labels listed here
+            will include a reference to this test. See :ref:`term`.
         include_fields (list[str], optional): Names of fields to add to
             this test; provides the same behavior as the ``include`` parameter
             of :py:func:`atform.set_active_fields` while only affecting
@@ -349,6 +409,9 @@ def add_test(
         if label is not None:
             id_string = id_.to_string(content["id"])
             label_.add(label, id_string)
+
+        if terms is not None:
+            term.add_supporting_test(content["id"], terms)
 
     except error.UserScriptError as e:
         try:

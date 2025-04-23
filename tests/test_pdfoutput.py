@@ -684,3 +684,95 @@ class CachePageCount(Base, unittest.TestCase):
     def test_correct(self, mock):
         """Confirm correct page count(3) when the cached page count is right."""
         self.make_test(**self.TEST_ARGS)
+
+
+class Term(Base, unittest.TestCase):
+    """Tests for defined terms."""
+
+    def test_single_supporting(self):
+        """Confirm Supporting Tests section layout with a single term."""
+        atform.add_term("foo", "term")
+        self.make_test(
+            objective="Dummy supporting test.",
+            terms=["term"],
+            generate=False,
+        )
+        self.make_test(procedure=["$term."])
+
+    def test_multiple_supporting(self):
+        """Confirm Supporting Tests section layout with multiple terms."""
+        atform.add_term("term1", "t1")
+        atform.add_term("longerTerm", "t2")
+        atform.add_term("lastTerm", "t3")
+
+        self.make_test(
+            objective="Dummy supporting test.",
+            terms=["t3"],
+            generate=False,
+        )
+        self.make_test(
+            objective="Dummy supporting test.",
+            terms=["t3", "t2"],
+            generate=False,
+        )
+        self.make_test(
+            objective="Dummy supporting test.",
+            terms=["t3", "t2"],
+            generate=False,
+        )
+        self.make_test(
+            objective="Dummy supporting test.",
+            terms=["t1"],
+            generate=False,
+        )
+        self.make_test(
+            procedure=[
+                "Confirm supporting tests for $t2 and $t3 are comma-separated.",
+                "Confirm term text in Supporting Tests section is right-justified.",
+                "Confirm supporting test IDs are left-justified.",
+                """
+                Confirm terms are listed in the following order in the
+                Supporting Tests section:
+                """
+                + atform.bullet_list("$t1", "$t2", "$t3"),
+                "Confirm supporting tests are listed in numerical order",
+            ]
+        )
+
+    def test_long(self):
+        """Confirm layout with very long term text."""
+        # Define a term long enough to require line wrapping in the Supporting
+        # Tests section.
+        atform.add_term("Term" * 20, "long")
+
+        self.make_test(
+            objective="Dummy supporting test.", terms=["long"], generate=False
+        )
+        self.make_test(
+            procedure=["Confirm the supporting tests entry for $long is line wrapped."]
+        )
+
+    def test_format(self):
+        """Confirm correct term text formatting."""
+        atform.add_term("monospace", "msterm", typeface="monospace")
+        atform.add_term("sansserif", "ssterm", typeface="sansserif")
+        atform.add_term("bold", "bterm", font="bold")
+        atform.add_term("italic", "iterm", font="italic")
+        self.make_test(
+            objective="Dummy supporting test.",
+            terms=["msterm", "ssterm", "bterm", "iterm"],
+            generate=False,
+        )
+        self.make_test(
+            procedure=[
+                "Confirm $msterm is set in monospace.",
+                "Confirm $ssterm is set in sans serif.",
+                "Confirm $bterm is set in bold.",
+                "Confirm $iterm is set in italic.",
+            ]
+        )
+
+    def test_no_supporting(self):
+        """Confirm no Supporting Tests section for terms without supporting tests."""
+        atform.add_term("term", "term")
+        self.make_test(procedure=["$term"])

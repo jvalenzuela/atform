@@ -57,13 +57,19 @@ def add(label, id_, mapping=None):
         )
 
 
-def resolve(orig, mapping):
-    """Replaces label placeholders with the target IDs.
+def resolve(orig, mapping, used_labels):
+    """Replaces label placeholders with the target text.
 
     The public API already validates the original string to ensure it is
     in fact a string, so only substitution needs to be checked.
     """
     tpl = string.Template(orig)
+
+    # Add any labels found in the original string. This is not implemented
+    # using the get_identifiers() template method to support Python versions
+    # older than v3.11.
+    used = [lbl for lbl in mapping if tpl.safe_substitute({lbl: ""}) != orig]
+    used_labels.update(used)
 
     try:
         return tpl.substitute(mapping)

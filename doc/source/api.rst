@@ -19,6 +19,7 @@ Setup
    atform.add_logo
    atform.add_reference_category
    atform.add_signature
+   atform.add_term
    atform.require_version
    atform.set_id_depth
    atform.set_project_info

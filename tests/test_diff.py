@@ -1501,6 +1501,174 @@ class ProcedureLabel(DiffBase):
         self.generate_diff({(2,)})
 
 
+class Term(DiffBase):
+    """Tests for detecting changes to defined terms."""
+
+    def test_same(self):
+        """Confirm no term changes is not flagged as a difference."""
+        atform.add_term("term", "term", typeface="monospace", font="bold")
+        atform.add_test("title", procedure=["$term"])
+        atform.add_test("support", terms=["term"])
+        self.generate_old()
+
+        atform.add_term("term", "term", typeface="monospace", font="bold")
+        atform.add_test("title", procedure=["$term"])
+        atform.add_test("support", terms=["term"])
+        self.generate_diff(set())
+
+    def test_add_unused(self):
+        """Confirm adding an unused term is not flagged as a difference."""
+        atform.add_test("title")
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("title")
+        self.generate_diff(set())
+
+    def test_remove_unused(self):
+        """Confirm removing an unused term is not flagged as a difference."""
+        atform.add_term("term", "term")
+        atform.add_test("title")
+        self.generate_old()
+
+        atform.add_test("title")
+        self.generate_diff(set())
+
+    def test_change_text(self):
+        """Confirm altering the term text is detected."""
+        atform.add_term("foo", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("bar", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_change_label(self):
+        """Confirm altering the term label while the text stays the same is not flagged as a difference."""
+        atform.add_term("foo", "label")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$label"])
+        self.generate_old()
+
+        atform.add_term("foo", "newlabel")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$newlabel"])
+        self.generate_diff(set())
+
+    def test_add_typeface(self):
+        """Confirm adding a typeface is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term", typeface="monospace")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_change_typeface(self):
+        """Confirm altering the typeface is detected."""
+        atform.add_term("term", "term", typeface="sansserif")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term", typeface="monospace")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_remove_typeface(self):
+        """Confirm removing the typeface is detected."""
+        atform.add_term("term", "term", typeface="sansserif")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_add_font(self):
+        """Confirm adding a font is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term", font="bold")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_change_font(self):
+        """Confirm altering the font is detected."""
+        atform.add_term("term", "term", font="italic")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term", font="bold")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_remove_font(self):
+        """Confirm removing the font is detected."""
+        atform.add_term("term", "term", font="italic")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_add_support(self):
+        """Confirm adding a supporting test is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("unchanged", terms=["term"])
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_remove_support(self):
+        """Confirm removing a supporting test is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("unchanged", terms=["term"])
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("unchanged")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(2,)})
+
+    def test_change_support(self):
+        """Confirm changing a supporting test is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("old support", terms=["term"])
+        atform.add_test("new support")
+        atform.add_test("title", procedure=["$term"])
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("old support")
+        atform.add_test("new support", terms=["term"])
+        atform.add_test("title", procedure=["$term"])
+        self.generate_diff({(3,)})
+
+
 class DiffIdCombination(DiffBase):
     """Tests for combining the diff and ID command line arguments."""
 

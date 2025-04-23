@@ -49,9 +49,11 @@ def init():
     global fields
     fields = collections.OrderedDict()
 
-    # Globally accessible labels.
+    # Globally accessible labels; includes both test IDs and terms.
+    # Implemented as an ordered dictionary so term references in the output
+    # documents follow the order terms are defined.
     global labels
-    labels = {}
+    labels = collections.OrderedDict()
 
     # Hash of the the user-specified logo image file.
     global logo_hash

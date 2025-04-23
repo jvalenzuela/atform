@@ -42,9 +42,9 @@ class Step:
     fields: typing.List[Field]
     image_hash: bytes
 
-    def resolve_labels(self, mapping):
-        """Replaces label placeholders with their target IDs."""
-        self.text = label.resolve(self.text, mapping)
+    def resolve_labels(self, mapping, used_labels):
+        """Replaces label placeholders with their target text."""
+        self.text = label.resolve(self.text, mapping, used_labels)
 
 
 def validate(lst, label_mapping):

@@ -43,6 +43,40 @@ class Title(unittest.TestCase):
             atform.add_test("title", "foo")
 
 
+class Terms(unittest.TestCase):
+    """Tests for the supported terms argument."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_non_list(self):
+        """Confirm exception for a value that is not a list."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", terms="foo")
+
+    def test_item_type(self):
+        """Confirm exception for a list item that is not a string."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", terms=[42])
+
+    def test_undefined(self):
+        """Confirm exception for a list item that is not a label."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", terms=["foo"])
+
+    def test_non_term(self):
+        """Confirm exception for a label that does not refer to a term."""
+        atform.add_test("t1", label="not_a_term")
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", terms="not_a_term")
+
+    def test_duplicate(self):
+        """Confirm exception for duplicate list items."""
+        atform.add_term("term", "term")
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", terms=["term", "term"])
+
+
 class FieldBase(object):
     """Base class for field arguments of Test."""
 

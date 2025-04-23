@@ -82,6 +82,13 @@ class LabelString:
                 self.create_label("foo" + c)
 
 
+class Term(LabelString, unittest.TestCase):
+    """Tests for labels assigned to a term."""
+
+    def create_label(self, lbl):
+        atform.add_term("term", lbl)
+
+
 class TestId(LabelString, unittest.TestCase):
     """Tests for labels assigned to a test."""
 
@@ -105,17 +112,17 @@ class Resolve(unittest.TestCase):
     def test_undefined_label(self):
         """Confirm exception for a string with an undefined label."""
         with self.assertRaises(UserScriptError):
-            label.resolve("$foo", {})
+            label.resolve("$foo", {}, set())
 
     def test_invalid_identifier(self):
         """Confirm exception for a string with an invalid identifier."""
         with self.assertRaises(UserScriptError):
-            label.resolve("$ foo", {})
+            label.resolve("$ foo", {}, set())
 
     def test_no_identifiers(self):
         """Confirm a string with no identifiers is returned unmodified."""
         s = "foo"
-        self.assertEqual(s, label.resolve(s, {}))
+        self.assertEqual(s, label.resolve(s, {}, set()))
 
     def test_replacement(self):
         """Confirm labels are replaced with their IDs."""
@@ -123,7 +130,7 @@ class Resolve(unittest.TestCase):
             "spam": "foo",
             "eggs": "bar",
         }
-        self.assertEqual("foo bar", label.resolve("$spam $eggs", mapping))
+        self.assertEqual("foo bar", label.resolve("$spam $eggs", mapping, set()))
 
 
 class Duplicate(unittest.TestCase):
@@ -175,6 +182,31 @@ class Duplicate(unittest.TestCase):
         atform.add_test("t2", label="foo")
         with self.assertRaises(UserScriptError):
             t1.pregenerate()
+
+    def test_term_term(self):
+        """Confirm exception for a term label duplicating another term."""
+        atform.add_term("term1", "label")
+        with self.assertRaises(UserScriptError):
+            atform.add_term("term2", "label")
+
+    def test_term_test(self):
+        """Confirm exception for a term label duplicating a test label."""
+        atform.add_term("term", "label")
+        with self.assertRaises(UserScriptError):
+            atform.add_test("test", label="label")
+
+    def test_term_step(self):
+        """Confirm exception for a term label duplicating a procedure step."""
+        atform.add_term("term", "label")
+        atform.add_test("test", procedure=[
+            {
+                "text": "step",
+                "label": "label",
+            },
+        ])
+        t = utils.get_test_content()
+        with self.assertRaises(UserScriptError):
+            t.pregenerate()
 
 
 class IdReplacementBefore(unittest.TestCase):
