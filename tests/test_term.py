@@ -81,3 +81,15 @@ class LabelReplacement(unittest.TestCase):
         t.pregenerate()
         self.assertEqual("s1 foo", t.procedure[0].text)
         self.assertEqual("s2 foo", t.procedure[1].text)
+
+
+class SupportingTests(unittest.TestCase):
+    """Tests for detecting supporting tests."""
+
+    def setUp(self):
+        utils.reset()
+        atform.add_term("term1", "t1")
+        atform.add_term("term2", "t2")
+
+    def test_use_before_support(self):
+        """Confirm """
