@@ -1,0 +1,41 @@
+"""
+Implements a frame allowing the user to add to the build queue by selecting
+from a list of all tests.
+"""
+
+import tkinter as tk
+
+from . import common
+from .. import state
+from . import testlist
+
+
+class SelectList(tk.Frame):
+    """Top-level widget housing the selection list."""
+
+    def __init__(self, parent, build):
+        super().__init__(parent)
+        self.build = build
+        self._add_listing()
+        self._add_buttons()
+
+    def _add_listing(self):
+        """Creates the test listing widget."""
+        self.testlist = testlist.TestList(self)
+
+        # Populate the list with all defined tests.
+        for tid in state.tests:
+            self.testlist.add_test(tid)
+
+    def _add_buttons(self):
+        """Creates additional buttons."""
+        add = tk.Button(self, text="Add Selected Tests To Build")
+        add.bind(common.LEFT_CLICK, self._on_add)
+        add.pack(fill=tk.X)
+
+    def _on_add(self, _event):
+        """Event handler for the Add button."""
+        for tid in self.testlist.selected_tests:
+            self.build.add_test(tid)
+
+        self.testlist.unselect_all()

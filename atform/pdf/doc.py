@@ -62,7 +62,7 @@ def build(test, cached_page_count, path):
         raise BuildError(f"Failed to build PDF for {tid} {test.title}: {e}") from e
 
     # Return data to be written to the cache file.
-    return test.id, doc.page_count.last_page
+    return {test.id: doc.page_count.last_page}
 
 
 class TestDocument:

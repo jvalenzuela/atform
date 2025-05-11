@@ -20,6 +20,8 @@ def reset():
     after a single import.
     """
     atform.state.init()
+    atform.cache.data = None
+    atform.vcs.current = None
 
     # The image cache needs to be reset separately as it is not stored
     # in the state module.
@@ -28,12 +30,13 @@ def reset():
 
 def get_test_content():
     """Retrieves the content of the most recently created test."""
-    return atform.state.tests[-1]
+    ids = sorted(atform.state.tests.keys())
+    return atform.state.tests[ids[-1]]
 
 
 def mock_build(test, *args):
     """Dummy PDF build function to inhibit generating actual output files."""
-    return test.id, 1
+    return {test.id: 1}
 
 
 def no_pdf_output(method):
