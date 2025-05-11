@@ -357,4 +357,4 @@ def add_test(
             title = None
         add_exception_context(e, content["id"], title)
 
-    state.tests.append(TestContent(**content))
+    state.tests[content["id"]] = TestContent(**content)

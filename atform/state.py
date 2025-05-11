@@ -57,9 +57,9 @@ def init():
     global logo_hash
     logo_hash = None
 
-    # All tests in the order they were created.
+    # All tests keyed by ID tuple.
     global tests
-    tests = []
+    tests = {}
 
     # The current project information set by the most recent call to
     # set_project_info().

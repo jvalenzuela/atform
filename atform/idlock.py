@@ -90,7 +90,7 @@ OPEN_LOCK_FILE = functools.partial(open, FILENAME, newline="", encoding="utf8")
 
 def verify():
     """Top-level function to execute the entire verification process."""
-    current_tests = {t.id: t.title for t in state.tests}
+    current_tests = {t.id: t.title for t in state.tests.values()}
     old_tests = load()
     compare(current_tests, old_tests)
     save(current_tests, old_tests)
@@ -156,7 +156,7 @@ def check_titles(old):
     same ID between the current and old tests, but with a different title.
     """
     diffs = []
-    for test in state.tests:
+    for test in state.tests.values():
         try:
             old_title = old[test.id]
 

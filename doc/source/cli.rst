@@ -107,3 +107,12 @@ the information provided to :py:func:`atform.add_test`. This includes
 global items affecting all tests, such as the logo and copyright notice.
 Furthermore, the :ref:`format` section describes how spaces within strings
 may not affect PDF output, yet spacing changes are categorized as a difference.
+
+
+.. _cli_gui:
+
+Graphical User Interface
+------------------------
+
+The ``--gui`` option launches the interface described in :ref:`gui`,
+and overrides any other command line options.

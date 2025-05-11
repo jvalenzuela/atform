@@ -22,7 +22,7 @@ class DiffBase(unittest.TestCase):
     @utils.no_pdf_output
     @utils.disable_idlock
     @utils.no_args
-    @patch("atform.cache.load", return_value={})
+    @patch("atform.cache.load")
     def generate_old(self, *args):
         """Wrapper for the first call to generate().
 
@@ -30,45 +30,39 @@ class DiffBase(unittest.TestCase):
         original content, saving the cache data to be loaded on the
         second generate() call.
         """
-        with patch("atform.cache.OPEN", mock_open()) as mock_cache:
-            atform.generate()
-        self.cache_data = self.get_cache_data(mock_cache)
+        atform.cache.data = {}
+        atform.generate()
+        self.cache_data = atform.cache.data
+
+        # The page counts cache is cumulative, i.e., only built IDs
+        # get overwritten, so it needs to be explicitly emptied before
+        # the diff run, which uses the page counts cache to determine
+        # which IDs got built.
+        self.cache_data["page counts"] = {}
+
         utils.reset()  # Reset in preparation for the second run.
-
-    def get_cache_data(self, mock):
-        """Captures the cache data written to a mock open."""
-        for call in mock.mock_calls:
-            if call[0].endswith(".write"):
-
-                # The page counts cache is cumulative, i.e., only built IDs
-                # get overwritten, so it needs to be explicitly emptied before
-                # the diff run, which uses the page counts cache to determine
-                # which IDs got built.
-                data = pickle.loads(call[1][0])
-                data["page counts"] = {}
-                return pickle.dumps(data)
 
     @utils.no_pdf_output
     @utils.disable_idlock
-    @patch("atform.cache.save")
-    def generate_diff(self, diff_ids, mock_cache_save, *args, id_args=None):
+    @patch("atform.cache.load")
+    def generate_diff(self, diff_ids, *args, id_args=None):
         """Wrapper for the second call to generate().
 
         Run with the diff option using the cache data from the first call.
         """
-        with patch("atform.cache.OPEN", mock_open(read_data=self.cache_data)):
+        atform.cache.data = self.cache_data
 
-            # Assemble mock CLI arguments with --diff plus any optional IDs.
-            argv = ["--diff"]
-            if id_args:
-                argv.append(id_args)
+        # Assemble mock CLI arguments with --diff plus any optional IDs.
+        argv = ["--diff"]
+        if id_args:
+            argv.append(id_args)
 
-            with patch("sys.argv", utils.mock_argv(" ".join(argv))):
-                atform.generate()
+        with patch("sys.argv", utils.mock_argv(" ".join(argv))):
+            atform.generate()
 
         # The page counts saved to the cache is used to determine which tests
         # were actually built.
-        built_ids = set(mock_cache_save.call_args[0][0]["page counts"].keys())
+        built_ids = set(atform.cache.data["page counts"].keys())
 
         self.assertEqual(diff_ids, built_ids)
 

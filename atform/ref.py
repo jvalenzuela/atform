@@ -74,9 +74,9 @@ def get_xref():
 
     # Iterate through all Test instances to populate second-level
     # reference dictionaries and test lists.
-    for test in state.tests:
-        test_id = id_.to_string(test.id)
-        for ref in test.references:
+    for tid in sorted(state.tests.keys()):
+        test_id = id_.to_string(tid)
+        for ref in state.tests[tid].references:
             for item in ref.items:
                 xref[ref.label].setdefault(item, []).append(test_id)
 
