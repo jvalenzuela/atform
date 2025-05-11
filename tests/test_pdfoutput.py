@@ -50,24 +50,24 @@ def nosplit(method):
     return wrapper
 
 
+# Disable the normal VCS load() function to prevent it from overwriting
+# the version attribute patched in each method.
+@patch("atform.vcs.load")
 class VersionControl(Base, unittest.TestCase):
     """Generate PDFs under various version control conditions."""
 
-    @patch("atform.vcs.Git")
-    def test_no_version_control(self, mock):
+    @patch.object(atform.vcs, "version", new=None)
+    def test_no_version_control(self, mock_load):
         """Verify no draft mark or version in footer."""
-        mock.side_effect = atform.vcs.NoVersionControlError
         self.make_test()
 
-    @patch.object(atform.vcs.Git, "clean", new=False)
-    @patch.object(atform.vcs.Git, "version", new="foo")
-    def test_draft(self):
+    @patch.object(atform.vcs, "version", new="draft")
+    def test_draft(self, mock_load):
         """Verify draft mark and no version in the footer."""
         self.make_test()
 
-    @patch.object(atform.vcs.Git, "clean", new=True)
-    @patch.object(atform.vcs.Git, "version", new="spam")
-    def test_clean(self):
+    @patch.object(atform.vcs, "version", new="spam")
+    def test_clean(self, mock_load):
         """Verify version in the footer and no draft mark."""
         self.make_test()
 
@@ -659,28 +659,29 @@ class Copyright(Base, unittest.TestCase):
         self.make_test()
 
 
+@patch("atform.cache.load")
 class CachePageCount(Base, unittest.TestCase):
     """Tests for the cached page count."""
 
     # add_test() arguments to produce a three-page document.
     TEST_ARGS = {"procedure": ["step"] * 60}
 
-    @patch("atform.cache.load", return_value={})
+    @patch("atform.cache.data", new={})
     def test_no_cache(self, mock):
         """Confirm correct page count(3) when no cache is available."""
         self.make_test(**self.TEST_ARGS)
 
-    @patch("atform.cache.load", return_value={(1,): {"page count": 1}})
+    @patch("atform.cache.data", new={"page counts": {(1,): 1}})
     def test_stale_low(self, mock):
         """Confirm correct page count(3) when the cached page count is too low."""
         self.make_test(**self.TEST_ARGS)
 
-    @patch("atform.cache.load", return_value={(1,): {"page count": 99}})
+    @patch("atform.cache.data", new={"page counts": {(1,): 99}})
     def test_stale_high(self, mock):
         """Confirm correct page count(3) when the cached page count is too high."""
         self.make_test(**self.TEST_ARGS)
 
-    @patch("atform.cache.load", return_value={(1,): {"page count": 3}})
+    @patch("atform.cache.data", new={"page counts": {(1,): 3}})
     def test_correct(self, mock):
         """Confirm correct page count(3) when the cached page count is right."""
         self.make_test(**self.TEST_ARGS)

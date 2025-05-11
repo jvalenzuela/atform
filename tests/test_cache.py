@@ -20,12 +20,14 @@ class Load(unittest.TestCase):
         """Confirm default data when no cache file exists."""
         with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
             mock.side_effect = OSError
-            self.assertEqual(atform.cache.load(), {})
+            atform.cache.load()
+        self.assertEqual(atform.cache.data, {})
 
     def test_invalid_file(self):
         """Confirm default data when an invalid file exists."""
         with patch("atform.cache.OPEN", mock_open(read_data=b"spam")):
-            self.assertEqual(atform.cache.load(), {})
+            atform.cache.load()
+        self.assertEqual(atform.cache.data, {})
 
     def test_version_mismatch(self):
         """Confirm default data when loading a cache file from a different module version."""
@@ -36,17 +38,17 @@ class Load(unittest.TestCase):
             }
         )
         with patch("atform.cache.OPEN", mock_open(read_data=cache)):
-            self.assertEqual(atform.cache.load(), {})
+            atform.cache.load()
+        self.assertEqual(atform.cache.data, {})
 
     @utils.no_pdf_output
     @utils.disable_idlock
     @utils.no_args
-    @patch("atform.cache.load", return_value={})
-    def test_load_during_gen(self, mock_load):
+    def test_load_during_gen(self):
         """Confirm cache is loaded during output generation."""
         atform.add_test("a test")
         atform.generate()
-        mock_load.assert_called_once_with()
+        self.assertIsNotNone(atform.cache.data)
 
 
 class Save(unittest.TestCase):
@@ -57,8 +59,9 @@ class Save(unittest.TestCase):
 
     def test_version(self):
         """Confirm saved data includes the module version."""
+        atform.cache.data = {}
         with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
-            atform.cache.save({})
+            atform.cache.save()
         saved = self.get_saved_data(mock)
         self.assertEqual(saved["version"], atform.version.VERSION)
 

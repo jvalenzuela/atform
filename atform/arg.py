@@ -20,6 +20,11 @@ def parse():
         action="store_true",
     )
     parser.add_argument(
+        "--gui",
+        help="Launch GUI for building tests.",
+        action="store_true",
+    )
+    parser.add_argument(
         "id",
         help="Test ID(s) to generate; all tests will be generated if omitted.",
         nargs="*",

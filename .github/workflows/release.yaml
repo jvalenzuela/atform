@@ -45,7 +45,18 @@ jobs:
           toml-to-req --toml-file pyproject.toml
           pip install -r requirements.txt
 
+      # Linux runners require a virtual display to handle Tkinter tests.
+      - name: Setup virtual display
+        if: contains(matrix.os, 'ubuntu')
+        run: Xvfb :1 -screen 0 1280x1024x8 &
+
       - name: Run unit tests
+
+        # Enable the virtual display created in a previous step;
+        # this variable has no effect for non-Linux runners.
+        env:
+          DISPLAY: ':1.0'
+
         run: python -m unittest
 
       - name: Upload output

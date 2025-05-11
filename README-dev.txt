@@ -28,6 +28,9 @@ Release Procedure
 - Push the new release tag to GitHub and wait for the release action
   to complete.
 
+- Execute the GUI unit tests by running the run_gui_tests.py script with each
+  supported Python version.
+
 - Download and inspect the PDF manual in the draft GitHub release,
   verifying the new version appears correctly in the release history.
 

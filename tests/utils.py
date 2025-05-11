@@ -20,6 +20,8 @@ def reset():
     after a single import.
     """
     atform.state.init()
+    atform.cache.data = None
+    atform.vcs.version = None
 
     # The image cache needs to be reset separately as it is not stored
     # in the state module.
@@ -28,12 +30,13 @@ def reset():
 
 def get_test_content():
     """Retrieves the content of the most recently created test."""
-    return atform.state.tests[-1]
+    ids = sorted(atform.state.tests.keys())
+    return atform.state.tests[ids[-1]]
 
 
 def mock_build(test, *args):
     """Dummy PDF build function to inhibit generating actual output files."""
-    return test.id, 1
+    return {test.id: 1}
 
 
 def no_pdf_output(method):
@@ -127,3 +130,21 @@ class ContentAreaException(unittest.TestCase):
         atform.section(1)
         with self.assertRaises(atform.error.UserScriptError):
             self.call()
+
+
+def click_button(parent, button_name):
+    """Simulates clicking a Tk button."""
+    button = find_widget(parent, button_name)
+    button.invoke()
+
+
+def find_widget(parent, name):
+    """Locates a Tk widget by name."""
+    if parent.winfo_name() == name:
+        return parent
+
+    # Recursively descend into child widgets if the parent isn't the target.
+    for child in parent.winfo_children():
+        target = find_widget(child, name)
+        if target:
+            return target

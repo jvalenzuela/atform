@@ -22,4 +22,5 @@ def list_tests():
     Returns:
         list[tuple]: A list of ``(id, title)`` tuples in ascending order.
     """
-    return [(id_.to_string(t.id), t.title) for t in state.tests]
+    ids = sorted(state.tests.keys())
+    return [(id_.to_string(tid), state.tests[tid].title) for tid in ids]
