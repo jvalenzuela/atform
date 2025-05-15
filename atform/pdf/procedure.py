@@ -17,7 +17,6 @@ from . import (
     section,
 )
 from .textstyle import stylesheet
-from .. import state
 
 
 # Header row text.
@@ -61,14 +60,14 @@ FIELD_TABLE_STYLE = [
 ]
 
 
-def make_procedure(steps):
+def make_procedure(steps, images):
     """Generates the procedure section."""
     if not steps:
         return None
 
     rows = []
     rows.append(header())
-    rows.extend(step_rows(steps))
+    rows.extend(step_rows(steps, images))
     rows.append(last_row())
 
     style = [
@@ -126,20 +125,20 @@ def header():
     return [Paragraph(s, style) for s in HEADER_FIELDS]
 
 
-def step_rows(steps):
+def step_rows(steps, images):
     """Creates rows for all steps."""
     step_style = stylesheet["ProcedureTableHeading"]
     return [
         [
             Paragraph(str(i), step_style),
-            step_body(step),
+            step_body(step, images),
             acroform.Checkbox(),
         ]
         for i, step in enumerate(steps, start=1)
     ]
 
 
-def step_body(step):
+def step_body(step, images):
     """
     Creates flowables containing all user-defined content for a single
     step, i.e., everything that goes in the Description column.
@@ -149,7 +148,7 @@ def step_body(step):
 
     if step.image_hash:
         flowables.append(Spacer(0, IMAGE_SEP))
-        flowables.append(state.images[step.image_hash])
+        flowables.append(images[step.image_hash])
     if step.fields:
         flowables.extend(make_fields(step.fields))
 

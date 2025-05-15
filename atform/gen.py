@@ -1,6 +1,7 @@
 """API to generate output PDFs."""
 
 import concurrent.futures
+import os
 import sys
 
 from . import arg
@@ -74,7 +75,7 @@ def get_changed_tests(cache_):
     return changed_ids
 
 
-def submit_tests_to_build(executor, cache_, *build_args):
+def submit_tests_to_build(executor, cache_, root, folder_depth):
     """Submits test instances for output generation."""
     futures = []
     for t in get_tests_to_build(cache_):
@@ -82,8 +83,35 @@ def submit_tests_to_build(executor, cache_, *build_args):
             pages = cache_["page counts"][t.id]
         except KeyError:
             pages = 1
-        futures.append(executor.submit(pdf.build, t, pages, *build_args))
+        path = build_path(t.id, root, folder_depth)
+        futures.append(executor.submit(pdf.build, t, pages, path))
     return futures
+
+
+def build_path(tid, root, depth):
+    """Constructs a path where a test's output PDF will be written.
+
+    The path will consist of the root, followed by a folder per
+    section number limited to depth, e.g., <root>/<x>/<y> for an ID x.y.z
+    and depth 2. The final number in an ID is not translated to a folder.
+    """
+    folders = [root]
+
+    # Append a folder for each section level.
+    for i, section_id in enumerate(tid[:depth]):
+
+        # Include the section number and title if the section has a title.
+        try:
+            section = state.section_titles[tid[: i + 1]]
+            section_folder = f"{section_id} {section}"
+
+        # Use only the section number if the section has no title.
+        except KeyError:
+            section_folder = str(section_id)
+
+        folders.append(section_folder)
+
+    return os.path.join(*folders)
 
 
 def wait_build_complete(futures, cache_):
@@ -185,8 +213,11 @@ def generate(*, path="pdf", folder_depth=0):
     # of mock test documents. The process-based executor yielded a
     # significant improvement, while the thread-based executor was
     # worse than the original, serial implementation.
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        futures = submit_tests_to_build(executor, cache_, path, folder_depth, version)
+    init_args = (state.images, version)
+    with concurrent.futures.ProcessPoolExecutor(
+        initializer=pdf.init, initargs=init_args
+    ) as executor:
+        futures = submit_tests_to_build(executor, cache_, path, folder_depth)
         wait_build_complete(futures, cache_)
 
     cache.save(cache_)

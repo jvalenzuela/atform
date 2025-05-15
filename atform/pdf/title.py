@@ -9,7 +9,6 @@ from reportlab.platypus import (
 )
 
 from . import layout
-from .. import state
 from .textstyle import stylesheet
 
 
@@ -55,17 +54,17 @@ PRJ_INFO_TABLE_STYLE = [
 ]
 
 
-def make_title(test):
+def make_title(test, images):
     """Creates title information on the top of the first page."""
     prj_info = project_info_table(test)
 
     # Disable the title block if no information was given other than the
     # test title.
-    if not prj_info and not state.logo_hash:
+    if not prj_info and not test.logo_hash:
         return None
 
     try:
-        logo = state.images[state.logo_hash]
+        logo = images[test.logo_hash]
     except KeyError:
         logo = None
 
@@ -76,7 +75,7 @@ def make_title(test):
 
     widths = [0, 0]
 
-    if state.logo_hash:
+    if test.logo_hash:
         widths[LOGO_COL] = logo.drawWidth
 
     # The text column occupies all remaining horizontal space left over
