@@ -27,6 +27,11 @@ import switch
 
 ######################################################################
 # Output
+#
+# When a project is divided into separate scripts as demonstrated in
+# this example, the atform.generate() call must be located in the
+# top-level script.
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

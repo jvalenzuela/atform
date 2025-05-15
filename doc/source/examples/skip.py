@@ -45,4 +45,5 @@ atform.add_test("Verify Another")  # This will be 5.10.
 # Output
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

@@ -36,4 +36,5 @@ atform.add_test("Setup Example")
 # Output
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

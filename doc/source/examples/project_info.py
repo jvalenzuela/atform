@@ -45,4 +45,5 @@ atform.add_test("Switch 3 Test")
 # Output
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

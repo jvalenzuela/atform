@@ -33,7 +33,9 @@ atform.add_test("The Third Test")
 # Output
 #
 # After all tests have been defined, the output area contains commands
-# to generate the output PDFs.
+# to generate the output PDFs. The if condition containing the
+# atform.generate() function call is required.
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

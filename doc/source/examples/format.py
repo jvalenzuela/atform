@@ -55,4 +55,5 @@ atform.add_test(
 # Output
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

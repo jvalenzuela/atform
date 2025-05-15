@@ -37,4 +37,5 @@ button_test("Right")
 # Output
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

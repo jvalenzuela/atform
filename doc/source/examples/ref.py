@@ -45,4 +45,5 @@ atform.add_test("A Test Without References")
 # Output
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

@@ -37,4 +37,5 @@ atform.add_test("Function C")
 # Output
 ######################################################################
 
-atform.generate()
+if __name__ == "__main__":
+    atform.generate()

@@ -3,8 +3,8 @@
 
 from tests import utils
 import os
-import runpy
 import shutil
+import subprocess
 import sys
 import unittest
 
@@ -95,29 +95,31 @@ class ExampleRunner(object):
             for f in SRC_FILES
         ]
 
-        # Add the target directory to the Python search path to support example
-        # scripts that import other examples.
-        sys.path.append(os.path.abspath(target_dir))
-
-        # Change the current working directory to the target directory.
-        self.cwd = os.getcwd()
-        os.chdir(os.path.join(OUTPUT_PATH, self.script))
-
         return self
 
-    @utils.disable_idlock
-    @utils.no_args
     def run(self):
         """Executes the target script."""
-        runpy.run_path(self.script)
+        args = [
+            sys.executable,  # System python executable.
+            self.script,
+        ]
+
+        # PYTHONPATH is set to the current working directory(the repository
+        # root) so the module can be imported when running scripts in the
+        # output directories.
+        env = dict(os.environ)
+        env["PYTHONPATH"] = os.getcwd()
+
+        # The target script will be run from within its dedicated output
+        # path.
+        cwd = os.path.join(os.getcwd(), OUTPUT_PATH, self.script)
+
+        subprocess.run(args, env=env, cwd=cwd).check_returncode()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Clean up after example script has run."""
-        # Revert the Python search path and current working directory.
-        sys.path.pop()
-        os.chdir(self.cwd)
-
-        # Clean up the directory used to run the script by removing
-        # source files copied from INPUT_PATH when the directory was initalized,
-        # leaving only the output from the target script.
+        """
+        Cleans up the directory used to run the script by removing
+        source files copied from INPUT_PATH when the directory was initalized,
+        leaving only the output from the target script.
+        """
         [os.remove(os.path.join(OUTPUT_PATH, self.script, f)) for f in SRC_FILES]

@@ -143,7 +143,10 @@ def generate(*, path="pdf", folder_depth=0):
     """Builds PDF output files for all defined tests.
 
     Should be called once near the end of the script after tests have been
-    created with :py:class:`atform.Test`.
+    created with :py:class:`atform.Test`. Calling this function *must*
+    be dependent on an ``if __name__ == "__main__":`` condition.
+    Furthermore, if the project is organized into multiple scripts, this
+    function can only be called from the top-level script.
 
     .. warning::
 
