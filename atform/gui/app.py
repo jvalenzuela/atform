@@ -41,18 +41,18 @@ class Application(tk.Tk):
         """Creates the top-level panels."""
         pview = preview.Preview(self)
         build = buildlist.BuildList(self, path, folder_depth)
-        select = self._create_select_tabs(build)
+        select = self._create_select_tabs()
 
         select.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
         pview.pack(side=tk.LEFT, fill=tk.Y)
         build.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
-    def _create_select_tabs(self, build):
+    def _create_select_tabs(self):
         """Creates the Select panel and child tabs."""
         frame = ttk.LabelFrame(self, text="Select")
         tabs = ttk.Notebook(frame)
         tabs.pack(fill=tk.BOTH, expand=tk.TRUE)
 
-        tabs.add(selectlist.SelectList(tabs, build), text="List")
+        tabs.add(selectlist.SelectList(tabs), text="List")
 
         return frame

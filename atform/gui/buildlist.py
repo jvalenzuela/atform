@@ -8,6 +8,12 @@ from . import common
 from . import testlist
 
 
+def add(ids):
+    """Adds tests to the build list."""
+    for id_ in ids:
+        BuildList.instance.add_test(id_)
+
+
 class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
     """Top-level frame containing all components."""
 
@@ -17,6 +23,9 @@ class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
         self.folder_depth = folder_depth
         self.testlist = testlist.TestList(self)
         self._add_buttons()
+
+        # Store this instance so the build list is accessible at module level.
+        BuildList.instance = self
 
     def _add_buttons(self):
         """Creates the buttons."""
