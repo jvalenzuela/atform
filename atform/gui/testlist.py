@@ -244,34 +244,32 @@ class ControlPanel(tk.Frame):
 
     def _add_button(self, text, side):
         """Creates a single button."""
-        btn = tk.Button(self, text=text)
-
         # Convert the button text to snake case to match a method name.
         snake = text.lower().replace(" ", "_")
         func = getattr(self, f"_on_{snake}")
 
-        btn.bind(common.LEFT_CLICK, func)
+        btn = tk.Button(self, text=text, command=func)
         btn.pack(fill=tk.X, side=side)
 
-    def _on_expand_all(self, _event):
+    def _on_expand_all(self):
         """Event handler for the Expand All Button."""
         for iid in self.testlist.get_descendants():
             self.testlist.tree.see(iid)
 
-    def _on_collapse_all(self, _event):
+    def _on_collapse_all(self):
         """Event handler for the Collapse All Button."""
         for iid in self.testlist.get_descendants():
             self.testlist.tree.item(iid, open=False)
 
-    def _on_select_all(self, _event):
+    def _on_select_all(self):
         """Event handler for the Select All button."""
         self.testlist.tree.selection_set(*self.testlist.get_descendants())
 
-    def _on_unselect_all(self, _event):
+    def _on_unselect_all(self):
         """Event handler for Unselect All button."""
         self.testlist.unselect_all()
 
-    def _on_invert_selection(self, _event):
+    def _on_invert_selection(self):
         """Event handler for the Invert Selection button."""
         unselected = self.testlist.all_tests.difference(self.testlist.selected_tests)
         self.testlist.tree.selection_set(*unselected)

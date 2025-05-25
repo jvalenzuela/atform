@@ -81,12 +81,12 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
         return text
 
     def buttonbox(self):
-        # No action is bound to the close button until building is complete.
-        self.close_btn = tk.Button(self, text="Close", state=tk.DISABLED)
+        self.close_btn = tk.Button(
+            self, text="Close", state=tk.DISABLED, command=self._on_close
+        )
         self.close_btn.pack(side=tk.RIGHT)
 
-        self.cancel_btn = tk.Button(self, text="Cancel")
-        self.cancel_btn.bind(common.LEFT_CLICK, self._on_cancel)
+        self.cancel_btn = tk.Button(self, text="Cancel", command=self._on_cancel)
         self.cancel_btn.pack(side=tk.RIGHT)
 
     def _poll(self):
@@ -126,20 +126,20 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
     def _enable_close(self):
         """Enables the close button and disables the cancel button."""
         self.cancel_btn.configure(state=tk.DISABLED)
-        self.cancel_btn.unbind(common.LEFT_CLICK)
         self.close_btn.configure(state=tk.NORMAL)
-        self.close_btn.bind(common.LEFT_CLICK, self._on_close)
 
-    def _on_cancel(self, _event):
+    def _on_cancel(self):
         """Handler for the cancel button."""
-        self.msg.set("Cancelled by user.")
-        self._cancel_futures()
-        self.after_cancel(self.poll_id)
-        self._enable_close()
+        if self.cancel_btn.cget("state") == tk.NORMAL:
+            self.msg.set("Cancelled by user.")
+            self._cancel_futures()
+            self.after_cancel(self.poll_id)
+            self._enable_close()
 
-    def _on_close(self, _event):
+    def _on_close(self):
         """Handler for the close button."""
-        self.destroy()
+        if self.close_btn.cget("state") == tk.NORMAL:
+            self.destroy()
 
     def _cancel_futures(self, _event=None):
         """Cancels all futures."""

@@ -29,11 +29,10 @@ class SelectList(tk.Frame):
 
     def _add_buttons(self):
         """Creates additional buttons."""
-        add = tk.Button(self, text="Add Selected Tests To Build")
-        add.bind(common.LEFT_CLICK, self._on_add)
+        add = tk.Button(self, text="Add Selected Tests To Build", command=self._on_add)
         add.pack(fill=tk.X)
 
-    def _on_add(self, _event):
+    def _on_add(self):
         """Event handler for the Add button."""
         buildlist.add(self.testlist.selected_tests)
         self.testlist.unselect_all()
