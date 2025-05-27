@@ -62,15 +62,16 @@ def get_changed_tests():
     except KeyError:
         old_tests = {}
 
-    for test in state.tests:
+    for tid in state.tests:
+        current_test = state.tests[tid]
         try:
-            if test != old_tests[test.id]:
+            if current_test != old_tests[tid]:
                 raise KeyError
 
         # Accumulate tests that differ from the cache and those that do not
         # exist in the cache.
         except KeyError:
-            changed_ids.add(test.id)
+            changed_ids.add(tid)
 
     return changed_ids
 

@@ -21,7 +21,7 @@ def reset():
     """
     atform.state.init()
     atform.cache.data = None
-    atform.vcs.current = None
+    atform.vcs.version = None
 
     # The image cache needs to be reset separately as it is not stored
     # in the state module.

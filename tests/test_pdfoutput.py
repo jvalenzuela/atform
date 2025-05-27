@@ -659,28 +659,29 @@ class Copyright(Base, unittest.TestCase):
         self.make_test()
 
 
+@patch("atform.cache.load")
 class CachePageCount(Base, unittest.TestCase):
     """Tests for the cached page count."""
 
     # add_test() arguments to produce a three-page document.
     TEST_ARGS = {"procedure": ["step"] * 60}
 
-    @patch("atform.cache.load", return_value={})
+    @patch("atform.cache.data", new={})
     def test_no_cache(self, mock):
         """Confirm correct page count(3) when no cache is available."""
         self.make_test(**self.TEST_ARGS)
 
-    @patch("atform.cache.load", return_value={(1,): {"page count": 1}})
+    @patch("atform.cache.data", new={"page counts": {(1,): 1}})
     def test_stale_low(self, mock):
         """Confirm correct page count(3) when the cached page count is too low."""
         self.make_test(**self.TEST_ARGS)
 
-    @patch("atform.cache.load", return_value={(1,): {"page count": 99}})
+    @patch("atform.cache.data", new={"page counts": {(1,): 99}})
     def test_stale_high(self, mock):
         """Confirm correct page count(3) when the cached page count is too high."""
         self.make_test(**self.TEST_ARGS)
 
-    @patch("atform.cache.load", return_value={(1,): {"page count": 3}})
+    @patch("atform.cache.data", new={"page counts": {(1,): 3}})
     def test_correct(self, mock):
         """Confirm correct page count(3) when the cached page count is right."""
         self.make_test(**self.TEST_ARGS)

@@ -189,22 +189,15 @@ class FilterId(unittest.TestCase):
 
     @utils.no_pdf_output
     @utils.disable_idlock
-
-    # Patch the cache load to always yield an empty cache. Note, the default
-    # return value(empty dict) is created by a callable side effect, not
-    # the usual return_value argument because a new dictionary instance must
-    # be created every call.
-    @patch("atform.cache.load", side_effect=dict)
-
-    # Patch the cache save to capture which tests were built.
-    @patch("atform.cache.save")
-    def gen(self, args, expected, mock_save, mock_load):
+    @patch("atform.cache.load")
+    def gen(self, args, expected, mock_load):
         """Verifies generated tests match the expected tests."""
         with patch("sys.argv", utils.mock_argv(args)):
+            atform.cache.data = {}
             atform.generate()
 
         # Collect IDs from tests that have been built from the mock cache.
-        built = set(mock_save.call_args_list[0][0][0]["page counts"])
+        built = set(atform.cache.data["page counts"])
 
         self.assertEqual(expected, built)
 
