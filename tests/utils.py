@@ -130,3 +130,21 @@ class ContentAreaException(unittest.TestCase):
         atform.section(1)
         with self.assertRaises(atform.error.UserScriptError):
             self.call()
+
+
+def click_button(parent, button_name):
+    """Simulates clicking a Tk button."""
+    button = find_widget(parent, button_name)
+    button.invoke()
+
+
+def find_widget(parent, name):
+    """Locates a Tk widget by name."""
+    if parent.winfo_name() == name:
+        return parent
+
+    # Recursively descend into child widgets if the parent isn't the target.
+    for child in parent.winfo_children():
+        target = find_widget(child, name)
+        if target:
+            return target
