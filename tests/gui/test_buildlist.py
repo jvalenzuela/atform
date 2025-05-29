@@ -82,3 +82,33 @@ class BuildButton(unittest.TestCase):
         atform.gui.buildlist.add({(1,), (2,)})
         utils.click_button(self.buildlist, "build")
         self.assertEqual(set(), self.buildlist.testlist.all_tests)
+
+
+@patch("sys.argv", new=utils.mock_argv("--gui"))
+@patch("atform.gui.app.Application.mainloop")
+class GenerateParameters(unittest.TestCase):
+    """Tests for generate() parameters passed to the builder."""
+
+    def setUp(self):
+        utils.reset()
+
+    @utils.disable_idlock
+    @patch("atform.gui.build.build")
+    def test_path(self, _mock_mainloop, mock_build):
+        """Confirm the path parameter is passed to build."""
+        atform.add_test("foo")
+        atform.generate(path="foo")
+        atform.gui.buildlist.add({(1,)})
+        utils.click_button(atform.gui.buildlist.BuildList.instance, "build")
+        self.assertEqual("foo", mock_build.call_args[0][1])
+
+    @utils.disable_idlock
+    @patch("atform.gui.build.build")
+    def test_folder_depth(self, _mock_mainloop, mock_build):
+        """Confirm the folder depth parameter is passed to build."""
+        atform.set_id_depth(3)
+        atform.add_test("foo")
+        atform.generate(folder_depth=2)
+        atform.gui.buildlist.add({(1, 1, 1)})
+        utils.click_button(atform.gui.buildlist.BuildList.instance, "build")
+        self.assertEqual(2, mock_build.call_args[0][2])
