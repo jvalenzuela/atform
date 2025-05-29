@@ -22,11 +22,18 @@ class AddButton(unittest.TestCase):
         self.assertEqual({(1,), (2,), (3,)}, self.sl.testlist.all_tests)
 
     @patch("atform.gui.buildlist.add")
-    def test_add_to_build(self, mock_add):
+    def test_add_selected(self, mock_add):
         """Confirm selected tests are added to the build list."""
         self.sl.testlist.tree.selection_set((1,), (2,))
         utils.click_button(self.sl, "add")
         mock_add.assert_called_once_with({(1,), (2,)})
+
+    @patch("atform.gui.buildlist.add")
+    def test_empty(self, mock_add):
+        """Confirm nothing is added when nothing is selected."""
+        self.sl.testlist.tree.selection_set()
+        utils.click_button(self.sl, "add")
+        mock_add.assert_called_once_with(set())
 
     @patch("atform.gui.buildlist.add")
     def test_clear_selection(self, _mock_add):

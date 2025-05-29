@@ -6,7 +6,6 @@ from a list of all tests.
 import tkinter as tk
 
 from . import buildlist
-from . import common
 from .. import state
 from . import testlist
 
@@ -29,7 +28,12 @@ class SelectList(tk.Frame):
 
     def _add_buttons(self):
         """Creates additional buttons."""
-        add = tk.Button(self, text="Add Selected Tests To Build", command=self._on_add)
+        add = tk.Button(
+            self,
+            text="Add Selected Tests To Build",
+            command=self._on_add,
+            name="add",
+        )
         add.pack(fill=tk.X)
 
     def _on_add(self):

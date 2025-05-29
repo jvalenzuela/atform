@@ -248,7 +248,7 @@ class ControlPanel(tk.Frame):
         snake = text.lower().replace(" ", "_")
         func = getattr(self, f"_on_{snake}")
 
-        btn = tk.Button(self, text=text, command=func)
+        btn = tk.Button(self, text=text, command=func, name=snake)
         btn.pack(fill=tk.X, side=side)
 
     def _on_expand_all(self):
@@ -259,7 +259,7 @@ class ControlPanel(tk.Frame):
     def _on_collapse_all(self):
         """Event handler for the Collapse All Button."""
         for iid in self.testlist.get_descendants():
-            self.testlist.tree.item(iid, open=False)
+            self.testlist.tree.item(iid, open=tk.FALSE)
 
     def _on_select_all(self):
         """Event handler for the Select All button."""

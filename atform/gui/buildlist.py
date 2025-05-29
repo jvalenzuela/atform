@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import ttk
 
 from . import build
-from . import common
 from . import testlist
 
 
@@ -29,10 +28,20 @@ class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
 
     def _add_buttons(self):
         """Creates the buttons."""
-        btn = tk.Button(self, text="Remove Selected", command=self._on_remove)
+        btn = tk.Button(
+            self,
+            text="Remove Selected",
+            command=self._on_remove,
+            name="remove",
+        )
         btn.pack(fill=tk.X)
 
-        btn = tk.Button(self, text="Build PDFs", command=self._on_build)
+        btn = tk.Button(
+            self,
+            text="Build PDFs",
+            command=self._on_build,
+            name="build",
+        )
         btn.pack(fill=tk.X)
 
     def add_test(self, tid):
