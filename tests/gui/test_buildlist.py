@@ -96,7 +96,7 @@ class GenerateParameters(unittest.TestCase):
     @patch("atform.gui.build.build")
     def test_path(self, _mock_mainloop, mock_build):
         """Confirm the path parameter is passed to build."""
-        atform.add_test("foo")
+        atform.add_test("title")
         atform.generate(path="foo")
         atform.gui.buildlist.add({(1,)})
         utils.click_button(atform.gui.buildlist.BuildList.instance, "build")
