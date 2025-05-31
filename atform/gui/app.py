@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from . import buildlist
+from . import common
 from . import selectlist
 from . import preview
 from .. import state
@@ -44,7 +45,7 @@ class Application(tk.Tk):
         select = self._create_select_tabs()
 
         select.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
-        pview.pack(side=tk.LEFT, fill=tk.Y)
+        pview.pack(side=tk.LEFT, fill=tk.Y, padx=common.LARGE_PAD)
         build.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
     def _create_select_tabs(self):

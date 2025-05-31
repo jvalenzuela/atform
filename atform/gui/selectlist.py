@@ -6,6 +6,7 @@ from a list of all tests.
 import tkinter as tk
 
 from . import buildlist
+from . import common
 from .. import state
 from . import testlist
 
@@ -34,7 +35,7 @@ class SelectList(tk.Frame):
             command=self._on_add,
             name="add",
         )
-        add.pack(fill=tk.X)
+        add.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
 
     def _on_add(self):
         """Event handler for the Add button."""

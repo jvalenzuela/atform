@@ -37,7 +37,7 @@ class TestList(tk.Frame):
         self.tree.column("#0", width=len(state.current_id) * 40)
 
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
-        self.tree.tag_bind("preview", common.LEFT_CLICK, self._preview)
+        self.tree.tag_bind("preview", "<ButtonRelease-1>", self._preview)
 
         common.add_vertical_scrollbar(frame, self.tree)
 
@@ -248,8 +248,18 @@ class ControlPanel(tk.Frame):
         snake = text.lower().replace(" ", "_")
         func = getattr(self, f"_on_{snake}")
 
-        btn = tk.Button(self, text=text, command=func, name=snake)
-        btn.pack(fill=tk.X, side=side)
+        btn = tk.Button(
+            self,
+            text=text,
+            command=func,
+            name=snake,
+        )
+        btn.pack(
+            fill=tk.X,
+            side=side,
+            padx=common.SMALL_PAD,
+            pady=common.SMALL_PAD,
+        )
 
     def _on_expand_all(self):
         """Event handler for the Expand All Button."""

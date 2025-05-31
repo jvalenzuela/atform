@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from . import build
+from . import common
 from . import testlist
 
 
@@ -34,7 +35,7 @@ class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
             command=self._on_remove,
             name="remove",
         )
-        btn.pack(fill=tk.X)
+        btn.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
 
         btn = tk.Button(
             self,
@@ -42,7 +43,7 @@ class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
             command=self._on_build,
             name="build",
         )
-        btn.pack(fill=tk.X)
+        btn.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
 
     def add_test(self, tid):
         """Adds a test to the list."""

@@ -4,8 +4,9 @@ import tkinter as tk
 from tkinter import ttk
 
 
-# Event sequence used to bind mouse left clicks.
-LEFT_CLICK = "<ButtonRelease-1>"
+# Geometry manager padding sizes.
+SMALL_PAD = 5
+LARGE_PAD = 20
 
 
 def add_vertical_scrollbar(parent, target):
