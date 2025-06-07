@@ -62,8 +62,7 @@ def get_changed_tests():
     except KeyError:
         old_tests = {}
 
-    for tid in state.tests.values():
-        current_test = state.tests[tid]
+    for tid, current_test in state.tests.items():
         try:
             if current_test != old_tests[tid]:
                 raise KeyError

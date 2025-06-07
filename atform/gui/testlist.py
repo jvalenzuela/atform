@@ -15,6 +15,10 @@ from .. import state
 class TestList(tk.Frame):
     """Top-level widget housing the entire list and associated buttons."""
 
+    # Number of pixels to allocate to the ID column width per ID field;
+    # empirically derived to fit an ID with the format xx.yy.zzz.
+    ID_COLUMN_FACTOR = 40
+
     def __init__(self, parent):
         super().__init__(parent)
         self._add_tree()
@@ -26,19 +30,16 @@ class TestList(tk.Frame):
         """Creates the tree view widget."""
         frame = tk.Frame(self)
         frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.TRUE)
-
         self.tree = TupleTreeview(frame, columns=["Title"], selectmode=tk.EXTENDED)
         self.tree.heading("#0", text="ID", anchor=tk.W)
         self.tree.heading("Title", text="Title", anchor=tk.W)
-        self.tree.column("#0", stretch=tk.FALSE)
-
-        # Set the initial width of the ID column based on the number of
-        # ID fields; empirically derived formula.
-        self.tree.column("#0", width=len(state.current_id) * 40)
-
+        self.tree.column(
+            "#0",
+            stretch=tk.FALSE,
+            width=len(state.current_id) * self.ID_COLUMN_FACTOR,
+        )
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
         self.tree.tag_bind("preview", "<ButtonRelease-1>", self._preview)
-
         common.add_vertical_scrollbar(frame, self.tree)
 
     def add_test(self, tid):

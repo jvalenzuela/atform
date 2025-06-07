@@ -377,14 +377,20 @@ class BuildDialog(InteractiveGuiTestCase):
     @nonmodal_dialog
     def test_build_message(self):
         """Confirm correct message during build process."""
-        self.start_gui(run=False)
+        self.start_gui(
+            run=False,
+            instruction="Verify message indicates build is in process.",
+        )
         futures = mock_futures(1)
         atform.gui.build.Dialog(self.builder, futures, self.done_q)
 
     @nonmodal_dialog
     def test_completion_message(self):
         """Confirm correct message when build is complete."""
-        self.start_gui(run=False)
+        self.start_gui(
+            run=False,
+            instruction="Verify message indicates build is finished.",
+        )
         futures = mock_futures(1)
         self.done_q.put(0)
         atform.gui.build.Dialog(self.builder, futures, self.done_q)
@@ -423,6 +429,7 @@ class BuildDialog(InteractiveGuiTestCase):
         )
         futures = mock_futures(50)
         i = 0
+        interval = 250
 
         def step():
             """Simulates a build completion."""
@@ -430,9 +437,9 @@ class BuildDialog(InteractiveGuiTestCase):
             if i < len(futures):
                 self.done_q.put(i)
                 i += 1
-                self.root.after(100, step)
+                self.root.after(interval, step)
 
-        self.root.after(100, step)
+        self.root.after(interval, step)
         atform.gui.build.Dialog(self.builder, futures, self.done_q)
 
     def test_process_results(self):
