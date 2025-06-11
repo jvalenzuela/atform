@@ -3,6 +3,7 @@ This module implements building output PDFs in parallel via multiprocessing.
 """
 
 import concurrent.futures
+import gc
 import os
 
 from . import cache
@@ -31,6 +32,17 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
             cache.data["page counts"] = {}
 
         self.page_counts = cache.data["page counts"]
+
+    def __enter__(self, *args, **kwargs):
+        """ """
+        gc.disable()
+        return super().__enter__(*args, **kwargs)
+
+    def __exit__(self, *args, **kwargs):
+        """ """
+        ret_val = super().__exit__(*args, **kwargs)
+        gc.enable()
+        return ret_val
 
     def submit_test(self, tid, root, folder_depth):
         """Schedules a test for building."""
