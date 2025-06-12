@@ -10,23 +10,11 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-latest
-
           - windows-latest
-
-          # Latest MacOS to support x64, which is the only architecture
-          # supported by all Python versions.
-          - macos-13
-
         # Python versions to run on; must match the requires-python in
         # pyproject.toml.
         python:
           - '3.8'
-          - '3.9'
-          - '3.10'
-          - '3.11'
-          - '3.12'
-          - '3.13'
 
     runs-on: ${{ matrix.os }}
 
