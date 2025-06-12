@@ -14,11 +14,23 @@ class Title(unittest.TestCase):
 
     def test_no_project(self):
         """Confirm window title if no project name was provided."""
-        app = atform.gui.app.Application("foo", 0)
-        self.assertEqual("ATFORM", app.title())
+        self.app = atform.gui.app.Application("foo", 0)
+        self.assertEqual("ATFORM", self.app.title())
 
     def test_project_name(self):
         """Confirm the window title contains the project name."""
         atform.set_project_info(project="Spam")
-        app = atform.gui.app.Application("foo", 0)
-        self.assertEqual("ATFORM - Spam", app.title())
+        self.app = atform.gui.app.Application("foo", 0)
+        self.assertEqual("ATFORM - Spam", self.app.title())
+
+    def tearDown(self):
+        """
+        Clean up the application widget by immediately calling destroy()
+        from its mainloop. This is intended to ensure widgets are
+        garbage collected within the mainloop, addressing
+        "RuntimeError: main thread is not in main loop" exceptions in
+        widget __del__ methods.
+        """
+        self.app.withdraw()
+        self.app.after(0, self.app.destroy)
+        self.app.mainloop()
