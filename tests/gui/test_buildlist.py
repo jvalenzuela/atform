@@ -21,6 +21,9 @@ class Add(unittest.TestCase):
         atform.gui.buildlist.add({(1,), (2,)})
         self.assertEqual({(1,), (2,)}, self.buildlist.testlist.all_tests)
 
+    def tearDown(self):
+        self.buildlist.destroy()
+
 
 class RemoveButton(unittest.TestCase):
     """Tests for the remove selected button."""
@@ -49,6 +52,9 @@ class RemoveButton(unittest.TestCase):
         self.buildlist.testlist.tree.selection_set()
         utils.click_button(self.buildlist, "remove")
         self.assertEqual({(1,), (2,)}, self.buildlist.testlist.all_tests)
+
+    def tearDown(self):
+        self.buildlist.destroy()
 
 
 @patch("atform.gui.build.build")
@@ -86,6 +92,9 @@ class BuildButton(unittest.TestCase):
         utils.click_button(self.buildlist, "build")
         self.assertEqual(set(), self.buildlist.testlist.all_tests)
 
+    def tearDown(self):
+        self.buildlist.destroy()
+
 
 @patch("sys.argv", new=utils.mock_argv("--gui"))
 @patch("atform.gui.build.build")
@@ -114,3 +123,6 @@ class GenerateParameters(unittest.TestCase):
         atform.gui.buildlist.add({(1, 1, 1)})
         utils.click_button(atform.gui.buildlist.BuildList.instance, "build")
         self.assertEqual(2, mock_build.call_args[0][2])
+
+    def tearDown(self):
+        atform.gui.app.Application.instance.destroy()

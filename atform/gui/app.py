@@ -24,6 +24,8 @@ class Application(tk.Tk):
         self._set_title()
         self._create_panels(path, folder_depth)
 
+        Application.instance = self
+
     def _set_title(self):
         """Sets the window title."""
         title = "ATFORM"

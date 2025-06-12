@@ -41,3 +41,6 @@ class AddButton(unittest.TestCase):
         self.sl.testlist.tree.selection_set((1,), (2,))
         utils.click_button(self.sl, "add")
         self.assertEqual(set(), self.sl.testlist.selected_tests)
+
+    def tearDown(self):
+        self.sl.destroy()
