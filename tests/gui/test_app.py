@@ -14,11 +14,16 @@ class Title(unittest.TestCase):
 
     def test_no_project(self):
         """Confirm window title if no project name was provided."""
-        app = atform.gui.app.Application("foo", 0)
-        self.assertEqual("ATFORM", app.title())
+        self.app = atform.gui.app.Application("foo", 0)
+        self.assertEqual("ATFORM", self.app.title())
 
     def test_project_name(self):
         """Confirm the window title contains the project name."""
         atform.set_project_info(project="Spam")
-        app = atform.gui.app.Application("foo", 0)
-        self.assertEqual("ATFORM - Spam", app.title())
+        self.app = atform.gui.app.Application("foo", 0)
+        self.assertEqual("ATFORM - Spam", self.app.title())
+
+    def tearDown(self):
+        self.app.withdraw()
+        self.app.after(0, self.app.destroy)
+        self.app.mainloop()
