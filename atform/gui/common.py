@@ -17,3 +17,11 @@ def add_vertical_scrollbar(parent, target):
     scroll = ttk.Scrollbar(parent, orient=tk.VERTICAL, command=target.yview)
     scroll.pack(side=tk.RIGHT, fill=tk.Y)
     target["yscrollcommand"] = scroll.set
+
+
+widgets = []
+
+
+def keep_widget(w):
+    """ """
+    widgets.append(w)

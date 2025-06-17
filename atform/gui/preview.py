@@ -7,6 +7,7 @@ from tkinter import ttk
 import tkinter.font as tkfont
 from tkinter.scrolledtext import ScrolledText
 
+from . import common
 from .. import state
 from ..pdf import paragraph
 
@@ -55,6 +56,7 @@ class Preview(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
     def _create_title(self):
         """Creates a title bar displaying the test ID/title."""
         var = tk.StringVar()
+        common.keep_widget(var)
         font = tkfont.Font(weight=tkfont.BOLD)
         label = tk.Label(self, textvariable=var, font=font)
         label.pack(anchor=tk.NW)
@@ -199,6 +201,7 @@ class Location(tk.Frame):
         label.grid(row=self.row, column=0, sticky=tk.E)
 
         var = tk.StringVar()
+        common.keep_widget(var)
         value = tk.Label(self, textvariable=var)
         value.grid(row=self.row, column=1, sticky=tk.W)
 
