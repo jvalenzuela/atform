@@ -64,6 +64,7 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
     def _create_msg(self, parent):
         """Creates the main message text display widget."""
         var = tk.StringVar()
+        common.keep_widget(var)
         label = tk.Label(parent, textvariable=var)
         label.pack(anchor=tk.NW)
         return var
@@ -130,10 +131,12 @@ class Progress(tk.Frame):
         self.pack(fill=tk.X, pady=common.SMALL_PAD)
 
         self.bar_var = tk.IntVar()
+        common.keep_widget(self.bar_var)
         pbar = ttk.Progressbar(self, maximum=total, variable=self.bar_var)
         pbar.pack(side=tk.LEFT, fill=tk.X, expand=tk.TRUE)
 
         self.msg = tk.StringVar()
+        common.keep_widget(self.msg)
         self.msg_tpl = string.Template(f"$done/{total}")
 
         # Set the message width to accommodate a full count.

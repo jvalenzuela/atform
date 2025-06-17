@@ -311,6 +311,7 @@ class Counts(tk.Frame):
         label.grid(row=row, column=0, sticky=tk.E)
 
         var = tk.IntVar()
+        common.keep_widget(var)
         value = tk.Label(self, textvariable=var)
         value.grid(row=row, column=1, sticky=tk.W)
 
