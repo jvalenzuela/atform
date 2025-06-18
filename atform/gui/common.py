@@ -24,4 +24,4 @@ widgets = []
 
 def keep_widget(w):
     """ """
-    widgets.append(w)
+    pass
