@@ -1,11 +1,11 @@
 """Top-level frame containing the list of tests that will be built."""
 
 import tkinter as tk
-from tkinter import ttk
 
 from . import build
 from . import common
 from . import testlist
+from . import tkwidget
 
 
 def add(ids):
@@ -14,7 +14,7 @@ def add(ids):
         BuildList.instance.add_test(id_)
 
 
-class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
+class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     """Top-level frame containing all components."""
 
     def __init__(self, parent, path, folder_depth):
@@ -29,7 +29,7 @@ class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
 
     def _add_buttons(self):
         """Creates the buttons."""
-        btn = tk.Button(
+        btn = tkwidget.Button(
             self,
             text="Remove Selected",
             command=self._on_remove,
@@ -37,7 +37,7 @@ class BuildList(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
         )
         btn.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
 
-        btn = tk.Button(
+        btn = tkwidget.Button(
             self,
             text="Build PDFs",
             command=self._on_build,

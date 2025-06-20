@@ -4,15 +4,15 @@ user to select specific tests.
 """
 
 import tkinter as tk
-from tkinter import ttk
 
 from . import common
 from . import preview
 from .. import id as id_
 from .. import state
+from . import tkwidget
 
 
-class TestList(tk.Frame):
+class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Top-level widget housing the entire list and associated buttons."""
 
     # Number of pixels per ID field allocated to the ID column width;
@@ -155,8 +155,7 @@ class TestList(tk.Frame):
         return children
 
 
-# Disable Pylint ancestor limit because parent class is internal to tkinter.
-class TupleTreeview(ttk.Treeview):  # pylint: disable=too-many-ancestors
+class TupleTreeview(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
     """
     This alters the Treeview widget to use ID tuples as item IDs(iid) instead
     of strings. Provides methods wrapping the original API, converting ID
@@ -235,7 +234,7 @@ class TupleTreeview(ttk.Treeview):  # pylint: disable=too-many-ancestors
         super().selection_set(*iids)
 
 
-class ControlPanel(tk.Frame):
+class ControlPanel(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Container holding the buttons and count widgets."""
 
     def __init__(self, testlist):
@@ -258,7 +257,7 @@ class ControlPanel(tk.Frame):
         snake = text.lower().replace(" ", "_")
         func = getattr(self, f"_on_{snake}")
 
-        btn = tk.Button(
+        btn = tkwidget.Button(
             self,
             text=text,
             command=func,
@@ -295,7 +294,7 @@ class ControlPanel(tk.Frame):
         self.testlist.tree.selection_set(*unselected)
 
 
-class Counts(tk.Frame):
+class Counts(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Widgets displaying treeview item quantities."""
 
     def __init__(self, parent, testlist):
@@ -307,10 +306,10 @@ class Counts(tk.Frame):
 
     def _add_field(self, title, row):
         """Creates a count field."""
-        label = tk.Label(self, text=f"{title}:")
+        label = tkwidget.Label(self, text=f"{title}:")
         label.grid(row=row, column=0, sticky=tk.E)
 
-        var = tk.IntVar()
+        var = tkwidget.IntVar()
         value = tk.Label(self, textvariable=var)
         value.grid(row=row, column=1, sticky=tk.W)
 

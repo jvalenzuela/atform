@@ -7,6 +7,10 @@ used to interface between build futures and the GUI. A callback is
 attached to each future which sends the completed test ID back to the
 GUI via the queue. The GUI then periodically polls this queue to acquire
 progress updates.
+
+Wrapper classes from tkwidget are not used in this module because
+the tkinter Dialog defined here is tested differently from the normal
+unit tests, and does not suffer from the problems tkwidget addresses.
 """
 
 import queue

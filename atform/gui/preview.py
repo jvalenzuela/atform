@@ -3,12 +3,11 @@
 import functools
 import re
 import tkinter as tk
-from tkinter import ttk
 import tkinter.font as tkfont
-from tkinter.scrolledtext import ScrolledText
 
 from .. import state
 from ..pdf import paragraph
+from . import tkwidget
 
 
 def show(tid):
@@ -30,7 +29,7 @@ def skip_if_empty(func):
     return wrapper
 
 
-class Preview(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
+class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     """Top-level widget housing all preview elements.
 
     This object is intended to be a singleton, i.e., only one instance is
@@ -54,15 +53,15 @@ class Preview(ttk.LabelFrame):  # pylint: disable=too-many-ancestors
 
     def _create_title(self):
         """Creates a title bar displaying the test ID/title."""
-        var = tk.StringVar()
+        var = tkwidget.StringVar()
         font = tkfont.Font(weight=tkfont.BOLD)
-        label = tk.Label(self, textvariable=var, font=font)
+        label = tkwidget.Label(self, textvariable=var, font=font)
         label.pack(anchor=tk.NW)
         return var
 
     def _create_text(self):
         """Creates the text window displaying test content."""
-        text = ScrolledText(self, state=tk.DISABLED, width=self.TEXT_WIDTH)
+        text = tkwidget.ScrolledText(self, state=tk.DISABLED, width=self.TEXT_WIDTH)
         text.pack(fill=tk.Y, expand=tk.TRUE)
         return text
 
@@ -184,7 +183,7 @@ def normalize_text(s):
     return "\n\n".join(paragraphs)
 
 
-class Location(tk.Frame):
+class Location(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Widgets to display source file location."""
 
     def __init__(self, parent):
@@ -195,11 +194,11 @@ class Location(tk.Frame):
 
     def _add_field(self, title):
         """Adds a set of widgets to display a single value."""
-        label = tk.Label(self, text=f"{title}:")
+        label = tkwidget.Label(self, text=f"{title}:")
         label.grid(row=self.row, column=0, sticky=tk.E)
 
-        var = tk.StringVar()
-        value = tk.Label(self, textvariable=var)
+        var = tkwidget.StringVar()
+        value = tkwidget.Label(self, textvariable=var)
         value.grid(row=self.row, column=1, sticky=tk.W)
 
         self.row += 1

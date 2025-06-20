@@ -1,7 +1,8 @@
 """Miscellaneous GUI items."""
 
 import tkinter as tk
-from tkinter import ttk
+
+from . import tkwidget
 
 
 # Geometry manager padding sizes.
@@ -14,6 +15,10 @@ def add_vertical_scrollbar(parent, target):
 
     The target widget and scroll bar are packed into the given parent frame.
     """
-    scroll = ttk.Scrollbar(parent, orient=tk.VERTICAL, command=target.yview)
+    scroll = tkwidget.Scrollbar(
+        parent,
+        orient=tk.VERTICAL,
+        command=target.yview,
+    )
     scroll.pack(side=tk.RIGHT, fill=tk.Y)
     target["yscrollcommand"] = scroll.set
