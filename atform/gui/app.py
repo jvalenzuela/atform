@@ -1,13 +1,13 @@
 """This module contains the entry point for the GUI and top-level window."""
 
 import tkinter as tk
-from tkinter import ttk
 
 from . import buildlist
 from . import common
 from . import selectlist
 from . import preview
 from .. import state
+from . import tkwidget
 
 
 def run(path, folder_depth):
@@ -16,7 +16,7 @@ def run(path, folder_depth):
     app.mainloop()
 
 
-class Application(tk.Tk):
+class Application(tkwidget.Tk):
     """Top-level window containing the entire GUI."""
 
     def __init__(self, path, folder_depth):
@@ -51,8 +51,8 @@ class Application(tk.Tk):
 
     def _create_select_tabs(self):
         """Creates the Select panel and child tabs."""
-        frame = ttk.LabelFrame(self, text="Select")
-        tabs = ttk.Notebook(frame)
+        frame = tkwidget.LabelFrame(self, text="Select")
+        tabs = tkwidget.Notebook(frame)
         tabs.pack(fill=tk.BOTH, expand=tk.TRUE)
 
         tabs.add(selectlist.SelectList(tabs), text="List")

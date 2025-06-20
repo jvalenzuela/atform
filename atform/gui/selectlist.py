@@ -9,9 +9,10 @@ from . import buildlist
 from . import common
 from .. import state
 from . import testlist
+from . import tkwidget
 
 
-class SelectList(tk.Frame):
+class SelectList(tkwidget.Frame):
     """Top-level widget housing the selection list."""
 
     def __init__(self, parent):
@@ -29,7 +30,7 @@ class SelectList(tk.Frame):
 
     def _add_buttons(self):
         """Creates additional buttons."""
-        add = tk.Button(
+        add = tkwidget.Button(
             self,
             text="Add Selected Tests To Build",
             command=self._on_add,
