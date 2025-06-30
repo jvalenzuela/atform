@@ -6,6 +6,7 @@ from . import buildlist
 from . import common
 from . import selectlist
 from . import preview
+from . import searchwidget
 from .. import state
 from . import tkwidget
 
@@ -56,5 +57,6 @@ class Application(tkwidget.Tk):
         tabs.pack(fill=tk.BOTH, expand=tk.TRUE)
 
         tabs.add(selectlist.SelectList(tabs), text="List")
+        tabs.add(searchwidget.Search(tabs), text="Search")
 
         return frame

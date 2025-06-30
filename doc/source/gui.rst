@@ -53,6 +53,41 @@ In addition to toggling the selection, clicking on a test in the list will
 also display that test in the :ref:`gui_preview` window.
 
 
+Search
+^^^^^^
+
+.. image:: images/gui/search.png
+   :align: center
+
+The :guilabel:`Search` tab provides a way to select tests by searching for
+specific content. Query text is entered in the field at the top of the tab,
+then clicking the :guilabel:`Add Matching Tests To Build` button
+or pressing :kbd:`Enter` while focus is on the query entry field will add
+matching tests to the :ref:`gui_build` list.
+
+When the query contains multiple words the :guilabel:`Match all` and
+:guilabel:`Match any` options determine which words must be found to
+constitute a match. A test must contain every word in the query if
+:guilabel:`Match all` is enabled; the :guilabel:`Match any` option will
+yield a match if a test contains at least one query word.
+
+Words need not appear in the same order as the query.
+For example, the query :samp:`cat dog` matches
+:samp:`dog chases cat` even though the terms are ordered differently
+and separated by nonmatching text.
+Enclosing multiple words in double quotation marks will
+search for the complete phrase, e.g., changing the query to
+:samp:`"cat dog"` does not match the example text.
+
+The :guilabel:`Case-sensitive` option will require text to conform to the
+query text case. E.g., :samp:`python` only matches :samp:`Python` if
+:guilabel:`Case-sensitive` is not checked.
+
+The set of options in the :guilabel:`Sections` panel correspond to the
+principal divisions of a test document; content from specific sections can be
+excluded from searches by unchecking areas to be ignored.
+
+
 .. _gui_preview:
 
 Preview

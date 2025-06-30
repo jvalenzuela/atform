@@ -346,6 +346,73 @@ class Preview(InteractiveGuiTestCase):
         self.start_preview()
 
 
+class SearchQueryEntry(InteractiveGuiTestCase):
+    """Tests for the search tab query entry field."""
+
+    def setUp(self):
+        super().setUp()
+        self.root = tk.Tk()
+        search = atform.gui.searchwidget.Search(self.root)
+        search.pack()
+
+    @patch("atform.gui.searchwidget.buildlist")
+    @patch("atform.gui.searchwidget.search.search")
+    def test_enter_shortcut(self, mock_search, *_mocks):
+        """Confirm pressing enter executes a search."""
+        self.start_gui(
+            root=self.root,
+            instruction="Enter a query, press Enter, then close the search window.",
+            buttons=False,
+        )
+        mock_search.assert_called_once()
+
+
+class SearchResultMessage(InteractiveGuiTestCase):
+    """Tests for the search tab result message label."""
+
+    def setUp(self):
+        super().setUp()
+        self.root = tk.Tk()
+        search = atform.gui.searchwidget.Search(self.root)
+        search.pack()
+
+    def test_no_query(self):
+        """Confirm message reporting an empty query."""
+        btn = utils.find_widget_by_text(self.root, "Add Matching Tests To Build")
+        btn.invoke()
+        self.start_gui(
+            root=self.root,
+        )
+
+    def test_no_sections(self):
+        """Confirm message reporting no sections are selected."""
+        for section in atform.gui.search.SECTIONS:
+            utils.set_checkbox(self.root, section, False)
+        self.start_gui(
+            root=self.root,
+            instruction="Enter a query, click Add, and confirm message reports no sections are selected.",
+        )
+
+    @patch("atform.gui.searchwidget.buildlist")
+    @patch("atform.gui.searchwidget.search.search")
+    def test_match_count(self, mock_search, *_mocks):
+        """Confirm message reports number of matches."""
+        mock_search.return_value = set(range(42))
+        self.start_gui(
+            root=self.root,
+            instruction="Enter a query string, click Add, and confirm message reports 42 matches.",
+        )
+
+    def test_clear(self):
+        """Confirm message is cleared after altering the query string."""
+        btn = utils.find_widget_by_text(self.root, "Add Matching Tests To Build")
+        btn.invoke()
+        self.start_gui(
+            root=self.root,
+            instruction="Confirm the result message clears when typing in the query field.",
+        )
+
+
 def nonmodal_dialog(method):
     """
     Test method decorator to prevent the build dialog from being set modal,

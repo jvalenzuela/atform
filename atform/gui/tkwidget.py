@@ -34,7 +34,22 @@ def add_instance_storage(cls):
 
 
 @add_instance_storage
+class BooleanVar(tk.BooleanVar):
+    pass
+
+
+@add_instance_storage
 class Button(tk.Button):
+    pass
+
+
+@add_instance_storage
+class Checkbutton(tk.Checkbutton):
+    pass
+
+
+@add_instance_storage
+class Entry(tk.Entry):
     pass
 
 
@@ -50,6 +65,11 @@ class IntVar(tk.IntVar):
 
 @add_instance_storage
 class Label(tk.Label):
+    pass
+
+
+@add_instance_storage
+class Radiobutton(tk.Radiobutton):
     pass
 
 

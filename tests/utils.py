@@ -141,3 +141,29 @@ def click_button(mock_button, text):
     for _args, kwargs in mock_button.call_args_list:
         if kwargs["text"] == text:
             kwargs["command"]()
+
+
+def set_checkbox(parent, text, state):
+    """Sets the state of a Tk checkbox widget."""
+    checkbox = find_widget_by_text(parent, text)
+    if state:
+        checkbox.select()
+    else:
+        checkbox.deselect()
+
+
+def find_widget_by_text(parent, text):
+    """Locates a Tk widget by its statically assigned text."""
+    config = parent.config()
+    try:
+        if config["text"][-1] == text:
+            return parent
+    except KeyError:
+        pass
+
+    for child in parent.winfo_children():
+        widget = find_widget_by_text(child, text)
+        if widget is not None:
+            return widget
+
+    return None
