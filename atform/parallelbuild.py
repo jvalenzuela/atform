@@ -21,8 +21,19 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
     worse than the original, serial implementation.
     """
 
+    # Value passed to the superclass's __init__(). Under normal operation
+    # this is the same as the default value, so it has no effect. It is
+    # changed during unit testing to minimize the number of processes
+    # created, accelerating unit test execution as no unit test requires
+    # more than one worker process.
+    MAX_WORKERS = None
+
     def __init__(self):
-        super().__init__(initializer=pdf.init, initargs=(state.images, vcs.version))
+        super().__init__(
+            initializer=pdf.init,
+            initargs=(state.images, vcs.version),
+            max_workers=self.MAX_WORKERS,
+        )
 
         # Ensure the cache has a page count storage area.
         try:

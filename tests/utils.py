@@ -11,6 +11,12 @@ import unittest
 from unittest.mock import patch
 
 
+# Limit the number of worker processes spawned during unit tests.
+# This patch remains throughout all unit tests; see comment on patched
+# constant for additional detail.
+patch("atform.parallelbuild.Builder.MAX_WORKERS", new=1).start()
+
+
 def reset():
     """Resets the atform package back to its initial state.
 
