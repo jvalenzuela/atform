@@ -4,6 +4,7 @@ import tkinter as tk
 
 from . import buildlist
 from . import common
+from . import diffwidget
 from . import selectlist
 from . import preview
 from . import searchwidget
@@ -58,5 +59,6 @@ class Application(tkwidget.Tk):
 
         tabs.add(selectlist.SelectList(tabs), text="List")
         tabs.add(searchwidget.Search(tabs), text="Search")
+        tabs.add(diffwidget.Diff(tabs), text="Diff")
 
         return frame

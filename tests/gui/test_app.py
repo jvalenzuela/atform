@@ -7,6 +7,7 @@ import atform
 from .. import utils
 
 
+@patch("atform.cache.data", new={"vcs": None})
 class Title(unittest.TestCase):
     """Window title tests."""
 

@@ -32,7 +32,8 @@ class InteractiveGuiTestCase(unittest.TestCase):
         if root:
             self.root = root
         else:
-            self.root = atform.gui.app.Application(".", 0)
+            with patch("atform.cache.data", new={}):
+                self.root = atform.gui.app.Application(".", 0)
 
         dialog = tk.Toplevel()
         dialog.transient(root)
@@ -410,6 +411,52 @@ class SearchResultMessage(InteractiveGuiTestCase):
         self.start_gui(
             root=self.root,
             instruction="Confirm the result message clears when typing in the query field.",
+        )
+
+
+class Diff(InteractiveGuiTestCase):
+    """Tests for the Diff panel."""
+
+    def setUp(self):
+        super().setUp()
+        self.root = tk.Tk()
+
+    @patch("atform.gui.diffwidget.diff.load", return_value=False)
+    def test_no_cache(self, *_mocks):
+        """Confirm panel contains only a message stating no cache data is available."""
+        diff = atform.gui.diffwidget.Diff(self.root)
+        diff.pack()
+        self.start_gui(root=self.root)
+
+    @patch("atform.cache.data", new={"vcs": None, "tests": {}})
+    def test_no_vcs(self):
+        """Confirm panel does not contain cached version information."""
+        diff = atform.gui.diffwidget.Diff(self.root)
+        diff.pack()
+        self.start_gui(root=self.root)
+
+    @patch("atform.cache.data", new={"vcs": "foo", "tests": {}})
+    def test_cached_version(self):
+        """Confirm cached version is listed correctly."""
+        diff = atform.gui.diffwidget.Diff(self.root)
+        diff.pack()
+        self.start_gui(
+            root=self.root,
+            instruction="Confirm cached version is foo.",
+        )
+
+    @patch("atform.cache.data", new={"vcs": None})
+    @patch("atform.gui.diff.load", return_value=True)
+    @patch("atform.gui.diff.CHANGED", new=set(range(42)))
+    @patch("atform.gui.diff.NEW", new=set(range(99)))
+    @patch("atform.gui.diff.SAME", new=set(range(10)))
+    def test_diff_counts(self, *_mocks):
+        """Confirm correct diff counts."""
+        diff = atform.gui.diffwidget.Diff(self.root)
+        diff.pack()
+        self.start_gui(
+            root=self.root,
+            instruction="Confirm counts: changed=42, new=99, unmodified=10.",
         )
 
 

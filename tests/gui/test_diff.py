@@ -1,70 +1,95 @@
-"""Unit tests for detecting tests changes via the --diff option."""
+"""Unit tests for the diff module."""
 
 import os
-import pickle
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import patch
 
 import atform
-from . import utils
+from atform.gui import diff
+from .. import utils
+
+
+class Available(unittest.TestCase):
+    """Tests for the load() return value indicating if a comparison is available."""
+
+    def setUp(self):
+        utils.reset()
+        diff.CHANGED = None
+        diff.NEW = None
+        diff.SAME = None
+
+    @patch("atform.cache.data", new={})
+    def test_no_cache(self):
+        """Confirm no diff if cache data is not present."""
+        avail = diff.load()
+        self.assertFalse(avail)
+        self.assertIsNone(diff.CHANGED)
+        self.assertIsNone(diff.NEW)
+        self.assertIsNone(diff.SAME)
+
+    @patch("atform.cache.data", new={"tests": {}})
+    def test_cache(self):
+        """Confirm diff is available when cache data is present."""
+        avail = diff.load()
+        self.assertTrue(avail)
 
 
 class DiffBase(unittest.TestCase):
     """Base class for diff test cases.
 
     Each test case is composed of two calls to generate(): the first with
-    old content, and the second with the diff option.
+    old content, and the second with content to be compared against the
+    cached old content.
     """
 
     def setUp(self):
         utils.reset()
 
-    @utils.no_pdf_output
     @utils.disable_idlock
-    @utils.no_args
     @patch("atform.cache.load")
-    def generate_old(self, *args):
+
+    # Run with a mocked GUI launch to avoid starting worker processes,
+    # which makes these tests run much faster.
+    @patch("sys.argv", utils.mock_argv("--gui"))
+    @patch("atform.gen.gui.run")
+    def generate_old(self, *_mocks):
         """Wrapper for the first call to generate().
 
-        Simulates a script run without the diff option to capture the
-        original content, saving the cache data to be loaded on the
-        second generate() call.
+        Populates the cache with the original content.
         """
         atform.cache.data = {}
         atform.generate()
         self.cache_data = atform.cache.data
-
-        # The page counts cache is cumulative, i.e., only built IDs
-        # get overwritten, so it needs to be explicitly emptied before
-        # the diff run, which uses the page counts cache to determine
-        # which IDs got built.
-        self.cache_data["page counts"] = {}
-
         utils.reset()  # Reset in preparation for the second run.
 
-    @utils.no_pdf_output
     @utils.disable_idlock
     @patch("atform.cache.load")
-    def generate_diff(self, diff_ids, *args, id_args=None):
-        """Wrapper for the second call to generate().
 
-        Run with the diff option using the cache data from the first call.
-        """
+    # Replace the GUI launch with the diff load. These tests require the
+    # pregenerate tasks done in generate(), e.g., label replacement, and the
+    # diff needs to be loaded before the cache is updated with the current
+    # test content.
+    @patch("sys.argv", utils.mock_argv("--gui"))
+    @patch("atform.gen.gui.run", side_effect=lambda *args: diff.load())
+    def generate_diff(self, *_mocks):
+        """Wrapper for the second call to generate()."""
         atform.cache.data = self.cache_data
+        diff.CHANGED = None
+        diff.NEW = None
+        diff.SAME = None
+        atform.generate()
 
-        # Assemble mock CLI arguments with --diff plus any optional IDs.
-        argv = ["--diff"]
-        if id_args:
-            argv.append(id_args)
+    def assert_changed(self, *expected):
+        """Confirms an expected set of test IDs were detected as changed."""
+        self.assertEqual(set(expected), diff.CHANGED)
 
-        with patch("sys.argv", utils.mock_argv(" ".join(argv))):
-            atform.generate()
+    def assert_new(self, *expected):
+        """Confirms an expected set of test IDs were detected as new."""
+        self.assertEqual(set(expected), diff.NEW)
 
-        # The page counts saved to the cache is used to determine which tests
-        # were actually built.
-        built_ids = set(atform.cache.data["page counts"].keys())
-
-        self.assertEqual(diff_ids, built_ids)
+    def assert_same(self, *expected):
+        """Confirms an expected set of test IDs were detected as unchanged."""
+        self.assertEqual(set(expected), diff.SAME)
 
 
 class Copyright(DiffBase):
@@ -78,7 +103,10 @@ class Copyright(DiffBase):
 
         atform.add_copyright("foo")
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add(self):
         """Confirm adding a copyright message is detected."""
@@ -87,7 +115,10 @@ class Copyright(DiffBase):
 
         atform.add_copyright("foo")
         atform.add_test("title")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_remove(self):
         """Confirm removing the copyright message is detected."""
@@ -96,7 +127,10 @@ class Copyright(DiffBase):
         self.generate_old()
 
         atform.add_test("title")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_change(self):
         """Confirm altering the copyright message is detected."""
@@ -106,7 +140,10 @@ class Copyright(DiffBase):
 
         atform.add_copyright("bar")
         atform.add_test("title")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
 
 class Logo(DiffBase):
@@ -124,7 +161,10 @@ class Logo(DiffBase):
 
         atform.add_logo(self.image_path("full.jpg"))
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add(self):
         """Confirm adding a logo is detected."""
@@ -133,7 +173,10 @@ class Logo(DiffBase):
 
         atform.add_logo(self.image_path("full.jpg"))
         atform.add_test("title")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_remove(self):
         """Confirm removing the logo is detected."""
@@ -142,7 +185,10 @@ class Logo(DiffBase):
         self.generate_old()
 
         atform.add_test("title")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_change(self):
         """Confirm changing the logo image is detected.
@@ -159,7 +205,10 @@ class Logo(DiffBase):
         with utils.mock_image("JPEG", (20, 20)):
             atform.add_logo("foo")
         atform.add_test("title")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
 
 class Signature(DiffBase):
@@ -173,7 +222,10 @@ class Signature(DiffBase):
 
         atform.add_signature("sig")
         atform.add_test("test")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_none(self):
         """Confirm adding a signature where none were previously defined is detected."""
@@ -182,7 +234,10 @@ class Signature(DiffBase):
 
         atform.add_signature("sig")
         atform.add_test("test")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_add_to_existing(self):
         """Confirm adding a signature to an existing set of signatures is detected."""
@@ -193,7 +248,10 @@ class Signature(DiffBase):
         atform.add_signature("sig1")
         atform.add_signature("sig2")
         atform.add_test("test")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_remove_all(self):
         """Confirm removing all signatures is detected."""
@@ -202,7 +260,10 @@ class Signature(DiffBase):
         self.generate_old()
 
         atform.add_test("test")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_remove_one(self):
         """Confirm removing one signature while others remain is detected."""
@@ -213,7 +274,10 @@ class Signature(DiffBase):
 
         atform.add_signature("sig1")
         atform.add_test("test")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_change_title(self):
         """Confirm altering a signature title is detected."""
@@ -223,7 +287,10 @@ class Signature(DiffBase):
 
         atform.add_signature("foo")
         atform.add_test("test")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
     def test_change_order(self):
         """Confirm altering the signature order is detected."""
@@ -235,7 +302,10 @@ class Signature(DiffBase):
         atform.add_signature("sig2")
         atform.add_signature("sig1")
         atform.add_test("test")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
 
 class ProjectInfo(DiffBase):
@@ -249,7 +319,10 @@ class ProjectInfo(DiffBase):
 
         atform.set_project_info(project="prj", system="sys")
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_project(self):
         """Confirm adding a project name is detected."""
@@ -260,7 +333,10 @@ class ProjectInfo(DiffBase):
         atform.add_test("unchanged")
         atform.set_project_info(project="prj")
         atform.add_test("title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_project(self):
         """Confirm altering the project name is detected."""
@@ -272,7 +348,10 @@ class ProjectInfo(DiffBase):
         atform.add_test("unchanged")
         atform.set_project_info(project="foo")
         atform.add_test("title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_system(self):
         """Confirm adding a system name is detected."""
@@ -283,7 +362,10 @@ class ProjectInfo(DiffBase):
         atform.add_test("unchanged")
         atform.set_project_info(system="sys")
         atform.add_test("title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_system(self):
         """Confirm altering the system name is detected."""
@@ -295,7 +377,10 @@ class ProjectInfo(DiffBase):
         atform.add_test("unchanged")
         atform.set_project_info(system="foo")
         atform.add_test("title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class IdDepth(DiffBase):
@@ -310,7 +395,10 @@ class IdDepth(DiffBase):
         atform.set_id_depth(2)
         atform.add_test("t1")
         atform.add_test("t2")
-        self.generate_diff({(1, 1), (1, 2)})
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new((1, 1), (1, 2))
+        self.assert_same()
 
 
 class AddRemoveTest(DiffBase):
@@ -323,7 +411,10 @@ class AddRemoveTest(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("new test")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new((2,))
+        self.assert_same((1,))
 
     def test_remove(self):
         """Confirm removing a test does not incorrectly mark other tests."""
@@ -332,7 +423,10 @@ class AddRemoveTest(DiffBase):
         self.generate_old()
 
         atform.add_test("unchanged")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class TestLabel(DiffBase):
@@ -346,7 +440,10 @@ class TestLabel(DiffBase):
 
         atform.add_test("t1", label="label")
         atform.add_test("t2", objective="$label")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,), (2,))
 
     def test_add_unreferenced(self):
         """Confirm adding an unused label is not flagged as a difference."""
@@ -354,7 +451,10 @@ class TestLabel(DiffBase):
         self.generate_old()
 
         atform.add_test("title", label="label")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_unreferenced(self):
         """Confirm removing an unused label is not flagged as a difference."""
@@ -362,7 +462,10 @@ class TestLabel(DiffBase):
         self.generate_old()
 
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_placeholder(self):
         """Confirm adding a placeholder to an existing label is detected."""
@@ -372,7 +475,10 @@ class TestLabel(DiffBase):
 
         atform.add_test("label", label="label")
         atform.add_test("ref", objective="foo $label")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_placeholder(self):
         """Confirm removing a placeholder to an existing label is detected."""
@@ -382,7 +488,10 @@ class TestLabel(DiffBase):
 
         atform.add_test("label", label="label")
         atform.add_test("ref", objective="foo")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_label_name(self):
         """Confirm changing the name of a label that points to the same test is not flagged as a difference."""
@@ -392,7 +501,10 @@ class TestLabel(DiffBase):
 
         atform.add_test("label", label="label2")
         atform.add_test("ref", objective="foo $label2")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,), (2,))
 
     def test_change_label_test(self):
         """Confirm changing the test referenced by a label is detected."""
@@ -404,7 +516,10 @@ class TestLabel(DiffBase):
         atform.add_test("label1")
         atform.add_test("ref", objective="foo $label")
         atform.add_test("label2", label="label")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,), (3,))
 
 
 class Title(DiffBase):
@@ -416,7 +531,10 @@ class Title(DiffBase):
         self.generate_old()
 
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change(self):
         """Confirm a change to a test's title is detected."""
@@ -426,7 +544,10 @@ class Title(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("changed title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class Fields(DiffBase):
@@ -440,7 +561,10 @@ class Fields(DiffBase):
 
         atform.add_field("field", 1, "field")
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_unused(self):
         """Confirm adding a field that does not appear in any tests is not flagged as a difference."""
@@ -449,7 +573,10 @@ class Fields(DiffBase):
 
         atform.add_field("field", 1, "field", active=False)
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_unused(self):
         """Confirm altering a field that does not appear in any tests is not flagged as a difference."""
@@ -459,7 +586,10 @@ class Fields(DiffBase):
 
         atform.add_field("spam", 5, "eggs", active=False)
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_unused(self):
         """Confirm removing a field that does not appear in any tests is not flagged as a difference."""
@@ -468,7 +598,10 @@ class Fields(DiffBase):
         self.generate_old()
 
         atform.add_test("title")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_existing(self):
         """Confirm adding a field to an existing set of fields is detected."""
@@ -481,7 +614,10 @@ class Fields(DiffBase):
         atform.add_field("new", 1, "new", active=False)
         atform.add_test("unchanged")
         atform.add_test("title", include_fields=["new"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_none(self):
         """Confirm adding a field to a test that previously had none is detected."""
@@ -492,7 +628,10 @@ class Fields(DiffBase):
         atform.add_field("new", 1, "new", active=False)
         atform.add_test("unchanged")
         atform.add_test("title", include_fields=["new"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_one(self):
         """Confirm removing one field with some still remaining is detected."""
@@ -506,7 +645,10 @@ class Fields(DiffBase):
         atform.add_field("f2", 1, "f2")
         atform.add_test("unchanged")
         atform.add_test("title", exclude_fields=["f2"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_all(self):
         """Confirm removing all fields is detected."""
@@ -520,7 +662,10 @@ class Fields(DiffBase):
         atform.add_field("f2", 1, "f2")
         atform.add_test("unchanged")
         atform.add_test("title", exclude_fields=["f1", "f2"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_title(self):
         """Confirm a change to a field's title is detected."""
@@ -534,7 +679,10 @@ class Fields(DiffBase):
         atform.add_field("diff title", 1, "f2", active=False)
         atform.add_test("unchanged")
         atform.add_test("title", include_fields=["f2"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_length(self):
         """Confirm a change to a field's length is detected."""
@@ -548,7 +696,10 @@ class Fields(DiffBase):
         atform.add_field("f2", 9, "f2", active=False)
         atform.add_test("unchanged")
         atform.add_test("title", include_fields=["f2"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_order(self):
         """Confirm changing the order of fields is detected."""
@@ -560,7 +711,10 @@ class Fields(DiffBase):
         atform.add_field("f2", 1, "f2")
         atform.add_field("f1", 1, "f1")
         atform.add_test("title")
-        self.generate_diff({(1,)})
+        self.generate_diff()
+        self.assert_changed((1,))
+        self.assert_new()
+        self.assert_same()
 
 
 class Objective(DiffBase):
@@ -572,7 +726,10 @@ class Objective(DiffBase):
         self.generate_old()
 
         atform.add_test("title", objective="foo")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add(self):
         """Confirm adding an objective is detected."""
@@ -582,7 +739,10 @@ class Objective(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("obj", objective="new objective")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove(self):
         """Confirm removing an objective is detected."""
@@ -592,7 +752,10 @@ class Objective(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("obj")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change(self):
         """Confirm altering an objective is detected."""
@@ -602,7 +765,10 @@ class Objective(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("obj", objective="bar")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class References(DiffBase):
@@ -618,7 +784,10 @@ class References(DiffBase):
         atform.add_reference_category("ref1", "ref1")
         atform.add_reference_category("ref2", "ref2")
         atform.add_test("title", references={"ref1": ["a"], "ref2": ["a"]})
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_category_to_existing(self):
         """Confirm adding a category to an existing set of categories is detected."""
@@ -631,7 +800,10 @@ class References(DiffBase):
         atform.add_reference_category("ref2", "ref2")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref1": ["a"], "ref2": ["a"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_category_to_none(self):
         """Confirm adding a category to a test that previously had no references is detected."""
@@ -642,7 +814,10 @@ class References(DiffBase):
         atform.add_reference_category("ref", "ref")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref": ["a"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_unused_category(self):
         """Confirm adding an unused category is not detected as a difference."""
@@ -651,7 +826,10 @@ class References(DiffBase):
 
         atform.add_reference_category("ref", "ref")
         atform.add_test("unchanged")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_one_category(self):
         """Confirm removing one of many reference categories is detected."""
@@ -664,7 +842,10 @@ class References(DiffBase):
         atform.add_reference_category("ref1", "ref1")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref1": ["a"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_all_categories(self):
         """Confirm removing all reference categories is detected."""
@@ -675,7 +856,10 @@ class References(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("foo")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_unused_category(self):
         """Confirm removing an unused category is not detected as a difference."""
@@ -684,7 +868,10 @@ class References(DiffBase):
         self.generate_old()
 
         atform.add_test("unchanged")
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_title(self):
         """Confirm a change to a category's title is detected."""
@@ -696,7 +883,10 @@ class References(DiffBase):
         atform.add_reference_category("new title", "ref")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref": ["a"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_item(self):
         """Confirm adding a reference item to an existing category is detected."""
@@ -708,7 +898,10 @@ class References(DiffBase):
         atform.add_reference_category("ref", "ref")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref": ["a", "new"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_item(self):
         """Confirm removing a reference item from an existing category is detected."""
@@ -720,7 +913,10 @@ class References(DiffBase):
         atform.add_reference_category("ref", "ref")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref": ["a"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_item(self):
         """Confirm changing an existing reference item is detected."""
@@ -732,7 +928,10 @@ class References(DiffBase):
         atform.add_reference_category("ref", "ref")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref": ["a", "new"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_category_def_order(self):
         """Confirm changing the category definition order is detected."""
@@ -746,7 +945,10 @@ class References(DiffBase):
         atform.add_reference_category("ref1", "ref1")
         atform.add_test("unchanged")
         atform.add_test("title", references={"ref1": ["a"], "ref2": ["x"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_category_key_order(self):
         """Confirm changing the order of category keys is not flagged as a difference."""
@@ -760,7 +962,10 @@ class References(DiffBase):
         atform.add_reference_category("ref2", "ref2")
         atform.add_test("unchanged")
         atform.add_test("title", references={"ref2": ["x"], "ref1": ["a"]})
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,), (2,))
 
     def test_change_item_order(self):
         """Confirm changing the order of reference items is detected."""
@@ -772,7 +977,10 @@ class References(DiffBase):
         atform.add_reference_category("ref", "ref")
         atform.add_test("unchanged")
         atform.add_test("title", references={"ref": ["r2", "r1"]})
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_label(self):
         """Confirm changing a category label only is not flagged as a difference."""
@@ -782,7 +990,10 @@ class References(DiffBase):
 
         atform.add_reference_category("ref title", "newlabel")
         atform.add_test("title", references={"newlabel": ["a"]})
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class Equipment(DiffBase):
@@ -794,7 +1005,10 @@ class Equipment(DiffBase):
         self.generate_old()
 
         atform.add_test("title", equipment=["foo"])
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_none(self):
         """Confirm adding an equipment list to a test that previously had none is detected."""
@@ -804,7 +1018,10 @@ class Equipment(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", equipment=["spam"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_existing(self):
         """Confirm adding an item to an existing equipment list is detected."""
@@ -814,7 +1031,10 @@ class Equipment(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", equipment=["foo", "new"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_all(self):
         """Confirm removing the entire equipment list is detected."""
@@ -824,7 +1044,10 @@ class Equipment(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_one(self):
         """Confirm removing a single item while others remain is detected."""
@@ -834,7 +1057,10 @@ class Equipment(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", equipment=["foo"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_item(self):
         """Confirm altering an item is detected."""
@@ -844,7 +1070,10 @@ class Equipment(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", equipment=["foo", "spam"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_order(self):
         """Confirm changing item order is detected."""
@@ -854,7 +1083,10 @@ class Equipment(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", equipment=["e2", "e1"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class Preconditions(DiffBase):
@@ -866,7 +1098,10 @@ class Preconditions(DiffBase):
         self.generate_old()
 
         atform.add_test("title", preconditions=["foo"])
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_none(self):
         """Confirm adding a preconditions list to a test that previously had none is detected."""
@@ -876,7 +1111,10 @@ class Preconditions(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", preconditions=["foo"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_existing(self):
         """Confirm adding an item to an existing preconditions list is detected."""
@@ -886,7 +1124,10 @@ class Preconditions(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", preconditions=["foo", "bar"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_all(self):
         """Confirm removing the entire preconditions list is detected."""
@@ -896,7 +1137,10 @@ class Preconditions(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_one(self):
         """Confirm removing a single item while others remain is detected."""
@@ -906,7 +1150,10 @@ class Preconditions(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", preconditions=["foo"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_item(self):
         """Confirm altering an item is detected."""
@@ -916,7 +1163,10 @@ class Preconditions(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", preconditions=["foo", "spam"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_order(self):
         """Confirm changing item order is detected."""
@@ -926,7 +1176,10 @@ class Preconditions(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", preconditions=["p2", "p1"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class ProcedureList(DiffBase):
@@ -940,7 +1193,10 @@ class ProcedureList(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", procedure=["foo"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove(self):
         """Confirm removing the entire procedure is detected."""
@@ -950,7 +1206,10 @@ class ProcedureList(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title")
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_order(self):
         """Confirm changes to step order are detected."""
@@ -960,7 +1219,10 @@ class ProcedureList(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", procedure=["s2", "s1"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class ProcedureText(DiffBase):
@@ -974,7 +1236,10 @@ class ProcedureText(DiffBase):
 
         atform.add_test("str", procedure=["step"])
         atform.add_test("dict", procedure=[{"text": "step"}])
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,), (2,))
 
     def test_change_type(self):
         """Confirm switching between string and dict with no text changes is not flagged as a difference."""
@@ -986,7 +1251,10 @@ class ProcedureText(DiffBase):
         atform.add_test("unchanged")
         atform.add_test("str to dict", procedure=[{"text": "foo"}])
         atform.add_test("dict to str", procedure=["foo"])
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,), (2,), (3,))
 
     def test_change_str_content(self):
         """Confirm changes to string content is detected."""
@@ -996,7 +1264,10 @@ class ProcedureText(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", procedure=["bar"])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_dict_content(self):
         """Confirm changes to dict content is detected."""
@@ -1006,7 +1277,10 @@ class ProcedureText(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", procedure=[{"text": "bar"}])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class ProcedureImage(DiffBase):
@@ -1038,7 +1312,10 @@ class ProcedureImage(DiffBase):
                 }
             ],
         )
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add(self):
         """Confirm adding an image is detected."""
@@ -1056,7 +1333,10 @@ class ProcedureImage(DiffBase):
                 }
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove(self):
         """Confirm removing an image is detected."""
@@ -1074,7 +1354,10 @@ class ProcedureImage(DiffBase):
 
         atform.add_test("unchanged")
         atform.add_test("title", procedure=[{"text": "foo"}])
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change(self):
         """Confirm altering an image is detected.
@@ -1098,7 +1381,10 @@ class ProcedureImage(DiffBase):
                 "title",
                 procedure=[{"text": "foo", "image": "spam"}],
             )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class ProcedureField(DiffBase):
@@ -1126,7 +1412,10 @@ class ProcedureField(DiffBase):
                 },
             ],
         )
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_none(self):
         """Confirm adding a field to a step that previously had none is detected."""
@@ -1144,7 +1433,10 @@ class ProcedureField(DiffBase):
                 }
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_to_existing(self):
         """Confirm adding a field to an existing set of fields is detected."""
@@ -1170,7 +1462,10 @@ class ProcedureField(DiffBase):
                 }
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_all(self):
         """Confirm removing all fields from a step is detected."""
@@ -1190,7 +1485,10 @@ class ProcedureField(DiffBase):
                 {"text": "step"},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_one(self):
         """Confirm removing one field while others remain is detected."""
@@ -1210,7 +1508,10 @@ class ProcedureField(DiffBase):
                 {"text": "step", "fields": [("spam", 1)]},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_title(self):
         """Confirm altering a field title is detected."""
@@ -1230,7 +1531,10 @@ class ProcedureField(DiffBase):
                 {"text": "step", "fields": [("eggs", 1)]},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_width(self):
         """Confirm altering a field width is detected."""
@@ -1250,7 +1554,10 @@ class ProcedureField(DiffBase):
                 {"text": "step", "fields": [("spam", 5)]},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_suffix(self):
         """Confirm adding a field suffix is detected."""
@@ -1270,7 +1577,10 @@ class ProcedureField(DiffBase):
                 {"text": "step", "fields": [("spam", 1, "new")]},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_suffix(self):
         """Confirm removing a field suffix is detected."""
@@ -1290,7 +1600,10 @@ class ProcedureField(DiffBase):
                 {"text": "step", "fields": [("spam", 1)]},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_suffix(self):
         """Confirm altering a field suffix is detected."""
@@ -1310,7 +1623,10 @@ class ProcedureField(DiffBase):
                 {"text": "step", "fields": [("spam", 1, "foo")]},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_order(self):
         """Confirm changing the order of fields is detected."""
@@ -1330,7 +1646,10 @@ class ProcedureField(DiffBase):
                 {"text": "step", "fields": [("f2", 1), ("f1", 1)]},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
 
 class ProcedureLabel(DiffBase):
@@ -1360,7 +1679,10 @@ class ProcedureLabel(DiffBase):
                 {"text": "bar $label"},
             ],
         )
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_unreferenced(self):
         """Confirm adding an unused label is not flagged as a difference."""
@@ -1368,7 +1690,10 @@ class ProcedureLabel(DiffBase):
         self.generate_old()
 
         atform.add_test("title", procedure=[{"text": "foo", "label": "bar"}])
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_unreferenced(self):
         """Confirm removing an unused label is not flagged as a difference."""
@@ -1376,7 +1701,10 @@ class ProcedureLabel(DiffBase):
         self.generate_old()
 
         atform.add_test("title", procedure=[{"text": "foo"}])
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_add_placeholder(self):
         """Confirm adding a placeholder to an existing label is detected."""
@@ -1404,7 +1732,10 @@ class ProcedureLabel(DiffBase):
                 {"text": "bar $label"},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_remove_placeholder(self):
         """Confirm removing a placeholder to an existing label is detected."""
@@ -1432,7 +1763,10 @@ class ProcedureLabel(DiffBase):
                 {"text": "bar"},
             ],
         )
-        self.generate_diff({(2,)})
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_label_name(self):
         """Confirm changing the name of a label that points to the same step is not flagged as a difference."""
@@ -1458,7 +1792,10 @@ class ProcedureLabel(DiffBase):
                 {"text": "bar $labelB"},
             ],
         )
-        self.generate_diff(set())
+        self.generate_diff()
+        self.assert_changed()
+        self.assert_new()
+        self.assert_same((1,))
 
     def test_change_label_step(self):
         """Confirm changing the step referenced by a label is detected."""
@@ -1492,42 +1829,7 @@ class ProcedureLabel(DiffBase):
                 {"text": "step 3 $label"},
             ],
         )
-        self.generate_diff({(2,)})
-
-
-class DiffIdCombination(DiffBase):
-    """Tests for combining the diff and ID command line arguments."""
-
-    def test_no_overlap(self):
-        """Confirm no tests are built if the given IDs don't contain any tests that changed."""
-        atform.add_test("unchanged")
-        atform.add_test("will change")
-        self.generate_old()
-
-        atform.add_test("unchanged")
-        atform.add_test("new title")
-        self.generate_diff(set(), id_args="1")
-
-    def test_partial_overlap(self):
-        """Confirm correct build if the given IDs contain some of the tests that changed."""
-        atform.add_test("unchanged")
-        atform.add_test("will change")
-        atform.add_test("will change")
-        self.generate_old()
-
-        atform.add_test("unchanged")
-        atform.add_test("new title")
-        atform.add_test("new title")
-        self.generate_diff({(3,)}, id_args="3")
-
-    def test_equal(self):
-        """Confirm correct build if the given IDs exactly match the tests that changed."""
-        atform.add_test("unchanged")
-        atform.add_test("will change")
-        atform.add_test("will change")
-        self.generate_old()
-
-        atform.add_test("unchanged")
-        atform.add_test("new title")
-        atform.add_test("new title")
-        self.generate_diff({(2,), (3,)}, id_args="2-3")
+        self.generate_diff()
+        self.assert_changed((2,))
+        self.assert_new()
+        self.assert_same((1,))

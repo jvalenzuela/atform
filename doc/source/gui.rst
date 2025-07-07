@@ -88,6 +88,45 @@ principal divisions of a test document; content from specific sections can be
 excluded from searches by unchecking areas to be ignored.
 
 
+Diff
+^^^^
+
+.. image:: images/gui/diff.png
+   :align: center
+
+The :guilabel:`Diff` tab allows test selection based on changes relative to
+another version of the script; |project_name| compares the two
+versions and selections can be made based on the type of changes detected.
+While not strictly required, this function is intended for use with
+script files maintained by a :ref:`version control system <vcs>`.
+
+Content from two script versions is required to perform a comparison:
+one is the current state of the script, and the other is taken
+from the cache file. The following procedure describes how to load
+a specific script version into the cache file such that it can be used
+for comparsion:
+
+#. Check out the version serving as the basis for comparison, typically
+   the older version.
+
+#. Run the script normally. The sole purpose of this step is to update the
+   cache file with test content; it is unnecessary to use the GUI or
+   generate any PDFs at this point because |project_name| writes all
+   content to the
+   cache file regardless of which PDFs are built. Running the script
+   with a nonexistent ID given as a :ref:`command line option <cli_id>`
+   will prevent any PDF output, making this step very quick.
+
+#. Check out the version containing content to be built into PDFs,
+   typically newer than the version checked out in the first step.
+
+#. Run the script with the ``--gui`` option. The current test content
+   will be compared with content stored in the cache, i.e, the version
+   checked out in the first step. The GUI :guilabel:`Diff` tab will
+   present a summary of changes which can be selectively added to the
+   :ref:`gui_build`.
+
+
 .. _gui_preview:
 
 Preview

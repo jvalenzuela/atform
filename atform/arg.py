@@ -15,11 +15,6 @@ def parse():
     """Top-level function for this module to process all arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--diff",
-        help="Build only tests changed since last time the script was run.",
-        action="store_true",
-    )
-    parser.add_argument(
         "--gui",
         help="Launch GUI for building tests.",
         action="store_true",

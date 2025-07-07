@@ -26,9 +26,6 @@ def get_tests_to_build(args):
             tid for tid in state.tests if id_match_args(tid, args.id)
         )
 
-    if args.diff:
-        ids.intersection_update(get_changed_tests())
-
     return ids
 
 
@@ -51,28 +48,6 @@ def id_match(tid, target):
     # Otherwise target is a range.
     start, end = target
     return (start <= tid[: len(start)]) and (end >= tid[: len(end)])
-
-
-def get_changed_tests():
-    """Finds tests that differ from the cache."""
-    changed_ids = set()
-
-    try:
-        old_tests = cache.data["tests"]
-    except KeyError:
-        old_tests = {}
-
-    for tid, current_test in state.tests.items():
-        try:
-            if current_test != old_tests[tid]:
-                raise KeyError
-
-        # Accumulate tests that differ from the cache and those that do not
-        # exist in the cache.
-        except KeyError:
-            changed_ids.add(tid)
-
-    return changed_ids
 
 
 def cli_build(path, folder_depth, args):
