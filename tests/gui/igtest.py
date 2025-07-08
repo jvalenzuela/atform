@@ -460,6 +460,49 @@ class Diff(InteractiveGuiTestCase):
         )
 
 
+class Refs(InteractiveGuiTestCase):
+    """Tests for the Refs selection panel."""
+
+    def test_resize_horizontal(self):
+        """Confirm proper horizontal resizing."""
+        self.start_gui(
+            instruction="Enlarge the window horizontally and ensure the Refs tab Category/Item column and add button fill the horizontal space.",
+        )
+
+    def test_resize_vertical(self):
+        """Confirm proper vertical resizing."""
+        self.start_gui(
+            instruction="Enlarge the window vertically and ensure the Refs tab listing fills the vertical space.",
+        )
+
+    def test_scroll(self):
+        """Verify operation of the reference listing vertical scroll bar."""
+        atform.add_reference_category("Refs", "refs")
+        atform.add_test(
+            "title",
+            references={"refs": [str(x) for x in range(50)]},
+        )
+        root = tk.Tk()
+        ref = atform.gui.selectref.SelectRef(root)
+        ref.pack()
+        self.start_gui(root=root)
+
+    def test_select(self):
+        """Confirm correct item selection mode."""
+        atform.add_reference_category("Refs", "refs")
+        atform.add_test(
+            "title",
+            references={"refs": [str(x) for x in range(10)]},
+        )
+        root = tk.Tk()
+        ref = atform.gui.selectref.SelectRef(root)
+        ref.pack()
+        self.start_gui(
+            root=root,
+            instruction="Confirm multiple items can be selected simultaneously.",
+        )
+
+
 def nonmodal_dialog(method):
     """
     Test method decorator to prevent the build dialog from being set modal,

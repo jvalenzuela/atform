@@ -127,6 +127,26 @@ for comparsion:
    :ref:`gui_build`.
 
 
+Refs
+^^^^
+
+.. image:: images/gui/ref.png
+   :align: center
+
+The :guilabel:`Refs` tab organizes tests according to reference,
+as described in :ref:`ref`. All categories defined by
+:py:func:`atform.add_reference_category` are listed; below each are
+items assigned via the :py:func:`atform.add_test` ``references``
+parameter. The :guilabel:`Test Qty` column indicates the number of tests
+assocated with each category and item.
+
+Selecting an item or category and clicking
+:guilabel:`Add Selected References To Build` will add referring tests to
+the :ref:`gui_build` list. Multiple items may be selected with the usual
+:kbd:`Control` and :kbd:`Shift` combinations. Selecting a category
+is equivalent to selecting all items within that category.
+
+
 .. _gui_preview:
 
 Preview

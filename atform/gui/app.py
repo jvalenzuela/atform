@@ -6,6 +6,7 @@ from . import buildlist
 from . import common
 from . import diffwidget
 from . import selectlist
+from . import selectref
 from . import preview
 from . import searchwidget
 from .. import state
@@ -60,5 +61,6 @@ class Application(tkwidget.Tk):
         tabs.add(selectlist.SelectList(tabs), text="List")
         tabs.add(searchwidget.Search(tabs), text="Search")
         tabs.add(diffwidget.Diff(tabs), text="Diff")
+        tabs.add(selectref.SelectRef(tabs), text="Refs")
 
         return frame

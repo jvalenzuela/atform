@@ -173,3 +173,16 @@ def find_widget_by_text(parent, text):
             return widget
 
     return None
+
+
+def find_widget_by_class(parent, cls_name):
+    """Locates a Tk widget by class name."""
+    if parent.winfo_class() == cls_name:
+        return parent
+
+    for child in parent.winfo_children():
+        widget = find_widget_by_class(child, cls_name)
+        if widget is not None:
+            return widget
+
+    return None
