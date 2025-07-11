@@ -127,6 +127,13 @@ for comparsion:
    :ref:`gui_build`.
 
 
+Refs
+^^^^
+
+.. image:: images/gui/ref.png
+   :align: center
+
+
 .. _gui_preview:
 
 Preview
