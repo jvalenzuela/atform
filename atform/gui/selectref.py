@@ -64,8 +64,8 @@ class RefList(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
             selectmode=tk.EXTENDED,
         )
         self.heading("#0", text="Category/Item", anchor=tk.W)
-        self.column("#0", stretch=tk.TRUE)
         self.heading("qty", text="Test Qty", anchor=tk.W)
+        self.column("qty", stretch=tk.FALSE)
 
         # Set of test IDs for each tree item, including both parent categories
         # and child items, keyed by tree item ID.
