@@ -138,15 +138,13 @@ class ContentAreaException(unittest.TestCase):
             self.call()
 
 
-def click_button(mock_button, text):
+def click_button(parent, text):
     """Simulates clicking a Tk button.
 
-    Requires tk.Button to have been patched with a Mock, and the button
-    action defined with the command parameter instead of bind().
+    The target button is located by searching for matching text.
     """
-    for _args, kwargs in mock_button.call_args_list:
-        if kwargs["text"] == text:
-            kwargs["command"]()
+    btn = find_widget_by_text(parent, text)
+    btn.invoke()
 
 
 def set_checkbox(parent, text, state):

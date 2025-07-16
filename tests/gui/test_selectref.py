@@ -13,7 +13,6 @@ def get_treeview(parent):
 
 
 @patch("atform.gui.buildlist.add")
-@patch("atform.gui.tkwidget.Button")
 class Add(unittest.TestCase):
     """Tests for the add button."""
 
@@ -26,36 +25,36 @@ class Add(unittest.TestCase):
         atform.add_test("t3", references={"r2": ["i2"]})
         atform.add_test("t4", references={"r2": ["i2"]})
 
-    def test_none_selected(self, mock_button, mock_build):
+    def test_none_selected(self, mock_build):
         """Confirm nothing is added to the build if no items are selected."""
         panel = atform.gui.selectref.SelectRef(None)
         tree = get_treeview(panel)
         tree.selection_set()
-        self.click_add(mock_button)
+        self.click_add(panel)
         mock_build.assert_called_once_with(set())
 
-    def test_category_selected(self, mock_button, mock_build):
+    def test_category_selected(self, mock_build):
         """Confirm tests for all items are added to the build when a category is selected."""
         panel = atform.gui.selectref.SelectRef(None)
         tree = get_treeview(panel)
         r1 = tree.get_children()[0]
         tree.selection_set(r1)
-        self.click_add(mock_button)
+        self.click_add(panel)
         mock_build.assert_called_once_with({(1,), (2,)})
 
-    def test_item_selected(self, mock_button, mock_build):
+    def test_item_selected(self, mock_build):
         """Confirm tests for the selected child item are added to the build."""
         panel = atform.gui.selectref.SelectRef(None)
         tree = get_treeview(panel)
         r1 = tree.get_children()[0]
         i1 = tree.get_children(r1)
         tree.selection_set(i1)
-        self.click_add(mock_button)
+        self.click_add(panel)
         mock_build.assert_called_once_with({(1,), (2,)})
 
-    def click_add(self, mock_button):
+    def click_add(self, panel):
         """Simulates clicking the add to build button."""
-        utils.click_button(mock_button, "Add Selected References To Build")
+        utils.click_button(panel, "Add Selected References To Build")
 
 
 class CategoryListing(unittest.TestCase):

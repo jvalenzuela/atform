@@ -2,7 +2,6 @@
 
 import tkinter as tk
 import unittest
-from unittest.mock import patch
 
 import atform
 from .. import utils
@@ -13,8 +12,6 @@ class Base(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        self.btn_patch = patch("atform.gui.testlist.tkwidget.Button")
-        self.mock_buttons = self.btn_patch.start()
         self.tl = atform.gui.testlist.TestList(None)
 
     def set_open(self, id_, open_):
@@ -24,9 +21,6 @@ class Base(unittest.TestCase):
     def assert_open(self, id_, open_):
         """Confirms a section is open or closed."""
         self.assertEqual(self.tl.tree.item(id_, option="open"), open_)
-
-    def tearDown(self):
-        self.btn_patch.stop()
 
 
 class AddTest(Base):
@@ -341,7 +335,7 @@ class ExpandAll(Base):
 
     def click(self):
         """Simulates clicking the expand all button."""
-        utils.click_button(self.mock_buttons, "Expand All")
+        utils.click_button(self.tl, "Expand All")
 
 
 class CollapseAll(Base):
@@ -392,7 +386,7 @@ class CollapseAll(Base):
 
     def click(self):
         """Simulates clicking the collapse all button."""
-        utils.click_button(self.mock_buttons, "Collapse All")
+        utils.click_button(self.tl, "Collapse All")
 
 
 class SelectAll(Base):
@@ -448,7 +442,7 @@ class SelectAll(Base):
 
     def click(self):
         """Simulates clicking the select all button."""
-        utils.click_button(self.mock_buttons, "Select All")
+        utils.click_button(self.tl, "Select All")
 
 
 class UnselectAll(Base):
@@ -494,7 +488,7 @@ class UnselectAll(Base):
 
     def click(self):
         """Simulates clicking the unselect all button."""
-        utils.click_button(self.mock_buttons, "Unselect All")
+        utils.click_button(self.tl, "Unselect All")
 
 
 class InvertSelection(Base):
@@ -581,7 +575,7 @@ class InvertSelection(Base):
 
     def click(self):
         """Simulates clicking the invert selection button."""
-        utils.click_button(self.mock_buttons, "Invert Selection")
+        utils.click_button(self.tl, "Invert Selection")
 
 
 class TotalCount(Base):

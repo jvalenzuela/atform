@@ -22,7 +22,6 @@ class Initialize(unittest.TestCase):
         self.assertEqual({(1,), (2,), (3,)}, sl.testlist.all_tests)
 
 
-@patch("atform.gui.selectlist.tkwidget.Button")
 @patch("atform.gui.buildlist.add")
 class AddButton(unittest.TestCase):
     """Tests for the add to build button."""
@@ -33,27 +32,27 @@ class AddButton(unittest.TestCase):
         atform.add_test("bar")
         atform.add_test("baz")
 
-    def test_add_selected(self, mock_add, mock_buttons):
+    def test_add_selected(self, mock_add):
         """Confirm selected tests are added to the build list."""
         sl = atform.gui.selectlist.SelectList(None)
         sl.testlist.tree.selection_set((1,), (2,))
-        self.click(mock_buttons)
+        self.click(sl)
         mock_add.assert_called_once_with({(1,), (2,)})
 
-    def test_empty(self, mock_add, mock_buttons):
+    def test_empty(self, mock_add):
         """Confirm nothing is added when nothing is selected."""
         sl = atform.gui.selectlist.SelectList(None)
         sl.testlist.tree.selection_set()
-        self.click(mock_buttons)
+        self.click(sl)
         mock_add.assert_called_once_with(set())
 
-    def test_clear_selection(self, _mock_add, mock_buttons):
+    def test_clear_selection(self, _mock_add):
         """Confirm all items are unselected after being added."""
         sl = atform.gui.selectlist.SelectList(None)
         sl.testlist.tree.selection_set((1,), (2,))
-        self.click(mock_buttons)
+        self.click(sl)
         self.assertEqual(set(), sl.testlist.selected_tests)
 
-    def click(self, mock_buttons):
+    def click(self, parent):
         """Simulates clicking the add button."""
-        utils.click_button(mock_buttons, "Add Selected Tests To Build")
+        utils.click_button(parent, "Add Selected Tests To Build")
