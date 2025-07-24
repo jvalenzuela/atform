@@ -13,50 +13,43 @@ def click_add_button(parent):
     utils.click_button(parent, "Add Matching Tests To Build")
 
 
-def set_query(mock_entry, text):
-    """Simulates a query string."""
-    mock_entry().get.return_value = text
-
-
 @patch("atform.gui.searchwidget.buildlist.add", autospec=True)
-@patch("atform.gui.searchwidget.tkwidget.Entry")
 @patch("atform.gui.searchwidget.search.search", autospec=True)
 class QueryString(unittest.TestCase):
     """Query string tests."""
 
-    def test_empty(self, mock_search, mock_entry, *_mocks):
+    def test_empty(self, mock_search, *_mocks):
         """Confirm no search with an empty query string."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "")
+        utils.set_entry_text(parent, "")
         click_add_button(parent)
         mock_search.assert_not_called()
 
-    def test_blank(self, mock_search, mock_entry, *_mocks):
+    def test_blank(self, mock_search, *_mocks):
         """Confirm no search with a query string containing only whitespace."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, string.whitespace)
+        utils.set_entry_text(parent, string.whitespace)
         click_add_button(parent)
         mock_search.assert_not_called()
 
-    def test_non_blank(self, mock_search, mock_entry, *_mocks):
+    def test_non_blank(self, mock_search, *_mocks):
         """Confirm a non-blank query string is passed to the search."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo bar")
+        utils.set_entry_text(parent, "foo bar")
         click_add_button(parent)
         mock_search.assert_called_once()
         self.assertEqual("foo bar", mock_search.call_args.args[0])
 
 
 @patch("atform.gui.searchwidget.buildlist.add", autospec=True)
-@patch("atform.gui.searchwidget.tkwidget.Entry")
 @patch("atform.gui.searchwidget.search.search", autospec=True)
 class BuildList(unittest.TestCase):
     """Tests for search results added to the build list."""
 
-    def test_match(self, mock_search, mock_entry, mock_build):
+    def test_match(self, mock_search, mock_build):
         """Confirm match sets are added to the build list."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo")
+        utils.set_entry_text(parent, "foo")
         for result in [set(), {(1,)}, {(1,), (2,)}]:
             mock_search.return_value = result
             mock_build.reset_mock()
@@ -66,15 +59,14 @@ class BuildList(unittest.TestCase):
 
 
 @patch("atform.gui.searchwidget.buildlist.add", autospec=True)
-@patch("atform.gui.searchwidget.tkwidget.Entry")
 @patch("atform.gui.searchwidget.search.search", autospec=True)
 class MatchAnyAll(unittest.TestCase):
     """Tests for the match any/all selection."""
 
-    def test_select(self, mock_search, mock_entry, *_mocks):
+    def test_select(self, mock_search, *_mocks):
         """Confirm selection is passed to the correct search parameter."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo")
+        utils.set_entry_text(parent, "foo")
         for select in ["all", "any"]:
             mock_search.reset_mock()
             btn = utils.find_widget_by_text(parent, f"Match {select}")
@@ -86,22 +78,21 @@ class MatchAnyAll(unittest.TestCase):
 
 
 @patch("atform.gui.searchwidget.buildlist.add", autospec=True)
-@patch("atform.gui.searchwidget.tkwidget.Entry")
 @patch("atform.gui.searchwidget.search.search", autospec=True)
 class CaseSensitive(unittest.TestCase):
     """Tests for the case-sensitive option."""
 
-    def test_default(self, mock_search, mock_entry, *_mocks):
+    def test_default(self, mock_search, *_mocks):
         """Confirm the default selection is case-insensitive."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo")
+        utils.set_entry_text(parent, "foo")
         click_add_button(parent)
         self.assertEqual(False, mock_search.call_args.args[3])
 
-    def test_select(self, mock_search, mock_entry, *_mocks):
+    def test_select(self, mock_search, *_mocks):
         """Confirm selection is passed to the correct search parameter."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo")
+        utils.set_entry_text(parent, "foo")
         for select in [True, False]:
             mock_search.reset_mock()
             utils.set_checkbox(parent, "Case-sensitive", select)
@@ -112,7 +103,6 @@ class CaseSensitive(unittest.TestCase):
 
 
 @patch("atform.gui.searchwidget.buildlist.add", autospec=True)
-@patch("atform.gui.searchwidget.tkwidget.Entry")
 @patch("atform.gui.searchwidget.search.search", autospec=True)
 class Section(unittest.TestCase):
     """Tests for the section selection checkboxes."""
@@ -127,19 +117,19 @@ class Section(unittest.TestCase):
         "Procedure",
     ]
 
-    def test_none(self, mock_search, mock_entry, *_mocks):
+    def test_none(self, mock_search, *_mocks):
         """Confirm no search if no sections are selected."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo")
+        utils.set_entry_text(parent, "foo")
         for section in self.SECTIONS:
             utils.set_checkbox(parent, section, False)
         click_add_button(parent)
         mock_search.assert_not_called()
 
-    def test_single(self, mock_search, mock_entry, *_mocks):
+    def test_single(self, mock_search, *_mocks):
         """Confirm each section is passed to the search."""
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo")
+        utils.set_entry_text(parent, "foo")
         for section in self.SECTIONS:
             mock_search.reset_mock()
             for s in self.SECTIONS:
@@ -149,13 +139,13 @@ class Section(unittest.TestCase):
                 mock_search.assert_called_once()
                 self.assertEqual({section}, mock_search.call_args.args[1])
 
-    def test_multiple(self, mock_search, mock_entry, *_mocks):
+    def test_multiple(self, mock_search, *_mocks):
         """Confirm multiple selected sections are passed to the search.
 
         This also serves to ensure all sections are checked by default.
         """
         parent = searchwidget.Search(None)
-        set_query(mock_entry, "foo")
+        utils.set_entry_text(parent, "foo")
         click_add_button(parent)
         mock_search.assert_called_once()
         self.assertEqual(set(self.SECTIONS), mock_search.call_args.args[1])

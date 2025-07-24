@@ -7,6 +7,7 @@ import collections
 import contextlib
 import io
 from PIL import Image
+import tkinter as tk
 import unittest
 from unittest.mock import patch
 
@@ -154,6 +155,16 @@ def set_checkbox(parent, text, state):
         checkbox.select()
     else:
         checkbox.deselect()
+
+
+def set_entry_text(parent, text):
+    """Populates a Tk Entry widget with a given string.
+
+    Assumes only one Entry widget within the given parent.
+    """
+    entry = find_widget_by_class(parent, "Entry")
+    entry.delete(0, tk.END)
+    entry.insert(tk.END, text)
 
 
 def find_widget_by_text(parent, text):

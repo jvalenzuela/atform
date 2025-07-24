@@ -360,9 +360,10 @@ class SearchQueryEntry(InteractiveGuiTestCase):
     @patch("atform.gui.searchwidget.search.search")
     def test_enter_shortcut(self, mock_search, *_mocks):
         """Confirm pressing enter executes a search."""
+        utils.set_entry_text(self.root, "foo")
         self.start_gui(
             root=self.root,
-            instruction="Enter a query, press Enter, then close the search window.",
+            instruction="Select the query entry to give it focus, press Enter, then close the search window.",
             buttons=False,
         )
         mock_search.assert_called_once()
@@ -389,9 +390,10 @@ class SearchResultMessage(InteractiveGuiTestCase):
         """Confirm message reporting no sections are selected."""
         for section in atform.gui.search.SECTIONS:
             utils.set_checkbox(self.root, section, False)
+        utils.set_entry_text(self.root, "foo")
         self.start_gui(
             root=self.root,
-            instruction="Enter a query, click Add, and confirm message reports no sections are selected.",
+            instruction="Click Add and confirm message reports no sections are selected.",
         )
 
     @patch("atform.gui.searchwidget.buildlist")
@@ -399,9 +401,10 @@ class SearchResultMessage(InteractiveGuiTestCase):
     def test_match_count(self, mock_search, *_mocks):
         """Confirm message reports number of matches."""
         mock_search.return_value = set(range(42))
+        utils.set_entry_text(self.root, "foo")
         self.start_gui(
             root=self.root,
-            instruction="Enter a query string, click Add, and confirm message reports 42 matches.",
+            instruction="Click Add and confirm message reports 42 matches.",
         )
 
     def test_clear(self):
