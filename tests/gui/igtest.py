@@ -640,3 +640,46 @@ class BuildDialog(InteractiveGuiTestCase):
             atform.gui.build.Dialog(self.builder, futures, self.done_q)
             self.root.destroy()
             mock.assert_called_once_with(futures[0])
+
+
+class StatusBar(InteractiveGuiTestCase):
+    """Status bar tests."""
+
+    def test_size(self):
+        """Verify status bar sizing."""
+        self.start_gui(
+            instruction="Ensure the status bar occupies the entire width and stretches horizontally.",
+        )
+
+    @patch("atform.gui.statusbar.vcs.version", new=None)
+    def test_no_vcs(self):
+        """Verify VCS indicator when no version control is present."""
+        root = tk.Tk()
+        sb = atform.gui.statusbar.StatusBar(root)
+        sb.pack()
+        self.start_gui(
+            root=root,
+            instruction="Verify VCS status indicates no version control.",
+        )
+
+    @patch("atform.gui.statusbar.vcs.version", new="draft")
+    def test_vcs_draft(self):
+        """Verify VCS indicator when uncommitted changes are present."""
+        root = tk.Tk()
+        sb = atform.gui.statusbar.StatusBar(root)
+        sb.pack()
+        self.start_gui(
+            root=root,
+            instruction="Verify VCS status indicates draft with an orange background.",
+        )
+
+    @patch("atform.gui.statusbar.vcs.version", new="0123456")
+    def test_vcs_clean(self):
+        """Verify VCS indicator when working directory is clean."""
+        root = tk.Tk()
+        sb = atform.gui.statusbar.StatusBar(root)
+        sb.pack()
+        self.start_gui(
+            root=root,
+            instruction="Verify VCS status contains a 7-digit SHA1.",
+        )

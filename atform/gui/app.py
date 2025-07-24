@@ -9,6 +9,7 @@ from . import selectlist
 from . import selectref
 from . import preview
 from . import searchwidget
+from . import statusbar
 from .. import state
 from . import tkwidget
 
@@ -26,6 +27,7 @@ class Application(tkwidget.Tk):
         super().__init__()
         self._set_title()
         self._create_panels(path, folder_depth)
+        statusbar.StatusBar(self)
 
     def _set_title(self):
         """Sets the window title."""
@@ -43,18 +45,21 @@ class Application(tkwidget.Tk):
 
     def _create_panels(self, path, folder_depth):
         """Creates the top-level panels."""
-        select = self._create_select_tabs()
+        frame = tkwidget.Frame(self)
+        frame.pack(fill=tk.BOTH, expand=tk.TRUE)
+
+        select = self._create_select_tabs(frame)
         select.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
-        pview = preview.Preview(self)
+        pview = preview.Preview(frame)
         pview.pack(side=tk.LEFT, fill=tk.Y, padx=common.LARGE_PAD)
 
-        build = buildlist.BuildList(self, path, folder_depth)
+        build = buildlist.BuildList(frame, path, folder_depth)
         build.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
-    def _create_select_tabs(self):
+    def _create_select_tabs(self, parent):
         """Creates the Select panel and child tabs."""
-        frame = tkwidget.LabelFrame(self, text="Select")
+        frame = tkwidget.LabelFrame(parent, text="Select")
         tabs = tkwidget.Notebook(frame)
         tabs.pack(fill=tk.BOTH, expand=tk.TRUE)
 

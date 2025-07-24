@@ -106,3 +106,8 @@ class Notebook(ttk.Notebook):
 @add_instance_storage
 class Treeview(ttk.Treeview):
     pass
+
+
+@add_instance_storage
+class Separator(ttk.Separator):
+    pass

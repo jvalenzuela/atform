@@ -191,3 +191,23 @@ closing the pop-up dialog.
 
 This list will be cleared after building, allowing another set of tests
 to be selected and built.
+
+
+Status Bar
+----------
+
+Along the bottom of the main GUI window is a traditional status bar
+conveying various ancillary conditions. Unless otherwise noted, all
+status bar information is static, i.e., it is captured when the script is
+initially run and not dynamically updated if content is altered while
+the GUI is running. The GUI must be closed and the script re-executed to
+detect external changes.
+
+
+VCS
+^^^
+
+The :guilabel:`VCS` indicator reflects the state reported by the
+:ref:`version control system <vcs>`. In addition to a SHA1 or
+:literal:`draft`, this indicator will also show :literal:`No VCS`
+if version control is absent.
