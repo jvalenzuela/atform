@@ -69,8 +69,7 @@ class MatchAnyAll(unittest.TestCase):
         utils.set_entry_text(parent, "foo")
         for select in ["all", "any"]:
             mock_search.reset_mock()
-            btn = utils.find_widget_by_text(parent, f"Match {select}")
-            btn.invoke()
+            utils.click_button(parent, f"Match {select}")
             click_add_button(parent)
             with self.subTest(select=select):
                 mock_search.assert_called_once()

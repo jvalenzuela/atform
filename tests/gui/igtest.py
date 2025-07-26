@@ -380,8 +380,7 @@ class SearchResultMessage(InteractiveGuiTestCase):
 
     def test_no_query(self):
         """Confirm message reporting an empty query."""
-        btn = utils.find_widget_by_text(self.root, "Add Matching Tests To Build")
-        btn.invoke()
+        self.click_add()
         self.start_gui(
             root=self.root,
         )
@@ -391,9 +390,10 @@ class SearchResultMessage(InteractiveGuiTestCase):
         for section in atform.gui.search.SECTIONS:
             utils.set_checkbox(self.root, section, False)
         utils.set_entry_text(self.root, "foo")
+        self.click_add()
         self.start_gui(
             root=self.root,
-            instruction="Click Add and confirm message reports no sections are selected.",
+            instruction="Confirm message reports no sections are selected.",
         )
 
     @patch("atform.gui.searchwidget.buildlist")
@@ -402,19 +402,23 @@ class SearchResultMessage(InteractiveGuiTestCase):
         """Confirm message reports number of matches."""
         mock_search.return_value = set(range(42))
         utils.set_entry_text(self.root, "foo")
+        self.click_add()
         self.start_gui(
             root=self.root,
-            instruction="Click Add and confirm message reports 42 matches.",
+            instruction="Confirm message reports 42 matches.",
         )
 
     def test_clear(self):
         """Confirm message is cleared after altering the query string."""
-        btn = utils.find_widget_by_text(self.root, "Add Matching Tests To Build")
-        btn.invoke()
+        self.click_add()
         self.start_gui(
             root=self.root,
             instruction="Confirm the result message clears when typing in the query field.",
         )
+
+    def click_add(self):
+        """Simulates clicking the add button."""
+        utils.click_button(self.root, "Add Matching Tests To Build")
 
 
 class Diff(InteractiveGuiTestCase):
