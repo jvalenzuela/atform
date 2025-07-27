@@ -33,7 +33,6 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.tree = TupleTreeview(
             frame,
             columns=["Title"],
-            selectmode=tk.EXTENDED,
         )
         self.tree.heading("#0", text="ID", anchor=tk.W)
         self.tree.heading("Title", text="Title", anchor=tk.W)

@@ -124,6 +124,19 @@ class TestList(InteractiveGuiTestCase):
         atform.add_test("title")
         self.start_gui()
 
+    @patch("atform.gui.preview.show")
+    def test_multiple_select(self, *_mocks):
+        """Confirm multiple items can be simultaneously selected."""
+        for i in range(1, 11):
+            atform.add_test(f"test {i}")
+        root, tl = self.create_testlist()
+        for i in range(1, 11):
+            tl.add_test((i,))
+        self.start_gui(
+            root=root,
+            instruction="Ensure multiple items can be selected using Shift & Control.",
+        )
+
 
 class Resize(InteractiveGuiTestCase):
     """Window resizing tests."""
