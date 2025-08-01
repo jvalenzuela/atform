@@ -3,6 +3,7 @@
 import tkinter as tk
 
 from . import common
+from .. import idlock
 from . import tkwidget
 from .. import vcs
 
@@ -26,6 +27,7 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         # Indicator widget classes, not instances, ordered left to right.
         items = [
             Vcs,
+            IdLock,
         ]
 
         for cls in items:
@@ -53,4 +55,14 @@ class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
             text = f"VCS: {vcs.version}"
         super().__init__(parent, text=text)
         if vcs.version == "draft":
+            self.configure(background=WARNING_BACKGROUND)
+
+
+class IdLock(tkwidget.Label):  # pylint: disable=too-many-ancestors
+    """ID lock file status display item."""
+
+    def __init__(self, parent):
+        status = "ok" if idlock.lockfile_current else "stale"
+        super().__init__(parent, text=f"ID Lock: {status}")
+        if not idlock.lockfile_current:
             self.configure(background=WARNING_BACKGROUND)

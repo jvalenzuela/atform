@@ -211,3 +211,12 @@ The :guilabel:`VCS` indicator reflects the state reported by the
 :ref:`version control system <vcs>`. In addition to a SHA1 or
 :literal:`draft`, this indicator will also show :literal:`No VCS`
 if version control is absent.
+
+
+ID Lock
+^^^^^^^
+
+The :guilabel:`ID Lock` indicator shows the state of the lock file discussed in
+:ref:`idlock`. This indicator will display :literal:`ok` if the existing
+tests are consistent with the lock file, or :literal:`stale` if the lock file
+needs to be updated as described in :ref:`idlock`.

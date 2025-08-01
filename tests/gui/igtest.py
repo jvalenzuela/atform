@@ -683,3 +683,25 @@ class StatusBar(InteractiveGuiTestCase):
             root=root,
             instruction="Verify VCS status contains a 7-digit SHA1.",
         )
+
+    @patch("atform.idlock.lockfile_current", new=False)
+    def test_idlock_stale(self):
+        """Verify ID lock indicator when the lock file is stale."""
+        root = tk.Tk()
+        sb = atform.gui.statusbar.StatusBar(root)
+        sb.pack()
+        self.start_gui(
+            root=root,
+            instruction="Confirm ID Lock indicator shows stale with an orange background.",
+        )
+
+    @patch("atform.idlock.lockfile_current", new=True)
+    def test_idlock_ok(self):
+        """Verify ID lock indicator when the lock file is current."""
+        root = tk.Tk()
+        sb = atform.gui.statusbar.StatusBar(root)
+        sb.pack()
+        self.start_gui(
+            root=root,
+            instruction="Confirm ID Lock indicator shows ok with a normal background.",
+        )

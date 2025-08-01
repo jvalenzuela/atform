@@ -16,6 +16,11 @@ from . import state
 from . import version
 
 
+# True if the lock file matches the current test content; set by verify()
+# after comparing the existing test content to the lock file.
+lockfile_current = False  # pylint: disable=invalid-name
+
+
 # Lock file name.
 FILENAME = "id.csv"
 
@@ -90,10 +95,15 @@ OPEN_LOCK_FILE = functools.partial(open, FILENAME, newline="", encoding="utf8")
 
 def verify():
     """Top-level function to execute the entire verification process."""
+    global lockfile_current  # pylint: disable=global-statement
     current_tests = {t.id: t.title for t in state.tests.values()}
     old_tests = load()
     compare(current_tests, old_tests)
     save(current_tests, old_tests)
+
+    # The lock file can now be considered current if no exceptions have been
+    # raised.
+    lockfile_current = True
 
 
 def load():

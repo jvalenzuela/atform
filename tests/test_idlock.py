@@ -221,6 +221,49 @@ class AllowedChanges(unittest.TestCase):
         atform.idlock.verify()
 
 
+class LockFileCurrent(unittest.TestCase):
+    """Tests for the flag indicating the state of the lock file."""
+
+    def setUp(self):
+        atform.idlock.lockfile_current = False
+
+    @patch("atform.idlock.load", side_effect=atform.idlock.LockFileWarning)
+    def test_load_fail(self, *_mocks):
+        """Confirm state if an error occurs loading the lock file."""
+        try:
+            atform.idlock.verify()
+        except atform.idlock.LockFileWarning:
+            pass
+        self.assertFalse(atform.idlock.lockfile_current)
+
+    @patch("atform.idlock.load", return_value={})
+    @patch("atform.idlock.compare", side_effect=atform.idlock.ChangedTestError([]))
+    def test_compare_fail(self, *_mocks):
+        """Confirm state if no lock file existed to begin with."""
+        try:
+            atform.idlock.verify()
+        except atform.idlock.ChangedTestError:
+            pass
+        self.assertFalse(atform.idlock.lockfile_current)
+
+    @patch("atform.idlock.load", return_value={})
+    @patch("atform.idlock.save", side_effect=atform.idlock.LockFileWarning)
+    def test_save_error(self, *_mocks):
+        """Confirm state if an error occurs writing the lock file."""
+        try:
+            atform.idlock.verify()
+        except atform.idlock.LockFileWarning:
+            pass
+        self.assertFalse(atform.idlock.lockfile_current)
+
+    @patch("atform.idlock.load", return_value={})
+    @patch("atform.idlock.save")
+    def test_no_error(self, *_mocks):
+        """Confirm state if no exceptions were raised."""
+        atform.idlock.verify()
+        self.assertTrue(atform.idlock.lockfile_current)
+
+
 class Integration(unittest.TestCase):
     """Module integration tests."""
 
