@@ -26,6 +26,7 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         # Indicator widget classes, not instances, ordered left to right.
         items = [
             Vcs,
+            IdLock,
         ]
 
         for cls in items:
@@ -54,3 +55,10 @@ class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
         super().__init__(parent, text=text)
         if vcs.version == "draft":
             self.configure(background=WARNING_BACKGROUND)
+
+
+class IdLock(tkwidget.Label): # pylint: disable=too-many-ancestors
+    """ """
+
+    def __init__(self, parent):
+        super().__init__(parent, text=f"ID Lock:")
