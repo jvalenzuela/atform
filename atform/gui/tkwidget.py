@@ -84,6 +84,11 @@ class ScrolledText(tk.scrolledtext.ScrolledText):
 
 
 @add_instance_storage
+class Spinbox(tk.Spinbox):
+    pass
+
+
+@add_instance_storage
 class StringVar(tk.StringVar):
     pass
 
