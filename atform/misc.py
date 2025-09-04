@@ -60,6 +60,17 @@ def validate_field_length(length):
     return length
 
 
+def max_folder_depth():
+    """Computes the maximum allowable folder depth."""
+    return len(state.current_id) - 1
+
+
+def validate_folder_depth(depth):
+    """Validates a folder depth value."""
+    if (depth < 0) or (depth > max_folder_depth()):
+        raise ValueError
+
+
 ################################################################################
 # Public API
 #

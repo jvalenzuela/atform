@@ -142,9 +142,11 @@ class Resize(InteractiveGuiTestCase):
     """Window resizing tests."""
 
     def test_horizontal(self):
-        """Stretch the window horitontally and ensure only the test list title columns expand."""
+        """Confirm correct horizontal resizing."""
         atform.add_test("title")
-        self.start_gui()
+        self.start_gui(
+            instruction="Stretch the window horizontally and ensure the test list title columns and Build path entry expand.",
+        )
 
     def test_vertical(self):
         """Stretch the window vertically and ensure the test lists and preview areas expand."""

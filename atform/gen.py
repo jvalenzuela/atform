@@ -7,6 +7,7 @@ from . import arg
 from . import cache
 from . import idlock
 from . import error
+from . import misc
 from . import parallelbuild
 from . import pdf
 from . import state
@@ -114,8 +115,10 @@ def generate(*, path="pdf", folder_depth=0):
             "Folder depth must be an integer.",
         )
 
-    max_depth = len(state.current_id) - 1
-    if (folder_depth < 0) or (folder_depth > max_depth):
+    try:
+        misc.validate_folder_depth(folder_depth)
+    except ValueError as e:
+        max_depth = misc.max_folder_depth()
         if max_depth:
             remedy = f"""
             The folder depth must be within 0 and {max_depth}, inclusive.
@@ -129,7 +132,7 @@ def generate(*, path="pdf", folder_depth=0):
         raise error.UserScriptError(
             "Invalid folder depth value.",
             remedy,
-        )
+        ) from e
 
     args = arg.parse()
     vcs.load()

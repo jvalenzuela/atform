@@ -185,6 +185,10 @@ regardless of which, if any, are selected. To remove items from this list,
 select them in the same manner as the :ref:`gui_select_list` panel,
 and click the :guilabel:`Remove Selected` button.
 
+The :guilabel:`Path` and :guilabel:`Folder Depth` options are equivalent
+to the :py:func:`atform.generate` parameters of the same name,
+allowing the PDF output directory to be altered without script modification.
+
 A pop-up dialog will appear while building output documents, displaying
 progress and any errors. The build process may be cancelled by
 closing the pop-up dialog.
