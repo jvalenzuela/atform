@@ -88,7 +88,7 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
             textvariable=var,
             from_=0,
             to=to,
-            width=len(str(to)) + 1,
+            width=len(str(to)) + 1,  # Fit largest value plus some extra space.
             state="readonly",
         )
         spin.pack(side=tk.LEFT, padx=common.SMALL_PAD)
