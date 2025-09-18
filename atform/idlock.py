@@ -204,7 +204,7 @@ def check_ids(current_tests, old_tests):
         for old_id in removed_ids:
             old_title = old_tests[old_id]
 
-            # The test is considered changed if it's current title matches the
+            # The test is considered changed if its current title matches the
             # title of a removed test.
             if old_title == new_title:
                 diffs.append(ChangedTest(old_id, old_title, new_id, new_title))
