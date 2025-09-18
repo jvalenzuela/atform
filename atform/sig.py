@@ -1,4 +1,4 @@
-"""Approval sigature API."""
+"""Approval signature API."""
 
 from . import error
 from . import misc
