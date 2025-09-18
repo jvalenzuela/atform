@@ -52,7 +52,7 @@ def load(path, max_size):
 
             # PNG formats require calling load() to ensure EXIF data is available
             # in the info attribute. The call is unconditional for simplicity as
-            # there's no downside to callling it regardless of format.
+            # there's no downside to calling it regardless of format.
             # This also ensures the entire image is loaded into memory so the
             # source file object can be closed.
             image.load()
