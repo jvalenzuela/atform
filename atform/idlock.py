@@ -8,6 +8,7 @@ is loaded each run and compared to the current tests.
 import csv
 from dataclasses import dataclass
 import functools
+import itertools
 import os
 import textwrap
 
@@ -188,26 +189,21 @@ def check_ids(current_tests, old_tests):
     is no longer used.
     """
     # IDs that do not exist in the lock file are considered new tests.
-    new_ids = [id_ for id_ in current_tests if not id_ in old_tests]
+    new_ids = set(current_tests).difference(old_tests)
 
     # IDs that exist only in the lock file are considered removed.
-    removed_ids = [id_ for id_ in old_tests if not id_ in current_tests]
+    removed_ids = set(old_tests).difference(current_tests)
 
     diffs = []
 
-    # Only newly-created tests are evaluated as shifted tests would appear
-    # as new.
-    for new_id in new_ids:
+    for new_id, rem_id in itertools.product(new_ids, removed_ids):
         new_title = current_tests[new_id]
+        rem_title = old_tests[rem_id]
 
-        # Compare the title to all removed titles.
-        for old_id in removed_ids:
-            old_title = old_tests[old_id]
-
-            # The test is considered changed if it's current title matches the
-            # title of a removed test.
-            if old_title == new_title:
-                diffs.append(ChangedTest(old_id, old_title, new_id, new_title))
+        # The test is considered changed if its current title matches the
+        # title of a removed test.
+        if new_title == rem_title:
+            diffs.append(ChangedTest(rem_id, rem_title, new_id, new_title))
 
     return diffs
 
