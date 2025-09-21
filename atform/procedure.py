@@ -2,6 +2,7 @@
 
 import collections
 import dataclasses
+import enum
 import typing
 
 from . import (
@@ -10,6 +11,19 @@ from . import (
     label,
     misc,
 )
+
+
+@enum.unique
+class RawField(enum.IntEnum):
+    """Indices for field tuples provided by the user script.
+
+    Although they may be equivalent, these are not to be used with the
+    Field named tuple defined below, which is always indexed by name.
+    """
+
+    TITLE = 0
+    LENGTH = 1
+    SUFFIX = 2
 
 
 # Container to hold normalized procedure step field definitions. This is
@@ -142,8 +156,8 @@ def create_field(tpl):
 
     # Validate the required items: title and length.
     try:
-        raw_title = tpl[0]
-        raw_length = tpl[1]
+        raw_title = tpl[RawField.TITLE]
+        raw_length = tpl[RawField.LENGTH]
     except IndexError as e:
         raise error.UserScriptError(
             "Procedure step field tuple is too short.",
@@ -158,7 +172,7 @@ def create_field(tpl):
 
     # Validate suffix, providing a default value if omitted.
     try:
-        raw = tpl[2]
+        raw = tpl[RawField.SUFFIX]
     except IndexError:
         suffix = ""
     else:
