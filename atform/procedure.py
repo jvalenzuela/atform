@@ -208,7 +208,7 @@ def check_undefined_keys(data):
     any remaining keys are assumed to be undefined.
     """
     if data:
-        keys = ", ".join([str(k) for k in data.keys()])
+        keys = ", ".join(str(k) for k in data.keys())
         raise error.UserScriptError(
             f"Undefined procedure step dictionary key(s): {keys}",
         )
