@@ -29,7 +29,7 @@ def get_id():
 
 def to_string(id_):
     """Generates a presentation string for a given ID tuple."""
-    return ".".join([str(x) for x in id_])
+    return ".".join(str(x) for x in id_)
 
 
 def validate_section_title(title):
