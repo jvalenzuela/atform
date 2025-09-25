@@ -8,5 +8,24 @@
   \item[0.2] Add configurable output section folder depth, and support
     Python v3.12 and v3.13.
 
+  \item[1.0]
+    \begin{itemize}
+      \item Minor PDF format improvements.
+      \item Change test definition from Test() class to add\_test() function.
+      \item Make procedure step labels local, removing the
+        need for globally unique step labels.
+      \item Make most optional API arguments keyword-only.
+      \item Build PDFs in parallel to improve generation time.
+      \item Minor API documentation clarifications.
+      \item Add support for procedure step images.
+      \item Add support for PNG images.
+      \item Add CLI option to select PDFs to build.
+      \item Implement ID locking system to prevent inadverent numbering shifts.
+      \item Add list\_tests().
+      \item Remove Python 3.7 and 3.8 support.
+      \item Require conventional \_\_name\_\_ == ``\_\_main\_\_'' guard
+        around generate().
+      \item Add build GUI.
+    \end{itemize}
   \end{description}
 }
