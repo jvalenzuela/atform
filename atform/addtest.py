@@ -11,7 +11,7 @@ from . import procedure as procedure_
 from . import state
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=False)
 # This is a data class intended to contain all attributes required to populate
 # a single test document.
 # pylint: disable=too-many-instance-attributes
@@ -99,8 +99,7 @@ class TestContent:
     def __eq__(self, other):
         """Equality implementation for detecting content differences.
 
-        This is used for the --diff option, and specifically excludes the
-        following fields:
+        The following fields are specifically excluded:
 
         call_frame: Used only for generating error messages; not relevant
                     for comparing test content.
