@@ -41,10 +41,7 @@ Field = collections.namedtuple(
 MAX_IMAGE_SIZE = image.ImageSize(5, 3)
 
 
-@dataclasses.dataclass(
-    repr=False,
-    order=False,
-)
+@dataclasses.dataclass(repr=False)
 class Step:
     """Storage for a single procedure step.
 
