@@ -5,6 +5,7 @@ import atform
 from atform import label
 import collections
 import contextlib
+import importlib
 import io
 from PIL import Image
 import tkinter as tk
@@ -26,7 +27,7 @@ def reset():
     while unit test cases require this initial condition many times
     after a single import.
     """
-    atform.state.init()
+    importlib.reload(atform.state)
     atform.cache.data = None
     atform.vcs.version = None
 
