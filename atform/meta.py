@@ -11,7 +11,7 @@ from . import state
 ################################################################################
 
 
-def list_tests():
+def list_tests() -> list[tuple[str, str]]:
     """Lists all defined tests.
 
     Intended to be called in the Output section, after all calls to

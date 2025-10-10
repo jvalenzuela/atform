@@ -4,11 +4,16 @@ Searching is done with the whoosh module. Content from all tests is
 indexed upon initialization, then searches can be dispatched from the GUI.
 """
 
-import whoosh.analysis
-import whoosh.fields
-import whoosh.filedb.filestore
-import whoosh.qparser
+from typing import Iterable
 
+import whoosh.analysis  # type: ignore[import-untyped]
+import whoosh.fields  # type: ignore[import-untyped]
+import whoosh.filedb.filestore  # type: ignore[import-untyped]
+import whoosh.qparser  # type: ignore[import-untyped]
+
+from ..addtest import TestContent, Reference
+from ..id import IdType
+from ..procedure import Step
 from .. import state
 
 
@@ -107,7 +112,7 @@ class TestContentSearch:
         return matches
 
 
-def index_test(test):
+def index_test(test: TestContent) -> dict[str, str]:
     """Creates index fields from a test's content."""
     fields = {"Title": test.title}
     if test.objective:
@@ -120,7 +125,7 @@ def index_test(test):
     return fields
 
 
-def index_refs(refs):
+def index_refs(refs: list[Reference]) -> str:
     """Converts a test's references into a single string for indexing."""
     items = []
     for r in refs:
@@ -129,7 +134,7 @@ def index_refs(refs):
     return "\n".join(items)
 
 
-def index_procedure(steps):
+def index_procedure(steps: list[Step]) -> str:
     """Converts a test's procedure list into a single string for indexing."""
     items = []
     for step in steps:

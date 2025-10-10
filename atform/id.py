@@ -8,13 +8,18 @@ of integers.
 
 import pathlib
 import tempfile
+from typing import Optional
 
 from . import error
 from . import misc
 from . import state
 
 
-def get_id():
+IdType = tuple[int, ...]
+IdRangeType = tuple[IdType, IdType]
+
+
+def get_id() -> IdType:
     """Returns the identifier to be used for the next test."""
     # Increment last ID level for each test.
     state.current_id[-1] = state.current_id[-1] + 1
@@ -27,12 +32,12 @@ def get_id():
     return tuple(state.current_id)
 
 
-def to_string(id_):
+def to_string(id_: IdType) -> str:
     """Generates a presentation string for a given ID tuple."""
     return ".".join(str(x) for x in id_)
 
 
-def validate_section_title(title):
+def validate_section_title(title: str) -> None:
     """Confirms a section title is valid.
 
     Validation is implemented by attempting to create a folder named with
@@ -66,9 +71,13 @@ def validate_section_title(title):
 
 
 @error.exit_on_script_error
-# Allow id parameter to shadow id() built-in.
-# pylint: disable-next=redefined-builtin
-def section(level, *, id=None, title=None):
+def section(
+    level: int,
+    *,
+    # pylint: disable-next=redefined-builtin
+    id: Optional[int] = None,
+    title: Optional[str] = None,
+) -> None:
     """Creates a new section or subsection.
 
     The target section level is incremented, and the new section can be given
@@ -152,7 +161,7 @@ def section(level, *, id=None, title=None):
 
 @error.exit_on_script_error
 @misc.setup_only
-def set_id_depth(levels):
+def set_id_depth(levels: int) -> None:
     """Configures the number of fields in test numeric identifiers.
 
     For example, setting the depth to three will generate identifiers with
@@ -180,7 +189,7 @@ def set_id_depth(levels):
 @error.exit_on_script_error
 # Allow id parameter to shadow id() built-in.
 # pylint: disable-next=redefined-builtin
-def skip_test(id=None):
+def skip_test(id: Optional[int] = None) -> None:
     """Omits one or more tests.
 
     This function can only skip tests within the current section, i.e.,

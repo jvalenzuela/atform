@@ -3,6 +3,9 @@ This module implements a widget displaying a heirarchial tree allowing the
 user to select specific tests.
 """
 
+from collections.abc import Iterable
+from typing import Optional
+
 import tkinter as tk
 
 from . import common
@@ -19,14 +22,14 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     # empirically derived to fit an ID with the format xx.yy.zzz.
     ID_COLUMN_FACTOR = 40
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         super().__init__(parent)
         self._add_tree()
         self.controls = ControlPanel(self)
         self.controls.pack(side=tk.LEFT, fill=tk.Y)
         self.pack(fill=tk.BOTH, expand=tk.TRUE)
 
-    def _add_tree(self):
+    def _add_tree(self) -> None:
         """Creates the tree view widget."""
         frame = tk.Frame(self)
         frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.TRUE)
@@ -45,7 +48,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.tree.tag_bind("preview", "<ButtonRelease-1>", self._preview)
         common.add_vertical_scrollbar(frame, self.tree)
 
-    def add_test(self, tid):
+    def add_test(self, tid: id_.IdType) -> None:
         """Adds a test to the listing."""
         if self.tree.ttv_exists(tid):
             return
@@ -65,7 +68,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.tree.ttv_see(tid)
         self.controls.counts.adjust_total(1)
 
-    def _add_parents(self, tid):
+    def _add_parents(self, tid: id_.IdType) -> None:
         """Creates all required parent items for a given test ID."""
         for i in range(len(tid) - 1):
             current_tid = tid[: i + 1]
@@ -85,7 +88,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
                     values=[title],
                 )
 
-    def _calc_index(self, tid):
+    def _calc_index(self, tid: id_.IdType) -> int:
         """Computes the index to insert a given test or section ID."""
         parent = tid[:-1]
         siblings = list(self.tree.ttv_get_children(parent))
@@ -93,7 +96,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         siblings.sort()
         return siblings.index(tid)
 
-    def remove_test(self, tid):
+    def remove_test(self, tid: id_.IdType) -> None:
         """Revoves a test from the listing."""
         if not self.tree.ttv_exists(tid):
             return
@@ -109,7 +112,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
                 break
             self.tree.ttv_delete(parent_id)
 
-    def _preview(self, _event):
+    def _preview(self, _event: tk.Event) -> None:
         """Event handler for clicks on a test item to dispatch a preview."""
         tid = self.tree.ttv_focus()
 
@@ -122,26 +125,26 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             preview.show(tid)
 
     @property
-    def selected_tests(self):
+    def selected_tests(self) -> set[id_.IdType]:
         """Gets IDs for all selected tests."""
         return self._get_tests(self.tree.ttv_selection())
 
     @property
-    def all_tests(self):
+    def all_tests(self) -> set[id_.IdType]:
         """Gets IDs for all listed tests, regardless of selection."""
         return self._get_tests(self.get_descendants())
 
-    def clear(self):
+    def clear(self) -> None:
         """Removes all items."""
         cnt = len(self.all_tests)
         self.controls.counts.adjust_total(-cnt)
         self.tree.ttv_delete(*self.tree.ttv_get_children())
 
-    def unselect_all(self):
+    def unselect_all(self) -> None:
         """Unselects all items."""
         self.tree.ttv_selection_set()
 
-    def _get_tests(self, parents):
+    def _get_tests(self, parents: Iterable[id_.IdType]) -> set[id_.IdType]:
         """Gets all test IDs under a given set of parent IDs."""
         tids = set()
         for tid in parents:
@@ -152,7 +155,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         # children.
         return {tid for tid in tids if not self.tree.ttv_get_children(tid)}
 
-    def get_descendants(self, tid=()):
+    def get_descendants(self, tid: id_.IdType=()) -> set[id_.IdType]:
         """Gets all items under a given item."""
         children = set()
         for c in self.tree.ttv_get_children(tid):

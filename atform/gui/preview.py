@@ -4,14 +4,18 @@ import functools
 import re
 import tkinter as tk
 import tkinter.font as tkfont
+from typing import Optional
 
+from ..addtest import TestContent
+from ..id import IdType
 from .. import state
 from ..pdf import paragraph
 from . import tkwidget
 
 
-def show(tid):
+def show(tid: IdType) -> None:
     """Shows a given test in the preview window."""
+    assert isinstance(Preview.instance, Preview)
     Preview.instance.show(tid)
 
 
@@ -36,11 +40,13 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     allowed.
     """
 
+    instance: Optional[Preview] = None
+
     # Width of the text display, in characters. Chosen based on
     # general recommendations for readability.
     TEXT_WIDTH = 60
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Frame) -> None:
         super().__init__(parent, text="Preview")
         self.title = self._create_title()
         self.text = self._create_text()
@@ -51,7 +57,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         # Store this instance so the previewer is accessible at module level.
         Preview.instance = self
 
-    def _create_title(self):
+    def _create_title(self) -> tk.StringVar:
         """Creates a title bar displaying the test ID/title."""
         var = tkwidget.StringVar()
         font = tkfont.Font(weight=tkfont.BOLD)
@@ -59,18 +65,18 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         label.pack(anchor=tk.NW)
         return var
 
-    def _create_text(self):
+    def _create_text(self) -> tk.scrolledtext.ScrolledText:
         """Creates the text window displaying test content."""
         text = tkwidget.ScrolledText(self, state=tk.DISABLED, width=self.TEXT_WIDTH)
         text.pack(fill=tk.Y, expand=tk.TRUE)
         return text
 
-    def _configure_tags(self):
+    def _configure_tags(self) -> None:
         """Creates formatting tags used in the text widget."""
         font = tkfont.Font(weight=tkfont.BOLD, underline=tk.TRUE)
         self.text.tag_config("section", font=font)
 
-    def show(self, tid):
+    def show(self, tid: IdType) -> None:
         """Diplays test content for a given ID."""
         test = state.tests[tid]
         self.title.set(test.full_name)
@@ -88,7 +94,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
         self.text.configure(state=tk.DISABLED)
 
-    def _section(self, title):
+    def _section(self, title: str) -> None:
         """Creates a section header."""
         # Add leading space to all sections except the first.
         if self.text.tag_ranges("section"):
@@ -149,7 +155,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
             for f in step.fields:
                 self._append_text(f"\n{f.title} ___ {f.suffix}")
 
-    def _bullet_list(self, items):
+    def _bullet_list(self, items: list[str]) -> None:
         """Adds a bullet list to the text display."""
         for i, text in enumerate(items):
             # Add vertical space above each step, except the first.
@@ -159,7 +165,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
             text = normalize_text(text)
             self._append_text(f"\u2022 {text}")
 
-    def _append_text(self, text, tag=None):
+    def _append_text(self, text: str, tag: Optional[str]=None) -> None:
         """Adds a string to the end of the text display."""
         # Convert any tag into a tuple.
         if tag:
@@ -167,12 +173,12 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
         self.text.insert(tk.END, text, tag)
 
-    def _skip_line(self):
+    def _skip_line(self) -> None:
         """Appends a empty line."""
         self._append_text("\n\n")
 
 
-def normalize_text(s):
+def normalize_text(s: str) -> str:
     """Separates paragraphs with a blank line and collapses whitespace."""
     paragraphs = [re.sub(r"\s+", " ", p) for p in paragraph.split_paragraphs(s)]
     return "\n\n".join(paragraphs)
@@ -181,13 +187,13 @@ def normalize_text(s):
 class Location(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Widgets to display source file location."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         super().__init__(parent)
         self.row = 0
         self.file = self._add_field("File")
         self.lineno = self._add_field("Line Number")
 
-    def _add_field(self, title):
+    def _add_field(self, title: str) -> tk.StringVar:
         """Adds a set of widgets to display a single value."""
         label = tkwidget.Label(self, text=f"{title}:")
         label.grid(row=self.row, column=0, sticky=tk.E)
@@ -199,7 +205,7 @@ class Location(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.row += 1
         return var
 
-    def show(self, test):
+    def show(self, test: TestContent) -> None:
         """Displays the source location of a given test."""
         self.file.set(test.call_frame.filename)
         self.lineno.set(str(test.call_frame.lineno))

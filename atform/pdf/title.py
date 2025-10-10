@@ -3,11 +3,16 @@
 This module creates the title block at the top of the first page.
 """
 
+from typing import Optional, Union
+
 from reportlab.platypus import (
+    Flowable,
+    Image,
     Paragraph,
     Table,
 )
 
+from ..addtest import TestContent
 from . import layout
 from .textstyle import stylesheet
 
@@ -54,7 +59,7 @@ PRJ_INFO_TABLE_STYLE = [
 ]
 
 
-def make_title(test, images):
+def make_title(test: TestContent, images: dict[bytes, Image]) -> Optional[Flowable]:
     """Creates title information on the top of the first page."""
     prj_info = project_info_table(test)
 
@@ -63,8 +68,11 @@ def make_title(test, images):
     if not prj_info and not test.logo_hash:
         return None
 
+    widths: list[Union[float, int]] = [0, 0]
+
     try:
         logo = images[test.logo_hash]
+        widths[LOGO_COL] = logo.drawWidth
     except KeyError:
         logo = None
 
@@ -72,11 +80,6 @@ def make_title(test, images):
         [logo, prj_info],
         [None, Paragraph(test.full_name, stylesheet["HeaderRight"])],
     ]
-
-    widths = [0, 0]
-
-    if test.logo_hash:
-        widths[LOGO_COL] = logo.drawWidth
 
     # The text column occupies all remaining horizontal space left over
     # from the logo.
@@ -90,7 +93,7 @@ def make_title(test, images):
     )
 
 
-def project_info_table(test):
+def project_info_table(test: TestContent) -> Optional[Flowable]:
     """Builds the child table containing project information.
 
     Project information is contained in a dedicated child table to keep

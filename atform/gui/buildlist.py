@@ -1,18 +1,22 @@
 """Top-level frame containing the list of tests that will be built."""
 
+from collections.abc import Iterable
 import os
 import tkinter as tk
 from tkinter import filedialog
+from typing import Optional
 
 from . import build
 from . import common
+from ..id import IdType
 from .. import misc
 from . import testlist
 from . import tkwidget
 
 
-def add(ids):
+def add(ids: Iterable[IdType]) -> None:
     """Adds tests to the build list."""
+    assert isinstance(BuildList.instance, BuildList)  # Type narrowing assertion.
     for id_ in ids:
         BuildList.instance.add_test(id_)
 
@@ -20,7 +24,9 @@ def add(ids):
 class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     """Top-level frame containing all components."""
 
-    def __init__(self, parent, path, folder_depth):
+    instance: Optional[BuildList] = None
+
+    def __init__(self, parent: tk.Frame, path: str, folder_depth: int) -> None:
         super().__init__(parent, text="Build")
         self.testlist = testlist.TestList(self)
         self._add_remove_button()
@@ -31,7 +37,7 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         # Store this instance so the build list is accessible at module level.
         BuildList.instance = self
 
-    def _add_remove_button(self):
+    def _add_remove_button(self) -> None:
         """Creates the remove selected button."""
         btn = tkwidget.Button(
             self,
@@ -40,7 +46,7 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         )
         btn.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
 
-    def _add_path(self, path):
+    def _add_path(self, path: str) -> tk.StringVar:
         """Creates the path entry field."""
         frame = tkwidget.Frame(self)
         frame.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
@@ -71,7 +77,7 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
         return var
 
-    def _add_folder_depth(self, folder_depth):
+    def _add_folder_depth(self, folder_depth: int) -> tk.IntVar:
         """Creates the folder depth selector.
 
         The Spinbox widget is created as read-only so it can only be adjusted
@@ -101,7 +107,7 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
         return var
 
-    def _add_build_button(self):
+    def _add_build_button(self) -> None:
         """Creates the build PDFs button."""
         btn = tkwidget.Button(
             self,
@@ -110,23 +116,23 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         )
         btn.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
 
-    def add_test(self, tid):
+    def add_test(self, tid: IdType) -> None:
         """Adds a test to the list."""
         self.testlist.add_test(tid)
 
-    def _on_build(self):
+    def _on_build(self) -> None:
         """Event handler for the build button."""
         tests = self.testlist.all_tests
         if tests:
             build.build(tests, self.path.get(), self.folder_depth.get())
             self.testlist.clear()
 
-    def _on_remove(self):
+    def _on_remove(self) -> None:
         """Event handler for the remove button."""
         for tid in self.testlist.selected_tests:
             self.testlist.remove_test(tid)
 
-    def _on_path_click(self):
+    def _on_path_click(self) -> None:
         """Event handler for the path select button."""
         path = filedialog.askdirectory(
             title="PDF Output Folder",

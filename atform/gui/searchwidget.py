@@ -1,6 +1,7 @@
 """Frontend interface for test content searches."""
 
 import tkinter as tk
+from typing import Optional
 
 from . import buildlist
 from . import common
@@ -11,7 +12,7 @@ from . import tkwidget
 class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Top-level widget containing the entire search panel."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Frame) -> None:
         super().__init__(parent)
         self.search = search.TestContentSearch()
         self.entry = self._create_text_entry()
@@ -21,7 +22,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.sections = SectionSelect(self)
         self._create_add_button()
 
-    def _create_text_entry(self):
+    def _create_text_entry(self) -> tk.Entry:
         """Creates the search text entry field."""
         entry = tkwidget.Entry(
             self,
@@ -36,7 +37,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         entry.bind("<KeyPress-Return>", self._add)
         return entry
 
-    def _validate_text(self):
+    def _validate_text(self) -> bool:
         """Text entry validation function.
 
         Called each time the text content is altered. Serves only to clear
@@ -45,7 +46,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.result_msg.set("")
         return tk.TRUE
 
-    def _create_case_match(self):
+    def _create_case_match(self) -> tk.BooleanVar:
         """Creates the case-sensitive option."""
         var = tkwidget.BooleanVar()
         cbox = tkwidget.Checkbutton(
@@ -56,14 +57,14 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         cbox.pack(anchor=tk.W)
         return var
 
-    def _create_result_message(self):
+    def _create_result_message(self) -> tk.StringVar:
         """Creates a label displaying the match result."""
         var = tkwidget.StringVar()
         label = tkwidget.Label(self, textvariable=var)
         label.pack(anchor=tk.W)
         return var
 
-    def _create_combination_select(self):
+    def _create_combination_select(self) -> tk.StringVar:
         """Creates the any/all combination selectors."""
         frame = tkwidget.Frame(self)
         frame.pack(anchor=tk.W)
@@ -88,7 +89,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         var.set("all")  # Set initial selection.
         return var
 
-    def _create_add_button(self):
+    def _create_add_button(self) -> None:
         """Creates the add button."""
         btn = tkwidget.Button(
             self,
@@ -101,7 +102,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             pady=common.SMALL_PAD,
         )
 
-    def _add(self, _event=None):
+    def _add(self, _event: Optional[tk.Event] = None) -> None:
         """Handler for the add button and text field Enter keypresses."""
         text = self.entry.get().strip()
         sections = self.sections.selected
@@ -123,7 +124,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 class SectionSelect(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     """Panel of checkboxes allowing test section selection."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Frame) -> None:
         super().__init__(parent, text="Sections")
         self.pack(
             fill=tk.X,
@@ -132,7 +133,7 @@ class SectionSelect(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         )
         self.vars = [self._add_checkbox(s) for s in search.SECTIONS]
 
-    def _add_checkbox(self, label):
+    def _add_checkbox(self, label: str) -> tk.StringVar:
         """Creates a single checkbox for a section."""
         var = tkwidget.StringVar()
         var.set(label)  # Checkbox is initially checked.
@@ -147,6 +148,6 @@ class SectionSelect(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         return var
 
     @property
-    def selected(self):
+    def selected(self) -> set[str]:
         """Returns a set of selected sections."""
         return {v.get() for v in self.vars if v.get()}

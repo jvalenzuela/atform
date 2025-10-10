@@ -15,12 +15,12 @@ from . import tkwidget
 class SelectList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Top-level widget housing the selection list."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         super().__init__(parent)
         self._add_listing()
         self._add_buttons()
 
-    def _add_listing(self):
+    def _add_listing(self) -> None:
         """Creates the test listing widget."""
         self.testlist = testlist.TestList(self)
 
@@ -28,7 +28,7 @@ class SelectList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         for tid in state.tests:
             self.testlist.add_test(tid)
 
-    def _add_buttons(self):
+    def _add_buttons(self) -> None:
         """Creates additional buttons."""
         add = tkwidget.Button(
             self,
@@ -37,7 +37,7 @@ class SelectList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         )
         add.pack(fill=tk.X, padx=common.SMALL_PAD, pady=common.SMALL_PAD)
 
-    def _on_add(self):
+    def _on_add(self) -> None:
         """Event handler for the Add button."""
         buildlist.add(self.testlist.selected_tests)
         self.testlist.unselect_all()

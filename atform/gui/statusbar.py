@@ -16,7 +16,7 @@ WARNING_BACKGROUND = "#ff7900"
 class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Parent widget enclosing the entire status bar."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         super().__init__(
             parent,
             borderwidth=2,
@@ -34,12 +34,12 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             self._add_item(cls)
             self._add_sep()
 
-    def _add_item(self, item_cls):
+    def _add_item(self, item_cls: type[tk.Label]) -> None:
         """Appends an indicator widget."""
         item = item_cls(self)
         item.pack(side=tk.LEFT, ipadx=common.SMALL_PAD)
 
-    def _add_sep(self):
+    def _add_sep(self) -> None:
         """Appends a vertical separator."""
         sep = tkwidget.Separator(self, orient=tk.VERTICAL)
         sep.pack(side=tk.LEFT, fill=tk.Y)
@@ -48,7 +48,7 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
     """Version control status display item."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         if vcs.version is None:
             text = "No VCS"
         else:
@@ -61,7 +61,7 @@ class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
 class IdLock(tkwidget.Label):  # pylint: disable=too-many-ancestors
     """ID lock file status display item."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         status = "ok" if idlock.lockfile_current else "stale"
         super().__init__(parent, text=f"ID Lock: {status}")
         if not idlock.lockfile_current:

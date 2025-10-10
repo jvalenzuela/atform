@@ -4,8 +4,11 @@ the cache to identify altered, new, and unmodified tests.
 """
 
 import collections
+from typing import Iterable, Optional
 
+from ..addtest import TestContent
 from .. import cache
+from ..id import IdType
 from .. import state
 
 
@@ -19,7 +22,7 @@ CompareResult = collections.namedtuple(
 )
 
 
-def load():
+def load() -> bool:
     """Compares content with the cache, generating the result sets."""
     try:
         orig = cache.data["tests"]
@@ -35,7 +38,7 @@ def load():
     return CompareResult(changed=changed, new=new, same=same)
 
 
-def changed_tests(orig):
+def changed_tests(orig: dict[IdType, TestContent]) -> frozenset[IdType]:
     """Identifies tests modified since the cached version."""
     changed = set()
 
@@ -51,14 +54,14 @@ def changed_tests(orig):
     return frozenset(changed)
 
 
-def new_tests(orig):
+def new_tests(orig: dict[IdType, TestContent]) -> frozenset[IdType]:
     """Identifies tests added since the cached version."""
     new = set(state.tests.keys())
     new.difference_update(orig.keys())
     return frozenset(new)
 
 
-def same_tests(changed, new):
+def same_tests(changed: Iterable[IdType], new: Iterable[IdType]) -> frozenset[IdType]:
     """Identifies tests unchanged since the cached version."""
     ids = set(state.tests.keys())
     ids.difference_update(changed)

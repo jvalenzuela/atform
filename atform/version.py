@@ -20,7 +20,7 @@ VERSION = "1.0"
 
 
 @error.exit_on_script_error
-def require_version(major, minor=0):
+def require_version(major: int, minor: int = 0) -> None:
     """Verifies the installed version of atform.
 
     Aborts the script if the installed version does not match the major

@@ -1,7 +1,10 @@
 """Generates the Environment section."""
 
-from reportlab.platypus import Paragraph
+from typing import Optional
 
+from reportlab.platypus import Flowable, Paragraph
+
+from ..field import Field
 from . import (
     acroform,
     layout,
@@ -10,7 +13,7 @@ from . import (
 from .textstyle import stylesheet
 
 
-def make_environment(fields):
+def make_environment(fields: list[Field]) -> Optional[Flowable]:
     """Generates the Environment section."""
     if not fields:
         return None
@@ -36,7 +39,7 @@ def make_environment(fields):
     )
 
 
-def create_row(field):
+def create_row(field: Field) -> list[Flowable]:
     """Creates a table row for a single field."""
     return [
         Paragraph(field.title, stylesheet["NormalRight"]),
@@ -44,7 +47,7 @@ def create_row(field):
     ]
 
 
-def calc_widths(fields):
+def calc_widths(fields: list[Field]) -> list[Optional[float]]:
     """Calculates table column widths."""
     return [
         # Field title widths for column 0.

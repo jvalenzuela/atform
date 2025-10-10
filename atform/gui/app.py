@@ -14,7 +14,7 @@ from .. import state
 from . import tkwidget
 
 
-def run(path, folder_depth):
+def run(path: str, folder_depth: int) -> None:
     """Launches the GUI."""
     app = Application(path, folder_depth)
     app.mainloop()
@@ -23,13 +23,13 @@ def run(path, folder_depth):
 class Application(tkwidget.Tk):
     """Top-level window containing the entire GUI."""
 
-    def __init__(self, path, folder_depth):
+    def __init__(self, path: str, folder_depth: int) -> None:
         super().__init__()
         self._set_title()
         self._create_panels(path, folder_depth)
         statusbar.StatusBar(self)
 
-    def _set_title(self):
+    def _set_title(self) -> None:
         """Sets the window title."""
         title = "ATFORM"
 
@@ -43,7 +43,7 @@ class Application(tkwidget.Tk):
 
         self.title(title)
 
-    def _create_panels(self, path, folder_depth):
+    def _create_panels(self, path: str, folder_depth: int) -> None:
         """Creates the top-level panels."""
         frame = tkwidget.Frame(self)
         frame.pack(fill=tk.BOTH, expand=tk.TRUE)
@@ -57,7 +57,7 @@ class Application(tkwidget.Tk):
         build = buildlist.BuildList(frame, path, folder_depth)
         build.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
 
-    def _create_select_tabs(self, parent):
+    def _create_select_tabs(self, parent: tkwidget.Frame) -> tkwidget.LabelFrame:
         """Creates the Select panel and child tabs."""
         frame = tkwidget.LabelFrame(parent, text="Select")
         tabs = tkwidget.Notebook(frame)

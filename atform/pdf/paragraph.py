@@ -1,11 +1,11 @@
 """Functions for separating a string into distinct ReportLab paragraphs."""
 
-from reportlab.platypus import Paragraph
+from reportlab.platypus import Flowable, Paragraph
 
 from .textstyle import stylesheet
 
 
-def split_paragraphs(s):
+def split_paragraphs(s: str) -> list[str]:
     """Separates a string into a list of paragraphs.
 
     This function is used to convert a string possibly containing multiple
@@ -13,7 +13,7 @@ def split_paragraphs(s):
     paragraph, which can then be used by ReportLab Paragraph instances.
     """
     # Assembly buffer to hold lines for each paragraph.
-    plines = [
+    plines: list[list[str]] = [
         []  # Inner lists contain lines for a single paragraph.
         # [] Additional inner lists for each additional paragraph.
     ]
@@ -35,7 +35,7 @@ def split_paragraphs(s):
     return [" ".join(lines) for lines in plines if lines]
 
 
-def make_paragraphs(text):
+def make_paragraphs(text: str) -> list[Flowable]:
     """
     Creates a set of flowables from a string containing one or
     more paragraphs.

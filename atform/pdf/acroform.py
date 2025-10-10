@@ -3,6 +3,8 @@
 This module implements ReportLab Flowables containing an AcroForm field.
 """
 
+from typing import Optional, Union
+
 from reportlab.lib.units import toLength
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus.flowables import Flowable
@@ -17,14 +19,14 @@ class Checkbox(Flowable):
     # Height and width of the box.
     SIZE = toLength("0.25 in")
 
-    def wrap(self, *_args):
+    def wrap(self, *_args: float) -> tuple[float, float]:
         """Returns the size of the flowable.
 
         Callback method required for Flowables; called by Platypus.
         """
         return (self.SIZE, self.SIZE)
 
-    def draw(self):
+    def draw(self) -> None:
         """Places the flowable onto the canvas.
 
         Callback method required for Flowables; called by Platypus.
@@ -46,14 +48,14 @@ class TextEntry(Flowable):
     # integral to the field.
     EXTRA_WIDTH = toLength("4 pt")
 
-    def __init__(self, width, tooltip=None):
+    def __init__(self, width: Union[int, str], tooltip: Optional[str] = None) -> None:
         super().__init__()
         self.style = stylesheet["TextField"]
         self.tooltip = tooltip
         self.width = self._calc_width(width)
         self.height = self.style.fontSize * self.HEIGHT_FACTOR
 
-    def _calc_width(self, width):
+    def _calc_width(self, width: Union[int, str]) -> float:
         """Computes the horizontal size from the width argument.
 
         The width argument can be provided in two ways:
@@ -63,10 +65,10 @@ class TextEntry(Flowable):
         """
 
         # Build the template string from which width will be computed.
-        try:
+        if isinstance(width, int):
             # Integer width argument; use em dashes for the template.
             template = width * "\u2014"
-        except TypeError:
+        else:
             template = width  # String width argument.
 
         return self.EXTRA_WIDTH + stringWidth(
@@ -75,14 +77,14 @@ class TextEntry(Flowable):
             self.style.fontSize,
         )
 
-    def wrap(self, *_args):
+    def wrap(self, *_args: float) -> tuple[float, float]:
         """Returns the size of the flowable.
 
         Callback method required for Flowables; called by Platypus.
         """
         return (self.width, self.height)
 
-    def draw(self):
+    def draw(self) -> None:
         """Places the flowable onto the canvas.
 
         Callback method required for Flowables; called by Platypus.

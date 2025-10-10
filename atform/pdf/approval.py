@@ -5,10 +5,12 @@ above each field and the lower row is the actual data entry fields.
 """
 
 import itertools
+from typing import Optional
 
 from reportlab.lib.units import toLength
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
+    Flowable,
     Paragraph,
     Preformatted,
 )
@@ -42,10 +44,8 @@ INITIAL_COL = SIG_COL + 1
 DATE_COL = INITIAL_COL + 1
 
 
-def make_approval(test):
+def make_approval(sigs: list[str]) -> Optional[Flowable]:
     """Generates the approval section."""
-    sigs = test.signatures
-
     if not sigs:
         return None
 
@@ -58,7 +58,7 @@ def make_approval(test):
     )
 
 
-def make_sig_rows(title):
+def make_sig_rows(title: str) -> list[list[Optional[Flowable]]]:
     """Generates a row for a given signature entry."""
     field_style = stylesheet["SignatureFieldTitle"]
 
@@ -82,17 +82,16 @@ def make_sig_rows(title):
     ]
 
 
-def name_entry_field():
+def name_entry_field() -> acroform.TextEntry:
     """Creates a name entry field."""
     return acroform.TextEntry(NAME_WIDTH)
 
 
-def date_entry_field():
+def date_entry_field() -> acroform.TextEntry:
     """Creates a date entry field."""
     return acroform.TextEntry(DATE_FORMAT, DATE_FORMAT)
 
-
-def style(sigs):
+def style(sigs: list[str]) -> list[tuple]:
     """Generates style commands for the entire table."""
     sty = list(
         itertools.chain.from_iterable(
@@ -122,13 +121,13 @@ def style(sigs):
     return sty
 
 
-def sig_row_style(i, sigs):
+def sig_row_style(i: int, sigs: list[str]) -> list[tuple]:
     """Generates style commands for the two rows of a signature entry."""
     # Calculate the indices for the two rows assigned to this signature.
     upper = (i * 2) + 1
     lower = upper + 1
 
-    sty = [
+    sty: list[tuple] = [
         # Title column spans both upper and lower rows.
         ("SPAN", (TITLE_COL, upper), (TITLE_COL, lower)),
         # Remove vertical padding above the upper field name row.
@@ -178,7 +177,7 @@ def sig_row_style(i, sigs):
     return sty
 
 
-def widths(sigs):
+def widths(sigs: list[str]) -> list[Optional[float]]:
     """Computes the column widths of the entire table."""
     return [
         # Width of the first column is set to accommodate the
@@ -192,7 +191,7 @@ def widths(sigs):
     ]
 
 
-def name_col_width():
+def name_col_width() -> float:
     """Calculates the width of the name column."""
     sty = stylesheet["SignatureFieldTitle"]
     title_width = stringWidth("Name", sty.fontName, sty.fontSize)
@@ -210,7 +209,7 @@ def name_col_width():
     return widest + layout.SUBSECTION_RULE_WEIGHT
 
 
-def date_col_width():
+def date_col_width() -> float:
     """Calculates the width of the date column."""
     sty = stylesheet["SignatureFieldTitle"]
     title_width = stringWidth(DATE_TITLE, sty.fontName, sty.fontSize)

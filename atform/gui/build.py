@@ -13,22 +13,26 @@ the tkinter Dialog defined here is tested differently from the normal
 unit tests, and does not suffer from the problems tkwidget addresses.
 """
 
+from collections.abc import Collection
+from concurrent.futures import Future
 import queue
 import string
 import tkinter as tk
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 from tkinter import simpledialog
+from typing import Optional
 
 from . import common
+from ..id import IdType
 from .. import pdf
 from .. import parallelbuild
 
 
-def build(tids, root, folder_depth):
+def build(tids: Collection[IdType], root: str, folder_depth: int) -> None:
     """Launches the PDF build process and dialog."""
     with parallelbuild.Builder() as builder:
-        done_q = queue.SimpleQueue()
+        done_q: queue.SimpleQueue[IdType] = queue.SimpleQueue()
 
         futures = {}
         for id_ in tids:
@@ -50,14 +54,19 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
     # updating the progress display.
     POLL_INTERVAL = 250
 
-    def __init__(self, builder, futures, done_q):
+    def __init__(
+        self,
+        builder: parallelbuild.Builder,
+        futures: dict[IdType, Future],
+        done_q: queue.SimpleQueue[IdType],
+    ) -> None:
         self.builder = builder
         self.futures = futures
         self.done_q = done_q
-        self.poll_id = None  # Initial dummy value to address Pylint W0201.
+        self.poll_id = ""  # Initial dummy value to address Pylint W0201.
         super().__init__(None, title="ATFORM Build")
 
-    def body(self, master):
+    def body(self, master: tk.Frame) -> None:
         self.msg = self._create_msg(master)
         self.msg.set("Building PDF(s).")
         self.progress = Progress(master, len(self.futures))
@@ -65,14 +74,14 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
         self._reset_poll()
         master.bind("<Destroy>", self._on_close)
 
-    def _create_msg(self, parent):
+    def _create_msg(self, parent: tk.Frame) -> tk.StringVar:
         """Creates the main message text display widget."""
         var = tk.StringVar()
         label = tk.Label(parent, textvariable=var)
         label.pack(anchor=tk.NW)
         return var
 
-    def _create_error_list(self, parent):
+    def _create_error_list(self, parent: tk.Frame) -> ScrolledText:
         """Creates the text area for printing errors."""
         frame = ttk.LabelFrame(parent, text="Errors")
         frame.pack(fill=tk.BOTH, expand=tk.TRUE)
@@ -80,10 +89,10 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
         text.pack(fill=tk.BOTH, expand=tk.TRUE)
         return text
 
-    def buttonbox(self):
+    def buttonbox(self) -> None:
         return
 
-    def _poll(self):
+    def _poll(self) -> None:
         """Polls the queue to see if any tests have been completed.
 
         Scheduled for periodic execution by after().
@@ -106,17 +115,17 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
         else:
             self._reset_poll()
 
-    def _reset_poll(self):
+    def _reset_poll(self) -> None:
         """Schedules the next poll update."""
         self.poll_id = self.after(self.POLL_INTERVAL, self._poll)
 
-    def _print_error(self, e):
+    def _print_error(self, e: Exception) -> None:
         """Appends an error message to the error display."""
         self.errors.configure(state=tk.NORMAL)
         self.errors.insert(tk.END, f"{e}\n")
         self.errors.configure(state=tk.DISABLED)
 
-    def _on_close(self, _event=None):
+    def _on_close(self, _event: Optional[tk.Event] = None) -> None:
         """Handler for the window closing event."""
         if not self.progress.done:
             self.after_cancel(self.poll_id)
@@ -127,7 +136,7 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
 class Progress(tk.Frame):
     """Container holding widgets displaying the number of completd tests."""
 
-    def __init__(self, parent, total):
+    def __init__(self, parent: tk.Frame, total: int) -> None:
         super().__init__(parent)
         self.total = total
         self.remain = total
@@ -148,7 +157,7 @@ class Progress(tk.Frame):
 
         self.msg.set(self.msg_tpl.substitute(done=0))
 
-    def step(self):
+    def step(self) -> None:
         """Increments the current progress."""
         self.remain -= 1
         done = self.total - self.remain
@@ -156,6 +165,6 @@ class Progress(tk.Frame):
         self.msg.set(self.msg_tpl.substitute(done=done))
 
     @property
-    def done(self):
+    def done(self) -> bool:
         """Returns True when all tests have been completed."""
         return self.remain == 0

@@ -7,6 +7,7 @@ strings are then replaced with their assigned identifier.
 
 import re
 import string
+from typing import Optional
 
 from . import error
 from . import state
@@ -17,7 +18,7 @@ from . import state
 valid_label_pattern = re.compile(r"(?ai:[_a-z][_a-z0-9]*)$")
 
 
-def add(label, id_, mapping=None):
+def add(label: str, id_: str, mapping: Optional[dict[str, str]] = None) -> None:
     """Assigns an identifier to a label.
 
     This function is not exposed in the public API, however, the label
@@ -57,7 +58,7 @@ def add(label, id_, mapping=None):
         )
 
 
-def resolve(orig, mapping):
+def resolve(orig: str, mapping: dict[str, str]) -> str:
     """Replaces label placeholders with the target IDs.
 
     The public API already validates the original string to ensure it is

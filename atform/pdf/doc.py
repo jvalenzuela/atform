@@ -5,14 +5,19 @@ and applying non-sectional items such as headers and footers.
 """
 
 import os
+from typing import Optional
 
+from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import (
+    Flowable,
     Frame,
+    Image,
     IndexingFlowable,
     Paragraph,
     SimpleDocTemplate,
 )
 
+from .. import addtest
 from .. import id as id_
 from . import (
     approval,
@@ -31,7 +36,7 @@ from .textstyle import stylesheet
 
 # Common content used across all tests; initialized by init() when the
 # build worker process is started.
-IMAGES = None
+IMAGES = {}
 VERSION = None
 
 
@@ -39,7 +44,7 @@ class BuildError(Exception):
     """Exception chained from a PDF generation failure."""
 
 
-def init(images, version):
+def init(images: dict[bytes, Image], version: Optional[str]) -> None:
     """Initalizes the build process with common content used by all tests.
 
     This is the initializer function given to ProcessPoolExecutor. Pylint
@@ -53,7 +58,9 @@ def init(images, version):
     VERSION = version
 
 
-def build(test, cached_page_count, path):
+def build(
+    test: addtest.TestContent, cached_page_count: int, path: str
+) -> dict[id_.IdType, int]:
     """Builds a PDF document for a given test instance."""
     try:
         doc = TestDocument(test, cached_page_count, path)
@@ -68,7 +75,9 @@ def build(test, cached_page_count, path):
 class TestDocument:
     """This class creates a PDF for a single Test instance."""
 
-    def __init__(self, test, cached_page_count, path):
+    def __init__(
+        self, test: addtest.TestContent, cached_page_count: int, path: str
+    ) -> None:
         self.test = test
 
         self.bottom_margin = layout.BOTTOM_MARGIN
@@ -92,7 +101,7 @@ class TestDocument:
 
         doc = self._get_doc(path)
         self.page_count = PageCount(doc, cached_page_count)
-        body = [self.page_count]
+        body: list[Flowable] = [self.page_count]
         body.extend(self._build_body(test))
         doc.multiBuild(
             body,
@@ -101,7 +110,7 @@ class TestDocument:
             onLaterPages=self.on_later_pages,
         )
 
-    def _get_doc(self, path):
+    def _get_doc(self, path: str) -> SimpleDocTemplate:
         """Creates the document template."""
         pdfname = self.test.full_name + ".pdf"
         os.makedirs(path, exist_ok=True)
@@ -115,7 +124,7 @@ class TestDocument:
             bottomMargin=self.bottom_margin,
         )
 
-    def on_first_page(self, canvas, doc):
+    def on_first_page(self, canvas: Canvas, doc: SimpleDocTemplate) -> None:
         """Document template callback for the first page."""
         self._on_every_page(canvas, doc)
 
@@ -124,19 +133,19 @@ class TestDocument:
         if self.no_title_block:
             self._header(canvas, doc)
 
-    def on_later_pages(self, canvas, doc):
+    def on_later_pages(self, canvas: Canvas, doc: SimpleDocTemplate) -> None:
         """Document template callback for all pages after the first."""
         self._on_every_page(canvas, doc)
         self._header(canvas, doc)
 
-    def _on_every_page(self, canvas, doc):
+    def _on_every_page(self, canvas: Canvas, doc: SimpleDocTemplate):
         """Draws common content placed on every page."""
         if VERSION == "draft":
             self._draftmark(canvas, doc)
 
         self._footer(canvas, doc)
 
-    def _header(self, canvas, doc):
+    def _header(self, canvas: Canvas, doc: SimpleDocTemplate) -> None:
         """Draws the page header."""
         self._set_canvas_text_style(canvas, "Header")
         baseline = doc.pagesize[1] - layout.TOP_MARGIN
@@ -146,7 +155,7 @@ class TestDocument:
             self.test.full_name,
         )
 
-    def _footer(self, canvas, doc):
+    def _footer(self, canvas: Canvas, doc: SimpleDocTemplate) -> None:
         """Draws the page footer."""
         baseline = self.bottom_margin
 
@@ -180,12 +189,12 @@ class TestDocument:
             version_text = f"Document Version: {VERSION}"
             canvas.drawRightString(x, baseline, version_text)
 
-    def _set_canvas_text_style(self, canvas, style):
+    def _set_canvas_text_style(self, canvas: Canvas, style_name: str) -> None:
         """Sets the current canvas font to a given style."""
-        style = stylesheet[style]
+        style = stylesheet[style_name]
         canvas.setFont(style.fontName, style.fontSize)
 
-    def _build_body(self, test):
+    def _build_body(self, test: addtest.TestContent) -> list[Flowable]:
         """
         Assembles the list of flowables representing all content other
         than the header and footer.
@@ -199,14 +208,14 @@ class TestDocument:
             precondition.make_preconditions(test.preconditions),
             procedure.make_procedure(test.procedure, IMAGES),
             notes.make_notes(),
-            approval.make_approval(test),
+            approval.make_approval(test.signatures),
         ]
 
         self.no_title_block = flowables[0] is None
 
         return [f for f in flowables if f]
 
-    def _draftmark(self, canvas, doc):
+    def _draftmark(self, canvas: Canvas, doc: SimpleDocTemplate) -> None:
         """Creates a draft watermark."""
         canvas.saveState()
         self._set_canvas_text_style(canvas, "Draftmark")
@@ -233,12 +242,12 @@ class PageCount(IndexingFlowable):
     multiple build passes to determine the total number of pages.
     """
 
-    def __init__(self, doc, page_count):
+    def __init__(self, doc: SimpleDocTemplate, page_count: int) -> None:
         super().__init__()
         self.doc = doc
         self.last_page = page_count
 
-    def isSatisfied(self):
+    def isSatisfied(self) -> bool:
         """Document template multiBuild() hook to enable another build pass."""
         # The build is complete if the page number equals the cached last
         # page number.
@@ -249,5 +258,5 @@ class PageCount(IndexingFlowable):
         self.last_page = self.doc.page
         return False
 
-    def draw(self):
+    def draw(self) -> None:
         """This flowable doesn't draw anything."""

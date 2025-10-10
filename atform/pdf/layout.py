@@ -60,11 +60,11 @@ DRAFTMARK_COLOR = colors.Color(0, 0, 0, 0.3)
 
 
 def max_width(
-    items,
-    style_name,
-    left_pad=DEFAULT_TABLE_HORIZ_PAD,
-    right_pad=DEFAULT_TABLE_HORIZ_PAD,
-):
+    items: list[str],
+    style_name: str,
+    left_pad: float = DEFAULT_TABLE_HORIZ_PAD,
+    right_pad: float = DEFAULT_TABLE_HORIZ_PAD,
+) -> float:
     """Finds the width required to hold the longest among a set of strings.
 
     Used to size a table column such that it can hold the content

@@ -1,18 +1,21 @@
 """User interface panel for the diff selection tab."""
 
+from collections.abc import Collection
+
 import tkinter as tk
 
 from . import buildlist
 from .. import cache
 from . import common
 from . import diff
+from ..id import IdType
 from . import tkwidget
 
 
 class Diff(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Frame containing the diff selection widgets."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         super().__init__(parent)
         diff_result = diff.load()
         if diff_result:
@@ -25,7 +28,7 @@ class Diff(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             )
             lbl.pack(pady=common.SMALL_PAD)
 
-    def _create_version(self):
+    def _create_version(self) -> None:
         """Creates a label listing the version of the cached content."""
         version = cache.data["vcs"]
         if version is not None:
@@ -35,7 +38,7 @@ class Diff(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             )
             lbl.pack(pady=common.SMALL_PAD)
 
-    def _create_summary_table(self, diff_result):
+    def _create_summary_table(self, diff_result) -> None:
         """Creates widgets itemizing the types of changes."""
         frame = tkwidget.Frame(self)
         frame.pack(pady=common.SMALL_PAD)
@@ -44,7 +47,12 @@ class Diff(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self._create_summary_row(frame, "New", diff_result.new)
         self._create_summary_row(frame, "Unmodified", diff_result.same)
 
-    def _create_summary_row(self, parent, label, target_ids):
+    def _create_summary_row(
+        self,
+        parent: tk.Misc,
+        label: str,
+        target_ids: Collection[IdType],
+    ) -> None:
         """Creates widgets for a specific category of changes."""
         row = parent.grid_size()[1]  # Allocate the next unused row.
 

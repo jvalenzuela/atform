@@ -1,12 +1,16 @@
 """Generates the Objective section."""
 
+from typing import Optional
+
+from reportlab.platypus import Flowable
+
 from . import (
     paragraph,
     section,
 )
 
 
-def make_objective(obj):
+def make_objective(obj: Optional[str]) -> Optional[Flowable]:
     """Creates the Objective section flowable."""
     if not obj:
         return None

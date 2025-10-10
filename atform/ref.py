@@ -19,7 +19,7 @@ from . import state
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_reference_category(title, label):
+def add_reference_category(title: str, label: str) -> None:
     """Creates a topic for listing external references.
 
     This function does not create any actual references; they must be
@@ -50,7 +50,7 @@ def add_reference_category(title, label):
     state.ref_titles[label_stripped] = title_stripped
 
 
-def get_xref():
+def get_xref() -> dict[str, dict[str, list[str]]]:
     """Builds a cross-reference of tests assigned to each reference.
 
     For use in the output section of a script, after all tests have

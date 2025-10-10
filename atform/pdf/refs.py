@@ -1,7 +1,10 @@
 """References section generation."""
 
-from reportlab.platypus import Paragraph
+from typing import Optional
 
+from reportlab.platypus import Flowable, Paragraph
+
+from ..addtest import Reference
 from . import (
     layout,
     section,
@@ -9,7 +12,7 @@ from . import (
 from .textstyle import stylesheet
 
 
-def make_references(refs):
+def make_references(refs: list[Reference]) -> Optional[Flowable]:
     """Generates the References section."""
     if not refs:
         return None
@@ -39,7 +42,7 @@ def make_references(refs):
     )
 
 
-def make_row(ref):
+def make_row(ref: Reference) -> list[Flowable]:
     """Creates the table for a single reference category."""
     return [
         Paragraph(ref.title, stylesheet["NormalRight"]),
@@ -47,16 +50,17 @@ def make_row(ref):
     ]
 
 
-def calc_widths(titles):
+def calc_widths(titles: list[str]) -> list[Optional[float]]:
     """Computes table column widths."""
     widths = [
-        # First column is sized to fit the longest category title.
-        layout.max_width(titles, "NormalRight"),
+        # First column is sized to fit the longest category title plus
+        # LEFTPADDING and RIGHTPADDING.
+        (
+            layout.max_width(titles, "NormalRight")
+            + (2 * layout.DEFAULT_TABLE_HORIZ_PAD)
+        ),
         # Second column gets all remaining space.
         None,
     ]
-
-    # Include LEFTPADDING and RIGHTPADDING.
-    widths[0] = widths[0] + (2 * layout.DEFAULT_TABLE_HORIZ_PAD)
 
     return widths

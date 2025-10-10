@@ -7,6 +7,7 @@ import tkinter as tk
 
 from . import buildlist
 from . import common
+from ..id import IdType
 from .. import state
 from . import tkwidget
 
@@ -14,12 +15,12 @@ from . import tkwidget
 class SelectRef(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Top-level panel containing all widgets."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         super().__init__(parent)
         tree = self._create_ref_list()
         self._create_add_button(tree)
 
-    def _create_ref_list(self):
+    def _create_ref_list(self) -> RefList:
         """Creates the reference list."""
         frame = tkwidget.Frame(self)
         tree = RefList(frame)
@@ -37,7 +38,7 @@ class SelectRef(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         )
         return tree
 
-    def _create_add_button(self, tree):
+    def _create_add_button(self, tree: RefList) -> None:
         """Creates the add to build button."""
         btn = tkwidget.Button(
             self,
@@ -57,7 +58,7 @@ class RefList(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
     reference items.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc) -> None:
         super().__init__(
             parent,
             columns=["qty"],
@@ -68,11 +69,11 @@ class RefList(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
 
         # Set of test IDs for each tree item, including both parent categories
         # and child items, keyed by tree item ID.
-        self.tests = {}
+        self.tests: dict[str, set[IdType]] = {}
 
         self._populate()
 
-    def _populate(self):
+    def _populate(self) -> None:
         """Adds all reference categories and items to the tree."""
         refs = get_refs()
         for lbl in state.ref_titles:
@@ -101,7 +102,7 @@ class RefList(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
             self.item(cat_iid, values=[str(len(self.tests[cat_iid]))])
 
     @property
-    def selected_tests(self):
+    def selected_tests(self) -> set[IdType]:
         """Returns test IDs associated with selected items."""
         tests = set()
         for iid in self.selection():
@@ -109,13 +110,14 @@ class RefList(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
         return tests
 
 
-def get_refs():
-    """Assembles tests organized by reference.
+# Type alias for get_refs() return type, representing a nested dictionary:
+# dict[<ref category label>][<ref item>] = set(<test IDs>)
+RefMappingType = dict[str, dict[str, set[IdType]]]
 
-    Returns a nested dictionary:
-    dict[<ref category label>][<ref item>] = set(<test IDs>)
-    """
-    refs = {lbl: {} for lbl in state.ref_titles}
+
+def get_refs() -> RefMappingType:
+    """Assembles tests organized by reference."""
+    refs: RefMappingType = {lbl: {} for lbl in state.ref_titles}
 
     for test in state.tests.values():
         for ref in test.references:
