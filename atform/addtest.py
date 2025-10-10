@@ -1,6 +1,11 @@
 """This module contains the add_test() API and ancilliary validation functions."""
 
 import dataclasses
+from typing_extensions import (
+    NoReturn,
+    Optional,
+    Self,
+)
 
 from . import error
 from . import field
@@ -34,11 +39,11 @@ class TestContent:
     logo_hash: bytes
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         """String containing the combination of ID and title."""
         return " ".join((id_.to_string(self.id), self.title))
 
-    def pregenerate(self):
+    def pregenerate(self) -> None:
         """
         Performs tasks that need to occur after all tests have been defined,
         but before actual output is generated.
@@ -53,7 +58,7 @@ class TestContent:
 
             add_exception_context(e, self.id, self.title)
 
-    def _resolve_labels(self):
+    def _resolve_labels(self) -> None:
         """Replaces label placeholders with their target IDs."""
         if self.objective:
             try:
@@ -76,7 +81,7 @@ class TestContent:
                 e.add_field("Procedure Step", i)
                 raise
 
-    def _build_label_mapping(self):
+    def _build_label_mapping(self) -> None:
         """Updates label mapping to include globally-defined labels."""
         # Check for duplicate labels defined in the global scope.
         globals_ = set(state.labels.keys())
@@ -96,7 +101,9 @@ class TestContent:
                 """,
             )
 
-    def __eq__(self, other):
+    # Ignore incompatible overrides for the other parameter as this
+    # method shall only be used to compare Test objects.
+    def __eq__(self, other: Self) -> bool:  # type: ignore[override]
         """Equality implementation for detecting content differences.
 
         This is used for the --diff option, and specifically excludes the
@@ -135,7 +142,9 @@ class Reference:
     title: str
     items: list
 
-    def __eq__(self, other):
+    # Ignore incompatible overrides for the other parameter as this
+    # method shall only be used to compare Reference objects.
+    def __eq__(self, other: Self) -> bool:  # type: ignore[override]
         """Equality implementation for detecting differences.
 
         Excludes the label as it is not included in the output PDF, avoiding
@@ -145,14 +154,14 @@ class Reference:
         return self.title == other.title and self.items == other.items
 
 
-def validate_objective(obj):
+def validate_objective(obj: Optional[str]) -> Optional[str]:
     """Validates the objective parameter."""
     if obj is not None:
         return misc.nonempty_string("Objective", obj)
     return None
 
 
-def validate_refs(refs):
+def validate_refs(refs: Optional[dict[str, str]]) -> list[Reference]:
     """Validates the references parameter."""
     if refs is None:
         refs = {}
@@ -172,7 +181,7 @@ def validate_refs(refs):
     return valid
 
 
-def validate_ref_category(label, refs):
+def validate_ref_category(label: str, refs: list[str]) -> Reference:
     """Validates a single reference category and associated references."""
     label = misc.nonempty_string("Reference label", label)
 
@@ -222,7 +231,7 @@ def validate_ref_category(label, refs):
     return Reference(label, title, validated_refs)
 
 
-def validate_string_list(name, lst):
+def validate_string_list(name: str, lst: list[str]) -> list[str]:
     """Checks a list to ensure it contains only non-empty/blank strings."""
     if lst is None:
         lst = []
@@ -240,7 +249,11 @@ def validate_string_list(name, lst):
     return items
 
 
-def add_exception_context(e, tid, title):
+def add_exception_context(
+    e: error.UserScriptError,
+    tid: id_.IdType,
+    title: Optional[str],
+) -> NoReturn:
     """Adds information identifying a test to a UserScriptError."""
     if title:
         e.add_field("Test Title", title)
@@ -260,18 +273,18 @@ def add_exception_context(e, tid, title):
 # resulting test document to be completely populated via arguments.
 # pylint: disable=too-many-arguments
 def add_test(
-    title,
+    title: str,
     *,
-    label=None,
-    include_fields=None,
-    exclude_fields=None,
-    active_fields=None,
-    objective=None,
-    references=None,
-    equipment=None,
-    preconditions=None,
-    procedure=None,
-):
+    label: Optional[str]=None,
+    include_fields: Optional[list[str]]=None,
+    exclude_fields: Optional[list[str]]=None,
+    active_fields: Optional[list[str]]=None,
+    objective: Optional[str]=None,
+    references: Optional[dict[str, list[str]]]=None,
+    equipment: Optional[list[str]]=None,
+    preconditions: Optional[list[str]]=None,
+    procedure: Optional[procedure_.ProcedureType]=None,
+) -> None:
     """Creates a single test procedure.
 
     Numeric identifiers will be incrementally assigned to each test in the

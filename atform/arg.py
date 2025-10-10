@@ -3,7 +3,9 @@
 import argparse
 import re
 import sys
+from typing import Union
 
+from . import id as id_
 from . import state
 
 
@@ -11,7 +13,7 @@ class InvalidIdError(Exception):
     """Raised when an invalid ID or range is found in the argument list."""
 
 
-def parse():
+def parse() -> argparse.Namespace:
     """Top-level function for this module to process all arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -33,7 +35,7 @@ def parse():
     return ns
 
 
-def parse_ids(args):
+def parse_ids(args: list[str]) -> list[Union[id_.IdType, id_.IdRangeType]]:
     """Parses command line arguments into numeric IDs.
 
     Each ID must either be a single ID or a range consisting of two IDs
@@ -67,7 +69,7 @@ def parse_ids(args):
     return ids
 
 
-def split_range(s):
+def split_range(s: str) -> id_.IdRangeType:
     """Parses a string defining a range of IDs."""
     ids = s.split("-")
     if len(ids) != 2:
@@ -81,7 +83,7 @@ def split_range(s):
     return (start, end)
 
 
-def string_to_id(s):
+def string_to_id(s: str) -> id_.IdType:
     """Converts a string representation of an ID to a tuple of integers."""
     try:
         id_ = tuple(int(i) for i in s.split("."))

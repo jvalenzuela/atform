@@ -50,6 +50,8 @@ rst_prolog = f"""
 
 numfig = True
 
+autodoc_typehints = "none"
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 

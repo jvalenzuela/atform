@@ -11,6 +11,7 @@ import functools
 import itertools
 import os
 import textwrap
+from typing_extensions import Self
 
 from . import id as id_
 from . import state
@@ -26,7 +27,10 @@ lockfile_current = False  # pylint: disable=invalid-name
 FILENAME = "id.csv"
 
 
-def wrap(s):
+IdTitleMapType = dict[id_.IdType, str]
+
+
+def wrap(s: str) -> str:
     """Line wraps string."""
     return textwrap.fill(textwrap.dedent(s))
 
@@ -34,11 +38,11 @@ def wrap(s):
 class ChangedTestError(Exception):
     """Raised if any unintentional changes were found."""
 
-    def __init__(self, diffs):
+    def __init___(self, diffs: list[ChangedTest]) -> None:
         super().__init__()
         self.diffs = diffs
 
-    def __str__(self):
+    def __str__(self) -> str:
         lines = [
             wrap(
                 f"""\
@@ -63,7 +67,7 @@ class ChangedTestError(Exception):
 class LockFileWarning(Exception):
     """Raised if a non-fatal problem was encountered."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return wrap(self.args[0])
 
 
@@ -77,15 +81,19 @@ class ChangedTest:
     new_id: tuple
     new_title: str
 
-    def __str__(self):
+    def __str__(self) -> str:
         old_id_str = id_.to_string(self.old_id)
         new_id_str = id_.to_string(self.new_id)
         return f"{old_id_str} {self.old_title} -> {new_id_str} {self.new_title}"
 
-    def __eq__(self, other):
+    # Ignore incompatible overrides for the other parameter as this
+    # method shall only be used to compare ChangedTest objects.
+    def __eq__(self, other: Self) -> bool:  # type: ignore[override]
         return self.new_id == other.new_id
 
-    def __lt__(self, other):
+    # Ignore incompatible overrides for the other parameter as this
+    # method shall only be used to compare ChangedTest objects.
+    def __lt__(self, other: Self) -> bool:  # type: ignore[override]
         return self.new_id < other.new_id
 
 
@@ -94,7 +102,7 @@ class ChangedTest:
 OPEN_LOCK_FILE = functools.partial(open, FILENAME, newline="", encoding="utf8")
 
 
-def verify():
+def verify() -> None:
     """Top-level function to execute the entire verification process."""
     global lockfile_current  # pylint: disable=global-statement
     current_tests = {t.id: t.title for t in state.tests.values()}
@@ -107,7 +115,7 @@ def verify():
     lockfile_current = True
 
 
-def load():
+def load() -> IdTitleMapType:
     """Loads test information from the lock file."""
     tests = {}
     check_version = True
@@ -151,7 +159,7 @@ def load():
     return tests
 
 
-def compare(current_tests, old_tests):
+def compare(current_tests: IdTitleMapType, old_tests: IdTitleMapType) -> None:
     """Compares the current tests with those from the lock file."""
     diffs = check_titles(old_tests)
     diffs.extend(check_ids(current_tests, old_tests))
@@ -160,7 +168,7 @@ def compare(current_tests, old_tests):
         raise ChangedTestError(diffs)
 
 
-def check_titles(old):
+def check_titles(old: IdTitleMapType) -> list[ChangedTest]:
     """Checks for tests that have changed titles.
 
     The intent is to detect title changes in existing tests, i.e., the
@@ -181,7 +189,9 @@ def check_titles(old):
     return diffs
 
 
-def check_ids(current_tests, old_tests):
+def check_ids(
+    current_tests: IdTitleMapType, old_tests: IdTitleMapType
+) -> list[ChangedTest]:
     """Checks for tests with identical titles but different IDs.
 
     The intent is to detect tests that have been inadvertently shifted by
@@ -208,7 +218,7 @@ def check_ids(current_tests, old_tests):
     return diffs
 
 
-def save(current_tests, old_tests):
+def save(current_tests: IdTitleMapType, old_tests: IdTitleMapType) -> None:
     """Stores the current tests to the lock file."""
     # Do not overwrite an existing lock file, ensuring the lock file is only
     # updated when the user explicitly allows it by first deleting the

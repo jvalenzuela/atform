@@ -34,7 +34,7 @@ OPEN = open
 data = None  # pylint: disable=invalid-name
 
 
-def load():
+def load() -> None:
     """Reads the cache file."""
     global data  # pylint: disable=global-statement
     try:
@@ -55,7 +55,7 @@ def load():
     data = from_file
 
 
-def save():
+def save() -> None:
     """Writes the data from this run to the cache file."""
     data["version"] = version.VERSION
     data["vcs"] = vcs.version

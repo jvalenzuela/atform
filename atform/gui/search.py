@@ -4,10 +4,10 @@ Searching is done with the whoosh module. Content from all tests is
 indexed upon initialization, then searches can be dispatched from the GUI.
 """
 
-import whoosh.analysis
-import whoosh.fields
-import whoosh.filedb.filestore
-import whoosh.qparser
+import whoosh.analysis  # type: ignore[import-untyped]
+import whoosh.fields  # type: ignore[import-untyped]
+import whoosh.filedb.filestore  # type: ignore[import-untyped]
+import whoosh.qparser  # type: ignore[import-untyped]
 
 from .. import state
 

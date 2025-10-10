@@ -3,7 +3,7 @@
 import collections
 import dataclasses
 import enum
-import typing
+from typing import Optional, Union
 
 from . import (
     error,
@@ -11,6 +11,12 @@ from . import (
     label,
     misc,
 )
+
+
+FieldType = tuple[str, int, str]
+StepDictType = dict[str, Union[str, FieldType]]
+StepType = Union[str, StepDictType]
+ProcedureType = list[Union[str, StepType]]
 
 
 @enum.unique
@@ -50,15 +56,15 @@ class Step:
     """
 
     text: str
-    fields: typing.List[Field]
-    image_hash: bytes
+    fields: list[Field]
+    image_hash: Optional[bytes]
 
-    def resolve_labels(self, mapping):
+    def resolve_labels(self, mapping: dict[str, str]) -> None:
         """Replaces label placeholders with their target IDs."""
         self.text = label.resolve(self.text, mapping)
 
 
-def validate(lst, label_mapping):
+def validate(lst: list[StepType], label_mapping: dict[str, str]) -> list[Step]:
     """Validates a user-provided list containing procedure steps."""
     if lst is None:
         lst = []
@@ -74,7 +80,7 @@ def validate(lst, label_mapping):
     return steps
 
 
-def make_step(raw, num, label_mapping):
+def make_step(raw: StepType, num: int, label_mapping: dict[str, str]) -> Step:
     """Validates a single procedure step."""
     data = normalize_type(raw)
     step = Step(
@@ -87,7 +93,7 @@ def make_step(raw, num, label_mapping):
     return step
 
 
-def normalize_type(raw):
+def normalize_type(raw: StepType) -> StepDictType:
     """Normalizes the raw data into a dict."""
     # Convert a string to a dict with text key.
     if isinstance(raw, str):
@@ -107,7 +113,7 @@ def normalize_type(raw):
     return normalized
 
 
-def validate_text(data):
+def validate_text(data: StepDictType) -> str:
     """Validates the text key."""
     try:
         text = data.pop("text")
@@ -122,7 +128,7 @@ def validate_text(data):
     return misc.nonempty_string("Procedure step text", text)
 
 
-def validate_fields(data):
+def validate_fields(data: StepDictType) -> list[Field]:
     """Validates the fields key."""
     tpls = data.pop("fields", [])
     if not isinstance(tpls, list):
@@ -141,7 +147,7 @@ def validate_fields(data):
     return fields
 
 
-def create_field(tpl):
+def create_field(tpl: FieldType) -> Field:
     """Converts a raw procedure step field definition tuple into a named tuple."""
     if not isinstance(tpl, tuple):
         raise error.UserScriptError(
@@ -187,7 +193,7 @@ def create_field(tpl):
     return Field(title, length, suffix)
 
 
-def validate_image(data):
+def validate_image(data: StepDictType) -> Optional[bytes]:
     """Loads the file referenced by the image key."""
     try:
         path = data.pop("image")
@@ -199,7 +205,7 @@ def validate_image(data):
     return image.load(path, MAX_IMAGE_SIZE)
 
 
-def validate_label(data, num, mapping):
+def validate_label(data: StepDictType, num: int, mapping: dict[str, str]) -> None:
     """Creates a label referencing the step."""
     try:
         lbl = data.pop("label")
@@ -212,7 +218,7 @@ def validate_label(data, num, mapping):
         label.add(lbl, str(num), mapping)
 
 
-def check_undefined_keys(data):
+def check_undefined_keys(data: StepDictType) -> None:
     """Checks for undefined keys in a user-provided step dictionary.
 
     Defined keys are removed from the original dictionary as they are validated, so
