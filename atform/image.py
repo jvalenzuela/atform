@@ -9,10 +9,12 @@ import collections
 import functools
 import hashlib
 import io
+from typing import BinaryIO
 
 import PIL
+from PIL import Image as PILImage
 from reportlab.lib.units import inch
-from reportlab.platypus import Image
+from reportlab.platypus import Image as RLImage
 
 from . import error
 from . import misc
@@ -36,7 +38,7 @@ OPEN = open
 
 
 @functools.lru_cache(maxsize=None)
-def load(path, max_size):
+def load(path: str, max_size: ImageSize) -> bytes:
     """Loads and validates an image file."""
     # BytesIO are allowed to support unit testing.
     if not isinstance(path, str) and not isinstance(path, io.BytesIO):
@@ -48,7 +50,7 @@ def load(path, max_size):
     try:
         with OPEN(path, "rb") as f:
             img_hash = calc_hash(f)
-            image = PIL.Image.open(f, formats=FORMATS)
+            image = PILImage.open(f, formats=FORMATS)
 
             # PNG formats require calling load() to ensure EXIF data is available
             # in the info attribute. The call is unconditional for simplicity as
@@ -95,14 +97,14 @@ def load(path, max_size):
     return img_hash
 
 
-def calc_hash(file):
+def calc_hash(file: BinaryIO) -> bytes:
     """Computes the hash of an image file."""
     h = hashlib.blake2b()
     h.update(file.read())
     return h.digest()
 
 
-def to_rl_image(image, size, dpi):
+def to_rl_image(image: PIL.Image.Image, size: ImageSize, dpi: ImageSize) -> RLImage:
     """Converts a PIL Image to a ReportLab Image object."""
     buf = io.BytesIO()
     args = {
@@ -112,7 +114,7 @@ def to_rl_image(image, size, dpi):
     if image.format == "JPEG":
         args["quality"] = "keep"
     image.save(buf, **args)
-    return Image(
+    return RLImage(
         buf,
         width=size.width * inch,
         height=size.height * inch,
@@ -128,7 +130,7 @@ def to_rl_image(image, size, dpi):
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_logo(path):
+def add_logo(path: str) -> None:
     """Selects an image file to be used as the logo.
 
     The logo will appear on the first page of every test in the
