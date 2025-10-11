@@ -21,6 +21,9 @@ causing unit test failure.
 """
 
 import collections
+from typing import Optional
+
+from reportlab.platypus import Image
 
 
 # Names identifying which fields will be applied to the next test.
@@ -28,7 +31,7 @@ active_fields = set()
 
 
 # The user-defined copyright notice string.
-copyright_ = None  # pylint: disable=invalid-name
+copyright_: Optional[str] = None  # pylint: disable=invalid-name
 
 
 # Numeric ID assigned to the most recent test; stored as a list instead
@@ -46,7 +49,7 @@ labels = {}
 
 
 # Hash of the the user-specified logo image file.
-logo_hash = None  # pylint: disable=invalid-name
+logo_hash: Optional[bytes] = None  # pylint: disable=invalid-name
 
 
 # All tests keyed by ID tuple.
@@ -73,4 +76,4 @@ signatures = []
 
 
 # Mapping of image hash to ReportLab Image object.
-images = {}
+images: dict[bytes, Image] = {}
