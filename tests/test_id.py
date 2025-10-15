@@ -66,7 +66,7 @@ class Section(unittest.TestCase):
         """Confirm an exception is raised if id is not an integer."""
         atform.set_id_depth(2)
         with self.assertRaises(atform.error.UserScriptError):
-            atform.section(0, id="42")
+            atform.section(1, id="42")
 
     def test_id_backwards(self):
         """Confirm an exception is raised for id values of previous sections."""
