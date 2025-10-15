@@ -3,7 +3,6 @@
 import collections
 import dataclasses
 import enum
-import typing
 
 from . import (
     error,
@@ -50,7 +49,7 @@ class Step:
     """
 
     text: str
-    fields: typing.List[Field]
+    fields: list[Field]
     image_hash: bytes
 
     def resolve_labels(self, mapping):
