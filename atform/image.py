@@ -35,7 +35,7 @@ FORMATS = ["JPEG", "PNG"]
 OPEN = open
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def load(path, max_size):
     """Loads and validates an image file."""
     # BytesIO are allowed to support unit testing.
