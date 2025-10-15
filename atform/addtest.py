@@ -11,7 +11,7 @@ from . import procedure as procedure_
 from . import state
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=False)
 # This is a data class intended to contain all attributes required to populate
 # a single test document.
 # pylint: disable=too-many-instance-attributes
@@ -127,7 +127,7 @@ class TestContent:
         )
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=False)
 class Reference:
     """Storage for a single reference category and assigned items."""
 

@@ -67,7 +67,7 @@ class LockFileWarning(Exception):
         return wrap(self.args[0])
 
 
-@dataclass
+@dataclass(repr=False)
 @functools.total_ordering
 class ChangedTest:
     """Storage for a test that has changed relative to the lock file."""
