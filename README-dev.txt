@@ -72,3 +72,15 @@ can display formatted docstrings, while others simply dislay plain text;
 the Google style renders the best results in both cases.
 
 https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html
+
+
+Unit Test Coverage
+==================
+
+An accurate unit test coverage assessment requires including both the
+typical and interactive GUI tests using the following coverage commands:
+
+    coverage run -m unittest
+    coverage run run_gui_tests.py
+    coverage combine
+    coverage html

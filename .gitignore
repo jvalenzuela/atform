@@ -13,3 +13,7 @@ example_output/
 
 # Cache file.
 atform.cache
+
+# Unit test coverage analysis results.
+.coverage
+.coverage.*
