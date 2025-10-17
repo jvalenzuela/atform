@@ -121,8 +121,11 @@ class TestList(InteractiveGuiTestCase):
         This is a manual test because the preview action is bound to
         Treeview tags, which are not easily simulated.
         """
+        atform.set_id_depth(2)
         atform.add_test("title")
-        self.start_gui()
+        self.start_gui(
+            instruction="Click the test and ensure it is displayed in the Preview window, and click the parent section and ensure it does not affect the Preview window.",
+        )
 
     @patch("atform.gui.preview.show")
     def test_multiple_select(self, *_mocks):

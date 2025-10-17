@@ -72,12 +72,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
     def show(self, tid):
         """Diplays test content for a given ID."""
-        # Ignore section IDs.
-        try:
-            test = state.tests[tid]
-        except KeyError:
-            return
-
+        test = state.tests[tid]
         self.title.set(test.full_name)
         self.location.show(test)
 
