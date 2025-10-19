@@ -1,5 +1,6 @@
 """Unit tests for the cache module."""
 
+import contextlib
 import io
 import pickle
 import unittest
@@ -73,6 +74,15 @@ class Save(unittest.TestCase):
             atform.cache.save()
         saved = self.get_saved_data(mock)
         self.assertEqual(saved["vcs"], "foo")
+
+    @patch("atform.cache.OPEN", new_callable=mock_open)
+    def test_error(self, mock):
+        """Confirm a message is printed if saving encounters an error."""
+        atform.cache.data = {}
+        mock.side_effect = OSError("spam")
+        with contextlib.redirect_stdout(io.StringIO()) as stdout:
+            atform.cache.save()
+        self.assertIn("spam", stdout.getvalue())
 
     @utils.no_pdf_output
     @utils.disable_idlock
