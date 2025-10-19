@@ -411,3 +411,34 @@ class ProcedureStepReplacement(unittest.TestCase):
         t = utils.get_test_content()
         t.pregenerate()
         self.assertEqual("2", t.procedure[0].text)
+
+
+class ErrorLocation(unittest.TestCase):
+    """Tests to confirm error messages correctly identify the location of invalid labels."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_objective(self):
+        """Confirm an incorrect label in the objective is correctly located."""
+        atform.add_test("title", objective="$foo")
+        t = utils.get_test_content()
+        with self.assertRaises(UserScriptError) as cm:
+            t.pregenerate()
+        self.assertEqual(cm.exception.fields["Test Section"], "Objective")
+
+    def test_preconditions(self):
+        """Confirm an incorrect label in the preconditions is correctly located."""
+        atform.add_test("title", preconditions=["foo", "$bar", "spam"])
+        t = utils.get_test_content()
+        with self.assertRaises(UserScriptError) as cm:
+            t.pregenerate()
+        self.assertEqual(cm.exception.fields["Precondition Item"], 2)
+
+    def test_procedure(self):
+        """Confirm an incorrect label in the procedure is correctly located."""
+        atform.add_test("title", procedure=["foo", "$bar", "spam"])
+        t = utils.get_test_content()
+        with self.assertRaises(UserScriptError) as cm:
+            t.pregenerate()
+        self.assertEqual(cm.exception.fields["Procedure Step"], 2)
