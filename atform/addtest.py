@@ -364,10 +364,6 @@ def add_test(
             label_.add(label, id_string)
 
     except error.UserScriptError as e:
-        try:
-            title = content["title"]
-        except KeyError:
-            title = None
-        add_exception_context(e, content["id"], title)
+        add_exception_context(e, content["id"], content.get("title"))
 
     state.tests[content["id"]] = TestContent(**content)

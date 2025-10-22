@@ -16,7 +16,7 @@ from . import (
 FieldType = tuple[str, int, str]
 StepDictType = dict[str, Union[str, FieldType]]
 StepType = Union[str, StepDictType]
-ProcedureType = list[Union[str, StepType]]
+ProcedureType = list[StepType]
 
 
 @enum.unique

@@ -11,6 +11,7 @@ phases:
 """
 
 import pickle
+from typing import Any, Optional
 
 from . import state
 from . import vcs
@@ -31,7 +32,7 @@ OPEN = open
 # content during the build process.
 #
 # Pylint invalid-name is disabled because this is not a constant.
-data = None  # pylint: disable=invalid-name
+data: Optional[dict[str, Any]]=None  # pylint: disable=invalid-name
 
 
 def load() -> None:

@@ -25,9 +25,11 @@ from typing import Optional
 
 from reportlab.platypus import Image
 
+#from .field import Field
+
 
 # Names identifying which fields will be applied to the next test.
-active_fields = set()
+active_fields: set[str] = set()
 
 
 # The user-defined copyright notice string.
@@ -41,11 +43,11 @@ current_id = [0]
 
 
 # All defined fields, keyed by name, and ordered as added by add_field().
-fields = collections.OrderedDict()
+fields: dict[str, field.Field] = collections.OrderedDict()
 
 
 # Globally accessible labels.
-labels = {}
+labels: dict[str, str] = {}
 
 
 # Hash of the the user-specified logo image file.
@@ -58,21 +60,21 @@ tests = {}
 
 # The current project information set by the most recent call to
 # set_project_info().
-project_info = {}
+project_info: dict[str, str] = {}
 
 
 # Reference category titles, keyed by label. Stored as an ordered
 # dictionary because the order the categories are created defines
 # the order they are listed in the output documents.
-ref_titles = collections.OrderedDict()
+ref_titles: dict[str, str] = collections.OrderedDict()
 
 
 # Section titles, keyed by ID tuple.
-section_titles = {}
+section_titles: dict[str, str] = {}
 
 
 # Signature titles, in the order they were defined.
-signatures = []
+signatures: list[str] = []
 
 
 # Mapping of image hash to ReportLab Image object.
