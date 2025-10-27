@@ -446,7 +446,7 @@ class Diff(InteractiveGuiTestCase):
         super().setUp()
         self.root = tk.Tk()
 
-    @patch("atform.gui.diffwidget.diff.load", return_value=False)
+    @patch("atform.gui.diffwidget.diff.load", return_value=None)
     def test_no_cache(self, *_mocks):
         """Confirm panel contains only a message stating no cache data is available."""
         diff = atform.gui.diffwidget.Diff(self.root)
@@ -471,12 +471,14 @@ class Diff(InteractiveGuiTestCase):
         )
 
     @patch("atform.cache.data", new={"vcs": None})
-    @patch("atform.gui.diff.load", return_value=True)
-    @patch("atform.gui.diff.CHANGED", new=set(range(42)))
-    @patch("atform.gui.diff.NEW", new=set(range(99)))
-    @patch("atform.gui.diff.SAME", new=set(range(10)))
-    def test_diff_counts(self, *_mocks):
+    @patch("atform.gui.diff.load")
+    def test_diff_counts(self, mock_load, *_mocks):
         """Confirm correct diff counts."""
+        mock_load.return_value = atform.gui.diff.CompareResult(
+            changed=set(range(42)),
+            new=set(range(99)),
+            same=set(range(10)),
+        )
         diff = atform.gui.diffwidget.Diff(self.root)
         diff.pack()
         self.start_gui(

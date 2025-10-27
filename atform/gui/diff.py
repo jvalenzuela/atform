@@ -3,34 +3,36 @@ This module implements comparing the current test content with content from
 the cache to identify altered, new, and unmodified tests.
 """
 
+import collections
+
 from .. import cache
 from .. import state
 
 
-# Comparison result test ID sets; created by load().
-CHANGED = None  # Modified tests.
-NEW = None  # Newly created tests.
-SAME = None  # Unmodified tests.
+CompareResult = collections.namedtuple(
+    "CompareResult",
+    [
+        "changed",  # Modified tests.
+        "new",  # Newly created tests.
+        "same",  # Unmodified tests.
+    ],
+)
 
 
 def load():
     """Compares content with the cache, generating the result sets."""
-    global CHANGED  # pylint: disable=global-statement
-    global NEW  # pylint: disable=global-statement
-    global SAME  # pylint: disable=global-statement
-
     try:
         orig = cache.data["tests"]
 
     # No cache data containing previous test content; diff unavailable.
     except KeyError:
-        return False
+        return None
 
-    CHANGED = changed_tests(orig)
-    NEW = new_tests(orig)
-    SAME = same_tests()
+    changed = changed_tests(orig)
+    new = new_tests(orig)
+    same = same_tests(changed, new)
 
-    return True
+    return CompareResult(changed=changed, new=new, same=same)
 
 
 def changed_tests(orig):
@@ -56,9 +58,9 @@ def new_tests(orig):
     return frozenset(new)
 
 
-def same_tests():
+def same_tests(changed, new):
     """Identifies tests unchanged since the cached version."""
     ids = set(state.tests.keys())
-    ids.difference_update(CHANGED)
-    ids.difference_update(NEW)
+    ids.difference_update(changed)
+    ids.difference_update(new)
     return frozenset(ids)

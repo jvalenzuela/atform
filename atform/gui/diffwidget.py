@@ -14,9 +14,10 @@ class Diff(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 
     def __init__(self, parent):
         super().__init__(parent)
-        if diff.load():
+        diff_result = diff.load()
+        if diff_result:
             self._create_version()
-            self._create_summary_table()
+            self._create_summary_table(diff_result)
         else:
             lbl = tkwidget.Label(
                 self,
@@ -34,14 +35,14 @@ class Diff(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             )
             lbl.pack(pady=common.SMALL_PAD)
 
-    def _create_summary_table(self):
+    def _create_summary_table(self, diff_result):
         """Creates widgets itemizing the types of changes."""
         frame = tkwidget.Frame(self)
         frame.pack(pady=common.SMALL_PAD)
 
-        self._create_summary_row(frame, "Changed", diff.CHANGED)
-        self._create_summary_row(frame, "New", diff.NEW)
-        self._create_summary_row(frame, "Unmodified", diff.SAME)
+        self._create_summary_row(frame, "Changed", diff_result.changed)
+        self._create_summary_row(frame, "New", diff_result.new)
+        self._create_summary_row(frame, "Unmodified", diff_result.same)
 
     def _create_summary_row(self, parent, label, target_ids):
         """Creates widgets for a specific category of changes."""
