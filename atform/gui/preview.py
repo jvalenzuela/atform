@@ -44,8 +44,8 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         super().__init__(parent, text="Preview")
         self.title = self._create_title()
         self.text = self._create_text()
-        self.location = Location(self)
-        self.location.pack(anchor=tk.NW)
+        self.src_location = Location(self)
+        self.src_location.pack(anchor=tk.NW)
         self._configure_tags()
 
         # Store this instance so the previewer is accessible at module level.
@@ -74,7 +74,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         """Diplays test content for a given ID."""
         test = state.tests[tid]
         self.title.set(test.full_name)
-        self.location.show(test)
+        self.src_location.show(test)
 
         self.text.configure(state=tk.NORMAL)
         self.text.delete("1.0", tk.END)
