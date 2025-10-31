@@ -67,14 +67,14 @@ class InteractiveGuiTestCase(unittest.TestCase):
         """Handler for the pass button."""
         self.root.destroy()
 
-    def on_fail(self):
+    def on_fail(self):  # pragma: no cover
         """Handler for the fail button."""
         self.failed = True
         self.root.destroy()
 
     def tearDown(self):
         if self.failed:
-            self.fail("Fail button pressed.")
+            self.fail("Fail button pressed.")  # pragma: no cover
 
 
 class TestList(InteractiveGuiTestCase):
