@@ -115,8 +115,8 @@ class Sections(unittest.TestCase):
 
     def assert_match(self, section):
         """Confirms the text was found only in the target section."""
-        search.init()
-        matches = search.search("foo", [section], "all", False)
+        tcs = search.TestContentSearch()
+        matches = tcs.search("foo", [section], "all", False)
         self.assertEqual({(1,)}, matches)
 
 
@@ -140,8 +140,8 @@ class References(unittest.TestCase):
 
     def assert_match(self):
         """Confirms the text was found in the references section."""
-        search.init()
-        matches = search.search("foo", ["References"], "all", False)
+        tcs = search.TestContentSearch()
+        matches = tcs.search("foo", ["References"], "all", False)
         self.assertEqual({(1,)}, matches)
 
 
@@ -184,8 +184,8 @@ class Procedure(unittest.TestCase):
 
     def assert_match(self):
         """Confirms the text was found in the procedure section."""
-        search.init()
-        matches = search.search("foo", ["Procedure"], "all", False)
+        tcs = search.TestContentSearch()
+        matches = tcs.search("foo", ["Procedure"], "all", False)
         self.assertEqual({(1,)}, matches)
 
 
@@ -200,8 +200,8 @@ class MultipleMatch(unittest.TestCase):
         atform.add_test("foo")
         atform.add_test("spam")
         atform.add_test("bar")
-        search.init()
-        matches = search.search("foo bar", ["Title"], "any", False)
+        tcs = search.TestContentSearch()
+        matches = tcs.search("foo bar", ["Title"], "any", False)
         self.assertEqual({(1,), (3,)}, matches)
 
 
@@ -267,8 +267,8 @@ class CaseMatchingBase:
 
     def assert_match(self):
         """Confirms text was found in the correct tests."""
-        search.init()
-        matches = search.search(
+        tcs = search.TestContentSearch()
+        matches = tcs.search(
             self.TEXT,
             [
                 "Title",
@@ -325,8 +325,8 @@ class MatchAll(unittest.TestCase):
 
     def assert_match(self, text, expected):
         """Confirms text was matched in the correct tests."""
-        search.init()
-        matches = search.search(
+        tcs = search.TestContentSearch()
+        matches = tcs.search(
             text,
             [
                 "Title",
@@ -369,8 +369,8 @@ class MatchAny(unittest.TestCase):
 
     def assert_match(self, text, expected):
         """Confirms text was matched in the correct tests."""
-        search.init()
-        matches = search.search(text, ["Title"], "any", False)
+        tcs = search.TestContentSearch()
+        matches = tcs.search(text, ["Title"], "any", False)
         self.assertEqual(expected, matches)
 
 
@@ -392,8 +392,8 @@ class Format(unittest.TestCase):
 
     def assert_match(self, text):
         """Confirms text was matched in the correct tests."""
-        search.init()
-        matches = search.search(text, ["Objective"], "all", False)
+        tcs = search.TestContentSearch()
+        matches = tcs.search(text, ["Objective"], "all", False)
         self.assertEqual({(1,)}, matches)
 
 
@@ -430,6 +430,6 @@ class Phrase(unittest.TestCase):
 
     def assert_match(self, text, expected):
         """Confirms text was matched in the correct tests."""
-        search.init()
-        matches = search.search(text, ["Title"], "any", False)
+        tcs = search.TestContentSearch()
+        matches = tcs.search(text, ["Title"], "any", False)
         self.assertEqual(expected, matches)

@@ -55,36 +55,56 @@ INDEXED_FIELDS.update({f"{sec}_casefold": CASEFOLD_FIELD for sec in SECTIONS})
 SCHEMA = whoosh.fields.Schema(id=whoosh.fields.STORED, **INDEXED_FIELDS)
 
 
-# Created by init().
-index = None  # pylint: disable=invalid-name
+class TestContentSearch:
+    """
+    This object houses the search index of all test content and provides
+    an interface for finding matching terms.
+    """
 
+    # This object is implemented as class as it requires internal state,
+    # namely the index, and requires only a single public method.
+    # pylint: disable=too-few-public-methods
 
-# Match any/all selection mapping.
-COMBINE_GROUP = {
-    "all": whoosh.qparser.AndGroup,
-    "any": whoosh.qparser.OrGroup,
-}
+    # Match any/all selection mapping.
+    COMBINE_GROUP = {
+        "all": whoosh.qparser.AndGroup,
+        "any": whoosh.qparser.OrGroup,
+    }
 
+    def __init__(self):
+        storage = whoosh.filedb.filestore.RamStorage()
+        self.index = storage.create_index(SCHEMA)
+        writer = self.index.writer()
 
-def init():
-    """Initializes the search system with content from all tests."""
-    global index  # pylint: disable=global-statement
-    storage = whoosh.filedb.filestore.RamStorage()
-    index = storage.create_index(SCHEMA)
-    writer = index.writer()
+        for test in state.tests.values():
+            fields = index_test(test)
 
-    for test in state.tests.values():
-        fields = index_test(test)
+            verbatim = {f"{key}_verbatim": value for key, value in fields.items()}
+            writer.add_document(id=test.id, **verbatim)
 
-        verbatim = {f"{key}_verbatim": value for key, value in fields.items()}
-        writer.add_document(id=test.id, **verbatim)
+            casefold = {
+                f"{key}_casefold": value.casefold() for key, value in fields.items()
+            }
+            writer.add_document(id=test.id, **casefold)
 
-        casefold = {
-            f"{key}_casefold": value.casefold() for key, value in fields.items()
-        }
-        writer.add_document(id=test.id, **casefold)
+        writer.commit()
 
-    writer.commit()
+    def search(self, text, sections, combine, match_case):
+        """Executes a search for a given query text."""
+        if match_case:
+            field_suffix = "verbatim"
+        else:
+            field_suffix = "casefold"
+        parser = whoosh.qparser.MultifieldParser(
+            [f"{name}_{field_suffix}" for name in sections],
+            self.index.schema,
+            group=self.COMBINE_GROUP[combine],
+        )
+        query = parser.parse(text)
+        with self.index.searcher() as searcher:
+            results = searcher.search(query, limit=None)
+            matches = {r["id"] for r in results}
+        return matches
 
 
 def index_test(test):
@@ -119,21 +139,3 @@ def index_procedure(steps):
             if field.suffix:
                 items.append(field.suffix)
     return "\n".join(items)
-
-
-def search(text, sections, combine, match_case):
-    """Executes a search for a given query text."""
-    if match_case:
-        field_suffix = "verbatim"
-    else:
-        field_suffix = "casefold"
-    parser = whoosh.qparser.MultifieldParser(
-        [f"{name}_{field_suffix}" for name in sections],
-        index.schema,
-        group=COMBINE_GROUP[combine],
-    )
-    query = parser.parse(text)
-    with index.searcher() as searcher:
-        results = searcher.search(query, limit=None)
-        matches = {r["id"] for r in results}
-    return matches

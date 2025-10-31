@@ -368,23 +368,20 @@ class Preview(InteractiveGuiTestCase):
 class SearchQueryEntry(InteractiveGuiTestCase):
     """Tests for the search tab query entry field."""
 
-    def setUp(self):
-        super().setUp()
-        self.root = tk.Tk()
-        search = atform.gui.searchwidget.Search(self.root)
-        search.pack()
-
     @patch("atform.gui.searchwidget.buildlist")
-    @patch("atform.gui.searchwidget.search.search")
+    @patch("atform.gui.searchwidget.search.TestContentSearch")
     def test_enter_shortcut(self, mock_search, *_mocks):
         """Confirm pressing enter executes a search."""
-        utils.set_entry_text(self.root, "foo")
+        root = tk.Tk()
+        search = atform.gui.searchwidget.Search(root)
+        search.pack()
+        utils.set_entry_text(root, "foo")
         self.start_gui(
-            root=self.root,
+            root=root,
             instruction="Select the query entry to give it focus, press Enter, then close the search window.",
             buttons=False,
         )
-        mock_search.assert_called_once()
+        mock_search().search.assert_called_once()
 
 
 class SearchResultMessage(InteractiveGuiTestCase):
@@ -393,7 +390,10 @@ class SearchResultMessage(InteractiveGuiTestCase):
     def setUp(self):
         super().setUp()
         self.root = tk.Tk()
-        search = atform.gui.searchwidget.Search(self.root)
+        with patch(
+            "atform.gui.searchwidget.search.TestContentSearch"
+        ) as self.mock_search:
+            search = atform.gui.searchwidget.Search(self.root)
         search.pack()
 
     def test_no_query(self):
@@ -415,10 +415,9 @@ class SearchResultMessage(InteractiveGuiTestCase):
         )
 
     @patch("atform.gui.searchwidget.buildlist")
-    @patch("atform.gui.searchwidget.search.search")
-    def test_match_count(self, mock_search, *_mocks):
+    def test_match_count(self, *_mocks):
         """Confirm message reports number of matches."""
-        mock_search.return_value = set(range(42))
+        self.mock_search().search.return_value = set(range(42))
         utils.set_entry_text(self.root, "foo")
         self.click_add()
         self.start_gui(

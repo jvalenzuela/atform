@@ -13,7 +13,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 
     def __init__(self, parent):
         super().__init__(parent)
-        search.init()
+        self.search = search.TestContentSearch()
         self.entry = self._create_text_entry()
         self.result_msg = self._create_result_message()
         self.combine = self._create_combination_select()
@@ -110,7 +110,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         elif not sections:
             self.result_msg.set("No sections enabled to search.")
         else:
-            matches = search.search(
+            matches = self.search.search(
                 text,
                 sections,
                 self.combine.get(),
