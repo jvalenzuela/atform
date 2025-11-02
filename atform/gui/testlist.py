@@ -219,9 +219,6 @@ class TupleTreeview(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
     def item(self, item, *args, **kwargs):
         return super().item(self.ids[item], *args, **kwargs)
 
-    def parent(self, item):
-        return super().parent(self.ids[item])
-
     def see(self, item):
         return super().see(self.ids[item])
 
