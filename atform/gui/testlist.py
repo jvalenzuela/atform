@@ -47,14 +47,14 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 
     def add_test(self, tid):
         """Adds a test to the listing."""
-        if self.tree.exists(tid):
+        if self.tree.ttv_exists(tid):
             return
 
         self._add_parents(tid)
         parent = tid[:-1]
         index = self._calc_index(tid)
         title = state.tests[tid].title
-        self.tree.insert(
+        self.tree.ttv_insert(
             parent,
             index,
             tid,
@@ -62,7 +62,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             values=[title],
             tags="preview",
         )
-        self.tree.see(tid)
+        self.tree.ttv_see(tid)
         self.controls.counts.adjust_total(1)
 
     def _add_parents(self, tid):
@@ -70,14 +70,14 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         for i in range(len(tid) - 1):
             current_tid = tid[: i + 1]
 
-            if not self.tree.exists(current_tid):
+            if not self.tree.ttv_exists(current_tid):
                 parent = current_tid[:-1]
                 index = self._calc_index(current_tid)
                 try:
                     title = state.section_titles[current_tid]
                 except KeyError:
                     title = ""
-                self.tree.insert(
+                self.tree.ttv_insert(
                     parent,
                     index,
                     current_tid,
@@ -88,36 +88,36 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     def _calc_index(self, tid):
         """Computes the index to insert a given test or section ID."""
         parent = tid[:-1]
-        siblings = list(self.tree.get_children(parent))
+        siblings = list(self.tree.ttv_get_children(parent))
         siblings.append(tid)
         siblings.sort()
         return siblings.index(tid)
 
     def remove_test(self, tid):
         """Revoves a test from the listing."""
-        if not self.tree.exists(tid):
+        if not self.tree.ttv_exists(tid):
             return
 
-        self.tree.delete(tid)
+        self.tree.ttv_delete(tid)
         self.controls.counts.adjust_total(-1)
 
         # Remove any parent sections that are now empty after the target
         # test has been deleted.
         for i in range(1, len(tid)):
             parent_id = tid[:-i]
-            if self.tree.get_children(parent_id):
+            if self.tree.ttv_get_children(parent_id):
                 break
-            self.tree.delete(parent_id)
+            self.tree.ttv_delete(parent_id)
 
     def _preview(self, _event):
         """Event handler for clicks on a test item to dispatch a preview."""
-        tid = self.tree.focus()
+        tid = self.tree.ttv_focus()
         preview.show(tid)
 
     @property
     def selected_tests(self):
         """Gets IDs for all selected tests."""
-        return self._get_tests(self.tree.selection())
+        return self._get_tests(self.tree.ttv_selection())
 
     @property
     def all_tests(self):
@@ -128,11 +128,11 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         """Removes all items."""
         cnt = len(self.all_tests)
         self.controls.counts.adjust_total(-cnt)
-        self.tree.delete(*self.tree.get_children())
+        self.tree.ttv_delete(*self.tree.ttv_get_children())
 
     def unselect_all(self):
         """Unselects all items."""
-        self.tree.selection_set()
+        self.tree.ttv_selection_set()
 
     def _get_tests(self, parents):
         """Gets all test IDs under a given set of parent IDs."""
@@ -143,12 +143,12 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 
         # Filter only test IDs, which are are leaf nodes, i.e., without
         # children.
-        return {tid for tid in tids if not self.tree.get_children(tid)}
+        return {tid for tid in tids if not self.tree.ttv_get_children(tid)}
 
     def get_descendants(self, tid=()):
         """Gets all items under a given item."""
         children = set()
-        for c in self.tree.get_children(tid):
+        for c in self.tree.ttv_get_children(tid):
             children.add(c)
             children.update(self.get_descendants(c))
         return children
@@ -156,9 +156,11 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 
 class TupleTreeview(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
     """
-    This alters the Treeview widget to use ID tuples as item IDs(iid) instead
-    of strings. Provides methods wrapping the original API, converting ID
-    arguments and return values.
+    Treeview subclass that adds a set of ttv_<method> wrappers translating
+    integer ID tuples to strings for use as item IDs(iid). These wrappers
+    are not implemented as overrides to avoid Liskov substitution principle
+    violations reported by some static analysis tools, e.g., Mypy, due to
+    differing call signatures.
     """
 
     # Mapping between ID tuples and strings. It is symmetrical in that two
@@ -176,14 +178,16 @@ class TupleTreeview(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
         None: None,
     }
 
-    def delete(self, *items):
+    def ttv_delete(self, *items):
+        """Wrapper for delete()."""
         # IDs are explicitly not deleted from the internal tuple/string
         # mapping as it is simpler to retain all ID mappings, and allows
         # the single mapping to continue to serve all instances.
         iids = [self.ids[i] for i in items]
-        return super().delete(*iids)
+        self.delete(*iids)
 
-    def exists(self, item):
+    def ttv_exists(self, item):
+        """Wrapper for exists()."""
         # This method may receive an undefined item ID, i.e., testing for an
         # item that has not yet been inserted, so the return value in that
         # case overrides the original API call.
@@ -191,21 +195,18 @@ class TupleTreeview(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
             iid = self.ids[item]
         except KeyError:
             return False
+        return self.exists(iid)
 
-        return super().exists(iid)
+    def ttv_focus(self):
+        """Wrapper for focus()."""
+        return self.ids[self.focus()]
 
-    def focus(self, item=None):
-        return self.ids[super().focus(self.ids[item])]
+    def ttv_get_children(self, item=None):
+        """Wrapper for get_children()."""
+        return [self.ids[i] for i in self.get_children(self.ids[item])]
 
-    def get_children(self, item=None):
-        return [self.ids[i] for i in super().get_children(self.ids[item])]
-
-    def insert(self, parent, index, iid=None, **kwargs):
-        # Automatically-assigned iids are not supported, and not required
-        # as all items are always identified by ID tuple.
-        if iid is None:
-            raise ValueError("iid must be provided for all items.")
-
+    def ttv_insert(self, parent, index, iid, **kwargs):
+        """Wrapper for insert()."""
         # Add mappings for the new ID if it doesn't already exist.
         try:
             str_iid = self.ids[iid]
@@ -214,20 +215,24 @@ class TupleTreeview(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
             self.ids[str_iid] = iid
             self.ids[iid] = str_iid
 
-        return super().insert(self.ids[parent], index, str_iid, **kwargs)
+        self.insert(self.ids[parent], index, str_iid, **kwargs)
 
-    def item(self, item, *args, **kwargs):
-        return super().item(self.ids[item], *args, **kwargs)
+    def ttv_item(self, item, *args, **kwargs):
+        """Wrapper for item()."""
+        return self.item(self.ids[item], *args, **kwargs)
 
-    def see(self, item):
-        return super().see(self.ids[item])
+    def ttv_see(self, item):
+        """Wrapper for see()."""
+        self.see(self.ids[item])
 
-    def selection(self):
-        return tuple(self.ids[i] for i in super().selection())
+    def ttv_selection(self):
+        """Wrapper for selection()."""
+        return tuple(self.ids[i] for i in self.selection())
 
-    def selection_set(self, *items):
+    def ttv_selection_set(self, *items):
+        """Wrapper for selection_set()."""
         iids = [self.ids[i] for i in items]
-        super().selection_set(*iids)
+        self.selection_set(*iids)
 
 
 class ControlPanel(tkwidget.Frame):  # pylint: disable=too-many-ancestors
@@ -268,16 +273,16 @@ class ControlPanel(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     def _on_expand_all(self):
         """Event handler for the Expand All Button."""
         for iid in self.testlist.get_descendants():
-            self.testlist.tree.see(iid)
+            self.testlist.tree.ttv_see(iid)
 
     def _on_collapse_all(self):
         """Event handler for the Collapse All Button."""
         for iid in self.testlist.get_descendants():
-            self.testlist.tree.item(iid, open=tk.FALSE)
+            self.testlist.tree.ttv_item(iid, open=tk.FALSE)
 
     def _on_select_all(self):
         """Event handler for the Select All button."""
-        self.testlist.tree.selection_set(*self.testlist.get_descendants())
+        self.testlist.tree.ttv_selection_set(*self.testlist.get_descendants())
 
     def _on_unselect_all(self):
         """Event handler for the Unselect All button."""
@@ -286,7 +291,7 @@ class ControlPanel(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     def _on_invert_selection(self):
         """Event handler for the Invert Selection button."""
         unselected = self.testlist.all_tests.difference(self.testlist.selected_tests)
-        self.testlist.tree.selection_set(*unselected)
+        self.testlist.tree.ttv_selection_set(*unselected)
 
 
 class Counts(tkwidget.Frame):  # pylint: disable=too-many-ancestors

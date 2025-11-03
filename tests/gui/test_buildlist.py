@@ -39,7 +39,7 @@ class RemoveButton(unittest.TestCase):
         """Confirm removal when some tests are selected."""
         atform.gui.buildlist.BuildList(None, None, None)
         atform.gui.buildlist.add({(1,), (2,)})
-        atform.gui.buildlist.BuildList.instance.testlist.tree.selection_set((1,))
+        atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set((1,))
         self.click()
         self.assert_remaining_tests({(2,)})
 
@@ -47,7 +47,9 @@ class RemoveButton(unittest.TestCase):
         """Confirm removal when all tests are selected."""
         atform.gui.buildlist.BuildList(None, None, None)
         atform.gui.buildlist.add({(1,), (2,)})
-        atform.gui.buildlist.BuildList.instance.testlist.tree.selection_set((1,), (2,))
+        atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set(
+            (1,), (2,)
+        )
         self.click()
         self.assert_remaining_tests(set())
 
@@ -55,7 +57,7 @@ class RemoveButton(unittest.TestCase):
         """Confirm no change when no tests are selected."""
         atform.gui.buildlist.BuildList(None, None, None)
         atform.gui.buildlist.add({(1,), (2,)})
-        atform.gui.buildlist.BuildList.instance.testlist.tree.selection_set()
+        atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set()
         self.click()
         self.assert_remaining_tests({(1,), (2,)})
 
@@ -184,7 +186,7 @@ class BuildButton(unittest.TestCase):
         """Confirm all tests are built when none are selected."""
         atform.gui.buildlist.BuildList(None, "path", 0)
         atform.gui.buildlist.add({(1,), (2,)})
-        atform.gui.buildlist.BuildList.instance.testlist.tree.selection_set()
+        atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set()
         click_build()
         mock_build.assert_called_once_with({(1,), (2,)}, "path", 0)
 
@@ -192,7 +194,7 @@ class BuildButton(unittest.TestCase):
         """Confirm all tests are built when some are selected."""
         atform.gui.buildlist.BuildList(None, "path", 0)
         atform.gui.buildlist.add({(1,), (2,)})
-        atform.gui.buildlist.BuildList.instance.testlist.tree.selection_set((1,))
+        atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set((1,))
         click_build()
         mock_build.assert_called_once_with({(1,), (2,)}, "path", 0)
 

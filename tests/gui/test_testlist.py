@@ -16,11 +16,11 @@ class Base(unittest.TestCase):
 
     def set_open(self, id_, open_):
         """Opens or closes a given section."""
-        self.tl.tree.item(id_, open=open_)
+        self.tl.tree.ttv_item(id_, open=open_)
 
     def assert_open(self, id_, open_):
         """Confirms a section is open or closed."""
-        self.assertEqual(self.tl.tree.item(id_, option="open"), open_)
+        self.assertEqual(self.tl.tree.ttv_item(id_, option="open"), open_)
 
 
 class AddTest(Base):
@@ -31,23 +31,23 @@ class AddTest(Base):
         atform.add_test("foo")
         self.tl.add_test((1,))
         self.tl.add_test((1,))
-        self.assertEqual([(1,)], self.tl.tree.get_children())
+        self.assertEqual([(1,)], self.tl.tree.ttv_get_children())
 
     def test_add_sections(self):
         """Confirm enclosing sections are automatically added."""
         atform.set_id_depth(3)
         atform.add_test("foo")
         self.tl.add_test((1, 1, 1))
-        self.assertEqual([(1,)], self.tl.tree.get_children())
-        self.assertEqual([(1, 1)], self.tl.tree.get_children((1,)))
+        self.assertEqual([(1,)], self.tl.tree.ttv_get_children())
+        self.assertEqual([(1, 1)], self.tl.tree.ttv_get_children((1,)))
 
     def test_visible(self):
         """Confirm parent sections of added tests start fully expanded."""
         atform.set_id_depth(3)
         atform.add_test("foo")
         self.tl.add_test((1, 1, 1))
-        self.assertEqual(tk.TRUE, self.tl.tree.item((1,), option="open"))
-        self.assertEqual(tk.TRUE, self.tl.tree.item((1, 1), option="open"))
+        self.assertEqual(tk.TRUE, self.tl.tree.ttv_item((1,), option="open"))
+        self.assertEqual(tk.TRUE, self.tl.tree.ttv_item((1, 1), option="open"))
 
 
 class RemoveTest(Base):
@@ -61,9 +61,9 @@ class RemoveTest(Base):
         self.tl.add_test((1, 1))
         self.tl.add_test((1, 2))
         self.tl.remove_test((1, 1))
-        self.assertTrue(self.tl.tree.exists((1,)))
-        self.assertFalse(self.tl.tree.exists((1, 1)))
-        self.assertTrue(self.tl.tree.exists((1, 2)))
+        self.assertTrue(self.tl.tree.ttv_exists((1,)))
+        self.assertFalse(self.tl.tree.ttv_exists((1, 1)))
+        self.assertTrue(self.tl.tree.ttv_exists((1, 2)))
 
     def test_remove_section(self):
         """Confirm removing all tests from a section also removes empty parent sections."""
@@ -74,9 +74,9 @@ class RemoveTest(Base):
         self.tl.add_test((1, 2))
         self.tl.remove_test((1, 1))
         self.tl.remove_test((1, 2))
-        self.assertFalse(self.tl.tree.exists((1,)))
-        self.assertFalse(self.tl.tree.exists((1, 1)))
-        self.assertFalse(self.tl.tree.exists((1, 2)))
+        self.assertFalse(self.tl.tree.ttv_exists((1,)))
+        self.assertFalse(self.tl.tree.ttv_exists((1, 1)))
+        self.assertFalse(self.tl.tree.ttv_exists((1, 2)))
 
     def test_remove_nonexistent(self):
         """Confirm removing a test that is not listed has no effect."""
@@ -86,9 +86,9 @@ class RemoveTest(Base):
         self.tl.add_test((1, 1))
         self.tl.add_test((1, 2))
         self.tl.remove_test((1, 3))
-        self.assertTrue(self.tl.tree.exists((1,)))
-        self.assertTrue(self.tl.tree.exists((1, 1)))
-        self.assertTrue(self.tl.tree.exists((1, 2)))
+        self.assertTrue(self.tl.tree.ttv_exists((1,)))
+        self.assertTrue(self.tl.tree.ttv_exists((1, 1)))
+        self.assertTrue(self.tl.tree.ttv_exists((1, 2)))
 
 
 class Clear(Base):
@@ -103,7 +103,7 @@ class Clear(Base):
         self.tl.add_test((1, 1))
         self.tl.add_test((2, 1))
         self.tl.clear()
-        self.assertEqual([], self.tl.tree.get_children())
+        self.assertEqual([], self.tl.tree.ttv_get_children())
 
 
 class DisplayId(Base):
@@ -128,7 +128,7 @@ class DisplayId(Base):
 
     def assert_id(self, id_, text):
         """Confirms the ID text displayed for a given test."""
-        actual = self.tl.tree.item(id_, option="text")
+        actual = self.tl.tree.ttv_item(id_, option="text")
         self.assertEqual(text, actual)
 
 
@@ -161,7 +161,7 @@ class Title(Base):
 
     def assert_title(self, id_, title):
         """Confirms the title column contains the expected string."""
-        values = self.tl.tree.item(id_, option="values")
+        values = self.tl.tree.ttv_item(id_, option="values")
         self.assertEqual(title, values[0])
 
 
@@ -179,7 +179,7 @@ class Heirarchy(Base):
         self.tl.add_test((2,))
         self.tl.add_test((1,))
 
-        self.assertEqual([(1,), (2,), (3,)], self.tl.tree.get_children())
+        self.assertEqual([(1,), (2,), (3,)], self.tl.tree.ttv_get_children())
         self.assert_no_test_children()
 
     def test_sections(self):
@@ -197,15 +197,15 @@ class Heirarchy(Base):
         self.tl.add_test((1, 2))
         self.tl.add_test((1, 1))
 
-        self.assertEqual([(1,), (2,)], self.tl.tree.get_children())
-        self.assertEqual([(1, 1), (1, 2)], self.tl.tree.get_children((1,)))
-        self.assertEqual([(2, 1), (2, 2)], self.tl.tree.get_children((2,)))
+        self.assertEqual([(1,), (2,)], self.tl.tree.ttv_get_children())
+        self.assertEqual([(1, 1), (1, 2)], self.tl.tree.ttv_get_children((1,)))
+        self.assertEqual([(2, 1), (2, 2)], self.tl.tree.ttv_get_children((2,)))
         self.assert_no_test_children()
 
     def assert_no_test_children(self):
         """Confirms all tests are leaf nodes."""
         for id_ in self.tl.all_tests:
-            self.assertEqual([], self.tl.tree.get_children(id_))
+            self.assertEqual([], self.tl.tree.ttv_get_children(id_))
 
 
 class AllTests(Base):
@@ -255,7 +255,7 @@ class SelectedTests(Base):
         self.tl.add_test((1,))
         self.tl.add_test((2,))
         self.tl.add_test((3,))
-        self.tl.tree.selection_set((2,))
+        self.tl.tree.ttv_selection_set((2,))
         self.assertEqual({(2,)}, self.tl.selected_tests)
 
     def test_multiple_selected(self):
@@ -266,7 +266,7 @@ class SelectedTests(Base):
         self.tl.add_test((1,))
         self.tl.add_test((2,))
         self.tl.add_test((3,))
-        self.tl.tree.selection_set((1,), (2,))
+        self.tl.tree.ttv_selection_set((1,), (2,))
         self.assertEqual({(1,), (2,)}, self.tl.selected_tests)
 
     def test_section(self):
@@ -283,7 +283,7 @@ class SelectedTests(Base):
         self.tl.add_test((1, 1, 3))
         self.tl.add_test((2, 1, 1))
         self.tl.add_test((2, 1, 2))
-        self.tl.tree.selection_set((2,))
+        self.tl.tree.ttv_selection_set((2,))
         self.assertEqual({(2, 1, 1), (2, 1, 2)}, self.tl.selected_tests)
 
 
@@ -409,13 +409,13 @@ class SelectAll(Base):
 
     def test_initial_some(self):
         """Confirm all items are selected when some are initially selected."""
-        self.tl.tree.selection_set((1, 1, 1))
+        self.tl.tree.ttv_selection_set((1, 1, 1))
         self.click()
         self.assert_all_selected()
 
     def test_initial_all(self):
         """Confirm all items remain selected if all are initially selected."""
-        self.tl.tree.selection_set(
+        self.tl.tree.ttv_selection_set(
             (1,),
             (1, 1),
             (1, 1, 1),
@@ -437,7 +437,7 @@ class SelectAll(Base):
                 (2, 1),
                 (2, 1, 1),
             ),
-            self.tl.tree.selection(),
+            self.tl.tree.ttv_selection(),
         )
 
     def click(self):
@@ -459,19 +459,19 @@ class UnselectAll(Base):
 
     def test_initial_none(self):
         """Confirm all items remain unselected when none are initially selected."""
-        self.tl.tree.selection_set()
+        self.tl.tree.ttv_selection_set()
         self.click()
         self.assert_none_selected()
 
     def test_initial_some(self):
         """Confirm all items are unselected if some are initially selected."""
-        self.tl.tree.selection_set((1, 1, 1))
+        self.tl.tree.ttv_selection_set((1, 1, 1))
         self.click()
         self.assert_none_selected()
 
     def test_initial_all(self):
         """Confirm all items are unselected if all are initially selected."""
-        self.tl.tree.selection_set(
+        self.tl.tree.ttv_selection_set(
             (1,),
             (1, 1),
             (1, 1, 1),
@@ -484,7 +484,7 @@ class UnselectAll(Base):
 
     def assert_none_selected(self):
         """Confirms no items are selected."""
-        self.assertEqual((), self.tl.tree.selection())
+        self.assertEqual((), self.tl.tree.ttv_selection())
 
     def click(self):
         """Simulates clicking the unselect all button."""
@@ -509,7 +509,7 @@ class InvertSelection(Base):
 
     def test_initial_none(self):
         """Confirm all tests are selected if nothing is initially selected."""
-        self.tl.tree.selection_set()
+        self.tl.tree.ttv_selection_set()
         self.click()
         self.assertEqual(
             (
@@ -518,12 +518,12 @@ class InvertSelection(Base):
                 (2, 1, 1),
                 (2, 1, 2),
             ),
-            self.tl.tree.selection(),
+            self.tl.tree.ttv_selection(),
         )
 
     def test_initial_all(self):
         """Confirm all items are unselected if everything is initially selected."""
-        self.tl.tree.selection_set(
+        self.tl.tree.ttv_selection_set(
             (1,),
             (1, 1),
             (1, 1, 1),
@@ -534,11 +534,11 @@ class InvertSelection(Base):
             (2, 1, 2),
         )
         self.click()
-        self.assertEqual((), self.tl.tree.selection())
+        self.assertEqual((), self.tl.tree.ttv_selection())
 
     def test_single(self):
         """Confirm inversion if a single test is initially selcted."""
-        self.tl.tree.selection_set((1, 1, 2))
+        self.tl.tree.ttv_selection_set((1, 1, 2))
         self.click()
         self.assertEqual(
             (
@@ -546,31 +546,31 @@ class InvertSelection(Base):
                 (2, 1, 1),
                 (2, 1, 2),
             ),
-            self.tl.tree.selection(),
+            self.tl.tree.ttv_selection(),
         )
 
     def test_multiple(self):
         """Confirm inversion if multiple tests are initially selected."""
-        self.tl.tree.selection_set((1, 1, 2), (2, 1, 2))
+        self.tl.tree.ttv_selection_set((1, 1, 2), (2, 1, 2))
         self.click()
         self.assertEqual(
             (
                 (1, 1, 1),
                 (2, 1, 1),
             ),
-            self.tl.tree.selection(),
+            self.tl.tree.ttv_selection(),
         )
 
     def test_section(self):
         """Confirm inversion if a section is initally selected."""
-        self.tl.tree.selection_set((1,))
+        self.tl.tree.ttv_selection_set((1,))
         self.click()
         self.assertEqual(
             (
                 (2, 1, 1),
                 (2, 1, 2),
             ),
-            self.tl.tree.selection(),
+            self.tl.tree.ttv_selection(),
         )
 
     def click(self):
@@ -635,7 +635,7 @@ class SelectedCount(Base):
         atform.add_test("bar")
         self.tl.add_test((1,))
         self.tl.add_test((2,))
-        self.tl.tree.selection_set()
+        self.tl.tree.ttv_selection_set()
         self.assert_count(0)
 
     def test_single(self):
@@ -648,7 +648,7 @@ class SelectedCount(Base):
         self.tl.add_test((2,))
         self.tl.add_test((3,))
         self.tl.add_test((4,))
-        self.tl.tree.selection_set((1,))
+        self.tl.tree.ttv_selection_set((1,))
         self.assert_count(1)
 
     def test_multiple(self):
@@ -661,7 +661,7 @@ class SelectedCount(Base):
         self.tl.add_test((2,))
         self.tl.add_test((3,))
         self.tl.add_test((4,))
-        self.tl.tree.selection_set((1,), (2,), (3,))
+        self.tl.tree.ttv_selection_set((1,), (2,), (3,))
         self.assert_count(3)
 
     def test_section(self):
@@ -676,7 +676,7 @@ class SelectedCount(Base):
         self.tl.add_test((1, 2))
         self.tl.add_test((2, 1))
         self.tl.add_test((2, 2))
-        self.tl.tree.selection_set((1,))
+        self.tl.tree.ttv_selection_set((1,))
         self.assert_count(2)
 
     def test_remove(self):
@@ -685,7 +685,7 @@ class SelectedCount(Base):
         atform.add_test("bar")
         self.tl.add_test((1,))
         self.tl.add_test((2,))
-        self.tl.tree.selection_set((1,), (2,))
+        self.tl.tree.ttv_selection_set((1,), (2,))
         self.tl.remove_test((2,))
         self.assert_count(1)
 
