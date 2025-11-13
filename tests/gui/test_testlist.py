@@ -2,13 +2,60 @@
 
 import tkinter as tk
 import unittest
+from unittest.mock import patch
 
 import atform
 from .. import utils
 
 
+@patch("atform.gui.testlist.TupleTreeview.focus")
+@patch("atform.gui.preview.show")
+class Preview(unittest.TestCase):
+    """Tests for sending tests for preview when clicked."""
+
+    def setUp(self):
+        utils.reset()
+        self.tl = atform.gui.testlist.TestList(None)
+        atform.set_id_depth(3)
+        atform.add_test("foo")
+        self.id = utils.get_test_content().id
+        self.tl.add_test(self.id)
+
+    def test_click_test(self, mock_show, mock_focus):
+        """Confirm preview when a test item is clicked."""
+        mock_focus.return_value = str(self.id)
+        self.click_item(self.id)
+        mock_show.assert_called_once()
+
+    def test_section_focus(self, mock_show, mock_focus):
+        """Confirm no preview when clicking a test but focus() returns a section.
+
+        See testlist.TestList._preview() comment for details why this
+        unit test exists.
+        """
+        mock_focus.return_value = str(self.id[:-1])
+        self.click_item(self.id)
+        mock_show.assert_not_called()
+
+    def test_click_section(self, mock_show, mock_focus):
+        """Confirm no preview when a section item is clicked."""
+        target = self.id[:-1]
+        mock_focus.return_value = str(target)
+        self.click_item(target)
+        mock_show.assert_not_called()
+
+    def click_item(self, item):
+        """Simulates clicking on a given tree item."""
+        self.tl.tree.ttv_see(item)  # Target must be visible to be clicked.
+        x, y, w, h = self.tl.tree.bbox(str(item))
+        click_x = x + (w // 2)
+        click_y = y + (h // 2)
+        self.tl.tree.event_generate("<Button-1>", x=click_x, y=click_y)
+        self.tl.tree.event_generate("<ButtonRelease-1>", x=click_x, y=click_y)
+
+
 class Base(unittest.TestCase):
-    """Base class for all test cases."""
+    """Base class for various test cases."""
 
     def setUp(self):
         utils.reset()

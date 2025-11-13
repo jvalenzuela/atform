@@ -112,7 +112,14 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     def _preview(self, _event):
         """Event handler for clicks on a test item to dispatch a preview."""
         tid = self.tree.ttv_focus()
-        preview.show(tid)
+
+        # Even though this callback is bound to test items only, it is
+        # possible for Treeview.focus() to return a section or subsection
+        # when simultaneously selecting a section and a test. The preview
+        # dispatch is therefore filtered for test IDs only to prevent
+        # non-test IDs from being previewed.
+        if len(tid) == len(state.current_id):
+            preview.show(tid)
 
     @property
     def selected_tests(self):
