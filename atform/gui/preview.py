@@ -67,7 +67,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
     def _configure_tags(self):
         """Creates formatting tags used in the text widget."""
-        font = tkfont.Font(weight=tkfont.BOLD, underline=1)
+        font = tkfont.Font(weight=tkfont.BOLD, underline=tk.TRUE)
         self.text.tag_config("section", font=font)
 
     def show(self, tid):
