@@ -30,7 +30,7 @@ Installation
 requisite Python version listed below is available, including
 Windows, Linux, and macOS.
 
-The Python programming language, within version 3.9 to 3.13 inclusive,
+The Python programming language, within version 3.9 to 3.14 inclusive,
 must be installed,
 and is available from `<https://python.org>`_. Make sure Python is
 added to the system path; the relevant Windows installation option

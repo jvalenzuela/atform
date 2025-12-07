@@ -19,7 +19,7 @@ dynamic = ["version"]
 # doc/source/intro.rst, .github/workflow/release.yaml, and the classifiers list
 # below need to match this.
 # Range of versions is equivalent to those supported by Reportlab.
-requires-python = ">= 3.9, < 3.14"
+requires-python = ">= 3.9, < 3.15"
 
 dependencies = [
     "reportlab>=4.2.0",
@@ -38,6 +38,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Testing :: Acceptance",
     "Topic :: Text Processing :: Markup",
 ]
