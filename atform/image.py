@@ -31,10 +31,6 @@ MAX_LOGO_SIZE = ImageSize(2.0, 1.5)
 FORMATS = ["JPEG", "PNG"]
 
 
-# Alias so unit tests can patch open() just for this module.
-OPEN = open
-
-
 @functools.cache
 def load(path, max_size):
     """Loads and validates an image file."""
@@ -46,7 +42,7 @@ def load(path, max_size):
         )
 
     try:
-        with OPEN(path, "rb") as f:
+        with open(path, "rb") as f:
             img_hash = calc_hash(f)
             image = PIL.Image.open(f, formats=FORMATS)
 

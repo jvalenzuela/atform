@@ -21,12 +21,6 @@ from . import version
 FILENAME = "atform.cache"
 
 
-# This alias of the open() builtin supports unit tests, allowing this
-# attribute to be patched without affecting open() for other modules,
-# e.g., establishing IPC for concurrent builds.
-OPEN = open
-
-
 # Current data, initially loaded from the cache file, and updated with
 # content during the build process.
 #
@@ -38,7 +32,7 @@ def load():
     """Reads the cache file."""
     global data  # pylint: disable=global-statement
     try:
-        with OPEN(FILENAME, "rb") as f:
+        with open(FILENAME, "rb") as f:
             from_file = pickle.load(f)
 
         # Only accept cache data from matching module versions.
@@ -62,7 +56,7 @@ def save():
     data["tests"] = state.tests
 
     try:
-        f = OPEN(FILENAME, "wb")
+        f = open(FILENAME, "wb")
     except OSError as e:
         print(f"Error writing cache file: {e}")
     else:

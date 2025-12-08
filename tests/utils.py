@@ -108,7 +108,7 @@ def mock_image(fmt, size, include_dpi=True):
     buf.seek(0)
 
     # Path open() in the image module to return the in-memory image.
-    open_patch = patch("atform.image.OPEN", return_value=buf)
+    open_patch = patch("atform.image.open", return_value=buf)
     open_patch.start()
 
     try:

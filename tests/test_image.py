@@ -26,7 +26,7 @@ class ErrorBase:
         """Confirm exception for a file that is not an image format."""
         with self.assertRaises(atform.error.UserScriptError):
             buf = io.BytesIO(b"foo bar")
-            with patch("atform.image.OPEN", return_value=buf):
+            with patch("atform.image.open", return_value=buf):
                 self.call("")
 
     def test_unsupported_format(self):

@@ -19,14 +19,14 @@ class Load(unittest.TestCase):
 
     def test_no_file(self):
         """Confirm default data when no cache file exists."""
-        with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
+        with patch("atform.cache.open", new_callable=mock_open) as mock:
             mock.side_effect = OSError
             atform.cache.load()
         self.assertEqual(atform.cache.data, {})
 
     def test_invalid_file(self):
         """Confirm default data when an invalid file exists."""
-        with patch("atform.cache.OPEN", mock_open(read_data=b"spam")):
+        with patch("atform.cache.open", mock_open(read_data=b"spam")):
             atform.cache.load()
         self.assertEqual(atform.cache.data, {})
 
@@ -38,7 +38,7 @@ class Load(unittest.TestCase):
                 "data": {(1,): "foo"},
             }
         )
-        with patch("atform.cache.OPEN", mock_open(read_data=cache)):
+        with patch("atform.cache.open", mock_open(read_data=cache)):
             atform.cache.load()
         self.assertEqual(atform.cache.data, {})
 
@@ -61,7 +61,7 @@ class Save(unittest.TestCase):
     def test_version(self):
         """Confirm saved data includes the module version."""
         atform.cache.data = {}
-        with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
+        with patch("atform.cache.open", new_callable=mock_open) as mock:
             atform.cache.save()
         saved = self.get_saved_data(mock)
         self.assertEqual(saved["version"], atform.version.VERSION)
@@ -70,12 +70,12 @@ class Save(unittest.TestCase):
     def test_vcs(self):
         """Confirm saved data includes the VCS version."""
         atform.cache.data = {}
-        with patch("atform.cache.OPEN", new_callable=mock_open) as mock:
+        with patch("atform.cache.open", new_callable=mock_open) as mock:
             atform.cache.save()
         saved = self.get_saved_data(mock)
         self.assertEqual(saved["vcs"], "foo")
 
-    @patch("atform.cache.OPEN", new_callable=mock_open)
+    @patch("atform.cache.open", new_callable=mock_open)
     def test_error(self, mock):
         """Confirm a message is printed if saving encounters an error."""
         atform.cache.data = {}
@@ -97,7 +97,7 @@ class Save(unittest.TestCase):
                 "page counts": {(42,): 99},
             }
         )
-        with patch("atform.cache.OPEN", mock_open(read_data=prev)) as mock:
+        with patch("atform.cache.open", mock_open(read_data=prev)) as mock:
             atform.generate()
 
         saved = self.get_saved_data(mock)
@@ -121,7 +121,7 @@ class Save(unittest.TestCase):
                 },
             }
         )
-        with patch("atform.cache.OPEN", mock_open(read_data=stale)) as mock:
+        with patch("atform.cache.open", mock_open(read_data=stale)) as mock:
             atform.generate()
 
         saved = self.get_saved_data(mock)
