@@ -24,10 +24,10 @@ class Load(unittest.TestCase):
 
     def test_no_file(self):
         """Confirm default data is returned if no lock file exists."""
-        with patch("atform.idlock.OPEN_LOCK_FILE", side_effect=FileNotFoundError):
+        with patch("atform.idlock.open", side_effect=FileNotFoundError):
             self.assertEqual({}, atform.idlock.load())
 
-    @patch("atform.idlock.OPEN_LOCK_FILE", mock_open(read_data="VERSION,foo\n1,spam"))
+    @patch("atform.idlock.open", mock_open(read_data="VERSION,foo\n1,spam"))
     def test_version_mismatch(self):
         """Confirm exception if lock file version doesn't match."""
         with self.assertRaises(atform.idlock.LockFileWarning):
@@ -38,7 +38,7 @@ class Load(unittest.TestCase):
         lock_data = f"""VERSION,{atform.version.VERSION}
         42.5,spam
         99.7,eggs"""
-        with patch("atform.idlock.OPEN_LOCK_FILE", mock_open(read_data=lock_data)):
+        with patch("atform.idlock.open", mock_open(read_data=lock_data)):
             self.assertEqual({(42, 5): "spam", (99, 7): "eggs"}, atform.idlock.load())
 
 
@@ -61,7 +61,7 @@ class Save(unittest.TestCase):
     def test_version(self, *args):
         """Confirm the package version is included in the saved data."""
         atform.add_test("t1")
-        with patch("atform.idlock.OPEN_LOCK_FILE", mock_open()) as mock:
+        with patch("atform.idlock.open", mock_open()) as mock:
             atform.idlock.verify()
         rows = self.get_csv_data(mock)
         self.assertEqual(["VERSION", atform.version.VERSION], rows[0])
@@ -72,7 +72,7 @@ class Save(unittest.TestCase):
         for i in range(1, 50):
             atform.add_test(f"t{i}")
 
-        with patch("atform.idlock.OPEN_LOCK_FILE", mock_open()) as mock:
+        with patch("atform.idlock.open", mock_open()) as mock:
             atform.idlock.verify()
         rows = self.get_csv_data(mock)
 
@@ -80,7 +80,7 @@ class Save(unittest.TestCase):
             self.assertEqual([str(i), f"t{i}"], rows[i])
 
     @patch("atform.idlock.load", return_value={(1,): "t1"})
-    @patch("atform.idlock.OPEN_LOCK_FILE", new_callable=mock_open)
+    @patch("atform.idlock.open", new_callable=mock_open)
     def test_no_overwrite_current(self, mock_lock_open, *args):
         """Confirm the lock file is not overwritten when the lock file content is current."""
         pathlib.Path(atform.idlock.FILENAME).touch()
@@ -90,7 +90,7 @@ class Save(unittest.TestCase):
         rm_lock_file()
 
     @patch("atform.idlock.load", return_value={})
-    @patch("atform.idlock.OPEN_LOCK_FILE", new_callable=mock_open)
+    @patch("atform.idlock.open", new_callable=mock_open)
     def test_no_overwrite_stale(self, mock_lock_open, *args):
         """Confirm the lock file is not overwritten and an exception if the lock file content is stale."""
         pathlib.Path(atform.idlock.FILENAME).touch()
@@ -107,7 +107,7 @@ class Save(unittest.TestCase):
         """Confirm all tests are saved regardless of CLI ID filtering."""
         atform.add_test("t1")
         atform.add_test("t2")  # Excluded by ID filter.
-        with patch("atform.idlock.OPEN_LOCK_FILE", mock_open()) as mock:
+        with patch("atform.idlock.open", mock_open()) as mock:
             atform.generate()
         rows = self.get_csv_data(mock)
         self.assertEqual(["1", "t1"], rows[1])
@@ -202,7 +202,7 @@ class AllowedChanges(unittest.TestCase):
         utils.reset()
         rm_lock_file()
 
-    @patch("atform.idlock.OPEN_LOCK_FILE", mock_open())
+    @patch("atform.idlock.open", mock_open())
     @patch("atform.idlock.load", return_value={(1,): "t1"})
     def test_add(self, *args):
         """Confirm adding a test that does not shift previous tests."""
@@ -211,7 +211,7 @@ class AllowedChanges(unittest.TestCase):
 
         atform.idlock.verify()
 
-    @patch("atform.idlock.OPEN_LOCK_FILE", mock_open())
+    @patch("atform.idlock.open", mock_open())
     @patch("atform.idlock.load", return_value={(1,): "t1", (2,): "t2"})
     def test_remove(self, *args):
         """Confirm removing a test that does not shift previous tests."""

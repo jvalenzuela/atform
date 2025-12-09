@@ -89,9 +89,9 @@ class ChangedTest:
         return self.new_id < other.new_id
 
 
-# Capture common arguments to open() when used for CSV operations, and also
-# provides an attribute for unit tests to patch open() only in this module.
-OPEN_LOCK_FILE = functools.partial(open, FILENAME, newline="", encoding="utf8")
+def open_lock_file(*args, **kwargs):
+    """Opens the lock file."""
+    return open(FILENAME, *args, newline="", encoding="utf8", **kwargs)
 
 
 def verify():
@@ -112,7 +112,7 @@ def load():
     tests = {}
     check_version = True
     try:
-        with OPEN_LOCK_FILE() as f:
+        with open_lock_file() as f:
             reader = csv.reader(f)
             for row in reader:
                 # Verify matching module version in the first row.
@@ -225,7 +225,7 @@ def save(current_tests, old_tests):
         return
 
     try:
-        with OPEN_LOCK_FILE("w") as f:
+        with open_lock_file("w") as f:
             writer = csv.writer(f)
             writer.writerow(["VERSION", version.VERSION])
             rows = [
