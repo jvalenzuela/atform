@@ -7,8 +7,8 @@ is loaded each run and compared to the current tests.
 
 import csv
 from dataclasses import dataclass
-import functools
 import itertools
+import operator
 import os
 import textwrap
 
@@ -68,7 +68,6 @@ class LockFileWarning(Exception):
 
 
 @dataclass(repr=False)
-@functools.total_ordering
 class ChangedTest:
     """Storage for a test that has changed relative to the lock file."""
 
@@ -81,12 +80,6 @@ class ChangedTest:
         old_id_str = id_.to_string(self.old_id)
         new_id_str = id_.to_string(self.new_id)
         return f"{old_id_str} {self.old_title} -> {new_id_str} {self.new_title}"
-
-    def __eq__(self, other):
-        return self.new_id == other.new_id
-
-    def __lt__(self, other):
-        return self.new_id < other.new_id
 
 
 def open_lock_file(*args, **kwargs):
@@ -156,7 +149,7 @@ def compare(current_tests, old_tests):
     diffs = check_titles(old_tests)
     diffs.extend(check_ids(current_tests, old_tests))
     if diffs:
-        diffs.sort()
+        diffs.sort(key=operator.attrgetter("new_id"))
         raise ChangedTestError(diffs)
 
 
