@@ -12,7 +12,7 @@ preventing garbage collection, and should otherwise have no effect.
 """
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import scrolledtext, ttk
 
 
 def new(cls, *_args, **_kwargs):
@@ -79,7 +79,7 @@ class Scrollbar(tk.Scrollbar):
 
 
 @add_instance_storage
-class ScrolledText(tk.scrolledtext.ScrolledText):
+class ScrolledText(scrolledtext.ScrolledText):
     pass
 
 
