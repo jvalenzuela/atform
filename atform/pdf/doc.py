@@ -29,28 +29,21 @@ from . import (
 from .textstyle import stylesheet
 
 
-# Common content used across all tests; initialized by init() when the
+# Common content used across all tests; populated by init() when the
 # build worker process is started.
-IMAGES = None
-VERSION = None
+init_data = {}
 
 
 class BuildError(Exception):
     """Exception chained from a PDF generation failure."""
 
 
-def init(images, version):
+def init(data):
     """Initalizes the build process with common content used by all tests.
 
-    This is the initializer function given to ProcessPoolExecutor. Pylint
-    global-statement is disabled because the content held by these
-    constants is not available when the module is imported, and must be
-    set when the build worker process is started.
+    This is the initializer function given to ProcessPoolExecutor.
     """
-    global IMAGES  # pylint: disable=global-statement
-    global VERSION  # pylint: disable=global-statement
-    IMAGES = images
-    VERSION = version
+    init_data.update(data)
 
 
 def build(test, cached_page_count, path):
@@ -131,7 +124,7 @@ class TestDocument:
 
     def _on_every_page(self, canvas, doc):
         """Draws common content placed on every page."""
-        if VERSION == "draft":
+        if init_data["version"] == "draft":
             self._draftmark(canvas, doc)
 
         self._footer(canvas, doc)
@@ -175,9 +168,10 @@ class TestDocument:
         canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
 
         # Add version information if available.
-        if VERSION and (VERSION != "draft"):
+        ver = init_data["version"]
+        if ver and (ver != "draft"):
             x = doc.pagesize[0] - layout.RIGHT_MARGIN
-            version_text = f"Document Version: {VERSION}"
+            version_text = f"Document Version: {ver}"
             canvas.drawRightString(x, baseline, version_text)
 
     def _set_canvas_text_style(self, canvas, style):
@@ -191,13 +185,13 @@ class TestDocument:
         than the header and footer.
         """
         flowables = [
-            title.make_title(test, IMAGES),
+            title.make_title(test, init_data["images"]),
             objective.make_objective(test.objective),
             refs.make_references(test.references),
             environ.make_environment(test.fields),
             equip.make_equipment(test.equipment),
             precondition.make_preconditions(test.preconditions),
-            procedure.make_procedure(test.procedure, IMAGES),
+            procedure.make_procedure(test.procedure, init_data["images"]),
             notes.make_notes(),
             approval.make_approval(test),
         ]

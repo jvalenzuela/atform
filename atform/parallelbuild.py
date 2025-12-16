@@ -31,7 +31,7 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
     def __init__(self):
         super().__init__(
             initializer=pdf.init,
-            initargs=(state.images, vcs.version),
+            initargs=self._worker_init_data,
             max_workers=self.MAX_WORKERS,
         )
 
@@ -42,6 +42,15 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
             cache.data["page counts"] = {}
 
         self.page_counts = cache.data["page counts"]
+
+    @property
+    def _worker_init_data(self):
+        """Assembles arguments for the worker initializer."""
+        data = {
+            "images": state.images,
+            "version": vcs.version,
+        }
+        return (data,)
 
     def submit_test(self, tid, root, folder_depth):
         """Schedules a test for building."""
