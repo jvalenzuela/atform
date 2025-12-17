@@ -3,6 +3,8 @@ This module implements building output PDFs in parallel via multiprocessing.
 """
 
 import concurrent.futures
+import datetime
+import getpass
 import os
 
 from . import cache
@@ -48,8 +50,22 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
         """Assembles arguments for the worker initializer."""
         data = {
             "images": state.images,
+            "timestamp": datetime.datetime.today(),
             "version": vcs.version,
         }
+
+        try:
+            user = getpass.getuser()
+
+        # Broad exception class used because documentation states Python
+        # versions < 3.13 may raise various undocumented exceptions besides
+        # OSError.
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass
+
+        else:
+            data["user"] = user
+
         return (data,)
 
     def submit_test(self, tid, root, folder_depth):

@@ -14,6 +14,7 @@ from reportlab.platypus import (
 )
 
 from .. import id as id_
+from .. import version
 from . import (
     approval,
     environ,
@@ -128,6 +129,7 @@ class TestDocument:
             self._draftmark(canvas, doc)
 
         self._footer(canvas, doc)
+        self._slug(canvas, doc)
 
     def _header(self, canvas, doc):
         """Draws the page header."""
@@ -173,6 +175,35 @@ class TestDocument:
             x = doc.pagesize[0] - layout.RIGHT_MARGIN
             version_text = f"Document Version: {ver}"
             canvas.drawRightString(x, baseline, version_text)
+
+    def _slug(self, canvas, _doc):
+        """Draws the vertical text in the bottom left corner."""
+        style_name = "SlugText"
+        font_size = stylesheet[style_name].fontSize
+        x = font_size * 0.5
+        y = font_size * -1.2
+        canvas.saveState()
+        self._set_canvas_text_style(canvas, style_name)
+        canvas.rotate(90)
+        canvas.drawString(x, y, self._slug_text)
+        canvas.restoreState()
+
+    @property
+    def _slug_text(self):
+        """Assembles the slug string."""
+        text = [f"Generated with atform v{version.VERSION}"]
+
+        try:
+            user = init_data["user"]
+        except KeyError:
+            pass
+        else:
+            text.append(f"by {user}")
+
+        timestamp = init_data["timestamp"].strftime("%I:%M %p %Y/%m/%d")
+        text.append(f"at {timestamp}.")
+
+        return " ".join(text)
 
     def _set_canvas_text_style(self, canvas, style):
         """Sets the current canvas font to a given style."""

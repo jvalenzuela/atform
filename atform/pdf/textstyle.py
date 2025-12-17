@@ -155,3 +155,12 @@ stylesheet.add(
         alignment=TA_JUSTIFY,
     )
 )
+
+
+stylesheet.add(
+    ParagraphStyle(
+        name="SlugText",
+        fontName="Helvetica",
+        fontSize=toLength("6 pt"),
+    )
+)

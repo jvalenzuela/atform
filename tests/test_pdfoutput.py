@@ -5,6 +5,7 @@
 from tests import utils
 import atform
 import functools
+import getpass
 import os
 import string
 import unittest
@@ -685,3 +686,27 @@ class CachePageCount(Base, unittest.TestCase):
     def test_correct(self, mock):
         """Confirm correct page count(3) when the cached page count is right."""
         self.make_test(**self.TEST_ARGS)
+
+
+@patch("getpass.getuser")
+class Slug(Base, unittest.TestCase):
+    """Tests for the slug text."""
+
+    def test_with_user(self, mock_getuser):
+        """Confirm content and position when a user name is available."""
+        user = "FooBar"
+        mock_getuser.return_value = user
+        procedure = [
+            f"Confirm slug lists atform version {atform.version.VERSION}.",
+            f"Confirm slug lists user {user}.",
+            "Confirm slug contains current time stamp.",
+            "Confirm slug is present on all pages.",
+            "No further relevant steps.",
+        ]
+        procedure.extend(["Dummy step"] * 50)  # Filler to create 3 pages.
+        self.make_test(procedure=procedure)
+
+    def test_no_user(self, mock_getuser):
+        """Confirm slug text has no user name."""
+        mock_getuser.side_effect = OSError
+        self.make_test()
