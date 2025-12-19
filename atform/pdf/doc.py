@@ -182,11 +182,10 @@ class TestDocument:
         font_size = stylesheet[style_name].fontSize
         x = font_size * 0.5
         y = font_size * -1.2
-        canvas.saveState()
-        self._set_canvas_text_style(canvas, style_name)
-        canvas.rotate(90)
-        canvas.drawString(x, y, self._slug_text)
-        canvas.restoreState()
+        with CanvasState(canvas):
+            self._set_canvas_text_style(canvas, style_name)
+            canvas.rotate(90)
+            canvas.drawString(x, y, self._slug_text)
 
     @property
     def _slug_text(self):
@@ -233,21 +232,20 @@ class TestDocument:
 
     def _draftmark(self, canvas, doc):
         """Creates a draft watermark."""
-        canvas.saveState()
-        self._set_canvas_text_style(canvas, "Draftmark")
+        with CanvasState(canvas):
+            self._set_canvas_text_style(canvas, "Draftmark")
 
-        # Translate origin to center of page.
-        canvas.translate(doc.pagesize[0] / 2, doc.pagesize[1] / 2)
+            # Translate origin to center of page.
+            canvas.translate(doc.pagesize[0] / 2, doc.pagesize[1] / 2)
 
-        canvas.rotate(45)
-        canvas.setFillColor(layout.DRAFTMARK_COLOR)
+            canvas.rotate(45)
+            canvas.setFillColor(layout.DRAFTMARK_COLOR)
 
-        # Offset y coordinate by half the font size because the text
-        # is anchored at its baseline, not the midpoint.
-        y = stylesheet["Draftmark"].fontSize / -2
+            # Offset y coordinate by half the font size because the text
+            # is anchored at its baseline, not the midpoint.
+            y = stylesheet["Draftmark"].fontSize / -2
 
-        canvas.drawCentredString(0, y, "DRAFT")
-        canvas.restoreState()
+            canvas.drawCentredString(0, y, "DRAFT")
 
 
 class PageCount(IndexingFlowable):
@@ -276,3 +274,16 @@ class PageCount(IndexingFlowable):
 
     def draw(self):
         """This flowable doesn't draw anything."""
+
+
+class CanvasState:
+    """Context manager for saving and restoring the canvas state."""
+
+    def __init__(self, canvas):
+        self.canvas = canvas
+
+    def __enter__(self):
+        self.canvas.saveState()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.canvas.restoreState()
