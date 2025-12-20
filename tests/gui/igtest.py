@@ -7,6 +7,7 @@ launches the GUI for manual verification.
 
 import concurrent.futures
 import functools
+import os
 import queue
 import tkinter as tk
 import traceback
@@ -340,9 +341,42 @@ class Preview(InteractiveGuiTestCase):
                         ("A Long Title", 3, "Bar"),
                     ],
                 },
+                """
+                The next steps should all show a red circle inscribed by a
+                red rectangle.
+                """,
+                {
+                    "text": "Confirm a full size image fits in the window.",
+                    "image": self.image_path("full.jpg"),
+                },
+                {
+                    "text": "Confirm a full height image.",
+                    "image": self.image_path("height.jpg"),
+                },
+                {
+                    "text": "Confirm a full width image fits in the window.",
+                    "image": self.image_path("width.jpg"),
+                },
+                {
+                    "text": "Confirm a small image displays correctly.",
+                    "image": self.image_path("small.jpg"),
+                },
+                {
+                    "text": "Confirm a PNG image displays correctly.",
+                    "image": self.image_path("step.png"),
+                },
+                {
+                    "text": "Confirm the field is below the image.",
+                    "image": self.image_path("small.jpg"),
+                    "fields": [("field", 3)],
+                },
             ],
         )
         self.start_preview()
+
+    def image_path(self, filename):
+        """Generates a path to a test procedure step image."""
+        return os.path.join("tests", "images", "procedure", filename)
 
     def test_location(self):
         """Confirm location specified in objective."""

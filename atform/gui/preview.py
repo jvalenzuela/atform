@@ -1,9 +1,12 @@
 """Test document previewer."""
 
 import functools
+import io
 import re
 import tkinter as tk
 import tkinter.font as tkfont
+
+from PIL import Image, ImageTk
 
 from .. import state
 from ..pdf import paragraph
@@ -40,6 +43,11 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     # general recommendations for readability.
     TEXT_WIDTH = 60
 
+    # Maximim horizontal size of an image relative to the width of the
+    # Tk text widget. Images larger than this will be scaled down to
+    # this width.
+    MAX_IMAGE_WIDTH_FACTOR = 0.9
+
     def __init__(self, parent):
         super().__init__(parent, text="Preview")
         self.title = self._create_title()
@@ -47,6 +55,12 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         self.src_location = Location(self)
         self.src_location.pack(anchor=tk.NW)
         self._configure_tags()
+
+        # Cache of PIL ImageTk objects keyed by original image hash.
+        # Serves to prevent ImageTk objects from being garbage collected
+        # because Tkinter does not otherwise retain a reference when these
+        # are added to the text widget.
+        self.images = {}
 
         # Store this instance so the previewer is accessible at module level.
         Preview.instance = self
@@ -146,8 +160,34 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
             text = normalize_text(step.text)
             self._append_text(f"{i}. {text}")
 
+            if step.image_hash:
+                self._step_image(step.image_hash)
+
             for f in step.fields:
                 self._append_text(f"\n{f.title} ___ {f.suffix}")
+
+    def _step_image(self, img_hash):
+        """Adds a procedure step image to the text display."""
+        try:
+            image = self.images[img_hash]
+        except KeyError:
+            image = self._convert_image(img_hash)
+            self.images[img_hash] = image
+        self._append_text("\n")
+        self.text.image_create(tk.END, image=image)
+
+    def _convert_image(self, img_hash):
+        """Converts a raw image into a PIL ImageTk object."""
+        raw = state.images[img_hash]
+        buf = io.BytesIO(raw.data)
+        image = Image.open(buf)
+        max_width = self.text.winfo_reqwidth() * self.MAX_IMAGE_WIDTH_FACTOR
+        if image.width > max_width:
+            scale = max_width / image.width
+            new_width = int(image.width * scale)
+            new_height = int(image.height * scale)
+            image = image.resize((new_width, new_height))
+        return ImageTk.PhotoImage(image)
 
     def _bullet_list(self, items):
         """Adds a bullet list to the text display."""

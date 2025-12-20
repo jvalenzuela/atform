@@ -72,5 +72,5 @@ section_titles = {}
 signatures = []
 
 
-# Mapping of image hash to ReportLab Image object.
+# Mapping of image hash to an object containing the image's data.
 images = {}

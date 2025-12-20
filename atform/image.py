@@ -11,8 +11,6 @@ import hashlib
 import io
 
 import PIL
-from reportlab.lib.units import inch
-from reportlab.platypus import Image
 
 from . import error
 from . import misc
@@ -21,6 +19,10 @@ from . import state
 
 # Data type for storing two-dimensional sizes.
 ImageSize = collections.namedtuple("ImageSize", ["width", "height"])
+
+
+# Image data as stored in the global state dictionary.
+Image = collections.namedtuple("Image", ["size", "data"])
 
 
 # Largest allowable logo image size, in inches.
@@ -87,7 +89,7 @@ def load(path, max_size):
             """,
         )
 
-    state.images[img_hash] = to_rl_image(image, size, dpi)
+    state.images[img_hash] = convert_image(image, size, dpi)
     return img_hash
 
 
@@ -98,8 +100,8 @@ def calc_hash(file):
     return h.digest()
 
 
-def to_rl_image(image, size, dpi):
-    """Converts a PIL Image to a ReportLab Image object."""
+def convert_image(image, size, dpi):
+    """Converts a PIL Image into an Image named tuple."""
     buf = io.BytesIO()
     args = {
         "format": image.format,
@@ -108,11 +110,7 @@ def to_rl_image(image, size, dpi):
     if image.format == "JPEG":
         args["quality"] = "keep"
     image.save(buf, **args)
-    return Image(
-        buf,
-        width=size.width * inch,
-        height=size.height * inch,
-    )
+    return Image(size=size, data=buf.getvalue())
 
 
 ################################################################################
