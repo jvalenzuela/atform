@@ -337,7 +337,7 @@ class MatchAll(unittest.TestCase):
                 "Preconditions",
                 "Procedure",
             ],
-            "all",
+            atform.gui.search.Grouping.ALL,
             False,
         )
         self.assertEqual(expected, matches)
@@ -370,7 +370,12 @@ class MatchAny(unittest.TestCase):
     def assert_match(self, text, expected):
         """Confirms text was matched in the correct tests."""
         tcs = search.TestContentSearch()
-        matches = tcs.search(text, ["Title"], "any", False)
+        matches = tcs.search(
+            text,
+            ["Title"],
+            atform.gui.search.Grouping.ANY,
+            False,
+        )
         self.assertEqual(expected, matches)
 
 

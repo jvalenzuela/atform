@@ -4,6 +4,8 @@ Searching is done with the whoosh module. Content from all tests is
 indexed upon initialization, then searches can be dispatched from the GUI.
 """
 
+import enum
+
 import whoosh.analysis  # type: ignore[import-untyped]
 import whoosh.fields  # type: ignore[import-untyped]
 import whoosh.filedb.filestore  # type: ignore[import-untyped]
@@ -55,6 +57,17 @@ INDEXED_FIELDS.update({f"{sec}_casefold": CASEFOLD_FIELD for sec in SECTIONS})
 SCHEMA = whoosh.fields.Schema(id=whoosh.fields.STORED, **INDEXED_FIELDS)
 
 
+class Grouping(enum.IntEnum):
+    """Match any/all selections.
+
+    This is an integer enumeration because the selection is stored in a
+    Tkinter IntVar.
+    """
+
+    ANY = enum.auto()
+    ALL = enum.auto()
+
+
 class TestContentSearch:
     """
     This object houses the search index of all test content and provides
@@ -64,12 +77,6 @@ class TestContentSearch:
     # This object is implemented as class as it requires internal state,
     # namely the index, and requires only a single public method.
     # pylint: disable=too-few-public-methods
-
-    # Match any/all selection mapping.
-    COMBINE_GROUP = {
-        "all": whoosh.qparser.AndGroup,
-        "any": whoosh.qparser.OrGroup,
-    }
 
     def __init__(self):
         storage = whoosh.filedb.filestore.RamStorage()
@@ -95,10 +102,14 @@ class TestContentSearch:
             field_suffix = "verbatim"
         else:
             field_suffix = "casefold"
+        if combine == Grouping.ALL:
+            group = whoosh.qparser.AndGroup
+        else:
+            group = whoosh.qparser.OrGroup
         parser = whoosh.qparser.MultifieldParser(
             [f"{name}_{field_suffix}" for name in sections],
             self.index.schema,
-            group=self.COMBINE_GROUP[combine],
+            group=group,
         )
         query = parser.parse(text)
         with self.index.searcher() as searcher:

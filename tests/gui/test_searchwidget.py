@@ -4,7 +4,7 @@ import string
 import unittest
 from unittest.mock import patch
 
-from atform.gui import searchwidget
+from atform.gui import search, searchwidget
 from .. import utils
 
 
@@ -73,7 +73,11 @@ class MatchAnyAll(unittest.TestCase):
             click_add_button(parent)
             with self.subTest(select=select):
                 mock_search().search.assert_called_once()
-                self.assertEqual(select, mock_search().search.call_args.args[2])
+                if select == "all":
+                    expected = search.Grouping.ALL
+                else:
+                    expected = search.Grouping.ANY
+                self.assertEqual(expected, mock_search().search.call_args.args[2])
 
 
 @patch("atform.gui.searchwidget.buildlist.add", autospec=True)

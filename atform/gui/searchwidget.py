@@ -67,13 +67,13 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         """Creates the any/all combination selectors."""
         frame = tkwidget.Frame(self)
         frame.pack(anchor=tk.W)
-        var = tkwidget.StringVar()
+        var = tkwidget.IntVar()
 
         and_button = tkwidget.Radiobutton(
             frame,
             text="Match all",
             variable=var,
-            value="all",
+            value=search.Grouping.ALL,
         )
         and_button.pack(side=tk.LEFT)
 
@@ -81,11 +81,11 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             frame,
             text="Match any",
             variable=var,
-            value="any",
+            value=search.Grouping.ANY,
         )
         or_button.pack(side=tk.LEFT, padx=common.LARGE_PAD)
 
-        var.set("all")  # Set initial selection.
+        var.set(search.Grouping.ALL)  # Set initial selection.
         return var
 
     def _create_add_button(self):
