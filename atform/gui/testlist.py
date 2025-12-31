@@ -28,7 +28,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 
     def _add_tree(self):
         """Creates the tree view widget."""
-        frame = tk.Frame(self)
+        frame = tkwidget.Frame(self)
         frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.TRUE)
         self.tree = TupleTreeview(
             frame,
@@ -317,7 +317,7 @@ class Counts(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         label.grid(row=row, column=0, sticky=tk.E)
 
         var = tkwidget.IntVar()
-        value = tk.Label(self, textvariable=var)
+        value = tkwidget.Label(self, textvariable=var)
         value.grid(row=row, column=1, sticky=tk.W)
 
         return var
