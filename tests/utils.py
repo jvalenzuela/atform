@@ -152,10 +152,9 @@ def click_button(parent, text):
 def set_checkbox(parent, text, state):
     """Sets the state of a Tk checkbox widget."""
     checkbox = find_widget_by_text(parent, text)
-    if state:
-        checkbox.select()
-    else:
-        checkbox.deselect()
+    current = "selected" in checkbox.state()
+    if state != current:
+        checkbox.invoke()
 
 
 def set_entry_text(parent, text):
@@ -163,7 +162,7 @@ def set_entry_text(parent, text):
 
     Assumes only one Entry widget within the given parent.
     """
-    entry = find_widget_by_class(parent, "Entry")
+    entry = find_widget_by_class(parent, "TEntry")
     entry.delete(0, tk.END)
     entry.insert(tk.END, text)
 
