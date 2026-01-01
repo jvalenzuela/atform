@@ -80,7 +80,7 @@ class Path(unittest.TestCase):
         atform.gui.buildlist.BuildList(None, "spam", 0)
         atform.gui.buildlist.add({(1,)})
         self.entry = utils.find_widget_by_class(
-            atform.gui.buildlist.BuildList.instance, "Entry"
+            atform.gui.buildlist.BuildList.instance, "TEntry"
         )
 
     def test_initialize(self):
@@ -133,7 +133,7 @@ class FolderDepth(unittest.TestCase):
     def test_readonly(self):
         """Confirm direct entry is prohibited."""
         spin = self.get_widget()
-        self.assertEqual("readonly", spin.cget("state"))
+        self.assertIn("readonly", spin.state())
 
     def test_range_single_level(self):
         """Confirm allowable range when ID depth is one."""
@@ -158,9 +158,9 @@ class FolderDepth(unittest.TestCase):
         atform.gui.buildlist.BuildList(None, "spam", 2)
         atform.gui.buildlist.add({(1, 1, 1)})
 
-        # Click the down button to shift off the default value.
+        # Set to something other than the default value.
         spin = self.get_widget()
-        spin.invoke("buttondown")
+        spin.set(1)
 
         click_build()
         mock_build.assert_called_with({(1, 1, 1)}, "spam", 1)
@@ -169,7 +169,7 @@ class FolderDepth(unittest.TestCase):
         """Finds the spin box widget."""
         return utils.find_widget_by_class(
             atform.gui.buildlist.BuildList.instance,
-            "Spinbox",
+            "TSpinbox",
         )
 
 

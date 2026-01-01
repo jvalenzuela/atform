@@ -53,7 +53,7 @@ class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
             text = "No VCS"
         else:
             text = f"VCS: {vcs.version}"
-        super().__init__(parent, text=text)
+        super().__init__(parent, text=text, anchor=tk.CENTER)
         if vcs.version == "draft":
             self.configure(background=WARNING_BACKGROUND)
 
@@ -63,6 +63,6 @@ class IdLock(tkwidget.Label):  # pylint: disable=too-many-ancestors
 
     def __init__(self, parent):
         status = "ok" if idlock.lockfile_current else "stale"
-        super().__init__(parent, text=f"ID Lock: {status}")
+        super().__init__(parent, text=f"ID Lock: {status}", anchor=tk.CENTER)
         if not idlock.lockfile_current:
             self.configure(background=WARNING_BACKGROUND)

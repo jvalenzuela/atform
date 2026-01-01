@@ -39,22 +39,22 @@ class BooleanVar(tk.BooleanVar):
 
 
 @add_instance_storage
-class Button(tk.Button):
+class Button(ttk.Button):
     pass
 
 
 @add_instance_storage
-class Checkbutton(tk.Checkbutton):
+class Checkbutton(ttk.Checkbutton):
     pass
 
 
 @add_instance_storage
-class Entry(tk.Entry):
+class Entry(ttk.Entry):
     pass
 
 
 @add_instance_storage
-class Frame(tk.Frame):
+class Frame(ttk.Frame):
     pass
 
 
@@ -64,17 +64,17 @@ class IntVar(tk.IntVar):
 
 
 @add_instance_storage
-class Label(tk.Label):
+class Label(ttk.Label):
     pass
 
 
 @add_instance_storage
-class Radiobutton(tk.Radiobutton):
+class Radiobutton(ttk.Radiobutton):
     pass
 
 
 @add_instance_storage
-class Scrollbar(tk.Scrollbar):
+class Scrollbar(ttk.Scrollbar):
     pass
 
 
@@ -84,7 +84,7 @@ class ScrolledText(scrolledtext.ScrolledText):
 
 
 @add_instance_storage
-class Spinbox(tk.Spinbox):
+class Spinbox(ttk.Spinbox):
     pass
 
 
