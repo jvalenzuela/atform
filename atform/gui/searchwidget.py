@@ -73,7 +73,7 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             frame,
             text="Match all",
             variable=var,
-            value=search.Grouping.ALL,
+            value=search.Grouping.ALL.value,
         )
         and_button.pack(side=tk.LEFT)
 
@@ -81,11 +81,11 @@ class Search(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             frame,
             text="Match any",
             variable=var,
-            value=search.Grouping.ANY,
+            value=search.Grouping.ANY.value,
         )
         or_button.pack(side=tk.LEFT, padx=common.LARGE_PAD)
 
-        var.set(search.Grouping.ALL)  # Set initial selection.
+        var.set(search.Grouping.ALL.value)  # Set initial selection.
         return var
 
     def _create_add_button(self):
