@@ -733,3 +733,13 @@ class StatusBar(InteractiveGuiTestCase):
             root=root,
             instruction="Confirm ID Lock indicator shows ok with a normal background.",
         )
+
+    def test_package_version(self):
+        """Verify the status bar displays the correct package version.
+
+        This is done with a complete application window to ensure the
+        version is located at the far right edge.
+        """
+        self.start_gui(
+            instruction=f"Confirm v{atform.version.VERSION} at the right edge.",
+        )

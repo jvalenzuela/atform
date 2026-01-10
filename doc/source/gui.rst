@@ -224,3 +224,11 @@ The :guilabel:`ID Lock` indicator shows the state of the lock file discussed in
 :ref:`idlock`. This indicator will display :literal:`ok` if the existing
 tests are consistent with the lock file, or :literal:`stale` if the lock file
 needs to be updated as described in :ref:`idlock`.
+
+
+Package Version
+^^^^^^^^^^^^^^^
+
+The |project_name| version is displayed at the right end of the status
+bar. This reflects the version of the package installed as described in
+:ref:`install`, and is unrelated to the user script.

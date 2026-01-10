@@ -6,6 +6,7 @@ from . import common
 from .. import idlock
 from . import tkwidget
 from .. import vcs
+from .. import version
 
 
 # Indicator background color conveying a condition that may require attention.
@@ -34,6 +35,8 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             self._add_item(cls)
             self._add_sep()
 
+        self._add_version()
+
     def _add_item(self, item_cls):
         """Appends an indicator widget."""
         item = item_cls(self)
@@ -43,6 +46,11 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         """Appends a vertical separator."""
         sep = tkwidget.Separator(self, orient=tk.VERTICAL)
         sep.pack(side=tk.LEFT, fill=tk.Y)
+
+    def _add_version(self):
+        """Adds the package version identifier."""
+        ver = tkwidget.Label(self, text=f"v{version.VERSION}")
+        ver.pack(side=tk.RIGHT)
 
 
 class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
