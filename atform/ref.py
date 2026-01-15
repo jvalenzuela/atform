@@ -4,6 +4,7 @@ This module implements handling for external references, i.e., setup for
 content passed to the Test.__init__() references parameter.
 """
 
+from . import addtest
 from . import error
 from . import id as id_
 from . import misc
@@ -74,9 +75,9 @@ def get_xref():
 
     # Iterate through all Test instances to populate second-level
     # reference dictionaries and test lists.
-    for tid in sorted(state.tests.keys()):
+    for tid in sorted(addtest.tests.keys()):
         test_id = id_.to_string(tid)
-        for ref in state.tests[tid].references:
+        for ref in addtest.tests[tid].references:
             for item in ref.items:
                 xref[ref.label].setdefault(item, []).append(test_id)
 

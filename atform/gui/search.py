@@ -11,7 +11,7 @@ import whoosh.fields  # type: ignore[import-untyped]
 import whoosh.filedb.filestore  # type: ignore[import-untyped]
 import whoosh.qparser  # type: ignore[import-untyped]
 
-from .. import state
+from .. import addtest
 
 
 class CaseFolder(whoosh.analysis.Filter):
@@ -83,7 +83,7 @@ class TestContentSearch:
         self.index = storage.create_index(SCHEMA)
         writer = self.index.writer()
 
-        for test in state.tests.values():
+        for test in addtest.tests.values():
             fields = index_test(test)
 
             verbatim = {f"{key}_verbatim": value for key, value in fields.items()}

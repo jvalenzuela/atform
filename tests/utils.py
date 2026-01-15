@@ -5,6 +5,7 @@ import atform
 from atform import label
 import collections
 import contextlib
+import copy
 import importlib
 import io
 from PIL import Image
@@ -19,6 +20,23 @@ from unittest.mock import patch
 patch("atform.parallelbuild.Builder.MAX_WORKERS", new=1).start()
 
 
+# Attributes outside the state module that also need to be reverted back
+# to their initial values during reset.
+INIT_ATTRS = [
+    (atform.addtest, "tests"),
+    (atform.cache, "data"),
+    (atform.field, "fields"),
+    (atform.id, "section_titles"),
+    (atform.image, "images"),
+    (atform.vcs, "version"),
+]
+
+
+# Generate a copy of all init attribute values to serve as a template
+# when resetting back to the original state.
+INIT_VALUES = [copy.copy(getattr(*attr)) for attr in INIT_ATTRS]
+
+
 def reset():
     """Resets the atform package back to its initial state.
 
@@ -28,18 +46,20 @@ def reset():
     after a single import.
     """
     importlib.reload(atform.state)
-    atform.cache.data = None
-    atform.vcs.version = None
+
+    # Reset attributes outside the state module.
+    for i, attr in enumerate(INIT_ATTRS):
+        setattr(*attr, copy.copy(INIT_VALUES[i]))
 
     # The image cache needs to be reset separately as it is not stored
-    # in the state module.
+    # as a traditional attribute.
     atform.image.load.cache_clear()
 
 
 def get_test_content():
     """Retrieves the content of the most recently created test."""
-    ids = sorted(atform.state.tests.keys())
-    return atform.state.tests[ids[-1]]
+    ids = sorted(atform.addtest.tests.keys())
+    return atform.addtest.tests[ids[-1]]
 
 
 def mock_build(test, *args):

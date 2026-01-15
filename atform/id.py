@@ -14,6 +14,15 @@ from . import misc
 from . import state
 
 
+# Type alias for the internal representation of numeric test and section IDs.
+IdType = tuple[int, ...]
+
+
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+section_titles: dict[IdType, str] = {}
+
+
 def get_id():
     """Returns the identifier to be used for the next test."""
     # Increment last ID level for each test.
@@ -147,7 +156,7 @@ def section(level, *, id=None, title=None):
         stripped = title.strip()
         if stripped:
             section_key = tuple(state.current_id[: id_index + 1])
-            state.section_titles[section_key] = stripped
+            section_titles[section_key] = stripped
 
 
 @error.exit_on_script_error

@@ -1,7 +1,7 @@
 """Miscellaneous metadata output functions."""
 
+from . import addtest
 from . import id as id_
-from . import state
 
 
 ################################################################################
@@ -22,5 +22,5 @@ def list_tests():
     Returns:
         list[tuple]: A list of ``(id, title)`` tuples in ascending order.
     """
-    ids = sorted(state.tests.keys())
-    return [(id_.to_string(tid), state.tests[tid].title) for tid in ids]
+    ids = sorted(addtest.tests.keys())
+    return [(id_.to_string(tid), addtest.tests[tid].title) for tid in ids]

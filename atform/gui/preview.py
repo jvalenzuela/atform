@@ -8,7 +8,8 @@ import tkinter.font as tkfont
 
 from PIL import Image, ImageTk
 
-from .. import state
+from .. import addtest
+from .. import image
 from ..pdf import paragraph
 from . import tkwidget
 
@@ -86,7 +87,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
     def show(self, tid):
         """Diplays test content for a given ID."""
-        test = state.tests[tid]
+        test = addtest.tests[tid]
         self.title.set(test.full_name)
         self.src_location.show(test)
 
@@ -169,25 +170,25 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     def _step_image(self, img_hash):
         """Adds a procedure step image to the text display."""
         try:
-            image = self.images[img_hash]
+            img = self.images[img_hash]
         except KeyError:
-            image = self._convert_image(img_hash)
-            self.images[img_hash] = image
+            img = self._convert_image(img_hash)
+            self.images[img_hash] = img
         self._append_text("\n")
-        self.text.image_create(tk.END, image=image)
+        self.text.image_create(tk.END, image=img)
 
     def _convert_image(self, img_hash):
         """Converts a raw image into a PIL ImageTk object."""
-        raw = state.images[img_hash]
+        raw = image.images[img_hash]
         buf = io.BytesIO(raw.data)
-        image = Image.open(buf)
+        img = Image.open(buf)
         max_width = self.text.winfo_reqwidth() * self.MAX_IMAGE_WIDTH_FACTOR
-        if image.width > max_width:
-            scale = max_width / image.width
-            new_width = int(image.width * scale)
-            new_height = int(image.height * scale)
-            image = image.resize((new_width, new_height))
-        return ImageTk.PhotoImage(image)
+        if img.width > max_width:
+            scale = max_width / img.width
+            new_width = int(img.width * scale)
+            new_height = int(img.height * scale)
+            img = img.resize((new_width, new_height))
+        return ImageTk.PhotoImage(img)
 
     def _bullet_list(self, items):
         """Adds a bullet list to the text display."""

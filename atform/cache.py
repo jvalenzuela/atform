@@ -12,7 +12,7 @@ phases:
 
 import pickle
 
-from . import state
+from . import addtest
 from . import vcs
 from . import version
 
@@ -53,7 +53,7 @@ def save():
     """Writes the data from this run to the cache file."""
     data["version"] = version.VERSION
     data["vcs"] = vcs.version
-    data["tests"] = state.tests
+    data["tests"] = addtest.tests
 
     try:
         f = open(FILENAME, "wb")

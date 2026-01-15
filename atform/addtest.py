@@ -127,6 +127,13 @@ class TestContent:
         )
 
 
+# All tests defined by add_test().
+#
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+tests: dict[id_.IdType, TestContent] = {}
+
+
 @dataclasses.dataclass(repr=False)
 class Reference:
     """Storage for a single reference category and assigned items."""
@@ -357,4 +364,4 @@ def add_test(
             title = None
         add_exception_context(e, content["id"], title)
 
-    state.tests[content["id"]] = TestContent(**content)
+    tests[content["id"]] = TestContent(**content)

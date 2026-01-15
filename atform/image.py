@@ -21,7 +21,7 @@ from . import state
 ImageSize = collections.namedtuple("ImageSize", ["width", "height"])
 
 
-# Image data as stored in the global state dictionary.
+# Data and metadata for a single image.
 Image = collections.namedtuple("Image", ["size", "data"])
 
 
@@ -31,6 +31,17 @@ MAX_LOGO_SIZE = ImageSize(2.0, 1.5)
 
 # Allowable image formats.
 FORMATS = ["JPEG", "PNG"]
+
+
+# Type alias for hashes used to identify specific images.
+ImageHashType = bytes
+
+
+# Mapping of all loaded images.
+#
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+images: dict[ImageHashType, Image] = {}
 
 
 @functools.cache
@@ -89,7 +100,7 @@ def load(path, max_size):
             """,
         )
 
-    state.images[img_hash] = convert_image(image, size, dpi)
+    images[img_hash] = convert_image(image, size, dpi)
     return img_hash
 
 

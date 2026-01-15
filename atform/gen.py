@@ -3,6 +3,7 @@
 import concurrent.futures
 import sys
 
+from . import addtest
 from . import arg
 from . import cache
 from . import idlock
@@ -10,7 +11,6 @@ from . import error
 from . import misc
 from . import parallelbuild
 from . import pdf
-from . import state
 from . import vcs
 from . import gui
 
@@ -20,11 +20,11 @@ def get_tests_to_build(args):
 
     Returns a set of test IDs selected from command line arguments.
     """
-    ids = set(state.tests.keys())
+    ids = set(addtest.tests.keys())
 
     if args.id:
         ids.intersection_update(
-            tid for tid in state.tests if id_match_args(tid, args.id)
+            tid for tid in addtest.tests if id_match_args(tid, args.id)
         )
 
     return ids
@@ -107,7 +107,7 @@ def generate(*, path="pdf", folder_depth=0):
             "Output path must be a string.",
         )
 
-    for t in state.tests.values():
+    for t in addtest.tests.values():
         t.pregenerate()
 
     if not isinstance(folder_depth, int):

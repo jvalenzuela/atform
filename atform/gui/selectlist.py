@@ -5,9 +5,9 @@ from a list of all tests.
 
 import tkinter as tk
 
+from .. import addtest
 from . import buildlist
 from . import common
-from .. import state
 from . import testlist
 from . import tkwidget
 
@@ -25,7 +25,7 @@ class SelectList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.testlist = testlist.TestList(self)
 
         # Populate the list with all defined tests.
-        for tid in state.tests:
+        for tid in addtest.tests:
             self.testlist.add_test(tid)
 
     def _add_buttons(self):

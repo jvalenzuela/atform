@@ -5,6 +5,7 @@ based on assigned references.
 
 import tkinter as tk
 
+from .. import addtest
 from . import buildlist
 from . import common
 from .. import state
@@ -117,7 +118,7 @@ def get_refs():
     """
     refs = {lbl: {} for lbl in state.ref_titles}
 
-    for test in state.tests.values():
+    for test in addtest.tests.values():
         for ref in test.references:
             cat = refs[ref.label]
             for item in ref.items:

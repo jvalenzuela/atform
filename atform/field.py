@@ -18,6 +18,13 @@ Field = collections.namedtuple(
 )
 
 
+# All defined fields, ordered as added by add_field().
+#
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+fields: dict[str, Field] = collections.OrderedDict()
+
+
 def validate_name_list(title, lst):
     """Verifies a list to confirm it contains only valid field names."""
     if lst is None:
@@ -31,7 +38,7 @@ def validate_name_list(title, lst):
     for raw in lst:
         name = misc.nonempty_string("field name", raw)
         try:
-            state.fields[name]
+            fields[name]
         except KeyError as e:
             raise error.UserScriptError(
                 f"Undefined name in {title} list: {name}",
@@ -58,9 +65,9 @@ def get_active_fields(include, exclude, active):
     names = list(get_active_names(include, exclude, active))
 
     # Sort according to order defined by add_field().
-    names.sort(key=lambda n: list(state.fields.keys()).index(n))
+    names.sort(key=lambda n: list(fields.keys()).index(n))
 
-    return [state.fields[name] for name in names]
+    return [fields[name] for name in names]
 
 
 ################################################################################
@@ -99,9 +106,9 @@ def add_field(title, length, name, *, active=True):
 
     name = misc.nonempty_string("field name", name)
     try:
-        state.fields[name]
+        fields[name]
     except KeyError:
-        state.fields[name] = field
+        fields[name] = field
     else:
         raise error.UserScriptError(
             f"Duplicate field name: {name}",

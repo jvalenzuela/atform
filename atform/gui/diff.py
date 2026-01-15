@@ -5,8 +5,8 @@ the cache to identify altered, new, and unmodified tests.
 
 import collections
 
+from .. import addtest
 from .. import cache
-from .. import state
 
 
 CompareResult = collections.namedtuple(
@@ -39,7 +39,7 @@ def changed_tests(orig):
     """Identifies tests modified since the cached version."""
     changed = set()
 
-    for tid, current_test in state.tests.items():
+    for tid, current_test in addtest.tests.items():
         try:
             if current_test != orig[tid]:
                 changed.add(tid)
@@ -53,14 +53,14 @@ def changed_tests(orig):
 
 def new_tests(orig):
     """Identifies tests added since the cached version."""
-    new = set(state.tests.keys())
+    new = set(addtest.tests.keys())
     new.difference_update(orig.keys())
     return frozenset(new)
 
 
 def same_tests(changed, new):
     """Identifies tests unchanged since the cached version."""
-    ids = set(state.tests.keys())
+    ids = set(addtest.tests.keys())
     ids.difference_update(changed)
     ids.difference_update(new)
     return frozenset(ids)

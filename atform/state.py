@@ -1,6 +1,6 @@
 """Global data storage.
 
-This module stores all data, e.g. configuration and test content, accumulated
+This module stores data, e.g. configuration and test content, accumulated
 during execution of the user script(s).
 
 All access to storage attributes in this module must be by importing this
@@ -24,7 +24,7 @@ import collections
 
 
 # Names identifying which fields will be applied to the next test.
-active_fields = set()
+active_fields: set[str] = set()
 
 
 # The user-defined copyright notice string.
@@ -37,40 +37,24 @@ copyright_ = None  # pylint: disable=invalid-name
 current_id = [0]
 
 
-# All defined fields, keyed by name, and ordered as added by add_field().
-fields = collections.OrderedDict()
-
-
 # Globally accessible labels.
-labels = {}
+labels: dict[str, str] = {}
 
 
 # Hash of the the user-specified logo image file.
 logo_hash = None  # pylint: disable=invalid-name
 
 
-# All tests keyed by ID tuple.
-tests = {}
-
-
 # The current project information set by the most recent call to
 # set_project_info().
-project_info = {}
+project_info: dict[str, str] = {}
 
 
 # Reference category titles, keyed by label. Stored as an ordered
 # dictionary because the order the categories are created defines
 # the order they are listed in the output documents.
-ref_titles = collections.OrderedDict()
-
-
-# Section titles, keyed by ID tuple.
-section_titles = {}
+ref_titles: dict[str, str] = collections.OrderedDict()
 
 
 # Signature titles, in the order they were defined.
-signatures = []
-
-
-# Mapping of image hash to an object containing the image's data.
-images = {}
+signatures: list[str] = []

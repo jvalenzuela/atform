@@ -12,8 +12,8 @@ import operator
 import os
 import textwrap
 
+from . import addtest
 from . import id as id_
-from . import state
 from . import version
 
 
@@ -90,7 +90,7 @@ def open_lock_file(*args, **kwargs):
 def verify():
     """Top-level function to execute the entire verification process."""
     global lockfile_current  # pylint: disable=global-statement
-    current_tests = {t.id: t.title for t in state.tests.values()}
+    current_tests = {t.id: t.title for t in addtest.tests.values()}
     old_tests = load()
     compare(current_tests, old_tests)
     save(current_tests, old_tests)
@@ -160,7 +160,7 @@ def check_titles(old):
     same ID between the current and old tests, but with a different title.
     """
     diffs = []
-    for test in state.tests.values():
+    for test in addtest.tests.values():
         try:
             old_title = old[test.id]
 

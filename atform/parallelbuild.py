@@ -7,9 +7,11 @@ import datetime
 import getpass
 import os
 
+from . import addtest
 from . import cache
+from . import id as id_
+from . import image
 from . import pdf
-from . import state
 from . import vcs
 
 
@@ -49,7 +51,7 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
     def _worker_init_data(self):
         """Assembles arguments for the worker initializer."""
         data = {
-            "images": state.images,
+            "images": image.images,
             "timestamp": datetime.datetime.today(),
             "version": vcs.version,
         }
@@ -75,7 +77,7 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
         except KeyError:
             pages = 1
 
-        test = state.tests[tid]
+        test = addtest.tests[tid]
         path = build_path(test.id, root, folder_depth)
         return self.submit(pdf.build, test, pages, path)
 
@@ -99,7 +101,7 @@ def build_path(tid, root, depth):
 
         # Include the section number and title if the section has a title.
         try:
-            section = state.section_titles[tid[: i + 1]]
+            section = id_.section_titles[tid[: i + 1]]
             section_folder = f"{section_id} {section}"
 
         # Use only the section number if the section has no title.

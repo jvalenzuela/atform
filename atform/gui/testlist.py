@@ -5,6 +5,7 @@ user to select specific tests.
 
 import tkinter as tk
 
+from .. import addtest
 from . import common
 from . import preview
 from .. import id as id_
@@ -53,7 +54,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self._add_parents(tid)
         parent = tid[:-1]
         index = self._calc_index(tid)
-        title = state.tests[tid].title
+        title = addtest.tests[tid].title
         self.tree.ttv_insert(
             parent,
             index,
@@ -74,7 +75,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
                 parent = current_tid[:-1]
                 index = self._calc_index(current_tid)
                 try:
-                    title = state.section_titles[current_tid]
+                    title = id_.section_titles[current_tid]
                 except KeyError:
                     title = ""
                 self.tree.ttv_insert(
