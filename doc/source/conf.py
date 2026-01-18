@@ -50,6 +50,12 @@ rst_prolog = f"""
 
 numfig = True
 
+# Type hints are excluded in the interest of keeping user documentation
+# simple for users new to Python. Also, type hints are intended for internal
+# validation only as user scripts are not expected to utilize static type
+# checking.
+autodoc_typehints = "none"
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
