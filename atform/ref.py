@@ -11,6 +11,10 @@ from . import misc
 from . import state
 
 
+# Type alias for the mapping returned by get_xref().
+XrefType = dict[str, dict[str, list[str]]]
+
+
 ################################################################################
 # Public API
 #
@@ -20,7 +24,7 @@ from . import state
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_reference_category(title, label):
+def add_reference_category(title: str, label: str) -> None:
     """Creates a topic for listing external references.
 
     This function does not create any actual references; they must be
@@ -51,7 +55,7 @@ def add_reference_category(title, label):
     state.ref_titles[label_stripped] = title_stripped
 
 
-def get_xref():
+def get_xref() -> XrefType:
     """Builds a cross-reference of tests assigned to each reference.
 
     For use in the output section of a script, after all tests have
@@ -71,7 +75,7 @@ def get_xref():
         ``"sf"`` category would be ``["sf"]["SF42"]``.
     """
     # Initialize all categories with empty dictionaries, i.e., no references.
-    xref = {label: {} for label in state.ref_titles}
+    xref: XrefType = {label: {} for label in state.ref_titles}
 
     # Iterate through all Test instances to populate second-level
     # reference dictionaries and test lists.

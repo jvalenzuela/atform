@@ -2,6 +2,7 @@
 
 import shutil
 import subprocess
+from typing import Optional
 
 
 # The current commit SHA1, "draft" if uncommitted changes exist, or None if
@@ -15,7 +16,7 @@ version = None  # pylint: disable=invalid-name
 GIT_CMD = "git"
 
 
-def load():
+def load() -> None:
     """Gets the current state from the version control system."""
     global version  # pylint: disable=global-statement
     try:
@@ -36,7 +37,7 @@ class NoVersionControlError(Exception):
     """
 
 
-def find_git():
+def find_git() -> str:
     """Locates the git executable."""
     path = shutil.which(GIT_CMD)
     if not path:
@@ -44,7 +45,7 @@ def find_git():
     return path
 
 
-def is_clean(path):
+def is_clean(path: str) -> bool:
     """Determines if the working directory contains uncommitted changes."""
     try:
         status = run_git(
@@ -62,7 +63,7 @@ def is_clean(path):
     return status.strip() == ""
 
 
-def get_sha1(path):
+def get_sha1(path: str) -> Optional[str]:
     """Acquires the SHA1 of the current HEAD."""
     try:
         sha1 = run_git(
@@ -79,7 +80,7 @@ def get_sha1(path):
     return sha1
 
 
-def run_git(path, *args):
+def run_git(path: str, *args: str) -> str:
     """Executes the git CLI with a given set of arguments."""
     run_args = [path]
     run_args.extend(args)

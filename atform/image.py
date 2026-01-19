@@ -9,6 +9,7 @@ import collections
 import functools
 import hashlib
 import io
+from typing import BinaryIO
 
 import PIL
 
@@ -45,7 +46,7 @@ images: dict[ImageHashType, Image] = {}
 
 
 @functools.cache
-def load(path, max_size):
+def load(path: str, max_size: ImageSize) -> ImageHashType:
     """Loads and validates an image file."""
     # BytesIO are allowed to support unit testing.
     if not isinstance(path, str) and not isinstance(path, io.BytesIO):
@@ -104,14 +105,14 @@ def load(path, max_size):
     return img_hash
 
 
-def calc_hash(file):
+def calc_hash(file: BinaryIO) -> ImageHashType:
     """Computes the hash of an image file."""
     h = hashlib.blake2b()
     h.update(file.read())
     return h.digest()
 
 
-def convert_image(image, size, dpi):
+def convert_image(image: PIL.Image.Image, size: ImageSize, dpi: ImageSize) -> Image:
     """Converts a PIL Image into an Image named tuple."""
     buf = io.BytesIO()
     args = {
@@ -133,7 +134,7 @@ def convert_image(image, size, dpi):
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_logo(path):
+def add_logo(path: str) -> None:
     """Selects an image file to be used as the logo.
 
     The logo will appear on the first page of every test in the

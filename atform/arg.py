@@ -3,7 +3,9 @@
 import argparse
 import re
 import sys
+from typing import Union
 
+from . import id as id_
 from . import state
 
 
@@ -11,7 +13,7 @@ class InvalidIdError(Exception):
     """Raised when an invalid ID or range is found in the argument list."""
 
 
-def parse():
+def parse() -> argparse.Namespace:
     """Top-level function for this module to process all arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -33,7 +35,7 @@ def parse():
     return ns
 
 
-def parse_ids(args):
+def parse_ids(args: list[str]) -> list[Union[id_.IdType, id_.IdRangeType]]:
     """Parses command line arguments into numeric IDs.
 
     Each ID must either be a single ID or a range consisting of two IDs
@@ -59,15 +61,15 @@ def parse_ids(args):
         parser = split_range if "-" in arg else string_to_id
 
         try:
-            id_ = parser(arg)
+            tid = parser(arg)
         except InvalidIdError as e:
             sys.exit(f"Error parsing ID '{arg}' from command line: {e}")
-        ids.append(id_)
+        ids.append(tid)
 
     return ids
 
 
-def split_range(s):
+def split_range(s: str) -> id_.IdRangeType:
     """Parses a string defining a range of IDs."""
     ids = s.split("-")
     if len(ids) != 2:
@@ -81,10 +83,10 @@ def split_range(s):
     return (start, end)
 
 
-def string_to_id(s):
+def string_to_id(s: str) -> id_.IdType:
     """Converts a string representation of an ID to a tuple of integers."""
     try:
-        id_ = tuple(int(i) for i in s.split("."))
+        tid = tuple(int(i) for i in s.split("."))
     except ValueError as e:
         raise InvalidIdError(
             "IDs must consist of integers separated by periods."
@@ -92,12 +94,12 @@ def string_to_id(s):
 
     # An ID may not have more fields than the configured identifier depth.
     max_len = len(state.current_id)
-    if len(id_) > max_len:
+    if len(tid) > max_len:
         raise InvalidIdError(f"IDs cannot have more than {max_len} fields.")
 
     # All ID fields must be greater than zero.
-    for i in id_:
+    for i in tid:
         if i < 1:
             raise InvalidIdError("ID fields must be greater than zero.")
 
-    return id_
+    return tid

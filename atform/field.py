@@ -5,6 +5,7 @@ which tests they appear on.
 """
 
 import collections
+from typing import Optional
 
 from . import error
 from . import misc
@@ -25,7 +26,11 @@ Field = collections.namedtuple(
 fields: dict[str, Field] = collections.OrderedDict()
 
 
-def validate_name_list(title, lst):
+# Type alias for lists of field names given to the API, which default to None.
+FieldListType = Optional[list[str]]
+
+
+def validate_name_list(title: str, lst: FieldListType) -> set[str]:
     """Verifies a list to confirm it contains only valid field names."""
     if lst is None:
         lst = []
@@ -48,7 +53,9 @@ def validate_name_list(title, lst):
     return names
 
 
-def get_active_names(include, exclude, active):
+def get_active_names(
+    include: FieldListType, exclude: FieldListType, active: FieldListType
+) -> set[str]:
     """Computes the resulting active names after applying filters."""
     include = validate_name_list("include fields", include)
     exclude = validate_name_list("exclude fields", exclude)
@@ -57,7 +64,9 @@ def get_active_names(include, exclude, active):
     return state.active_fields.union(include).difference(exclude)
 
 
-def get_active_fields(include, exclude, active):
+def get_active_fields(
+    include: FieldListType, exclude: FieldListType, active: FieldListType
+) -> list[Field]:
     """
     Generates the list of field tuples to be applied to the next test
     after applying filters.
@@ -79,7 +88,7 @@ def get_active_fields(include, exclude, active):
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_field(title, length, name, *, active=True):
+def add_field(title: str, length: int, name: str, *, active: bool = True) -> None:
     """Adds a user entry field to capture test execution information.
 
     Form fields are suitable for entering a single line of text at the beginning
@@ -126,7 +135,12 @@ def add_field(title, length, name, *, active=True):
 
 
 @error.exit_on_script_error
-def set_active_fields(*, include=None, exclude=None, active=None):
+def set_active_fields(
+    *,
+    include: FieldListType = None,
+    exclude: FieldListType = None,
+    active: FieldListType = None,
+) -> None:
     """Alters the fields applied to each test created after this function.
 
     May be called repeatedly to modify the fields applied to different

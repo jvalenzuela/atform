@@ -1,11 +1,14 @@
 """API to generate output PDFs."""
 
+import argparse
 import concurrent.futures
 import sys
+from typing import Union
 
 from . import addtest
 from . import arg
 from . import cache
+from . import id as id_
 from . import idlock
 from . import error
 from . import misc
@@ -15,7 +18,7 @@ from . import vcs
 from . import gui
 
 
-def get_tests_to_build(args):
+def get_tests_to_build(args: argparse.Namespace) -> set[id_.IdType]:
     """Assembles the test instances that will be generated.
 
     Returns a set of test IDs selected from command line arguments.
@@ -30,12 +33,14 @@ def get_tests_to_build(args):
     return ids
 
 
-def id_match_args(tid, args):
+def id_match_args(
+    tid: id_.IdType, args: list[Union[id_.IdType, id_.IdRangeType]]
+) -> bool:
     """Determines if a test ID matches any ID or range from the command line."""
     return next(filter(None, (id_match(tid, arg) for arg in args)), False)
 
 
-def id_match(tid, target):
+def id_match(tid: id_.IdType, target: Union[id_.IdType, id_.IdRangeType]) -> bool:
     """Determines if a test ID matches a single ID from the command line.
 
     Comparison between the test and target ID(s) only evaluates the number of
@@ -51,7 +56,7 @@ def id_match(tid, target):
     return (start <= tid[: len(start)]) and (end >= tid[: len(end)])
 
 
-def cli_build(path, folder_depth, args):
+def cli_build(path: str, folder_depth: int, args: argparse.Namespace) -> None:
     """Builds tests for CLI operation."""
     with parallelbuild.Builder() as builder:
         ids = get_tests_to_build(args)
@@ -71,7 +76,7 @@ def cli_build(path, folder_depth, args):
 
 
 @error.exit_on_script_error
-def generate(*, path="pdf", folder_depth=0):
+def generate(*, path: str = "pdf", folder_depth: int = 0) -> None:
     """Builds PDF output files for all defined tests.
 
     Should be called once near the end of the script after tests have been
