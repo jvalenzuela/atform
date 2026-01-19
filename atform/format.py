@@ -22,7 +22,7 @@ FONTS = {
 }
 
 
-def allowed_format(i):
+def allowed_format(i: int) -> str:
     """
     Formats a list of allowable format selectors into a string for use in
     error messages.
@@ -41,7 +41,7 @@ def allowed_format(i):
 
 
 @error.exit_on_script_error
-def bullet_list(*items):
+def bullet_list(*items: str) -> str:
     """Creates a list of items.
 
     Items will be presented as an unnumbered list, in the same order they
@@ -91,7 +91,7 @@ def bullet_list(*items):
 
 
 @error.exit_on_script_error
-def format_text(text, *, typeface="normal", font="normal"):
+def format_text(text: str, *, typeface: str = "normal", font: str = "normal") -> str:
     """Applies special formatting attributes to text.
 
     The returned string can be incorporated into strings passed to the
