@@ -99,8 +99,7 @@ class TestContent:
     def __eq__(self, other):
         """Equality implementation for detecting content differences.
 
-        This is used for the --diff option, and specifically excludes the
-        following fields:
+        The following fields are specifically excluded:
 
         call_frame: Used only for generating error messages; not relevant
                     for comparing test content.
