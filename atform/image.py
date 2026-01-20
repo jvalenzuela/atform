@@ -121,13 +121,10 @@ def calc_hash(file: BinaryIO) -> ImageHashType:
 def convert_image(image: PIL.Image.Image, size: ImageSize, dpi: ImageSize) -> Image:
     """Converts a PIL Image into an Image named tuple."""
     buf = io.BytesIO()
-    args = {
-        "format": image.format,
-        "dpi": dpi,
-    }
+    args = {}
     if image.format == "JPEG":
         args["quality"] = "keep"
-    image.save(buf, **args)
+    image.save(buf, image.format, dpi=dpi, **args)
     return Image(size=size, data=buf.getvalue())
 
 
