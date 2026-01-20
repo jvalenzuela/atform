@@ -57,11 +57,11 @@ def get_active_names(
     include: FieldListType, exclude: FieldListType, active: FieldListType
 ) -> set[str]:
     """Computes the resulting active names after applying filters."""
-    include = validate_name_list("include fields", include)
-    exclude = validate_name_list("exclude fields", exclude)
+    incl = validate_name_list("include fields", include)
+    excl = validate_name_list("exclude fields", exclude)
     if active is not None:
         return validate_name_list("active fields", active)
-    return state.active_fields.union(include).difference(exclude)
+    return state.active_fields.union(incl).difference(excl)
 
 
 def get_active_fields(
