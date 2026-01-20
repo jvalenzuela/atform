@@ -14,7 +14,7 @@ from . import state
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_signature(title):
+def add_signature(title: str) -> None:
     """Adds an approval signature line.
 
     The signature entry contains title, name, signature, and date
