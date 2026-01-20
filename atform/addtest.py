@@ -5,6 +5,7 @@ import dataclasses
 from . import error
 from . import field
 from . import id as id_
+from . import image
 from . import label as label_
 from . import misc
 from . import procedure as procedure_
@@ -324,7 +325,7 @@ def add_test(
     content = {}
     content["copyright"] = state.copyright_
     content["signatures"] = state.signatures
-    content["logo_hash"] = state.logo_hash
+    content["logo_hash"] = image.logo_hash
 
     # Capture the current API call frame so the location where this test was
     # defined can be referenced in exceptions raised in later API calls

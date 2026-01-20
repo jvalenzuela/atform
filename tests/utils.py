@@ -27,6 +27,7 @@ INIT_ATTRS = [
     (atform.cache, "data"),
     (atform.field, "fields"),
     (atform.id, "section_titles"),
+    (atform.image, "logo_hash"),
     (atform.image, "images"),
     (atform.vcs, "version"),
 ]

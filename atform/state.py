@@ -41,10 +41,6 @@ current_id = [0]
 labels: dict[str, str] = {}
 
 
-# Hash of the the user-specified logo image file.
-logo_hash = None  # pylint: disable=invalid-name
-
-
 # The current project information set by the most recent call to
 # set_project_info().
 project_info: dict[str, str] = {}

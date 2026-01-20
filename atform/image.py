@@ -9,13 +9,12 @@ import collections
 import functools
 import hashlib
 import io
-from typing import BinaryIO
+from typing import BinaryIO, Optional
 
 import PIL
 
 from . import error
 from . import misc
-from . import state
 
 
 # Data type for storing two-dimensional sizes.
@@ -36,6 +35,13 @@ FORMATS = ["JPEG", "PNG"]
 
 # Type alias for hashes used to identify specific images.
 ImageHashType = bytes
+
+
+# Hash of the the user-specified logo image file.
+#
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+logo_hash: Optional[ImageHashType] = None  # pylint: disable=invalid-name
 
 
 # Mapping of all loaded images.
@@ -147,7 +153,8 @@ def add_logo(path: str) -> None:
         path (str): Path to the image file relative to the top-level script
             executed to generate test documents.
     """
-    if state.logo_hash:
+    global logo_hash  # pylint: disable=global-statement
+    if logo_hash:
         raise error.UserScriptError(
             "Duplicate logo definition.",
             """
@@ -156,4 +163,4 @@ def add_logo(path: str) -> None:
             """,
         )
 
-    state.logo_hash = load(path, MAX_LOGO_SIZE)
+    logo_hash = load(path, MAX_LOGO_SIZE)
