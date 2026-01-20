@@ -132,11 +132,11 @@ def format_text(text: str, *, typeface: str = "normal", font: str = "normal") ->
     font_values = FONTS[(typeface, font)]
     attrib = {"face": font_values[0]}
     try:
-        attrib["size"] = str(font_values[1])
+        attrib["size"] = font_values[1]
     except IndexError:
         pass
 
     # Enclose the string in a intra-paragraph XML markup element.
-    e = ElementTree.Element("font", attrib=attrib)
+    e = ElementTree.Element("font", attrib={k: str(v) for k, v in attrib.items()})
     e.text = text
     return ElementTree.tostring(e, encoding="unicode")
