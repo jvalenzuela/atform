@@ -145,7 +145,7 @@ def generate(*, path: str = "pdf", folder_depth: int = 0) -> None:
     try:
         idlock.verify()
     except idlock.ChangedTestError as e:
-        sys.exit(e)
+        sys.exit(str(e))
     except idlock.LockFileWarning as e:
         print(e)
 
