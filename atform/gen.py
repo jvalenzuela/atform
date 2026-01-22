@@ -53,6 +53,8 @@ def id_match(tid: id_.IdType, target: Union[id_.IdType, id_.IdRangeType]) -> boo
 
     # Otherwise target is a range.
     start, end = target
+    assert isinstance(start, tuple)
+    assert isinstance(end, tuple)
     return (start <= tid[: len(start)]) and (end >= tid[: len(end)])
 
 
