@@ -1,6 +1,7 @@
 """GUI status bar implementation."""
 
 import tkinter as tk
+from tkinter import ttk
 
 from . import common
 from .. import idlock
@@ -24,6 +25,7 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             relief=tk.RIDGE,
         )
         self.pack(fill=tk.X)
+        self._setup_styles()
 
         # Indicator widget classes, not instances, ordered left to right.
         items = [
@@ -36,6 +38,11 @@ class StatusBar(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             self._add_sep()
 
         self._add_version()
+
+    def _setup_styles(self):
+        """Creates custom ttk styles for use by status bar widgets."""
+        style = ttk.Style()
+        style.configure("Warning.TLabel", background=WARNING_BACKGROUND)
 
     def _add_item(self, item_cls):
         """Appends an indicator widget."""
@@ -63,7 +70,7 @@ class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
             text = f"VCS: {vcs.version}"
         super().__init__(parent, text=text, anchor=tk.CENTER)
         if vcs.version == "draft":
-            self.configure(background=WARNING_BACKGROUND)
+            self.configure(style="Warning.TLabel")
 
 
 class IdLock(tkwidget.Label):  # pylint: disable=too-many-ancestors
@@ -73,4 +80,4 @@ class IdLock(tkwidget.Label):  # pylint: disable=too-many-ancestors
         status = "ok" if idlock.lockfile_current else "stale"
         super().__init__(parent, text=f"ID Lock: {status}", anchor=tk.CENTER)
         if not idlock.lockfile_current:
-            self.configure(background=WARNING_BACKGROUND)
+            self.configure(style="Warning.TLabel")
