@@ -44,6 +44,11 @@ class Button(ttk.Button):
 
 
 @add_instance_storage
+class Canvas(tk.Canvas):
+    pass
+
+
+@add_instance_storage
 class Checkbutton(ttk.Checkbutton):
     pass
 

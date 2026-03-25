@@ -2,35 +2,20 @@
 
 import functools
 import io
-import re
 import tkinter as tk
-import tkinter.font as tkfont
 
-from PIL import Image, ImageTk
+import pymupdf
+from reportlab.lib.units import toLength
 
 from .. import addtest
-from .. import image
-from ..pdf import paragraph
+from . import common
+from .. import pdf
 from . import tkwidget
 
 
 def show(tid):
     """Shows a given test in the preview window."""
     Preview.instance.show(tid)
-
-
-def skip_if_empty(func):
-    """
-    Decorator for methods generating section content to omit the section
-    if it would be empty.
-    """
-
-    @functools.wraps(func)
-    def wrapper(self, data, *args, **kwargs):
-        if data:
-            func(self, data, *args, **kwargs)
-
-    return wrapper
 
 
 class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
@@ -40,183 +25,86 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     allowed.
     """
 
-    # Width of the text display, in characters. Chosen based on
-    # general recommendations for readability.
-    TEXT_WIDTH = 60
-
-    # Maximim horizontal size of an image relative to the width of the
-    # Tk text widget. Images larger than this will be scaled down to
-    # this width.
-    MAX_IMAGE_WIDTH_FACTOR = 0.9
-
     def __init__(self, parent):
         super().__init__(parent, text="Preview")
-        self.title = self._create_title()
-        self.text = self._create_text()
+        self.pages = PageDisplay(self)
+        self.pages.pack(fill=tk.Y, expand=tk.TRUE)
         self.src_location = Location(self)
         self.src_location.pack(anchor=tk.NW)
-        self._configure_tags()
-
-        # Cache of PIL ImageTk objects keyed by original image hash.
-        # Serves to prevent ImageTk objects from being garbage collected
-        # because Tkinter does not otherwise retain a reference when these
-        # are added to the text widget.
-        self.images = {}
 
         # Store this instance so the previewer is accessible at module level.
         Preview.instance = self
 
-    def _create_title(self):
-        """Creates a title bar displaying the test ID/title."""
-        var = tkwidget.StringVar()
-        font = tkfont.Font(weight=tkfont.BOLD)
-        label = tkwidget.Label(self, textvariable=var, font=font)
-        label.pack(anchor=tk.NW)
-        return var
-
-    def _create_text(self):
-        """Creates the text window displaying test content."""
-        text = tkwidget.ScrolledText(self, state=tk.DISABLED, width=self.TEXT_WIDTH)
-        text.pack(fill=tk.Y, expand=tk.TRUE)
-        return text
-
-    def _configure_tags(self):
-        """Creates formatting tags used in the text widget."""
-        font = tkfont.Font(weight=tkfont.BOLD, underline=tk.TRUE)
-        self.text.tag_config("section", font=font)
-
     def show(self, tid):
         """Diplays test content for a given ID."""
         test = addtest.tests[tid]
-        self.title.set(test.full_name)
+        self.pages.show(tid)
         self.src_location.show(test)
 
-        self.text.configure(state=tk.NORMAL)
-        self.text.delete("1.0", tk.END)
 
-        self._objective(test.objective)
-        self._references(test.references)
-        self._environment(test.fields)
-        self._equipment(test.equipment)
-        self._preconditions(test.preconditions)
-        self._procedure(test.procedure)
+class PageDisplay(tkwidget.Frame):  # pylint: disable=too-many-ancestors
+    """Widget displaying page content."""
 
-        self.text.configure(state=tk.DISABLED)
+    # PDF conversion resolution. Chosen to provide reasonable legibility of
+    # regular text.
+    DPI = 75
 
-    def _section(self, title):
-        """Creates a section header."""
-        # Add leading space to all sections except the first.
-        if self.text.tag_ranges("section"):
-            self._skip_line()
+    # Amount of vertical space in pixels to leave between pages.
+    PAGE_SEP = 10
 
-        self._append_text(f"{title.title()}\n", "section")
+    def __init__(self, parent):
+        super().__init__(parent)
 
-    @skip_if_empty
-    def _objective(self, obj):
-        """Adds the Objective section."""
-        self._section("Objective")
-        text = normalize_text(obj)
-        self._append_text(text)
+        # Initialize the PDF generation module.
+        pdf.init(pdf.build_init_data())
 
-    @skip_if_empty
-    def _references(self, refs):
-        """Adds the References section."""
-        self._section("References")
-        for i, ref in enumerate(refs):
-            # Add vertical space above each item, except the first.
-            if i:
-                self._skip_line()
+        self.canvas = tkwidget.Canvas(
+            self,
+            width=self._canvas_width,
+        )
+        self.canvas.pack(side=tk.LEFT, fill=tk.Y)
+        common.add_vertical_scrollbar(self, self.canvas)
 
-            items = ", ".join(ref.items)
-            self._append_text(f"{ref.title}: {items}")
+    @property
+    def _canvas_width(self):
+        """Computes the canvas width required to contain a single page."""
+        return int(self.DPI * pdf.layout.PAGE_SIZE[0] / toLength("1 in"))
 
-    @skip_if_empty
-    def _environment(self, fields):
-        """Adds the Environment section."""
-        self._section("Environment")
-        for f in fields:
-            self._append_text(f"{f.title} ___\n")
+    def show(self, tid):
+        """Displays pages of the given test."""
+        self._clear()
+        for i, page in enumerate(self._page_images(tid)):
+            y = i * (page.height() + self.PAGE_SEP)
+            self.canvas.create_image((0, y), anchor=tk.NW, image=page)
+        self._reset_scroll()
 
-    @skip_if_empty
-    def _equipment(self, items):
-        """Adds the Equipment section."""
-        self._section("Equipment")
-        self._bullet_list(items)
+    def _clear(self):
+        """Empties the canvas."""
+        self.canvas.delete(tk.ALL)
 
-    @skip_if_empty
-    def _preconditions(self, items):
-        """Adds the Preconditions section."""
-        self._section("Preconditions")
-        self._bullet_list(items)
+    @functools.cache  # pylint: disable=method-cache-max-size-none
+    def _page_images(self, tid):
+        """Generates a set of images of the pages for a given test."""
+        # Build the PDF to an in-memory buffer.
+        buf = io.BytesIO()
+        pdf.build(addtest.tests[tid], 1, buf)
 
-    @skip_if_empty
-    def _procedure(self, steps):
-        """Adds the Procedure section."""
-        self._section("Procedure")
-        for i, step in enumerate(steps, start=1):
-            # Add vertical space above each step, except the first.
-            if i > 1:
-                self._skip_line()
+        # Convert the PDF to a set of raster images, one per page.
+        doc = pymupdf.Document(stream=buf)
+        pixmaps = [page.get_pixmap(dpi=self.DPI) for page in doc.pages()]
 
-            text = normalize_text(step.text)
-            self._append_text(f"{i}. {text}")
+        # ppm output format per PyMuPDF recommendation, ref:
+        # https://pymupdf.readthedocs.io/en/latest/pixmap.html#pixmapoutput
+        return [tk.PhotoImage(data=pm.tobytes("ppm")) for pm in pixmaps]
 
-            if step.image_hash:
-                self._step_image(step.image_hash)
+    def _reset_scroll(self):
+        """Updates the scrollbar based on the displayed pages."""
+        # Limit the scroll region to the displayed pages.
+        region = self.canvas.bbox(tk.ALL)
+        self.canvas.config(scrollregion=region)
 
-            for f in step.fields:
-                self._append_text(f"\n{f.title} ___ {f.suffix}")
-
-    def _step_image(self, img_hash):
-        """Adds a procedure step image to the text display."""
-        try:
-            img = self.images[img_hash]
-        except KeyError:
-            img = self._convert_image(img_hash)
-            self.images[img_hash] = img
-        self._append_text("\n")
-        self.text.image_create(tk.END, image=img)
-
-    def _convert_image(self, img_hash):
-        """Converts a raw image into a PIL ImageTk object."""
-        raw = image.images[img_hash]
-        buf = io.BytesIO(raw.data)
-        img = Image.open(buf)
-        max_width = self.text.winfo_reqwidth() * self.MAX_IMAGE_WIDTH_FACTOR
-        if img.width > max_width:
-            scale = max_width / img.width
-            new_width = int(img.width * scale)
-            new_height = int(img.height * scale)
-            img = img.resize((new_width, new_height))
-        return ImageTk.PhotoImage(img)
-
-    def _bullet_list(self, items):
-        """Adds a bullet list to the text display."""
-        for i, text in enumerate(items):
-            # Add vertical space above each step, except the first.
-            if i:
-                self._skip_line()
-
-            text = normalize_text(text)
-            self._append_text(f"\u2022 {text}")
-
-    def _append_text(self, text, tag=None):
-        """Adds a string to the end of the text display."""
-        # Convert any tag into a tuple.
-        if tag:
-            tag = (tag,)
-
-        self.text.insert(tk.END, text, tag)
-
-    def _skip_line(self):
-        """Appends a empty line."""
-        self._append_text("\n\n")
-
-
-def normalize_text(s):
-    """Separates paragraphs with a blank line and collapses whitespace."""
-    paragraphs = [re.sub(r"\s+", " ", p) for p in paragraph.split_paragraphs(s)]
-    return "\n\n".join(paragraphs)
+        # Reset the view back to the first page.
+        self.canvas.yview(tk.MOVETO, 0)
 
 
 class Location(tkwidget.Frame):  # pylint: disable=too-many-ancestors
