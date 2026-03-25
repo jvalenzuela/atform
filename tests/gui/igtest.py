@@ -7,7 +7,6 @@ launches the GUI for manual verification.
 
 import concurrent.futures
 import functools
-import os
 import queue
 import tkinter as tk
 import traceback
@@ -34,7 +33,7 @@ class InteractiveGuiTestCase(unittest.TestCase):
             self.root = root
         else:
             with patch("atform.cache.data", new={}):
-                self.root = atform.gui.app.Application(".", 0)
+                self.root = atform.gui.app.Application("pdf", 0)
 
         dialog = tk.Toplevel()
         dialog.transient(root)
@@ -157,226 +156,37 @@ class Preview(InteractiveGuiTestCase):
         atform.gui.preview.show((1,))
         self.start_gui(root=root)
 
-    def test_title(self):
-        """Confirm correct title display."""
-        atform.add_test("This is the title")
+    def test_width(self):
+        """Confirm preview display width equals the page width."""
+        atform.add_test("title")
         self.start_preview()
 
-    def test_objective(self):
-        """Confirm correct objective display."""
+    def test_multipage_scroll(self):
+        """Confirm vertical scrollbar accesses all pages."""
         atform.add_test(
             "title",
-            objective="""
-            This is the first paragraph. Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-            irure dolor in reprehenderit in voluptate velit esse cillum dolore
-            eu fugiat nulla pariatur.
-
-            This is the second paragraph. Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-            magna aliqua. Duis at tellus at urna condimentum mattis pellentesque
-            id. Aliquam nulla facilisi cras fermentum odio. Viverra ipsum nunc
-            aliquet bibendum enim facilisis gravida neque convallis. Tempor orci
-            eu lobortis elementum nibh tellus molestie nunc. Porttitor rhoncus
-            dolor purus non enim praesent elementum facilisis leo.
-            """,
+            procedure=["step"] * 50,  # Generate 3 pages worth of content.
         )
         self.start_preview()
 
-    def test_references(self):
-        """Confirm correct references display."""
-        atform.add_reference_category("ref1", "r1")
-        atform.add_reference_category("ref2", "r2")
-        atform.add_test(
-            "title",
-            objective="Two reference categories, each with two references.",
-            references={"r1": ["foo", "bar"], "r2": ["spam", "eggs"]},
+    def test_scroll_reset(self):
+        """Confirm vertical scroll resets when changing preview."""
+        atform.add_test("test 1")
+        atform.add_test("test 2")
+        self.start_gui(
+            instruction="Select test 1, scroll the preview to the bottom, select test 2, ensure preview resets to the top of first page.",
         )
-        self.start_preview()
 
-    def test_environment(self):
-        """Confirm correct environment fields display."""
-        atform.add_field("Field 1", 3, "f1")
-        atform.add_field("Field 2", 3, "f2")
+    def test_scroll_range(self):
+        """Confirm vertical scroll is constrained to all pages."""
+        atform.add_test("test 1")  # Single-page test.
         atform.add_test(
-            "title",
-            objective="Verify two environment fields.",
+            "test 2",
+            procedure=["step"] * 50,  # Generate 3 pages worth of content.
         )
-        self.start_preview()
-
-    def test_equipment(self):
-        """Confirm correct Equipment list display."""
-        atform.add_test(
-            "title",
-            equipment=[
-                "The first equipment.",
-                """The second equipment with multiple paragraphs.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua. Eros in cursus turpis massa tincidunt dui ut ornare
-                lectus. Fringilla urna porttitor rhoncus dolor purus.
-                Enim blandit volutpat maecenas volutpat.
-
-                The second paragraph. Laoreet suspendisse interdum consectetur
-                libero id faucibus nisl tincidunt. Donec et odio pellentesque
-                diam. Posuere sollicitudin aliquam ultrices sagittis orci a
-                scelerisque purus semper. Volutpat blandit aliquam etiam erat.
-                Sed faucibus turpis in eu mi bibendum neque. At risus viverra
-                adipiscing at. Amet consectetur adipiscing elit ut aliquam
-                purus. Magna sit amet purus gravida.
-                """,
-                "The last equipment.",
-            ],
+        self.start_gui(
+            instruction="Select each test and ensure the vertical scroll range is limited to all pages in the test.",
         )
-        self.start_preview()
-
-    def test_preconditions(self):
-        """Confirm correct Precondition list display."""
-        atform.add_test(
-            "title",
-            preconditions=[
-                "The first precondition.",
-                """The second precondition with multiple paragraphs. Lorem ipsum
-            dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Eros in
-            cursus turpis massa tincidunt dui ut ornare lectus. Fringilla
-            urna porttitor rhoncus dolor purus. Enim blandit volutpat
-            maecenas volutpat.
-
-            The second paragraph. Laoreet suspendisse interdum consectetur
-            libero id faucibus nisl tincidunt. Donec et odio pellentesque diam.
-            Posuere sollicitudin aliquam ultrices sagittis orci a scelerisque
-            purus semper. Volutpat blandit aliquam etiam erat. Sed faucibus
-            turpis in eu mi bibendum neque. At risus viverra adipiscing at.
-            Amet consectetur adipiscing elit ut aliquam purus. Magna sit amet
-            purus gravida.
-            """,
-                "The last precondition.",
-            ],
-        )
-        self.start_preview()
-
-    def test_procedure(self):
-        """Confirm a test's procedure is displayed."""
-        atform.add_test(
-            "title",
-            procedure=[
-                """
-            This is a procedure step with a single paragraph created
-            as a simple string. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Viverra
-            aliquet eget sit amet tellus. Pharetra vel turpis nunc eget
-            lorem dolor sed viverra ipsum. Libero justo laoreet sit
-            amet cursus sit amet dictum sit. In dictum non consectetur a.
-            """,
-                """
-            This is a procedure step with multiple paragraphs created
-            as a simple string. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Viverra
-            aliquet eget sit amet tellus. Pharetra vel turpis nunc eget
-            lorem dolor sed viverra ipsum. Libero justo laoreet sit
-            amet cursus sit amet dictum sit. In dictum non consectetur a.
-
-            This is the second paragraph. Dolor sit amet consectetur
-            adipiscing elit pellentesque habitant. Vel fringilla est
-            ullamcorper eget nulla facilisi etiam dignissim diam.
-            Vitae proin sagittis nisl rhoncus mattis rhoncus. Nulla
-            at volutpat diam ut venenatis tellus. Nisi porta lorem
-            mollis aliquam.
-            """,
-                {
-                    "text": """
-                This is a procedure step with a single paragraph created
-                as a dictionary. Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Viverra
-                aliquet eget sit amet tellus.
-                """
-                },
-                {
-                    "text": """
-                This is a procedure step with multiple paragraphs created
-                as a dictionary. Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Viverra
-                aliquet eget sit amet tellus.
-
-                This is the second paragraph. Dolor sit amet consectetur
-                adipiscing elit pellentesque habitant. Vel fringilla est
-                ullamcorper eget nulla facilisi etiam dignissim diam.
-                Vitae proin sagittis nisl rhoncus mattis rhoncus.
-                Nulla at volutpat diam ut venenatis tellus. Nisi porta
-                lorem mollis aliquam.
-                """
-                },
-                {
-                    "text": """
-                This is a procedure step with a single data entry field
-                with no suffix.
-                """,
-                    "fields": [
-                        ("A Field", 10),
-                    ],
-                },
-                {
-                    "text": """
-                This is a procedure step with a single data entry field
-                with a suffix.
-                """,
-                    "fields": [
-                        ("Spam Eggs", 10, "Foo Bar"),
-                    ],
-                },
-                {
-                    "text": """
-                This is a procedure step with multiple data entry fields,
-                all with suffixes.
-                """,
-                    "fields": [
-                        ("Spam", 10, "Eggs"),
-                        ("A Long Title", 3, "Bar"),
-                    ],
-                },
-                """
-                The next steps should all show a red circle inscribed by a
-                red rectangle.
-                """,
-                {
-                    "text": "Confirm a full size image fits in the window.",
-                    "image": self.image_path("full.jpg"),
-                },
-                {
-                    "text": "Confirm a full height image.",
-                    "image": self.image_path("height.jpg"),
-                },
-                {
-                    "text": "Confirm a full width image fits in the window.",
-                    "image": self.image_path("width.jpg"),
-                },
-                {
-                    "text": "Confirm a small image displays correctly.",
-                    "image": self.image_path("small.jpg"),
-                },
-                {
-                    "text": "Confirm a PNG image displays correctly.",
-                    "image": self.image_path("step.png"),
-                },
-                {
-                    "text": "Confirm the field is below the image.",
-                    "image": self.image_path("small.jpg"),
-                    "fields": [("field", 3)],
-                },
-            ],
-        )
-        self.start_preview()
-
-    def image_path(self, filename):
-        """Generates a path to a test procedure step image."""
-        return os.path.join("tests", "images", "procedure", filename)
 
     def test_location(self):
         """Confirm location specified in objective."""
@@ -385,6 +195,19 @@ class Preview(InteractiveGuiTestCase):
             "title", objective=f"Confirm preview location is {__file__}, line {line}."
         )
         self.start_preview()
+
+    @patch("atform.cache.data", new={})
+    def test_build_after_preview(self):
+        """Confirm building works normally after preview.
+
+        The intent here is to ensure use of the PDF build module
+        in-process for the Preview widget does not impact its repeated use
+        in a separate process when building actual PDF output.
+        """
+        atform.add_test("foo")
+        self.start_gui(
+            instruction="Preview the test, add it to the build list, and ensure it builds normally."
+        )
 
 
 class SearchQueryEntry(InteractiveGuiTestCase):

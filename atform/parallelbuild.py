@@ -3,16 +3,12 @@ This module implements building output PDFs in parallel via multiprocessing.
 """
 
 import concurrent.futures
-import datetime
-import getpass
 import os
 
 from . import addtest
 from . import cache
 from . import id as id_
-from . import image
 from . import pdf
-from . import vcs
 
 
 class Builder(concurrent.futures.ProcessPoolExecutor):
@@ -35,7 +31,7 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
     def __init__(self):
         super().__init__(
             initializer=pdf.init,
-            initargs=self._worker_init_data,
+            initargs=(pdf.build_init_data(),),
             max_workers=self.MAX_WORKERS,
         )
 
@@ -46,29 +42,6 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
             cache.data["page counts"] = {}
 
         self.page_counts = cache.data["page counts"]
-
-    @property
-    def _worker_init_data(self):
-        """Assembles arguments for the worker initializer."""
-        data = {
-            "images": image.images,
-            "timestamp": datetime.datetime.today(),
-            "version": vcs.version,
-        }
-
-        try:
-            user = getpass.getuser()
-
-        # Broad exception class used because documentation states Python
-        # versions < 3.13 may raise various undocumented exceptions besides
-        # OSError.
-        except Exception:  # pylint: disable=broad-exception-caught
-            pass
-
-        else:
-            data["user"] = user
-
-        return (data,)
 
     def submit_test(self, tid, root, folder_depth):
         """Schedules a test for building."""

@@ -155,13 +155,10 @@ Preview
 .. image:: images/gui/preview.png
    :align: center
 
-The center panel displays test content. It has no controls for user input;
+The center panel displays test content as it will appear in the PDF output.
+It has no controls for user input;
 selecting tests in the :ref:`gui_select_list` or :ref:`gui_build` windows
 will automatically update the :guilabel:`Preview` display.
-
-Presentation in the :guilabel:`Preview` window does *not* reflect
-formatting in PDF output. This area is intended only as a rudimentary
-display to aid in test selection.
 
 Along with displaying content, the location of the
 :py:func:`atform.add_test` function call that created the test appears

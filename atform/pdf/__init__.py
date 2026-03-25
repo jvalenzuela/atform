@@ -5,4 +5,5 @@ using the ReportLab package.
 
 from .doc import BuildError
 from .doc import build
+from .doc import build_init_data
 from .doc import init
