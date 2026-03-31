@@ -30,12 +30,12 @@ jobs:
 
     steps:
       - name: Install target Python version
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
 
       - name: Checkout target commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install requirements
         run: |
@@ -58,7 +58,7 @@ jobs:
         run: python -m unittest
 
       - name: Upload output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: unittest_output_${{ matrix.os }}_python${{ matrix.python }}
           path: |
@@ -73,7 +73,7 @@ jobs:
 
     steps:
       - name: Install Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           # Needs to be 3.11 or later due to packages used by doc/source/conf.py.
           python-version: '3.11'
@@ -92,7 +92,7 @@ jobs:
           sudo apt-get install texlive-font-utils
 
       - name: Checkout target commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Sphinx imports the module being documented, so dependencies need
       # to be present.
