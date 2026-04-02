@@ -12,6 +12,7 @@ import whoosh.filedb.filestore  # type: ignore[import-untyped]
 import whoosh.qparser  # type: ignore[import-untyped]
 
 from .. import addtest
+from .. import embed
 
 
 class CaseFolder(whoosh.analysis.Filter):
@@ -82,9 +83,10 @@ class TestContentSearch:
         storage = whoosh.filedb.filestore.RamStorage()
         self.index = storage.create_index(SCHEMA)
         writer = self.index.writer()
+        self.erefs = embed.Resolver()
 
         for test in addtest.tests.values():
-            fields = index_test(test)
+            fields = self._index_test(test)
 
             verbatim = {f"{key}_verbatim": value for key, value in fields.items()}
             writer.add_document(id=test.id, **verbatim)
@@ -117,36 +119,57 @@ class TestContentSearch:
             matches = {r["id"] for r in results}
         return matches
 
+    def _index_test(self, test):
+        """Creates index fields from a test's content."""
+        fields = {"Title": test.title}
+        if test.objective:
+            fields["Objective"] = self._resolve_erefs(test.objective)
+        fields["References"] = self._index_refs(test.references)
+        fields["Environment"] = "\n".join(f.title for f in test.fields)
+        fields["Equipment"] = "\n".join(test.equipment)
+        fields["Preconditions"] = self._index_preconditions(test.preconditions)
+        fields["Procedure"] = self._index_procedure(test.procedure)
+        return fields
 
-def index_test(test):
-    """Creates index fields from a test's content."""
-    fields = {"Title": test.title}
-    if test.objective:
-        fields["Objective"] = test.objective
-    fields["References"] = index_refs(test.references)
-    fields["Environment"] = "\n".join(f.title for f in test.fields)
-    fields["Equipment"] = "\n".join(test.equipment)
-    fields["Preconditions"] = "\n".join(test.preconditions)
-    fields["Procedure"] = index_procedure(test.procedure)
-    return fields
+    def _index_refs(self, refs):
+        """Converts a test's references into a single string for indexing."""
+        items = []
+        for r in refs:
+            items.append(r.title)
+            items.extend(r.items)
+        return "\n".join(items)
 
+    def _index_preconditions(self, preconditions):
+        """Converts preconditions into a single string for indexing."""
+        items = [self._resolve_erefs(i) for i in preconditions]
+        return "\n".join(items)
 
-def index_refs(refs):
-    """Converts a test's references into a single string for indexing."""
-    items = []
-    for r in refs:
-        items.append(r.title)
-        items.extend(r.items)
-    return "\n".join(items)
+    def _index_procedure(self, steps):
+        """Converts a procedure list into a single string for indexing."""
+        items = []
+        for step in steps:
+            items.append(self._resolve_erefs(step.text))
+            for field in step.fields:
+                items.append(field.title)
+                if field.suffix:
+                    items.append(field.suffix)
+        return "\n".join(items)
 
+    def _resolve_erefs(self, text):
+        """
+        Replaces embedded references with strings representing their
+        searchable content.
+        """
+        content = []
+        for seg in self.erefs.resolve(text):
+            # Acquire searchable content from a referenced object.
+            try:
+                s = seg.search_content
 
-def index_procedure(steps):
-    """Converts a test's procedure list into a single string for indexing."""
-    items = []
-    for step in steps:
-        items.append(step.text)
-        for field in step.fields:
-            items.append(field.title)
-            if field.suffix:
-                items.append(field.suffix)
-    return "\n".join(items)
+            # Leave original content surrounding embedded references as-is.
+            except AttributeError:
+                s = seg
+
+            content.append(s)
+
+        return "\n".join(content)

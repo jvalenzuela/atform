@@ -18,6 +18,7 @@ from reportlab.platypus import (
     SimpleDocTemplate,
 )
 
+from .. import embed
 from .. import id as id_
 from .. import image
 from .. import vcs
@@ -28,7 +29,9 @@ from . import (
     equip,
     layout,
     notes,
+    notice,
     objective,
+    paragraph,
     precondition,
     procedure,
     refs,
@@ -57,6 +60,7 @@ def build_init_data():
         "images": image.images,
         "timestamp": datetime.datetime.today(),
         "version": vcs.version,
+        "erefs": embed.Resolver(),
     }
 
     try:
@@ -86,6 +90,9 @@ def init(data):
     # for the GUI preview.
     data["images"] = flowables
 
+    erefs = data.pop("erefs")
+    erefs.register_handler("Notice", notice.to_flowable)
+    paragraph.EREFS = erefs
     init_data.update(data)
 
 

@@ -438,3 +438,43 @@ class Phrase(unittest.TestCase):
         tcs = search.TestContentSearch()
         matches = tcs.search(text, ["Title"], search.Grouping.ANY, False)
         self.assertEqual(expected, matches)
+
+
+class Notice(unittest.TestCase):
+    """Tests to confirm content within embedded notices is found."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_objective(self):
+        """Confirm notice content in the objective is found."""
+        atform.add_test("title", objective=atform.notice("M001", "foo"))
+        self.assert_match("Objective", "foo")
+
+    def test_preconditions(self):
+        """Confirm notice content in the preconditions is found."""
+        atform.add_test("title", preconditions=[atform.notice("M001", "foo")])
+        self.assert_match("Preconditions", "foo")
+
+    def test_procedure(self):
+        """Confirm notice content in the procedure is found."""
+        atform.add_test("title", procedure=[atform.notice("M001", "foo")])
+        self.assert_match("Procedure", "foo")
+
+    def test_notice_in_bullet_list(self):
+        """Confirm notice content in a bullet list is found."""
+        items = [atform.notice("M001", "foo")]
+        atform.add_test("title", objective=atform.bullet_list(*items))
+        self.assert_match("Objective", "foo")
+
+    def test_bullet_list_in_notice(self):
+        """Confirm bullet list content in a notice is found."""
+        bl = atform.bullet_list("foo")
+        atform.add_test("title", objective=atform.notice("M001", bl))
+        self.assert_match("Objective", "foo")
+
+    def assert_match(self, section, text):
+        """Confirms text was matched in the correct tests."""
+        tcs = search.TestContentSearch()
+        matches = tcs.search(text, [section], search.Grouping.ALL, False)
+        self.assertEqual({(1,)}, matches)

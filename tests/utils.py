@@ -25,6 +25,7 @@ patch("atform.parallelbuild.Builder.MAX_WORKERS", new=1).start()
 INIT_ATTRS = [
     (atform.addtest, "tests"),
     (atform.cache, "data"),
+    (atform.embed, "objects"),
     (atform.field, "fields"),
     (atform.id, "section_titles"),
     (atform.image, "images"),

@@ -14,6 +14,15 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
+    # Required for pycairo(svglib requirement), which doesn't have built
+    # distributions for Linux.
+    - name: Install cairo
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install libcairo2-dev
+
     - name: Install requirements
       shell: bash
       run: |

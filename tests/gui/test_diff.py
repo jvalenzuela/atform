@@ -1603,3 +1603,38 @@ class ProcedureLabel(DiffBase):
         )
         self.generate_diff()
         self.assert_diff(changed={(2,)}, same={(1,)})
+
+
+class Notice(DiffBase):
+    """Tests for detecting changes to embedded notices."""
+
+    def test_same(self):
+        """Confirm no change to a notice is not flagged as a difference."""
+        atform.add_test("title", objective=atform.notice("M001", "foo"))
+        self.generate_old()
+
+        atform.add_test("title", objective=atform.notice("M001", "foo"))
+        self.generate_diff()
+        self.assert_diff(same={(1,)})
+
+    def test_change_symbol(self):
+        """Confirm altering the symbol is detected."""
+        atform.add_test("unchanged")
+        atform.add_test("title", objective=atform.notice("M001", "foo"))
+        self.generate_old()
+
+        atform.add_test("unchanged")
+        atform.add_test("title", objective=atform.notice("W001", "foo"))
+        self.generate_diff()
+        self.assert_diff(changed={(2,)}, same={(1,)})
+
+    def test_change_message(self):
+        """Confirm altering the message is detected."""
+        atform.add_test("unchanged")
+        atform.add_test("title", objective=atform.notice("M001", "foo"))
+        self.generate_old()
+
+        atform.add_test("unchanged")
+        atform.add_test("title", objective=atform.notice("M001", "bar"))
+        self.generate_diff()
+        self.assert_diff(changed={(2,)}, same={(1,)})

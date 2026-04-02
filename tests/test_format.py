@@ -1,5 +1,6 @@
 # Unit tests for the format module.
 
+import string
 
 import atform
 import unittest
@@ -55,3 +56,36 @@ class FormatFont(unittest.TestCase):
         """Confirm exception for an undefined argument."""
         with self.assertRaises(atform.error.UserScriptError):
             atform.format_text("", font="foo")
+
+
+class NoticeSymbol(unittest.TestCase):
+    """Unit tests for the notice() symbol argument."""
+
+    def test_type(self):
+        """Confirm exception for a non-string argument."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.notice(42, "msg")
+
+    def test_undefined(self):
+        """Confirm exception for an undefined symbol."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.notice("foo", "msg")
+
+
+class NoticeMessage(unittest.TestCase):
+    """Unit tests for the notice() message argument."""
+
+    def test_type(self):
+        """Confirm exception for a non-string argument."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.notice("M001", 42)
+
+    def test_empty(self):
+        """Confirm exception for an empty string."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.notice("M001", "")
+
+    def test_blank(self):
+        """Confirm exception for a message containing only whitespace."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.notice("M001", string.whitespace)

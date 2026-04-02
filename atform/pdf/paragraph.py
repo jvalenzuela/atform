@@ -5,6 +5,10 @@ from reportlab.platypus import Paragraph
 from .textstyle import stylesheet
 
 
+# Embedded reference resolver; populated by doc.init().
+EREFS = None
+
+
 def split_paragraphs(s):
     """Separates a string into a list of paragraphs.
 
@@ -35,10 +39,21 @@ def split_paragraphs(s):
     return [" ".join(lines) for lines in plines if lines]
 
 
-def make_paragraphs(text):
+def make_paragraphs(text, style="Normal"):
     """
     Creates a set of flowables from a string containing one or
     more paragraphs.
     """
-    style = stylesheet["Normal"]
-    return [Paragraph(p, style=style) for p in split_paragraphs(text)]
+    ss = stylesheet[style]
+    flowables = []
+    for segment in EREFS.resolve(text):
+        # Text surrounding embedded references is converted into Paragraph
+        # flowables.
+        if isinstance(segment, str):
+            flowables.extend(Paragraph(p, style=ss) for p in split_paragraphs(segment))
+
+        # Handle embedded references already converted to a flowable.
+        else:
+            flowables.append(segment)
+
+    return flowables

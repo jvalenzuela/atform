@@ -223,3 +223,23 @@ This following sample script demonstrates these formatting concepts:
    :caption: Excerpt of format.py
    :start-after: # begin-listing
    :end-before: # end-listing
+
+Admonitions, such as tips or safety warnings, can be added with
+:py:func:`atform.notice`. The note below illustrates the intent of
+such a notice, although the actual format will differ in the PDF output.
+Refer to the :py:func:`atform.notice` API documentation for the specific
+places where notices may be inserted.
+
+.. important::
+   This is an example of a notice.
+
+Notices created by :py:func:`atform.notice` are returned as strings,
+and can be combined with other strings using any of the
+Python string operations.
+The following :file:`notice.py` example demonstrates some typical methods
+to add notices.
+
+.. literalinclude:: examples/notice.py
+   :caption: Excerpt of notice.py
+   :start-after: # begin-listing
+   :end-before: # end-listing

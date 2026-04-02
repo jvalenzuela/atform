@@ -164,3 +164,15 @@ stylesheet.add(
         fontSize=toLength("6 pt"),
     )
 )
+
+
+# Body text for embedded notices. A different font is used to help keep
+# notices distinct from surrounding text.
+stylesheet.add(
+    ParagraphStyle(
+        name="NoticeMessage",
+        parent=stylesheet["Normal"],
+        fontName="Helvetica",
+        fontSize=toLength("11 pt"),  # Adjusted to match normal text.
+    )
+)

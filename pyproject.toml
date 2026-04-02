@@ -25,6 +25,7 @@ dependencies = [
     "reportlab>=4.2.0",
     "pillow",
     "pymupdf>=1.19.2",  # Minimum version for Page.get_pixmap() dpi parameter.
+    "svglib",
     "whoosh",
 ]
 

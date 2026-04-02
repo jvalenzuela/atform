@@ -1,8 +1,24 @@
 """Text formatting API available to user scripts."""
 
+import dataclasses
 from xml.etree import ElementTree
 
+from . import embed
 from . import error
+from . import iso7010
+from . import misc
+
+
+@dataclasses.dataclass(repr=False)
+class Notice:
+    """Internal storage object for each notice."""
+
+    symbol: str
+    msg: str
+
+    def __post_init__(self):
+        self.hash_fields = [self.symbol, self.msg]
+        self.search_content = self.msg
 
 
 # Mapping between typeface and font parameters of format_text() to
@@ -140,3 +156,46 @@ def format_text(text, *, typeface="normal", font="normal"):
     e = ElementTree.Element("font", attrib=attrib)
     e.text = text
     return ElementTree.tostring(e, encoding="unicode")
+
+
+@error.exit_on_script_error
+def notice(symbol, message):
+    """Creates an embedded notice, such as a warning.
+
+    Embedded notices may be used in the following contexts:
+
+    * Objective
+    * Preconditions
+    * Procedure step text
+
+    .. seealso:: :ref:`format`
+
+    Args:
+        symbol (str): ISO 7010 number of the image adjacent to the message.
+            See :ref:`iso7010` for supported symbols.
+        message (str): Notice content; may contain multiple paragraphs
+            and bullet lists created with :py:func:`atform.bullet_list`.
+
+    Returns:
+        str: A string to be inserted into surrounding text where the notice
+        should appear.
+
+        .. note::
+           Returned strings contain reference information for internal use
+           by |project_name|; they do not contain literal notice content
+           and must not be altered.
+    """
+    try:
+        iso7010.validate(symbol)
+    except TypeError as e:
+        raise error.UserScriptError(
+            f"Invalid symbol type: {type(symbol).__name__}",
+            "Symbol must be a string.",
+        ) from e
+    except KeyError as e:
+        raise error.UserScriptError(
+            f'Undefined symbol: "{symbol}"',
+            "See user manual Appendix A for a list of supported symbols.",
+        ) from e
+    notice_ = Notice(symbol, misc.nonempty_string("message", message))
+    return embed.store(notice_)

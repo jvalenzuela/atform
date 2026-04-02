@@ -16,6 +16,7 @@ from atform.field import (
 from atform.format import (
     bullet_list,
     format_text,
+    notice,
 )
 
 from atform.gen import (

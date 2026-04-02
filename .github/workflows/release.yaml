@@ -79,6 +79,7 @@ jobs:
         run: |
           pip install build
           pip install sphinx
+          pip install sphinxcontrib-svg2pdfconverter
           pip install twine
 
       - name: Install LaTeX
@@ -87,6 +88,9 @@ jobs:
           sudo apt-get install latexmk
           sudo apt-get install texlive-latex-extra
           sudo apt-get install texlive-font-utils
+
+      - name: Install Inkscape
+        run: sudo apt-get install inkscape
 
       - name: Build manual
         run: make latexpdf

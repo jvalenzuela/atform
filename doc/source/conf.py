@@ -14,6 +14,8 @@ sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 import atform
 import atform.version
 
+sys.path.append(os.path.abspath("_ext"))
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -33,6 +35,8 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
+    "sphinxcontrib.inkscapeconverter",
+    "iso7010",
 ]
 
 templates_path = ["_templates"]
@@ -77,6 +81,9 @@ latex_additional_files = [
     "images/python-powered.eps",
 ]
 
+latex_appendices = [
+    "iso7010",
+]
 
 # Example files that will not be embedded in the output PDF.
 EXCLUDE_FROM_EMBED = [

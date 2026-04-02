@@ -710,3 +710,112 @@ class Slug(Base, unittest.TestCase):
         """Confirm slug text has no user name."""
         mock_getuser.side_effect = OSError
         self.make_test()
+
+
+class Notice(Base, unittest.TestCase):
+    """Tests for embedded notices."""
+
+    def test_notice(self):
+        """Confirm correct layout for various notice permutations."""
+        procedure = [
+            (
+                """
+                Verify notice with a single-line message with a
+                sans-serif font.
+                """
+                + atform.notice("M001", "A single line message.")
+            ),
+            (
+                """
+                Verify notice with a message taller than the image; ensure
+                the image is aligned with the top of the message.
+                """
+                + atform.notice(
+                    "M001",
+                    """
+                    Lorem ipsum odor amet, consectetuer
+                    adipiscing elit. Quis platea est
+                    non, volutpat vulputate luctus nullam. Dolor ligula rhoncus,
+                    malesuada nascetur senectus donec erat? Adipiscing et
+                    dignissim euismod cursus rutrum morbi parturient
+                    tempor elit.
+                    """,
+                )
+            ),
+            (
+                "Verify notice with multiple paragraphs."
+                + atform.notice(
+                    "M001",
+                    """
+                    This is the first paragraph. Lorem ipsum odor amet,
+                    consectetuer adipiscing elit. Quis platea est
+                    non, volutpat vulputate luctus nullam.
+
+                    This is the second paragraph. Lorem ipsum odor amet,
+                    consectetuer adipiscing elit. Quis platea est
+                    non, volutpat vulputate luctus nullam.
+                    """,
+                )
+            ),
+            atform.notice(
+                "M001", "Verify content containing only an embedded message."
+            ),
+            (
+                atform.notice("M001", "Notice message.")
+                + "Verify content with a notice at the beginning."
+            ),
+            (
+                "Verify an embedded message surrounded by text."
+                + atform.notice("M001", "Notice message.")
+                + "This paragraph follows the embedded notice."
+            ),
+            (
+                "Verify two consecutive notices."
+                + atform.notice("M001", "First")
+                + atform.notice("W001", "Second")
+            ),
+            (
+                "Verify a notice containing a bullet list."
+                + atform.notice(
+                    "M001",
+                    (
+                        "Message with a bullet list:"
+                        + atform.bullet_list("spam", "eggs")
+                    ),
+                )
+            ),
+            (
+                "Verify a bullet list containing a notice."
+                + atform.bullet_list(
+                    "First item",
+                    (
+                        "Item with an embedded notice."
+                        + atform.notice("M001", "Notice message")
+                    ),
+                    "Last item",
+                )
+            ),
+        ]
+        procedure.extend(self._symbol_steps())
+        self.make_test(
+            objective=(
+                "Confirm embedded notice in the objective."
+                + atform.notice("M001", "A notice in the objective.")
+            ),
+            preconditions=[
+                (
+                    "Confirm embedded notice in the precondition item."
+                    + atform.notice("M001", "Notice message.")
+                ),
+                atform.notice("M001", "Item containing only a notice."),
+            ],
+            procedure=procedure,
+        )
+
+    def _symbol_steps(self):
+        """Generates procedure steps to verify all available symbols."""
+        symbols = atform.iso7010.SYMBOLS
+        return [
+            f"Verify symbol for {s}:\n{atform.notice(s, symbols[s])}"
+            for s in sorted(symbols.keys())
+        ]
