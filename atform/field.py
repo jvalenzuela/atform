@@ -132,7 +132,7 @@ def set_active_fields(*, include=None, exclude=None, active=None):
     May be called repeatedly to modify the fields applied to different
     tests. The fields set by this function can also be overridden by
     the ``include_fields``, ``exclude_fields``, and ``active_fields``
-    arguments of :py:class:`atform.Test`.
+    arguments of :py:func:`atform.add_test`.
 
     .. seealso:: :ref:`env_fields`
 

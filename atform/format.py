@@ -59,7 +59,7 @@ def bullet_list(*items):
         str: The entire list with embedded formatting that can be incorporated
         into strings passed to the ``objective``, ``equipment``,
         ``preconditions``, and ``procedure`` parameters of
-        :py:class:`atform.Test`.
+        :py:func:`atform.add_test`.
     """
     indent = 12  # Horizontal indentation in points applied to each item.
 
@@ -96,7 +96,7 @@ def format_text(text, *, typeface="normal", font="normal"):
 
     The returned string can be incorporated into strings passed to the
     ``objective``, ``equipment``, ``preconditions``, and ``procedure``
-    parameters of :py:class:`atform.Test`.
+    parameters of :py:func:`atform.add_test`.
 
     .. seealso:: :ref:`format`
 

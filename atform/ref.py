@@ -25,7 +25,7 @@ def add_reference_category(title, label):
 
     This function does not create any actual references; they must be
     added to each test individually with the ``references`` argument of
-    :py:class:`atform.Test`. This function is only available in the setup
+    :py:func:`atform.add_test`. This function is only available in the setup
     area of the script before any tests or sections are created.
 
     .. seealso:: :ref:`ref`
@@ -64,7 +64,7 @@ def get_xref():
         nested dictionary. The top-level dictionary is keyed by category labels
         defined with :py:func:`atform.add_reference_category`; second-level
         dictionaries are keyed by references in that category, i.e., items
-        passed to the ``references`` argument of :py:class:`atform.Test`.
+        passed to the ``references`` argument of :py:func:`atform.add_test`.
         Final values of the inner dictionary are lists of test identifiers,
         formatted as strings, assigned to that reference. As an example,
         the keys yielding a list of all tests assigned ``"SF42"`` in the
