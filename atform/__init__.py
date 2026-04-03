@@ -41,6 +41,10 @@ from atform.misc import (
     set_project_info,
 )
 
+from atform.notice import (
+    notice,
+)
+
 from atform.ref import (
     add_reference_category,
     get_xref,

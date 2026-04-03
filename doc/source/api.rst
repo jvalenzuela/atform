@@ -33,6 +33,7 @@ Content
    atform.add_test
    atform.bullet_list
    atform.format_text
+   atform.notice
    atform.section
    atform.set_active_fields
    atform.skip_test
