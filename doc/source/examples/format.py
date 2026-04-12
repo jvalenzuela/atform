@@ -9,9 +9,9 @@ import atform
 
 def tag_name(name):
     """
-    # This function formats a specific type of text, a program
-    # tag name in this case, which will then be used in tests
-    # anywhere a program tag name is needed.
+    This function formats a specific type of text, a program
+    tag name in this case, which will then be used in tests
+    anywhere a program tag name is needed.
     """
     return atform.format_text(name, typeface="sansserif", font="bold")
 
