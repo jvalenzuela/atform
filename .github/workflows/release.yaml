@@ -29,19 +29,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Install target Python version
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.python }}
-
       - name: Checkout target commit
         uses: actions/checkout@v6
 
-      - name: Install requirements
-        run: |
-          pip install toml-to-requirements
-          toml-to-req --toml-file pyproject.toml
-          pip install -r requirements.txt
+      - name: Common runner setup
+        uses: ./.github/actions/setup-runner-action
+        with:
+          python-version: ${{ matrix.python }}
 
       # Linux runners require a virtual display to handle Tkinter tests.
       - name: Setup virtual display
@@ -72,8 +66,11 @@ jobs:
       contents: write # Required to create a new release.
 
     steps:
-      - name: Install Python
-        uses: actions/setup-python@v6
+      - name: Checkout target commit
+        uses: actions/checkout@v6
+
+      - name: Common runner setup
+        uses: ./.github/actions/setup-runner-action
         with:
           # Needs to be 3.11 or later due to packages used by doc/source/conf.py.
           python-version: '3.11'
@@ -90,17 +87,6 @@ jobs:
           sudo apt-get install latexmk
           sudo apt-get install texlive-latex-extra
           sudo apt-get install texlive-font-utils
-
-      - name: Checkout target commit
-        uses: actions/checkout@v6
-
-      # Sphinx imports the module being documented, so dependencies need
-      # to be present.
-      - name: Install dependencies
-        run: |
-          pip install toml-to-requirements
-          toml-to-req --toml-file pyproject.toml
-          pip install -r requirements.txt
 
       - name: Build manual
         run: make latexpdf
