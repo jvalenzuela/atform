@@ -3,7 +3,10 @@
 
 from tests import utils
 import atform
+import contextlib
+import io
 import unittest
+from unittest.mock import patch
 
 
 class Generate(unittest.TestCase):
@@ -14,6 +17,22 @@ class Generate(unittest.TestCase):
         """Confirm exception if path is not a string."""
         with self.assertRaises(atform.error.UserScriptError):
             atform.generate(path=42)
+
+    @utils.disable_idlock
+    @utils.no_args
+    @patch("concurrent.futures.Future.result")
+    def test_cli_build_error(self, mock_result):
+        """Confirm CLI build errors are output to standard error."""
+        # Actual build errors cannot be mocked because they are raised in
+        # worker processes, i.e., a patch made here would not propagate to
+        # the worker process. Instead, Future.result() is mocked
+        # to raise the exception that would come back from the worker
+        # process.
+        mock_result.side_effect = atform.pdf.doc.BuildError("spam")
+        atform.add_test("foo")
+        with contextlib.redirect_stderr(io.StringIO()) as stderr:
+            atform.generate()
+            self.assertEqual("spam", stderr.getvalue().strip())
 
 
 class GenerateFolderDepth(unittest.TestCase):
