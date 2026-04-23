@@ -6,6 +6,7 @@ import atform
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 class SectionTitles(unittest.TestCase):
@@ -119,3 +120,21 @@ class OutputSectionPathDepth(unittest.TestCase):
         path.extend(["1"] * depth)
         path.append("1.1.1.1 Foo.pdf")
         self.assertTrue(os.path.exists(os.path.join(*path)))
+
+
+class BuildError(unittest.TestCase):
+    """Tests for errors during the build process."""
+
+    def setUp(self):
+        utils.reset()
+
+    @patch("atform.pdf.doc.TestDocument", side_effect=KeyError("spam"))
+    def test_exception(self, _mock):
+        """Confirm exceptions during building raise a BuildError."""
+        atform.add_test("foo")
+        test = utils.get_test_content()
+        with self.assertRaises(atform.pdf.doc.BuildError) as cm:
+            atform.pdf.doc.build(test, 1, "")
+        msg = str(cm.exception)
+        self.assertIn(test.full_name, msg)
+        self.assertIn("spam", msg)
