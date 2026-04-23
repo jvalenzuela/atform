@@ -101,6 +101,11 @@ class TestContent:
         This is used for the --diff option, and specifically excludes the
         following fields:
 
+        id: The test's ID is used to identify like tests for comparison,
+            i.e., only tests with the same ID as the cache are subject
+            to equality testing, making comparison of the ID field here
+            unnecessary.
+
         call_frame: Used only for generating error messages; not relevant
                     for comparing test content.
 
@@ -111,8 +116,7 @@ class TestContent:
                 still points to the same target.
         """
         return (
-            self.id == other.id
-            and self.title == other.title
+            self.title == other.title
             and self.fields == other.fields
             and self.objective == other.objective
             and self.references == other.references
