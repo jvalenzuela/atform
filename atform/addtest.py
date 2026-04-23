@@ -33,10 +33,9 @@ class TestContent:
     signatures: list
     logo_hash: bytes
 
-    @property
-    def full_name(self):
-        """String containing the combination of ID and title."""
-        return " ".join((id_.to_string(self.id), self.title))
+    def __post_init__(self):
+        # String containing the combination of ID and title.
+        self.full_name = " ".join((id_.to_string(self.id), self.title))
 
     def pregenerate(self):
         """
