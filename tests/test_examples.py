@@ -17,13 +17,11 @@ INPUT_PATH = os.path.join("doc", "source", "examples")
 SRC_FILES = [entry.name for entry in os.scandir(INPUT_PATH) if entry.is_file()]
 
 # Scripts to exclude from running.
-EXCLUDE = set(
-    [
-        # These scripts are imported, not standalone.
-        "button.py",
-        "switch.py",
-    ]
-)
+EXCLUDE = {
+    # These scripts are imported, not standalone.
+    "button.py",
+    "switch.py",
+}
 
 # Folder relative to the repository root where examples will be executed
 # and resulting output will appear.
