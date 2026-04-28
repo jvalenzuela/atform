@@ -6,13 +6,10 @@ and applying non-sectional items such as headers and footers.
 
 import datetime
 import getpass
-import io
 import os
 
-from reportlab.lib.units import inch
 from reportlab.platypus import (
     Frame,
-    Image,
     IndexingFlowable,
     Paragraph,
     SimpleDocTemplate,
@@ -28,6 +25,7 @@ from . import (
     environ,
     equip,
     layout,
+    imgflow,
     notes,
     notice,
     objective,
@@ -81,27 +79,11 @@ def init(data):
     This is the initializer function given to ProcessPoolExecutor when
     building via multiprocessing.
     """
-    # Convert all images into ReportLab flowables.
-    images = data["images"]
-    flowables = {ihash: convert_image(images[ihash]) for ihash in images}
-
-    # The newly created flowable mapping replaces the images dict to
-    # avoid modifying the original mapping when building in-process, i.e.,
-    # for the GUI preview.
-    data["images"] = flowables
-
     erefs = data.pop("erefs")
     erefs.register_handler("Notice", notice.to_flowable)
     paragraph.EREFS = erefs
+    imgflow.IMAGES = data["images"]
     init_data.update(data)
-
-
-def convert_image(raw):
-    """Converts raw image data into a ReportLab image flowable."""
-    buf = io.BytesIO(raw.data)
-    width = raw.size.width * inch
-    height = raw.size.height * inch
-    return Image(buf, width=width, height=height)
 
 
 def build(test, cached_page_count, path):
@@ -278,13 +260,13 @@ class TestDocument:
         than the header and footer.
         """
         flowables = [
-            title.make_title(test, init_data["images"]),
+            title.make_title(test),
             objective.make_objective(test.objective),
             refs.make_references(test.references),
             environ.make_environment(test.fields),
             equip.make_equipment(test.equipment),
             precondition.make_preconditions(test.preconditions),
-            procedure.make_procedure(test.procedure, init_data["images"]),
+            procedure.make_procedure(test.procedure),
             notes.make_notes(),
             approval.make_approval(test),
         ]

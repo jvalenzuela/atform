@@ -338,63 +338,12 @@ class Procedure(Base, unittest.TestCase):
                     ("A Long Title", 3, "Bar"),
                 ],
             },
-            self.make_image_step("full"),
-            self.make_image_step("width"),
-            self.make_image_step("height"),
-            self.make_image_step("small"),
-            {
-                # This step exists to verify correct operation with a PNG
-                # image. Testing image size limits is not done with PNG
-                # images; see test_image.ErrorBase.test_too_large for
-                # rationale.
-                "text": """
-                Procedure step with a PNG image. Verify a circle inscribed
-                by a square.
-                """,
-                "image": os.path.join("tests", "images", "procedure", "step.png"),
-            },
         ]
 
         # Add enough steps to force the table to span muliple pages.
         [procedure.append("Dummy step") for i in range(10)]
 
         self.make_test(procedure=procedure)
-
-    def make_image_step(self, size):
-        """Creates a procedure step verifying an optional image."""
-        return {
-            "text": f"""
-            Verify procedure step layout with image size: {size}
-
-            Confirm image has a red border, the shape in the middle is a circle, and
-            clearance from surrounding text and fields.
-
-            jpqy Bottom text line with descenders.
-            """,
-            "image": os.path.join("tests", "images", "procedure", f"{size}.jpg"),
-            "fields": [
-                ("field", 1),
-            ],
-        }
-
-    def test_dup_image(self):
-        """Confirm the same image can be used in separate tests.
-
-        The intent is to verify the same ReportLab Image flowable can be used
-        multiple times.
-        """
-        step = {
-            "text": "Step with image.",
-            "image": os.path.join("tests", "images", "procedure", "small.jpg"),
-        }
-        self.make_test(
-            objective="Confirm the same image appearing in multiple procedure steps.",
-            procedure=[step] * 2,
-        )
-        self.make_test(
-            objective="Confirm the same image used in multiple tests.",
-            procedure=[step],
-        )
 
     def test_nosplit_first_step(self):
         """Verify Procedure section starts at the top of the second page.
@@ -409,6 +358,91 @@ class Procedure(Base, unittest.TestCase):
     def test_nosplit_last_row(self):
         """Verify the second page starts with the last step."""
         self.make_test(procedure=["step"] * 2)
+
+
+class ProcedureImage(Base, unittest.TestCase):
+    """Tests for images within a procedure step."""
+
+    def test_scaling(self):
+        """Verify images are scaled correctly."""
+        self.make_test(
+            objective="""
+            Ensure all steps show a red circle inscribed by a rectangle,
+            the image is left-justified,
+            and the image is clear of the text above and the field below.
+            """,
+            procedure=[
+                self.make_step(
+                    f"""Full size; verify image is
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.width}
+                    x
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.height}
+                    in.""",
+                    "full.jpg",
+                ),
+                self.make_step(
+                    "Small image; verify image is 1 x 1 in.",
+                    "small.jpg",
+                ),
+                self.make_step(
+                    f"""
+                    Full width; verify image is
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.width}
+                    in wide.""",
+                    "width.jpg",
+                ),
+                self.make_step(
+                    f"""Full height; verify image is
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.height}
+                    in high.""",
+                    "height.jpg",
+                ),
+                self.make_step(
+                    f"""Too wide; verify image is
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.width}
+                    in wide.""",
+                    "toowide.png",
+                ),
+                self.make_step(
+                    f"""Too high; verify image is
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.height}
+                    in high.""",
+                    "toohigh.png",
+                ),
+                self.make_step(
+                    f"""No DPI wide; verify image is
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.width}
+                    in wide.""",
+                    "nodpiwide.png",
+                ),
+                self.make_step(
+                    f"""No DPI high; verify image is
+                    {atform.pdf.procedure.MAX_IMAGE_SIZE.height}
+                    in high.""",
+                    "nodpihigh.png",
+                ),
+            ],
+        )
+
+    def test_format(self):
+        """Verify supported image formats."""
+        self.make_test(
+            procedure=[
+                self.make_step("Verify JPEG format.", "python.jpg"),
+                self.make_step("Verify PNG format.", "python.png"),
+            ],
+        )
+
+    def make_step(self, text, image):
+        """Generates a procedure step with an image."""
+        step = {
+            "text": text + "\n\njpqy Bottom text line with descenders.",
+            "image": os.path.join("tests", "images", "procedure", image),
+            "fields": [
+                ("field below image", 1),
+            ],
+        }
+        return step
 
 
 class Notes(Base, unittest.TestCase):
@@ -599,34 +633,89 @@ class Logo(Base, unittest.TestCase):
     def setUp(self):
         utils.reset()
 
-    def make_logo(self, name):
-        """Creates a test with a given logo image."""
-        path = os.path.join("tests", "images", "logo", f"{name}.jpg")
-        atform.add_logo(path)
+    def test_full(self):
+        """Verify correct size of a full-sized image."""
+        self.add_logo("full.jpg")
         self.make_test(
-            preconditions=[
-                "Verify the logo has a red border.",
-                "Verify the shape in the middle is a circle.",
-                "Verify the logo abuts the left margin.",
-                "Verify the bottom of the logo clears the top of the first section.",
-            ]
+            procedure=self.procedure(
+                width=atform.pdf.title.MAX_LOGO_SIZE.width,
+                height=atform.pdf.title.MAX_LOGO_SIZE.height,
+            ),
         )
 
-    def test_full_size(self):
-        """Verify appearance of a logo that is both maximum height and width."""
-        self.make_logo("full")
+    def test_width(self):
+        """Verify correct size of a full-width image."""
+        self.add_logo("width.jpg")
+        self.make_test(
+            procedure=self.procedure(
+                width=atform.pdf.title.MAX_LOGO_SIZE.width,
+            ),
+        )
 
-    def test_full_width(self):
-        """Verify appearance of a logo that is maximum width."""
-        self.make_logo("width")
-
-    def test_full_height(self):
-        """Verify appearance of a logo that is maximum height."""
-        self.make_logo("height")
+    def test_height(self):
+        """Verify correct size of a full-height image."""
+        self.add_logo("height.jpg")
+        self.make_test(
+            procedure=self.procedure(
+                height=atform.pdf.title.MAX_LOGO_SIZE.height,
+            ),
+        )
 
     def test_small(self):
-        """Verify appearance of a logo smaller than the maximum height and width."""
-        self.make_logo("small")
+        """Verify correct size of an image smaller than maximum in both axes."""
+        self.add_logo("small.jpg")
+        self.make_test(
+            procedure=self.procedure(
+                width=1.0,
+                height=0.75,
+            ),
+        )
+
+    def test_no_dpi_wide(self):
+        """Verify correct size of a wide image with no DPI."""
+        self.add_logo("nodpiwide.png")
+        self.make_test(
+            procedure=self.procedure(
+                width=atform.pdf.title.MAX_LOGO_SIZE.width,
+            ),
+        )
+
+    def test_no_dpi_high(self):
+        """Verify correct size of a tall image with no DPI."""
+        self.add_logo("nodpihigh.png")
+        self.make_test(
+            procedure=self.procedure(
+                height=atform.pdf.title.MAX_LOGO_SIZE.height,
+            ),
+        )
+
+    def test_png(self):
+        """Verify PNG format."""
+        self.add_logo("python-powered.png")
+        self.make_test()
+
+    def test_jpeg(self):
+        """Verify JPEG format."""
+        self.add_logo("python-powered.jpg")
+        self.make_test()
+
+    def add_logo(self, filename):
+        """Adds a logo image from the test images directory."""
+        path = os.path.join("tests", "images", "logo", filename)
+        atform.add_logo(path)
+
+    def procedure(self, width=None, height=None):
+        """Creates procedure steps to verify the logo."""
+        steps = [
+            "Verify the logo is a red circle inscribed by a rectangle.",
+            "Verify the logo clears the top of the first section.",
+            "Verify the logo abuts the left margin.",
+        ]
+        if width:
+            steps.append(f"Verify logo is {width} inches wide.")
+        if height:
+            steps.append(f"Verify logo is {height} inches high.")
+        return steps
 
 
 class Copyright(Base, unittest.TestCase):

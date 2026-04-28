@@ -117,13 +117,11 @@ def no_args(method):
 
 
 @contextlib.contextmanager
-def mock_image(fmt, size, include_dpi=True):
+def mock_image(fmt, size):
     """Context manager for simulating a mock image file."""
     # Generate an in-memory image.
     img = Image.new(mode="RGB", size=size)
     kwargs = {"format": fmt}
-    if include_dpi:
-        kwargs["dpi"] = (100, 100)
     buf = io.BytesIO()
     img.save(buf, **kwargs)
     buf.seek(0)

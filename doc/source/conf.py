@@ -44,10 +44,10 @@ exclude_patterns = []
 
 rst_prolog = f"""
 .. |project_name| replace:: {project}
-.. |max_logo_width| replace:: {atform.image.MAX_LOGO_SIZE.width}
-.. |max_logo_height| replace:: {atform.image.MAX_LOGO_SIZE.height}
-.. |max_step_image_width| replace:: {atform.procedure.MAX_IMAGE_SIZE.width}
-.. |max_step_image_height| replace:: {atform.procedure.MAX_IMAGE_SIZE.height}
+.. |max_logo_width| replace:: {atform.pdf.title.MAX_LOGO_SIZE.width}
+.. |max_logo_height| replace:: {atform.pdf.title.MAX_LOGO_SIZE.height}
+.. |max_step_image_width| replace:: {atform.pdf.procedure.MAX_IMAGE_SIZE.width}
+.. |max_step_image_height| replace:: {atform.pdf.procedure.MAX_IMAGE_SIZE.height}
 .. |cache_filename| replace:: :file:`{atform.cache.FILENAME}`
 .. |idlock_filename| replace:: :file:`{atform.idlock.FILENAME}`
 """

@@ -1111,7 +1111,7 @@ class ProcedureImage(DiffBase):
             procedure=[
                 {
                     "text": "foo",
-                    "image": self.image_path("step.png"),
+                    "image": self.image_path("python.png"),
                 }
             ],
         )
@@ -1122,7 +1122,7 @@ class ProcedureImage(DiffBase):
             procedure=[
                 {
                     "text": "foo",
-                    "image": self.image_path("step.png"),
+                    "image": self.image_path("python.png"),
                 }
             ],
         )
@@ -1141,7 +1141,7 @@ class ProcedureImage(DiffBase):
             procedure=[
                 {
                     "text": "foo",
-                    "image": self.image_path("step.png"),
+                    "image": self.image_path("python.png"),
                 }
             ],
         )
@@ -1156,7 +1156,7 @@ class ProcedureImage(DiffBase):
             procedure=[
                 {
                     "text": "foo",
-                    "image": self.image_path("step.png"),
+                    "image": self.image_path("python.png"),
                 }
             ],
         )

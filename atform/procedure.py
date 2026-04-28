@@ -34,12 +34,6 @@ Field = collections.namedtuple(
 )
 
 
-# Largest allowable procedure step image size, in inches. The width is
-# selected to fit within the allowable horizontal space allotted to the
-# procedure table's Description column; the height chosen arbitrarily.
-MAX_IMAGE_SIZE = image.ImageSize(5, 3)
-
-
 @dataclasses.dataclass(repr=False)
 class Step:
     """Storage for a single procedure step.
@@ -195,7 +189,7 @@ def validate_image(data):
     except KeyError:
         return None
 
-    return image.load(path, MAX_IMAGE_SIZE)
+    return image.load(path)
 
 
 def validate_label(data, num, mapping):

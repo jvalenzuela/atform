@@ -35,48 +35,9 @@ class ErrorBase:
             with utils.mock_image("BMP", (1, 1)):
                 self.call("")
 
-    def test_supported_formats(self):
-        """Confirm supported image formats are accepted."""
-        for fmt in atform.image.FORMATS:
-            with self.subTest(fmt=fmt):
-                utils.reset()
-                with utils.mock_image(fmt, (1, 1)):
-                    self.call("")
-
-    def test_no_dpi(self):
-        """Confirm exception if the image file lacks DPI metadata."""
-        for fmt in atform.image.FORMATS:
-            with self.subTest(fmt=fmt):
-                utils.reset()
-                with self.assertRaises(atform.error.UserScriptError):
-                    with utils.mock_image(fmt, (1, 1), include_dpi=False):
-                        self.call("")
-
-    def test_too_large(self):
-        """Confirm exception if the image is too large.
-
-        This test is only run with JPEG images because DPI information
-        for PNG images is metric, making it impossible to generate images
-        of max size + 1 pixel.
-        """
-        sizes = [
-            (self.TOO_WIDE, 1),
-            (1, self.TOO_HIGH),
-            (self.TOO_WIDE, self.TOO_HIGH),
-        ]
-        for size in sizes:
-            with self.subTest(size=size):
-                with self.assertRaises(atform.error.UserScriptError):
-                    with utils.mock_image("JPEG", size):
-                        self.call("")
-
 
 class AddLogo(unittest.TestCase, ErrorBase):
     """Unit tests for the add_logo() function."""
-
-    # Excessive image sizes required by ErrorBase, assuming 100 DPI.
-    TOO_WIDE = 201
-    TOO_HIGH = 151
 
     def setUp(self):
         utils.reset()
@@ -96,10 +57,6 @@ class AddLogo(unittest.TestCase, ErrorBase):
 
 class ProcedureStep(unittest.TestCase, ErrorBase):
     """Tests for procedure step images."""
-
-    # Excessive image sizes required by ErrorBase, assuming 100 DPI.
-    TOO_WIDE = 501
-    TOO_HIGH = 301
 
     def setUp(self):
         utils.reset()

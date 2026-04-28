@@ -11,15 +11,24 @@ Images must be either JPEG or PNG format. As a general rule,
 photographs or scans are best served by JPEG, while PNG is better for
 screenshots or diagrams.
 
-Both image formats support optional metadata
-specifying DPI, which is required by |project_name| to determine the size
-of the image
-in the output. A typical minimum is 300 DPI; lesser values may result
-in poor image quality while higher values increase file sizes and
-processing time.
-
-|project_name| will not scale or crop
-any image; the onus is on the user to construct images suitable for
-presentation within the allowable area.
 The maximum image size varies based on where the image is used, and is
-listed in the relevant API documentation.
+listed in the relevant API documentation. |project_name| will use one of
+the following methods to fit an image to the allowable area:
+
+#. If the image fits as-is within the allowable area it will retain its
+   original size.
+
+#. If the image exceeds the maximum size it will be scaled to fit in the
+   allowable area.
+
+#. If the image file does not contain DPI metadata by which to calculate
+   its physical size it will be scaled to the maximum allowable
+   height or width.
+
+Any scaling performed by |project_name| will retain the original aspect ratio.
+
+.. note::
+
+   Although |project_name| will scale images as necessary,
+   images of excessive size or resolution will result in unnecessarily large
+   PDF files.

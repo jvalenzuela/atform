@@ -13,10 +13,17 @@ from reportlab.platypus import (
 from . import (
     acroform,
     layout,
+    imgflow,
     paragraph,
     section,
 )
 from .textstyle import stylesheet
+
+
+# Largest allowable procedure step image size, in inches. The width is
+# selected to fit within the allowable horizontal space allotted to the
+# procedure table's Description column; the height chosen arbitrarily.
+MAX_IMAGE_SIZE = imgflow.ImageSize(5, 3)
 
 
 # Header row text.
@@ -60,14 +67,14 @@ FIELD_TABLE_STYLE = [
 ]
 
 
-def make_procedure(steps, images):
+def make_procedure(steps):
     """Generates the procedure section."""
     if not steps:
         return None
 
     rows = []
     rows.append(header())
-    rows.extend(step_rows(steps, images))
+    rows.extend(step_rows(steps))
     rows.append(last_row())
 
     style = [
@@ -125,20 +132,20 @@ def header():
     return [Paragraph(s, style) for s in HEADER_FIELDS]
 
 
-def step_rows(steps, images):
+def step_rows(steps):
     """Creates rows for all steps."""
     step_style = stylesheet["ProcedureTableHeading"]
     return [
         [
             Paragraph(str(i), step_style),
-            step_body(step, images),
+            step_body(step),
             acroform.Checkbox(),
         ]
         for i, step in enumerate(steps, start=1)
     ]
 
 
-def step_body(step, images):
+def step_body(step):
     """
     Creates flowables containing all user-defined content for a single
     step, i.e., everything that goes in the Description column.
@@ -148,7 +155,7 @@ def step_body(step, images):
 
     if step.image_hash:
         flowables.append(Spacer(0, IMAGE_SEP))
-        flowables.append(images[step.image_hash])
+        flowables.append(imgflow.get_flowable(step.image_hash, MAX_IMAGE_SIZE))
     if step.fields:
         flowables.extend(make_fields(step.fields))
 

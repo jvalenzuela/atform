@@ -9,7 +9,12 @@ from reportlab.platypus import (
 )
 
 from . import layout
+from . import imgflow
 from .textstyle import stylesheet
+
+
+# Maximum logo image size, in inches.
+MAX_LOGO_SIZE = imgflow.ImageSize(2.0, 1.5)
 
 
 # Table coordinates.
@@ -54,7 +59,7 @@ PRJ_INFO_TABLE_STYLE = [
 ]
 
 
-def make_title(test, images):
+def make_title(test):
     """Creates title information on the top of the first page."""
     prj_info = project_info_table(test)
 
@@ -64,7 +69,7 @@ def make_title(test, images):
         return None
 
     try:
-        logo = images[test.logo_hash]
+        logo = imgflow.get_flowable(test.logo_hash, MAX_LOGO_SIZE)
     except KeyError:
         logo = None
 

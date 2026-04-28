@@ -5,7 +5,6 @@ file hash. Using a hash value allows the image to be stored in, and compared
 with the cache file without storing the entire image data in the cache file.
 """
 
-import collections
 import functools
 import hashlib
 import io
@@ -15,18 +14,6 @@ import PIL
 from . import error
 from . import misc
 from . import state
-
-
-# Data type for storing two-dimensional sizes.
-ImageSize = collections.namedtuple("ImageSize", ["width", "height"])
-
-
-# Data and metadata for a single image.
-Image = collections.namedtuple("Image", ["size", "data"])
-
-
-# Largest allowable logo image size, in inches.
-MAX_LOGO_SIZE = ImageSize(2.0, 1.5)
 
 
 # Allowable image formats.
@@ -41,11 +28,11 @@ ImageHashType = bytes
 #
 # This attribute must only be accessed externally by importing the entire
 # module; see the state module for details.
-images: dict[ImageHashType, Image] = {}
+images: dict[ImageHashType, bytes] = {}
 
 
 @functools.cache
-def load(path, max_size):
+def load(path):
     """Loads and validates an image file."""
     # BytesIO are allowed to support unit testing.
     if not isinstance(path, str) and not isinstance(path, io.BytesIO):
@@ -56,13 +43,11 @@ def load(path, max_size):
 
     try:
         with open(path, "rb") as f:
-            img_hash = calc_hash(f)
+            raw = f.read()
+            img_hash = calc_hash(raw)
             image = PIL.Image.open(f, formats=FORMATS)
 
-            # PNG formats require calling load() to ensure EXIF data is available
-            # in the info attribute. The call is unconditional for simplicity as
-            # there's no downside to callling it regardless of format.
-            # This also ensures the entire image is loaded into memory so the
+            # Ensures the entire image is loaded into memory so the
             # source file object can be closed.
             image.load()
     except FileNotFoundError as e:
@@ -78,50 +63,15 @@ def load(path, max_size):
             """,
         ) from e
 
-    try:
-        dpi_raw = image.info["dpi"]
-    except KeyError as e:
-        raise error.UserScriptError(
-            "No DPI information found in image file.",
-            "Ensure the image file has embedded DPI metadata.",
-        ) from e
-
-    # Ensure DPI values are floats.
-    dpi = ImageSize(*[float(i) for i in dpi_raw])
-
-    size = ImageSize(image.width / dpi.width, image.height / dpi.height)
-
-    if (size.width > max_size.width) or (size.height > max_size.height):
-        raise error.UserScriptError(
-            f"Image is too large: {path}",
-            f"""
-            Reduce the image size to within {max_size.width} inch
-            wide and {max_size.height} inch high.
-            """,
-        )
-
-    images[img_hash] = convert_image(image, size, dpi)
+    images[img_hash] = raw
     return img_hash
 
 
-def calc_hash(file):
+def calc_hash(raw):
     """Computes the hash of an image file."""
     h = hashlib.blake2b()
-    h.update(file.read())
+    h.update(raw)
     return h.digest()
-
-
-def convert_image(image, size, dpi):
-    """Converts a PIL Image into an Image named tuple."""
-    buf = io.BytesIO()
-    args = {
-        "format": image.format,
-        "dpi": dpi,
-    }
-    if image.format == "JPEG":
-        args["quality"] = "keep"
-    image.save(buf, **args)
-    return Image(size=size, data=buf.getvalue())
 
 
 ################################################################################
@@ -155,4 +105,4 @@ def add_logo(path):
             """,
         )
 
-    state.logo_hash = load(path, MAX_LOGO_SIZE)
+    state.logo_hash = load(path)
