@@ -16,7 +16,7 @@ class ListTests(unittest.TestCase):
 
     def test_content(self):
         """Confirm returned list contains correct test listing."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("t1")
         atform.add_test("t2")
         self.assertEqual([("1.1", "t1"), ("1.2", "t2")], atform.list_tests())
@@ -26,7 +26,7 @@ class ListTests(unittest.TestCase):
     @utils.no_args
     def test_after_generate(self):
         """Confirm correct operation when called after generate()."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("t1")
         atform.add_test("t2")
         atform.generate()
@@ -36,14 +36,14 @@ class ListTests(unittest.TestCase):
     @utils.disable_idlock
     def test_cli_filters(self):
         """Confirm CLI option filters do not limit returned test list."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("t1")
         atform.add_test("t2")
         with patch("sys.argv", utils.mock_argv("")):
             atform.generate()  # Call to update cache.
 
         utils.reset()
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("t1", objective="foo")
         atform.add_test("t2")
         atform.add_test("t3")

@@ -25,7 +25,6 @@ from atform.gen import (
 
 from atform.id import (
     section,
-    set_id_depth,
     skip_test,
 )
 

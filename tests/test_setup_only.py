@@ -23,7 +23,6 @@ class SetupOnly(unittest.TestCase):
 
     def test_call_after_section(self):
         """Confirm exception when calling a decorated function after section()."""
-        atform.set_id_depth(2)
         atform.section(1)
         with self.assertRaises(atform.error.UserScriptError):
             func(0)

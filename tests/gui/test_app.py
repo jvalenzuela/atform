@@ -41,6 +41,5 @@ class BuildListParameters(unittest.TestCase):
     @utils.disable_idlock
     def test_folder_depth(self, mock_build, *_mocks):
         """Confirm the folder depth parameter is passed to build."""
-        atform.set_id_depth(3)
         atform.generate(folder_depth=2)
         self.assertEqual(2, mock_build.call_args[0][2])

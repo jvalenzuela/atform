@@ -323,16 +323,16 @@ class ProjectInfo(DiffBase):
         self.assert_diff(changed={(2,)}, same={(1,)})
 
 
-class IdDepth(DiffBase):
-    """Tests for detecting changes to ID depth."""
+class SectionDepth(DiffBase):
+    """Tests for detecting changes to section depth."""
 
     def test_change(self):
-        """Confirm changing the ID depth is detected."""
+        """Confirm changing the section depth is detected."""
         atform.add_test("t1")
         atform.add_test("t2")
         self.generate_old()
 
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("t1")
         atform.add_test("t2")
         self.generate_diff()

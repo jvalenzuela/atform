@@ -8,7 +8,6 @@ from . import arg
 from . import cache
 from . import idlock
 from . import error
-from . import misc
 from . import parallelbuild
 from . import pdf
 from . import vcs
@@ -115,24 +114,11 @@ def generate(*, path="pdf", folder_depth=0):
             "Folder depth must be an integer.",
         )
 
-    try:
-        misc.validate_folder_depth(folder_depth)
-    except ValueError as e:
-        max_depth = misc.max_folder_depth()
-        if max_depth:
-            remedy = f"""
-            The folder depth must be within 0 and {max_depth}, inclusive.
-            """
-        else:
-            remedy = """
-            atform.set_id_depth() must first be called to increase the
-            number of test identifier fields before folder_depth can
-            be increased beyond zero.
-            """
+    if folder_depth < 0:
         raise error.UserScriptError(
-            "Invalid folder depth value.",
-            remedy,
-        ) from e
+            f"Invalid folder depth: {folder_depth}",
+            "The folder depth must be greater than or equal to zero.",
+        )
 
     args = arg.parse()
     vcs.load()

@@ -9,7 +9,6 @@ from .. import addtest
 from . import common
 from . import preview
 from .. import id as id_
-from .. import state
 from . import tkwidget
 
 
@@ -40,11 +39,22 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.tree.column(
             "#0",
             stretch=tk.FALSE,
-            width=len(state.current_id) * self.ID_COLUMN_FACTOR,
+            width=self._id_column_width(),
         )
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
         self.tree.tag_bind("preview", "<ButtonRelease-1>", self._preview)
         common.add_vertical_scrollbar(frame, self.tree)
+
+    def _id_column_width(self):
+        """Computes the initial width of the ID column."""
+        try:
+            max_depth = max(len(id_) for id_ in addtest.tests)
+
+        # Corner case if no tests exist.
+        except ValueError:
+            max_depth = 1
+
+        return max_depth * self.ID_COLUMN_FACTOR
 
     def add_test(self, tid):
         """Adds a test to the listing."""
@@ -119,7 +129,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         # when simultaneously selecting a section and a test. The preview
         # dispatch is therefore filtered for test IDs only to prevent
         # non-test IDs from being previewed.
-        if len(tid) == len(state.current_id):
+        if tid in addtest.tests:
             preview.show(tid)
 
     @property

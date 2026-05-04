@@ -60,14 +60,16 @@ class Builder(concurrent.futures.ProcessPoolExecutor):
         self.page_counts.update(result)
 
 
-def build_path(tid, root, depth):
+def build_path(tid, root, max_depth):
     """Constructs a path where a test's output PDF will be written.
 
     The path will consist of the root, followed by a folder per
-    section number limited to depth, e.g., <root>/<x>/<y> for an ID x.y.z
+    section number limited to max_depth, e.g., <root>/<x>/<y> for an ID x.y.z
     and depth 2. The final number in an ID is not translated to a folder.
     """
     folders = [root]
+
+    depth = min(len(tid) - 1, max_depth)
 
     # Append a folder for each section level.
     for i, section_id in enumerate(tid[:depth]):

@@ -88,12 +88,16 @@ class TestList(InteractiveGuiTestCase):
 
     def test_id_column_width(self):
         """Confirm the select list ID column is wide enough to accommodate the test ID."""
-        atform.set_id_depth(3)
+        # Test with a small ID to ensure the longer IDs take precedence.
+        atform.section(1)
+        atform.add_test("foo")
+
         atform.section(1, id=42)
         atform.section(2, id=99)
         atform.skip_test(id=999)
         atform.add_test("title")
         root, tl = self.create_testlist()
+        tl.add_test((1, 1))
         tl.add_test((42, 99, 999))
         self.start_gui(root=root)
 

@@ -11,10 +11,6 @@ import atform
 # start of each section.
 atform.set_project_info(project="The Big Project")
 
-# Use two-level identifiers so each system will be dedicated to
-# a top-level section.
-atform.set_id_depth(2)
-
 
 ######################################################################
 # Content

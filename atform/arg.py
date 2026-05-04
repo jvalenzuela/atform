@@ -4,8 +4,6 @@ import argparse
 import re
 import sys
 
-from . import state
-
 
 class InvalidIdError(Exception):
     """Raised when an invalid ID or range is found in the argument list."""
@@ -89,11 +87,6 @@ def string_to_id(s):
         raise InvalidIdError(
             "IDs must consist of integers separated by periods."
         ) from e
-
-    # An ID may not have more fields than the configured identifier depth.
-    max_len = len(state.current_id)
-    if len(id_) > max_len:
-        raise InvalidIdError(f"IDs cannot have more than {max_len} fields.")
 
     # All ID fields must be greater than zero.
     for i in id_:

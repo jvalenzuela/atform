@@ -13,20 +13,16 @@ additional organizational levels to segregate related test procedures into
 sections, and |project_name| can support this by numbering tests
 with multiple integer fields,
 e.g., 5.1 or 1.8.9. Any quantity of fields can be used,
-although practical values are between two and four. The only stipulation
-regarding numbering is all test procedures must use the same format,
-i.e., *every* test will be numbered with the same quantity of fields.
+although practical values are between two and four.
 
 When using two or more numbering fields, |project_name| refers to each field as a
-level, with the leftmost field as level one, increasing up to
-the number of configured levels. For example, when configured for
-three levels, tests will be numbered *x.y.z*; where *x* is level one, *y* is
-level two, and *z* is level three.
+level, starting with the leftmost field as level one.
+Using the identifier *x.y* as an example, *x* is level one and *y*
+is level two.
 
-The following example shows the two commands for organizing tests
-into sections:
-:py:func:`atform.set_id_depth` and
-:py:func:`atform.section`:
+Organizing tests into numeric sections is done with the
+:py:func:`atform.section` function as the following example
+demonstrates:
 
 .. literalinclude:: examples/section.py
    :caption: Excerpt of section.py

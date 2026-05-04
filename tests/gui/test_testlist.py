@@ -16,16 +16,23 @@ class Preview(unittest.TestCase):
     def setUp(self):
         utils.reset()
         self.tl = atform.gui.testlist.TestList(None)
-        atform.set_id_depth(3)
+
+        # Create tests at varying section depths.
+        atform.section(1)
         atform.add_test("foo")
-        self.id = utils.get_test_content().id
-        self.tl.add_test(self.id)
+        self.tl.add_test((1, 1))
+
+        atform.section(3)
+        atform.add_test("bar")
+        self.tl.add_test((1, 2, 1, 1))
 
     def test_click_test(self, mock_show, mock_focus):
         """Confirm preview when a test item is clicked."""
-        mock_focus.return_value = str(self.id)
-        self.click_item(self.id)
-        mock_show.assert_called_once()
+        for id_ in [(1, 1), (1, 2, 1, 1)]:
+            mock_show.reset_mock()
+            mock_focus.return_value = str(id_)
+            self.click_item(id_)
+            mock_show.assert_called_once_with(id_)
 
     def test_section_focus(self, mock_show, mock_focus):
         """Confirm no preview when clicking a test but focus() returns a section.
@@ -33,16 +40,17 @@ class Preview(unittest.TestCase):
         See testlist.TestList._preview() comment for details why this
         unit test exists.
         """
-        mock_focus.return_value = str(self.id[:-1])
-        self.click_item(self.id)
+        mock_focus.return_value = str((1,))
+        self.click_item((1, 1))
         mock_show.assert_not_called()
 
     def test_click_section(self, mock_show, mock_focus):
         """Confirm no preview when a section item is clicked."""
-        target = self.id[:-1]
-        mock_focus.return_value = str(target)
-        self.click_item(target)
-        mock_show.assert_not_called()
+        for id_ in [(1,), (1, 2, 1)]:
+            with self.subTest(id_=id_):
+                mock_focus.return_value = str(id_)
+                self.click_item(id_)
+                mock_show.assert_not_called()
 
     def click_item(self, item):
         """Simulates clicking on a given tree item."""
@@ -88,7 +96,7 @@ class AddTest(Base):
 
     def test_add_sections(self):
         """Confirm enclosing sections are automatically added."""
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         self.tl.add_test((1, 1, 1))
         self.assertEqual([(1,)], self.tl.tree.ttv_get_children())
@@ -96,7 +104,7 @@ class AddTest(Base):
 
     def test_visible(self):
         """Confirm parent sections of added tests start fully expanded."""
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         self.tl.add_test((1, 1, 1))
         self.assertEqual(tk.TRUE, self.tl.tree.ttv_item((1,), option="open"))
@@ -108,7 +116,7 @@ class RemoveTest(Base):
 
     def test_remove_one_test(self):
         """Confirm removing one test from a section containing several tests."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         atform.add_test("bar")
         self.tl.add_test((1, 1))
@@ -120,7 +128,7 @@ class RemoveTest(Base):
 
     def test_remove_section(self):
         """Confirm removing all tests from a section also removes empty parent sections."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         atform.add_test("bar")
         self.tl.add_test((1, 1))
@@ -133,7 +141,7 @@ class RemoveTest(Base):
 
     def test_remove_nonexistent(self):
         """Confirm removing a test that is not listed has no effect."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         atform.add_test("bar")
         self.tl.add_test((1, 1))
@@ -149,7 +157,7 @@ class Clear(Base):
 
     def test_removal(self):
         """Confirm all items are removed."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         atform.section(1)
         atform.add_test("bar")
@@ -173,7 +181,7 @@ class DisplayId(Base):
 
     def test_section(self):
         """Confirm section IDs are displayed correctly."""
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         self.tl.add_test((1, 1, 1))
         self.assert_id((1,), "1")
@@ -199,7 +207,6 @@ class Title(Base):
 
     def test_section_title(self):
         """Confirm section titles are displayed."""
-        atform.set_id_depth(2)
         atform.section(1, title="foo")
         atform.add_test("a test")
         self.tl.add_test((1, 1))
@@ -207,7 +214,7 @@ class Title(Base):
 
     def test_section_no_title(self):
         """Confirm a section with no title is blank."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("a test")
         self.tl.add_test((1, 1))
         self.assert_title((1,), "")
@@ -237,7 +244,7 @@ class Heirarchy(Base):
 
     def test_sections(self):
         """Confirm correct structure when sections are present."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         atform.add_test("bar")
         atform.section(1)
@@ -278,7 +285,7 @@ class AllTests(Base):
 
     def test_section(self):
         """Confirm test IDs when sections are defined."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         atform.section(1)
         atform.add_test("bar")
@@ -324,20 +331,23 @@ class SelectedTests(Base):
 
     def test_section(self):
         """Confirm child tests are returned when a section is selected."""
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         atform.add_test("bar")
         atform.add_test("baz")
         atform.section(1)
         atform.add_test("spam")
         atform.add_test("eggs")
+        atform.section(2)
+        atform.add_test("ham")
         self.tl.add_test((1, 1, 1))
         self.tl.add_test((1, 1, 2))
         self.tl.add_test((1, 1, 3))
-        self.tl.add_test((2, 1, 1))
-        self.tl.add_test((2, 1, 2))
+        self.tl.add_test((2, 1))
+        self.tl.add_test((2, 2))
+        self.tl.add_test((2, 3, 1))
         self.tl.tree.ttv_selection_set((2,))
-        self.assertEqual({(2, 1, 1), (2, 1, 2)}, self.tl.selected_tests)
+        self.assertEqual({(2, 1), (2, 2), (2, 3, 1)}, self.tl.selected_tests)
 
 
 class ExpandAll(Base):
@@ -345,19 +355,18 @@ class ExpandAll(Base):
 
     def setUp(self):
         super().setUp()
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         atform.section(1)
         atform.add_test("bar")
         self.tl.add_test((1, 1, 1))
-        self.tl.add_test((2, 1, 1))
+        self.tl.add_test((2, 1))
 
     def test_all_closed(self):
         """Confirm all sections are opened if all are initially closed."""
         self.set_open((1,), tk.FALSE)
         self.set_open((1, 1), tk.FALSE)
         self.set_open((2,), tk.FALSE)
-        self.set_open((2, 1), tk.FALSE)
         self.click()
         self.assert_all_open()
 
@@ -366,7 +375,6 @@ class ExpandAll(Base):
         self.set_open((1,), tk.TRUE)
         self.set_open((1, 1), tk.TRUE)
         self.set_open((2,), tk.FALSE)
-        self.set_open((2, 1), tk.FALSE)
         self.click()
         self.assert_all_open()
 
@@ -375,7 +383,6 @@ class ExpandAll(Base):
         self.set_open((1,), tk.TRUE)
         self.set_open((1, 1), tk.TRUE)
         self.set_open((2,), tk.TRUE)
-        self.set_open((2, 1), tk.TRUE)
         self.click()
         self.assert_all_open()
 
@@ -384,7 +391,6 @@ class ExpandAll(Base):
         self.assert_open((1,), tk.TRUE)
         self.assert_open((1, 1), tk.TRUE)
         self.assert_open((2,), tk.TRUE)
-        self.assert_open((2, 1), tk.TRUE)
 
     def click(self):
         """Simulates clicking the expand all button."""
@@ -396,19 +402,18 @@ class CollapseAll(Base):
 
     def setUp(self):
         super().setUp()
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         atform.section(1)
         atform.add_test("bar")
         self.tl.add_test((1, 1, 1))
-        self.tl.add_test((2, 1, 1))
+        self.tl.add_test((2, 1))
 
     def test_all_closed(self):
         """Confirm all sections remain closed if all are initially closed."""
         self.set_open((1,), tk.FALSE)
         self.set_open((1, 1), tk.FALSE)
         self.set_open((2,), tk.FALSE)
-        self.set_open((2, 1), tk.FALSE)
         self.click()
         self.assert_all_closed()
 
@@ -417,7 +422,6 @@ class CollapseAll(Base):
         self.set_open((1,), tk.TRUE)
         self.set_open((1, 1), tk.TRUE)
         self.set_open((2,), tk.FALSE)
-        self.set_open((2, 1), tk.FALSE)
         self.click()
         self.assert_all_closed()
 
@@ -426,7 +430,6 @@ class CollapseAll(Base):
         self.set_open((1,), tk.TRUE)
         self.set_open((1, 1), tk.TRUE)
         self.set_open((2,), tk.TRUE)
-        self.set_open((2, 1), tk.TRUE)
         self.click()
         self.assert_all_closed()
 
@@ -435,7 +438,6 @@ class CollapseAll(Base):
         self.assert_open((1,), tk.FALSE)
         self.assert_open((1, 1), tk.FALSE)
         self.assert_open((2,), tk.FALSE)
-        self.assert_open((2, 1), tk.FALSE)
 
     def click(self):
         """Simulates clicking the collapse all button."""
@@ -447,12 +449,12 @@ class SelectAll(Base):
 
     def setUp(self):
         super().setUp()
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         atform.section(1)
         atform.add_test("bar")
         self.tl.add_test((1, 1, 1))
-        self.tl.add_test((2, 1, 1))
+        self.tl.add_test((2, 1))
 
     def test_initial_none(self):
         """Confirm all items are selected when none are initially selected."""
@@ -474,7 +476,6 @@ class SelectAll(Base):
             (1, 1, 1),
             (2,),
             (2, 1),
-            (2, 1, 1),
         )
         self.click()
         self.assert_all_selected()
@@ -488,7 +489,6 @@ class SelectAll(Base):
                 (1, 1, 1),
                 (2,),
                 (2, 1),
-                (2, 1, 1),
             ),
             self.tl.tree.ttv_selection(),
         )
@@ -503,12 +503,12 @@ class UnselectAll(Base):
 
     def setUp(self):
         super().setUp()
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         atform.section(1)
         atform.add_test("bar")
         self.tl.add_test((1, 1, 1))
-        self.tl.add_test((2, 1, 1))
+        self.tl.add_test((2, 1))
 
     def test_initial_none(self):
         """Confirm all items remain unselected when none are initially selected."""
@@ -530,7 +530,6 @@ class UnselectAll(Base):
             (1, 1, 1),
             (2,),
             (2, 1),
-            (2, 1, 1),
         )
         self.click()
         self.assert_none_selected()
@@ -549,7 +548,7 @@ class InvertSelection(Base):
 
     def setUp(self):
         super().setUp()
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         atform.add_test("bar")
         atform.section(1)
@@ -557,8 +556,8 @@ class InvertSelection(Base):
         atform.add_test("eggs")
         self.tl.add_test((1, 1, 1))
         self.tl.add_test((1, 1, 2))
-        self.tl.add_test((2, 1, 1))
-        self.tl.add_test((2, 1, 2))
+        self.tl.add_test((2, 1))
+        self.tl.add_test((2, 2))
 
     def test_initial_none(self):
         """Confirm all tests are selected if nothing is initially selected."""
@@ -568,8 +567,8 @@ class InvertSelection(Base):
             (
                 (1, 1, 1),
                 (1, 1, 2),
-                (2, 1, 1),
-                (2, 1, 2),
+                (2, 1),
+                (2, 2),
             ),
             self.tl.tree.ttv_selection(),
         )
@@ -583,8 +582,7 @@ class InvertSelection(Base):
             (1, 1, 2),
             (2,),
             (2, 1),
-            (2, 1, 1),
-            (2, 1, 2),
+            (2, 2),
         )
         self.click()
         self.assertEqual((), self.tl.tree.ttv_selection())
@@ -596,20 +594,20 @@ class InvertSelection(Base):
         self.assertEqual(
             (
                 (1, 1, 1),
-                (2, 1, 1),
-                (2, 1, 2),
+                (2, 1),
+                (2, 2),
             ),
             self.tl.tree.ttv_selection(),
         )
 
     def test_multiple(self):
         """Confirm inversion if multiple tests are initially selected."""
-        self.tl.tree.ttv_selection_set((1, 1, 2), (2, 1, 2))
+        self.tl.tree.ttv_selection_set((1, 1, 2), (2, 2))
         self.click()
         self.assertEqual(
             (
                 (1, 1, 1),
-                (2, 1, 1),
+                (2, 1),
             ),
             self.tl.tree.ttv_selection(),
         )
@@ -620,8 +618,8 @@ class InvertSelection(Base):
         self.click()
         self.assertEqual(
             (
-                (2, 1, 1),
-                (2, 1, 2),
+                (2, 1),
+                (2, 2),
             ),
             self.tl.tree.ttv_selection(),
         )
@@ -719,7 +717,7 @@ class SelectedCount(Base):
 
     def test_section(self):
         """Confirm correct count if a section is selected."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         atform.add_test("bar")
         atform.section(1)

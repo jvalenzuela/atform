@@ -153,7 +153,6 @@ class ContentAreaException(unittest.TestCase):
 
     def test_after_section(self):
         """Confirm exception if called after a section is created."""
-        atform.set_id_depth(2)
         atform.section(1)
         with self.assertRaises(atform.error.UserScriptError):
             self.call()

@@ -1,14 +1,12 @@
 import atform
 
 
-# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Setup
 ######################################################################
 
-atform.set_id_depth(2)
 
-
+# begin-listing <<< Marker comment for documentation code listing.
 ######################################################################
 # Content
 #

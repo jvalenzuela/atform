@@ -26,13 +26,11 @@ class InvalidId(unittest.TestCase):
     @patch("sys.argv", utils.mock_argv("1.spam"))
     def test_field_non_integer(self):
         """Confirm error if a single field is not an integer."""
-        atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
             arg.parse()
 
     def test_empty_field(self):
         """Confirm error for an empty field."""
-        atform.set_id_depth(3)
         for s in [".2.3", "1..3", "1.2."]:
             with self.subTest(s=s):
                 with self.assertRaises(SystemExit):
@@ -42,14 +40,6 @@ class InvalidId(unittest.TestCase):
     @patch("sys.argv", utils.mock_argv("0.1"))
     def test_out_of_range(self):
         """Confirm error for a field value less than one."""
-        atform.set_id_depth(2)
-        with self.assertRaises(SystemExit):
-            arg.parse()
-
-    @patch("sys.argv", utils.mock_argv("1.2.3"))
-    def test_too_long(self):
-        """Confirm error for too many fields."""
-        atform.set_id_depth(2)
         with self.assertRaises(SystemExit):
             arg.parse()
 
@@ -59,7 +49,6 @@ class ValidId(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        atform.set_id_depth(2)
 
     @patch("sys.argv", utils.mock_argv("042.0099"))
     def test_leading_zero(self):
@@ -69,7 +58,7 @@ class ValidId(unittest.TestCase):
 
     @patch("sys.argv", utils.mock_argv("42 88.99"))
     def test_fields(self):
-        """Confirm IDs with fields up to the configured ID depth are correctly parsed."""
+        """Confirm IDs with varying numbers of fields are correctly parsed."""
         ids = arg.parse().id
         self.assertEqual(ids, [(42,), (88, 99)])
 
@@ -82,7 +71,6 @@ class InvalidRange(unittest.TestCase):
 
     def test_order(self):
         """Confirm error if the end ID is not greater than the start ID."""
-        atform.set_id_depth(2)
         cases = [
             "1-1",
             "2-1",
@@ -123,7 +111,6 @@ class ValidRange(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        atform.set_id_depth(2)
 
     def test_hyphen_spacing(self):
         """Confirm ranges with various spacing around the hyphen are correctly parsed."""
@@ -157,7 +144,6 @@ class Misc(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        atform.set_id_depth(2)
 
     @utils.no_args
     def test_none(self):
@@ -185,7 +171,6 @@ class FilterId(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        atform.set_id_depth(2)
 
     @utils.no_pdf_output
     @utils.disable_idlock
@@ -252,8 +237,8 @@ class FilterId(unittest.TestCase):
 
         for args in combos:
             utils.reset()
-            atform.set_id_depth(2)
 
+            atform.section(1)
             atform.add_test("1.1")
 
             atform.section(1, id=3)

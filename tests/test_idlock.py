@@ -174,8 +174,8 @@ class ProhibitedChanges(unittest.TestCase):
 
     @patch("atform.idlock.load", return_value={(1,): "t1"})
     def test_id_depth(self, *args):
-        """Confirm exception if the ID depth is altered."""
-        atform.set_id_depth(2)
+        """Confirm exception if the section depth changes."""
+        atform.section(1)
         atform.add_test("t1")
 
         with self.assertRaises(atform.idlock.ChangedTestError) as cm:

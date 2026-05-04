@@ -28,7 +28,7 @@ class SectionTitles(unittest.TestCase):
     @utils.no_args
     def test_single_section_no_title(self):
         """Confirm path created for an ID with one section and no title."""
-        atform.set_id_depth(2)
+        atform.section(1)
         atform.add_test("foo")
         with tempfile.TemporaryDirectory() as root:
             atform.generate(path=root, folder_depth=1)
@@ -38,7 +38,6 @@ class SectionTitles(unittest.TestCase):
     @utils.no_args
     def test_single_section_title(self):
         """Confirm path created for an ID with one section with a title."""
-        atform.set_id_depth(2)
         atform.section(1, title="spam")
         atform.add_test("foo")
         with tempfile.TemporaryDirectory() as root:
@@ -49,7 +48,7 @@ class SectionTitles(unittest.TestCase):
     @utils.no_args
     def test_multi_section_no_title(self):
         """Confirm path created for an ID with multiple sections with no titles."""
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         with tempfile.TemporaryDirectory() as root:
             atform.generate(path=root, folder_depth=2)
@@ -59,7 +58,6 @@ class SectionTitles(unittest.TestCase):
     @utils.no_args
     def test_multi_section_some_titles(self):
         """Confirm path created for an ID with multiple sections, some with titles."""
-        atform.set_id_depth(3)
         atform.section(1)
         atform.section(2, title="spam")
         atform.add_test("foo")
@@ -71,7 +69,6 @@ class SectionTitles(unittest.TestCase):
     @utils.no_args
     def test_multi_section_all_titles(self):
         """Confirm path created for an ID with multiple sections, all with titles."""
-        atform.set_id_depth(3)
         atform.section(1, title="spam")
         atform.section(2, title="eggs")
         atform.add_test("foo")
@@ -89,36 +86,69 @@ class SectionTitles(unittest.TestCase):
 class OutputSectionPathDepth(unittest.TestCase):
     """Tests for output section folder depth."""
 
-    ID_DEPTH = 4
-
     def setUp(self):
         utils.reset()
-        atform.set_id_depth(self.ID_DEPTH)
-        atform.add_test("Foo")
 
     @utils.disable_idlock
     @utils.no_args
-    def test_default(self):
-        """Verify no section folders with the default folder depth."""
+    def test_no_section_default_depth(self):
+        """Verify correct path with no sections and default folder depth."""
+        atform.add_test("foo")
         with tempfile.TemporaryDirectory() as root:
             atform.generate(path=root)
-            self.assert_path(root, 0)
+            self.assert_path(root, "1 foo.pdf")
 
     @utils.disable_idlock
     @utils.no_args
-    def test_explicit(self):
-        """Verify correct section folder depth with explicitly given depths."""
-        for depth in range(0, self.ID_DEPTH):
-            with self.subTest(depth=depth):
-                with tempfile.TemporaryDirectory() as root:
-                    atform.generate(path=root, folder_depth=depth)
-                    self.assert_path(root, depth)
+    def test_no_section_nonzero_depth(self):
+        """Verify correct path with no sections and nonzero folder depth."""
+        atform.add_test("foo")
+        with tempfile.TemporaryDirectory() as root:
+            atform.generate(path=root, folder_depth=42)
+            self.assert_path(root, "1 foo.pdf")
 
-    def assert_path(self, root, depth):
+    @utils.disable_idlock
+    @utils.no_args
+    def test_section_default_depth(self):
+        """Verify correct path with sections and default folder depth."""
+        atform.section(1)
+        atform.add_test("foo")
+        with tempfile.TemporaryDirectory() as root:
+            atform.generate(path=root)
+            self.assert_path(root, "1.1 foo.pdf")
+
+    @utils.disable_idlock
+    @utils.no_args
+    def test_depth_less_than_section(self):
+        """Verify correct path when folder depth is less than section depth."""
+        atform.section(2)
+        atform.add_test("foo")
+        with tempfile.TemporaryDirectory() as root:
+            atform.generate(path=root, folder_depth=1)
+            self.assert_path(root, "1", "1.1.1 foo.pdf")
+
+    @utils.disable_idlock
+    @utils.no_args
+    def test_depth_equal_section(self):
+        """Verify correct path when folder depth equals section depth."""
+        atform.section(2)
+        atform.add_test("foo")
+        with tempfile.TemporaryDirectory() as root:
+            atform.generate(path=root, folder_depth=2)
+            self.assert_path(root, "1", "1", "1.1.1 foo.pdf")
+
+    @utils.disable_idlock
+    @utils.no_args
+    def test_depth_greater_section(self):
+        """Verify correct path when folder depth exceeds section depth."""
+        atform.section(2)
+        atform.add_test("foo")
+        with tempfile.TemporaryDirectory() as root:
+            atform.generate(path=root, folder_depth=42)
+            self.assert_path(root, "1", "1", "1.1.1 foo.pdf")
+
+    def assert_path(self, *path):
         """Confirms the output PDF exists in the correct subfolder."""
-        path = [root]
-        path.extend(["1"] * depth)
-        path.append("1.1.1.1 Foo.pdf")
         self.assertTrue(os.path.exists(os.path.join(*path)))
 
 

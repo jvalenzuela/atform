@@ -19,7 +19,7 @@ class Add(unittest.TestCase):
         utils.reset()
         atform.add_test("foo")
         atform.add_test("bar")
-        self.buildlist = atform.gui.buildlist.BuildList(None, None, None)
+        self.buildlist = atform.gui.buildlist.BuildList(None, None, 0)
 
     def test_add(self):
         """Confirm tests are added to the test list."""
@@ -37,7 +37,7 @@ class RemoveButton(unittest.TestCase):
 
     def test_remove_some(self):
         """Confirm removal when some tests are selected."""
-        atform.gui.buildlist.BuildList(None, None, None)
+        atform.gui.buildlist.BuildList(None, None, 0)
         atform.gui.buildlist.add({(1,), (2,)})
         atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set((1,))
         self.click()
@@ -45,7 +45,7 @@ class RemoveButton(unittest.TestCase):
 
     def test_remove_all(self):
         """Confirm removal when all tests are selected."""
-        atform.gui.buildlist.BuildList(None, None, None)
+        atform.gui.buildlist.BuildList(None, None, 0)
         atform.gui.buildlist.add({(1,), (2,)})
         atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set(
             (1,), (2,)
@@ -55,7 +55,7 @@ class RemoveButton(unittest.TestCase):
 
     def test_remove_none(self):
         """Confirm no change when no tests are selected."""
-        atform.gui.buildlist.BuildList(None, None, None)
+        atform.gui.buildlist.BuildList(None, None, 0)
         atform.gui.buildlist.add({(1,), (2,)})
         atform.gui.buildlist.BuildList.instance.testlist.tree.ttv_selection_set()
         self.click()
@@ -123,37 +123,61 @@ class FolderDepth(unittest.TestCase):
     def setUp(self):
         utils.reset()
 
-    def test_initialize(self):
-        """Confirm depth is initialized with the BuildList parameter."""
-        atform.set_id_depth(3)
-        atform.gui.buildlist.BuildList(None, "spam", 2)
-        spin = self.get_widget()
-        self.assertEqual(2, int(spin.get()))
-
     def test_readonly(self):
         """Confirm direct entry is prohibited."""
         spin = self.get_widget()
         self.assertIn("readonly", spin.state())
 
-    def test_range_single_level(self):
-        """Confirm allowable range when ID depth is one."""
+    def test_no_sections_default_depth(self):
+        """Confirm range when no sections are defined and depth is zero."""
         atform.gui.buildlist.BuildList(None, "spam", 0)
-        spin = self.get_widget()
-        self.assertEqual(0, int(spin.cget("from")))
-        self.assertEqual(0, int(spin.cget("to")))
+        self.assert_value(0, 0, 0)
 
-    def test_range_multiple_level(self):
-        """Confirm allowable range when ID depth is greater than one."""
-        atform.set_id_depth(3)
+    def test_no_sections_nonzero_depth(self):
+        """Confirm range when no sections are defined and depth is nonzero."""
+        atform.gui.buildlist.BuildList(None, "spam", 42)
+        self.assert_value(0, 0, 0)
+
+    def test_sections_default_depth(self):
+        """Confirm range when sections exist and depth is zero."""
+        atform.section(3)
+        atform.add_test("foo")
+        atform.section(1)
+        atform.add_test("bar")
         atform.gui.buildlist.BuildList(None, "spam", 0)
-        spin = self.get_widget()
-        self.assertEqual(0, int(spin.cget("from")))
-        self.assertEqual(2, int(spin.cget("to")))
+        self.assert_value(0, 0, 3)
+
+    def test_depth_below_sections(self):
+        """Confirm range when depth is less than existing sections."""
+        atform.section(3)
+        atform.add_test("foo")
+        atform.section(1)
+        atform.add_test("bar")
+        atform.gui.buildlist.BuildList(None, "spam", 2)
+        self.assert_value(2, 0, 3)
+
+    def test_depth_equals_sections(self):
+        """Confirm range when depth matches existing sections."""
+        atform.section(3)
+        atform.add_test("foo")
+        atform.section(1)
+        atform.add_test("bar")
+        atform.gui.buildlist.BuildList(None, "spam", 3)
+        self.assert_value(3, 0, 3)
+
+    def test_depth_exceeds_sections(self):
+        """Confirm range when depth exceeds existing sections."""
+        atform.section(3)
+        atform.add_test("foo")
+        atform.section(1)
+        atform.add_test("bar")
+        atform.gui.buildlist.BuildList(None, "spam", 42)
+        self.assert_value(3, 0, 3)
 
     @patch("atform.gui.build.build")
     def test_build_parameter(self, mock_build):
         """Confirm current value is passed to the builder."""
-        atform.set_id_depth(3)
+        atform.section(2)
         atform.add_test("foo")
         atform.gui.buildlist.BuildList(None, "spam", 2)
         atform.gui.buildlist.add({(1, 1, 1)})
@@ -171,6 +195,13 @@ class FolderDepth(unittest.TestCase):
             atform.gui.buildlist.BuildList.instance,
             "TSpinbox",
         )
+
+    def assert_value(self, init, min_, max_):
+        """Verifies the initial value and allowable range."""
+        spin = self.get_widget()
+        self.assertEqual(init, int(spin.get()))
+        self.assertEqual(min_, int(spin.cget("from")))
+        self.assertEqual(max_, int(spin.cget("to")))
 
 
 @patch("atform.gui.build.build")

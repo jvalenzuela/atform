@@ -4,9 +4,9 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
+from .. import addtest
 from . import build
 from . import common
-from .. import misc
 from . import testlist
 from . import tkwidget
 
@@ -85,21 +85,32 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         lbl = tkwidget.Label(frame, text="Folder Depth")
         lbl.pack(side=tk.LEFT)
 
-        var = tkwidget.IntVar()
-        var.set(folder_depth)
+        deepest = self._deepest_section
 
-        to = misc.max_folder_depth()
+        var = tkwidget.IntVar()
+        var.set(min(folder_depth, deepest))
+
         spin = tkwidget.Spinbox(
             frame,
             textvariable=var,
             from_=0,
-            to=to,
-            width=len(str(to)) + 1,  # Fit largest value plus some extra space.
+            to=deepest,
+            width=len(str(deepest)) + 1,  # Fit largest value plus some extra space.
             state="readonly",
         )
         spin.pack(side=tk.LEFT, padx=common.SMALL_PAD)
 
         return var
+
+    @property
+    def _deepest_section(self):
+        """Determines the length of the deepest section."""
+        try:
+            return max(len(id_) - 1 for id_ in addtest.tests)
+
+        # Corner case if no tests exist.
+        except ValueError:
+            return 0
 
     def _add_build_button(self):
         """Creates the build PDFs button."""

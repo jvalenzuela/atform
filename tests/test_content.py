@@ -55,12 +55,3 @@ class GenerateFolderDepth(unittest.TestCase):
         """Confirm exception for a negative argument."""
         with self.assertRaises(atform.error.UserScriptError):
             atform.generate(folder_depth=-1)
-
-    @utils.disable_idlock
-    def test_too_large(self):
-        """Confirm exception for values greater than or equal to the id depth."""
-        atform.set_id_depth(3)
-        for i in [3, 4]:
-            with self.subTest(i=i):
-                with self.assertRaises(atform.error.UserScriptError):
-                    atform.generate(folder_depth=i)
