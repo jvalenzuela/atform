@@ -12,6 +12,9 @@ from unittest.mock import patch
 class Generate(unittest.TestCase):
     """Unit tests for the generate() function."""
 
+    def setUp(self):
+        utils.reset()
+
     @utils.disable_idlock
     def test_path_type(self):
         """Confirm exception if path is not a string."""
