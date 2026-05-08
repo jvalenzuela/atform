@@ -47,7 +47,7 @@ class ListTests(unittest.TestCase):
         atform.add_test("t1", objective="foo")
         atform.add_test("t2")
         atform.add_test("t3")
-        with patch("sys.argv", utils.mock_argv("--diff 2")):
+        with patch("sys.argv", utils.mock_argv("2")):
             tests = atform.list_tests()
         self.assertEqual(
             [
