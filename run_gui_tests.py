@@ -7,9 +7,10 @@ running during normal test discovery. See tests/gui/igtest.py for details.
 import unittest
 
 
-# Configure the runner so all testing is aborted upon first failure.
-runner = unittest.TextTestRunner(failfast=True)
+if __name__ == "__main__":
+    # Configure the runner so all testing is aborted upon first failure.
+    runner = unittest.TextTestRunner(failfast=True)
 
-loader = unittest.TestLoader()
-suite = loader.discover(".", pattern="igtest*")
-runner.run(suite)
+    loader = unittest.TestLoader()
+    suite = loader.discover(".", pattern="igtest*")
+    runner.run(suite)
