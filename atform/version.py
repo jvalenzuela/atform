@@ -9,7 +9,7 @@ from . import error
 
 # This is the version number for the entire module, and is used by the
 # hatch packaging and Sphinx documentation systems.
-VERSION = "1.0"
+VERSION = "2.0"
 
 
 ################################################################################
