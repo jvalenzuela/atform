@@ -2,7 +2,6 @@
 
 import functools
 from importlib import resources
-import sys
 
 
 # Available symbols and their associated meaning. The meanings(values) are
@@ -55,4 +54,5 @@ def load(ref):
     which is used later to process the image, does not support strings
     containing an XML encoding declaration.
     """
-    return resources.read_binary(sys.modules[__name__], f"{ref}.svg")
+    with resources.files().joinpath(f"{ref}.svg").open("rb") as f:
+        return f.read()
