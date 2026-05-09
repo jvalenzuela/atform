@@ -47,6 +47,12 @@ class Preview(unittest.TestCase):
     def click_item(self, item):
         """Simulates clicking on a given tree item."""
         self.tl.tree.ttv_see(item)  # Target must be visible to be clicked.
+
+        # Required to ensure the treeview widget is sufficiently
+        # instantiated so the following bbox() call can reliably return
+        # a bounding box.
+        self.tl.tree.update()
+
         x, y, w, h = self.tl.tree.bbox(str(item))
         click_x = x + (w // 2)
         click_y = y + (h // 2)
