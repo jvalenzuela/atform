@@ -120,8 +120,7 @@ def increment_section(section_id):
 def increment_parent_section(level, section_id):
     """Creates a new section in a parent of the current section."""
     del section_id[level:]  # Remove subsections beneath the new level.
-    section_id[-1] += 1
-    return 0  # Test ID is reset in the new section.
+    return increment_section(section_id)
 
 
 def resume_section(level, section_id):
