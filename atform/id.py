@@ -25,7 +25,7 @@ section_titles: dict[IdType, str] = {}
 def get_id():
     """Returns the identifier to be used for the next test."""
     # Increment last ID level for each test.
-    state.current_id[-1] = state.current_id[-1] + 1
+    state.current_id[-1] += 1
 
     return tuple(state.current_id)
 
