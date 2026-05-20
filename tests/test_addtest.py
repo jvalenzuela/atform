@@ -384,6 +384,52 @@ class StringList(object):
         atform.add_test("title", **args)
 
 
+class SupportsTerms(unittest.TestCase):
+    """Unit tests for the supports_terms argument."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_type(self):
+        """Confirm exception for a non-list."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", supports_terms="foo")
+
+    def test_item_type(self):
+        """Confirm exception for a non-string list item."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", supports_terms=[42])
+
+    def test_list_unchanged(self):
+        """Confirm the given list is not modified."""
+        atform.add_term("foo", "foo")
+        atform.add_term("bar", "bar")
+        terms = ["foo", "bar"]
+        cpy = list(terms)
+        atform.add_test("title", supports_terms=terms)
+        self.assertEqual(terms, cpy)
+
+    def test_undefined(self):
+        """Confirm exception for an undefined label."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("title", supports_terms=["foo"])
+
+    def test_not_term(self):
+        """Confirm exception for a label not assigned to a term."""
+        atform.add_test("t1", label="label")
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("t2", supports_terms=["label"])
+
+    def test_empty(self):
+        """Confirm an empty list is accepted."""
+        atform.add_test("title", supports_terms=[])
+
+    def test_duplicate(self):
+        """Confirm the same term listed more than once is accepted."""
+        atform.add_term("foo", "term")
+        atform.add_test("title", supports_terms=["term"] * 3)
+
+
 class Equipment(StringList, unittest.TestCase):
     """Unit tests for test equipment."""
 

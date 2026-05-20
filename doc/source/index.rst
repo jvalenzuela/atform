@@ -9,6 +9,7 @@ Welcome to atform's documentation!
    org
    setup
    write
+   term
    image
    ref
    auto

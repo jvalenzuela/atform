@@ -141,6 +141,44 @@ class References(Base, unittest.TestCase):
         self.make_test(references=dict([(f"r{i}", ["spam"]) for i in range(num_refs)]))
 
 
+class Terms(Base, unittest.TestCase):
+    """Tests for the Terms section."""
+
+    def test_terms(self):
+        """Verify term formatting and supporting terms layout."""
+        atform.add_term("one_support", "s1", typeface="sansserif", font="bold")
+        atform.add_term("two_support", "s2", typeface="sansserif", font="bold")
+
+        # Create terms for each format variant.
+        formats = []
+        for typeface, font in atform.format.FONTS.keys():
+            name = f"{typeface}_{font}"
+            atform.add_term(name, name, typeface=typeface, font=font)
+            formats.append(name)
+
+        procedure = [
+            "Verify layout of $s1 supporting tests with 1 supporting test.",
+            "Verify layout of $s2 supporting tests with 2 supporting tests.",
+        ]
+
+        procedure.extend(f"Verify format of ${t}" for t in formats)
+
+        self.make_test(
+            objective="Dummy supporting term test; nothing to verify",
+            supports_terms=["s1", "s2"],
+            generate=False,
+        )
+        self.make_test(
+            objective="Dummy supporting term test; nothing to verify",
+            supports_terms=["s2"],
+            generate=False,
+        )
+
+        self.make_test(
+            procedure=procedure,
+        )
+
+
 class Equipment(Base, unittest.TestCase):
     """Tests for the Equipment section."""
 

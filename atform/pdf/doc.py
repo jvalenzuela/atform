@@ -33,6 +33,7 @@ from . import (
     precondition,
     procedure,
     refs,
+    term,
     title,
 )
 from .textstyle import stylesheet
@@ -263,6 +264,7 @@ class TestDocument:
             title.make_title(test),
             objective.make_objective(test.objective),
             refs.make_references(test.references),
+            term.make_terms(test.supported_terms),
             environ.make_environment(test.fields),
             equip.make_equipment(test.equipment),
             precondition.make_preconditions(test.preconditions),

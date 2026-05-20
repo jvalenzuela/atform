@@ -132,6 +132,12 @@ class Duplicate(unittest.TestCase):
     def setUp(self):
         utils.reset()
 
+    def test_term(self):
+        """Confirm exception for duplicate term labels."""
+        atform.add_term("foo", "foo")
+        with self.assertRaises(UserScriptError):
+            atform.add_term("bar", "foo")
+
     def test_id(self):
         """Confirm exception for duplicate test ID labels."""
         atform.add_test("t1", label="foo")
@@ -148,6 +154,23 @@ class Duplicate(unittest.TestCase):
                     {"text": "eggs", "label": "foo"},
                 ],
             )
+
+    def test_term_id(self):
+        """Confirm exception for the same label applied to a term and test ID."""
+        atform.add_term("foo", "label")
+        with self.assertRaises(UserScriptError):
+            atform.add_test("title", label="label")
+
+    def test_term_procedure_step(self):
+        """Confirm exception for the same label applied to a term and a procedure step."""
+        atform.add_term("foo", "label")
+        atform.add_test(
+            "title",
+            procedure=[{"text": "foo", "label": "label"}],
+        )
+        t = utils.get_test_content()
+        with self.assertRaises(UserScriptError):
+            t.pregenerate()
 
     def test_procedure_step_id(self):
         """Confirm exception for a duplicate procedure step and test ID label defined in the same test."""

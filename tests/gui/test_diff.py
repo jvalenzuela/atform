@@ -1638,3 +1638,140 @@ class Notice(DiffBase):
         atform.add_test("title", objective=atform.notice("M001", "bar"))
         self.generate_diff()
         self.assert_diff(changed={(2,)}, same={(1,)})
+
+
+class Term(DiffBase):
+    """Tests for detecting differences in terms defined with add_term()."""
+
+    def test_add_unused_term(self):
+        """Confirm adding an unused term is not flagged as a difference."""
+        atform.add_test("title")
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("title")
+        self.generate_diff()
+        self.assert_diff(same={(1,)})
+
+    def test_remove_unused_term(self):
+        """Confirm removing an unused term is not flagged as a difference."""
+        atform.add_term("term", "term")
+        atform.add_test("title")
+        self.generate_old()
+
+        atform.add_test("title")
+        self.generate_diff()
+        self.assert_diff(same={(1,)})
+
+    def test_add_supporting_test(self):
+        """Confirm a new test supporting a used term is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("support")
+        atform.add_test("use", objective="$term")
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_diff()
+        self.assert_diff(same={(1,)}, changed={(2,)})
+
+    def test_remove_supporting_test(self):
+        """Confirm removing a test supporting a used term is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("support")
+        atform.add_test("use", objective="$term")
+        self.generate_diff()
+        self.assert_diff(same={(1,)}, changed={(2,)})
+
+    def test_alter_supporting_test_title(self):
+        """Confirm a change to the title of a test supporting a used term is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("foo", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_diff()
+        self.assert_diff(changed={(1,), (2,)})
+
+    def test_add_support(self):
+        """Confirm adding a term as supported is not flagged as a difference."""
+        atform.add_term("term", "term")
+        atform.add_test("support")
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        self.generate_diff()
+        self.assert_diff(same={(1,)})
+
+    def test_remove_support(self):
+        """Confirm removing a term as support is not flagged as a difference."""
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        self.generate_old()
+
+        atform.add_term("term", "term")
+        atform.add_test("support")
+        self.generate_diff()
+        self.assert_diff(same={(1,)})
+
+    def test_change_text(self):
+        """Confirm a change to a term's text is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_old()
+
+        atform.add_term("foo", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_diff()
+        self.assert_diff(same={(1,)}, changed={(2,)})
+
+    def test_change_label(self):
+        """Confirm a change to a term's label is not flagged as a difference."""
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_old()
+
+        atform.add_term("term", "foo")
+        atform.add_test("support", supports_terms=["foo"])
+        atform.add_test("use", objective="$foo")
+        self.generate_diff()
+        self.assert_diff(same={(1,), (2,)})
+
+    def test_change_typeface(self):
+        """Confirm a change in a term's typeface is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_old()
+
+        atform.add_term("term", "term", typeface="monospace")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_diff()
+        self.assert_diff(same={(1,)}, changed={(2,)})
+
+    def test_change_font(self):
+        """Confirm a change in a term's font is detected."""
+        atform.add_term("term", "term")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_old()
+
+        atform.add_term("term", "term", font="bold")
+        atform.add_test("support", supports_terms=["term"])
+        atform.add_test("use", objective="$term")
+        self.generate_diff()
+        self.assert_diff(same={(1,)}, changed={(2,)})

@@ -49,6 +49,26 @@ def allowed_format(i):
     return ", ".join(quoted[:-1]) + f", or {quoted[-1]}"
 
 
+def validate_typeface(typeface):
+    """Ensures a given typeface is valid."""
+    typefaces = {k[0] for k in FONTS}
+    if not typeface in typefaces:
+        raise error.UserScriptError(
+            f"Invalid text format typeface: {typeface}",
+            f"Select {allowed_format(0)} as a typeface.",
+        )
+
+
+def validate_font(font):
+    """Ensures a given font is valid."""
+    fonts = {k[1] for k in FONTS}
+    if not font in fonts:
+        raise error.UserScriptError(
+            f"Invalid text format font: {font}",
+            f"Select {allowed_format(1)} as a font.",
+        )
+
+
 ################################################################################
 # Public API
 #
@@ -131,19 +151,8 @@ def format_text(text, *, typeface="normal", font="normal"):
             "Text to be formatted must be a string.",
         )
 
-    typefaces = {k[0] for k in FONTS}
-    if not typeface in typefaces:
-        raise error.UserScriptError(
-            f"Invalid text format typeface: {typeface}",
-            f"Select {allowed_format(0)} as a typeface.",
-        )
-
-    fonts = {k[1] for k in FONTS}
-    if not font in fonts:
-        raise error.UserScriptError(
-            f"Invalid text format font: {font}",
-            f"Select {allowed_format(1)} as a font.",
-        )
+    validate_typeface(typeface)
+    validate_font(font)
 
     font_values = FONTS[(typeface, font)]
     attrib = {"face": font_values[0]}

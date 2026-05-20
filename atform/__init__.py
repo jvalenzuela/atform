@@ -50,6 +50,10 @@ from atform.sig import (
     add_signature,
 )
 
+from atform.term import (
+    add_term,
+)
+
 from atform.version import (
     require_version,
 )

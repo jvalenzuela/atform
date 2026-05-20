@@ -1,5 +1,6 @@
 """This module contains the add_test() API and ancilliary validation functions."""
 
+import collections
 import dataclasses
 
 from . import error
@@ -9,6 +10,7 @@ from . import label as label_
 from . import misc
 from . import procedure as procedure_
 from . import state
+from . import term
 
 
 @dataclasses.dataclass(repr=False)
@@ -37,6 +39,9 @@ class TestContent:
         # String containing the combination of ID and title.
         self.full_name = " ".join((id_.to_string(self.id), self.title))
 
+        # Populated during pregenerate().
+        self.supported_terms = collections.OrderedDict()
+
     def pregenerate(self):
         """
         Performs tasks that need to occur after all tests have been defined,
@@ -44,7 +49,7 @@ class TestContent:
         """
         try:
             self._build_label_mapping()
-            self._resolve_labels()
+            used_labels = self._resolve_labels()
         except error.UserScriptError as e:
             # Set the exception's call frame to the call to add_test() where
             # this test was defined, instead of the API that called this method.
@@ -52,28 +57,33 @@ class TestContent:
 
             add_exception_context(e, self.id, self.title)
 
+        self._assemble_terms(used_labels)
+
     def _resolve_labels(self):
         """Replaces label placeholders with their target IDs."""
+        labels = LabelMapping(self.labels)
         if self.objective:
             try:
-                self.objective = label_.resolve(self.objective, self.labels)
+                self.objective = label_.resolve(self.objective, labels)
             except error.UserScriptError as e:
                 e.add_field("Test Section", "Objective")
                 raise
 
         for i, item in enumerate(self.preconditions):
             try:
-                self.preconditions[i] = label_.resolve(item, self.labels)
+                self.preconditions[i] = label_.resolve(item, labels)
             except error.UserScriptError as e:
                 e.add_field("Precondition Item", i + 1)
                 raise
 
         for i, step in enumerate(self.procedure, start=1):
             try:
-                step.resolve_labels(self.labels)
+                step.resolve_labels(labels)
             except error.UserScriptError as e:
                 e.add_field("Procedure Step", i)
                 raise
+
+        return labels.used
 
     def _build_label_mapping(self):
         """Updates label mapping to include globally-defined labels."""
@@ -94,6 +104,25 @@ class TestContent:
                 Select a label name that is not used elsewhere.
                 """,
             )
+
+    def _assemble_terms(self, used_labels):
+        """
+        Populates the supported_terms dict with tests supporting terms
+        used in this test.
+        """
+        # Filter used labels to select only those associated with a term.
+        used_terms = used_labels.intersection(term.terms.keys())
+
+        for trm in sorted(used_terms, key=lambda lbl: term.terms[lbl].raw):
+            ids = set(term.supporting_tests[trm])
+
+            # Exclude this test from the tests supporting this term to
+            # prevent a test listing itself in the supporting terms list.
+            ids.discard(self.id)
+
+            if ids:
+                titles = [tests[id].full_name for id in sorted(ids)]
+                self.supported_terms[term.terms[trm].formatted] = titles
 
     def __eq__(self, other):
         """Equality implementation for detecting content differences.
@@ -127,6 +156,7 @@ class TestContent:
             and self.copyright == other.copyright
             and self.signatures == other.signatures
             and self.logo_hash == other.logo_hash
+            and self.supported_terms == other.supported_terms
         )
 
 
@@ -135,6 +165,22 @@ class TestContent:
 # This attribute must only be accessed externally by importing the entire
 # module; see the state module for details.
 tests: dict[id_.IdType, TestContent] = {}
+
+
+class LabelMapping(collections.UserDict):
+    """A custom dict that captures which keys were used to read items.
+
+    Used as the mapping for String.Template when labels are replaced with
+    their target text to determine which labels(keys) were used.
+    """
+
+    def __init__(self, mapping):
+        super().__init__(mapping)
+        self.used = set()
+
+    def __getitem__(self, key):
+        self.used.add(key)
+        return self.data[key]
 
 
 @dataclasses.dataclass(repr=False)
@@ -250,6 +296,24 @@ def validate_string_list(name, lst):
     return items
 
 
+def add_supported_terms(terms, tid):
+    """
+    Stores a test as supporting terms given by the supports_terms argument
+    to add_test().
+    """
+    for trm in validate_string_list("supports_terms", terms):
+        try:
+            term.supporting_tests[trm].add(tid)
+        except KeyError as e:
+            raise error.UserScriptError(
+                f"Undefined term label: {trm}",
+                """
+                Items in the supports_terms list must be labels assigned
+                to a term with the atform.add_term() function.
+                """,
+            ) from e
+
+
 def add_exception_context(e, tid, title):
     """Adds information identifying a test to a UserScriptError."""
     if title:
@@ -278,6 +342,7 @@ def add_test(
     active_fields=None,
     objective=None,
     references=None,
+    supports_terms=None,
     equipment=None,
     preconditions=None,
     procedure=None,
@@ -316,6 +381,9 @@ def add_test(
             For example, ``{"C1":["rA", "rB"]}`` would result in references
             ``"rA"`` and ``"rB"`` to be listed under the ``"C1"`` category.
             See :ref:`ref`.
+        supports_terms (list[str], optional): A list of labels created
+            with :py:func:`atform.add_term` identifying terms supported
+            by this test. See :ref:`term`.
         equipment (list[str], optional): A list of equipment required to
             perform the procedure; will be rendered as a bullet list under
             a dedicated section heading.
@@ -355,6 +423,7 @@ def add_test(
         content["preconditions"] = validate_string_list("Preconditions", preconditions)
         content["procedure"] = procedure_.validate(procedure, content["labels"])
         content["project_info"] = project_info
+        add_supported_terms(supports_terms, content["id"])
 
         if label is not None:
             id_string = id_.to_string(content["id"])
