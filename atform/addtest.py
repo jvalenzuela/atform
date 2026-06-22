@@ -106,13 +106,17 @@ class TestContent:
             )
 
     def _assemble_terms(self, used_labels):
+        # Filter used labels to select only those associated with a term.
+        used_terms = used_labels.intersection(term.terms.keys())
+
+        self._assemble_supporting_terms(used_terms)
+        self._assemble_used_terms(used_terms)
+
+    def _assemble_supporting_terms(self, used_terms):
         """
         Populates the supported_terms dict with tests supporting terms
         used in this test.
         """
-        # Filter used labels to select only those associated with a term.
-        used_terms = used_labels.intersection(term.terms.keys())
-
         for trm in sorted(used_terms, key=lambda lbl: term.terms[lbl].raw):
             ids = set(term.supporting_tests[trm])
 
@@ -123,6 +127,15 @@ class TestContent:
             if ids:
                 titles = [tests[id].full_name for id in sorted(ids)]
                 self.supported_terms[term.terms[trm].formatted] = titles
+
+    def _assemble_used_terms(self, used_terms):
+        """
+        Populates the global used_terms dict with terms used and not
+        supported by this test.
+        """
+        for trm in used_terms:
+            if not self.id in term.supporting_tests[trm]:
+                term.used_terms[trm].add(self.id)
 
     def __eq__(self, other):
         """Equality implementation for detecting content differences.

@@ -27,6 +27,14 @@ terms = {}
 supporting_tests = {}
 
 
+# The set of test IDs, keyed by term label, that use, but do not support
+# a term.
+#
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+used_terms = {}
+
+
 def normalize_whitespace(text):
     """Converts consecutive whitespace into a single space."""
     return re.sub(r"\s+", " ", text)
@@ -86,4 +94,5 @@ def add_term(text, label, *, typeface="normal", font="normal"):
 
     label_.add(label, formatted)
     supporting_tests[label] = set()
+    used_terms[label] = set()
     terms[label] = Term(text, formatted)

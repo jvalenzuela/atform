@@ -46,5 +46,6 @@ Output
    :toctree: generated
 
    atform.generate
+   atform.get_terms
    atform.get_xref
    atform.list_tests

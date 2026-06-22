@@ -67,3 +67,11 @@ cause the output PDF to include a listing of supported terms and the tests that
 support them. An exception is the supporting test itself, which will
 typically use the term it supports, however, it will not reference itself
 as supporting the term.
+
+A cross-reference of terms and tests that support or use them can be
+generated with :py:func:`atform.get_terms` as shown below.
+
+.. literalinclude:: examples/term.py
+   :caption: Exporting terms; excerpt of term.py.
+   :start-after: # begin-export-term
+   :end-before: # end-export-term

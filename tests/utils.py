@@ -31,6 +31,7 @@ INIT_ATTRS = [
     (atform.image, "images"),
     (atform.term, "terms"),
     (atform.term, "supporting_tests"),
+    (atform.term, "used_terms"),
     (atform.vcs, "version"),
 ]
 

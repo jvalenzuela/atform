@@ -33,6 +33,7 @@ from atform.image import (
 )
 
 from atform.meta import (
+    get_terms,
     list_tests,
 )
 
