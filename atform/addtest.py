@@ -29,7 +29,7 @@ class TestContent:
     preconditions: list
     procedure: list
     project_info: dict
-    call_frame: error.CallFrame
+    call_stack: list[error.CallFrame]
     labels: dict
     copyright: str
     signatures: list
@@ -53,7 +53,7 @@ class TestContent:
         except error.UserScriptError as e:
             # Set the exception's call frame to the call to add_test() where
             # this test was defined, instead of the API that called this method.
-            e.call_frame = self.call_frame
+            e.call_frame = self.call_stack[-1]
 
             add_exception_context(e, self.id, self.title)
 
@@ -410,10 +410,10 @@ def add_test(
     content["signatures"] = state.signatures
     content["logo_hash"] = state.logo_hash
 
-    # Capture the current API call frame so the location where this test was
+    # Capture the current API call stack so the location where this test was
     # defined can be referenced in exceptions raised in later API calls
     # that result from this test's content, e.g., label resolution.
-    content["call_frame"] = error.api_call_frame
+    content["call_stack"] = error.api_call_stack
 
     content["id"] = id_.get_id()
     content["labels"] = {}

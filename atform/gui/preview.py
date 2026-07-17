@@ -27,10 +27,14 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
 
     def __init__(self, parent):
         super().__init__(parent, text="Preview")
-        self.pages = PageDisplay(self)
-        self.pages.pack(fill=tk.Y, expand=tk.TRUE)
-        self.src_location = Location(self)
-        self.src_location.pack(anchor=tk.NW)
+        panes = tkwidget.PanedWindow(self, orient=tk.VERTICAL)
+        panes.pack(fill=tk.Y, expand=tk.TRUE)
+
+        self.pages = PageDisplay(panes)
+        panes.add(self.pages, stretch="always")
+
+        self.src_location = Location(panes)
+        panes.add(self.src_location, stretch="never")
 
         # Store this instance so the previewer is accessible at module level.
         Preview.instance = self
@@ -107,28 +111,16 @@ class PageDisplay(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.canvas.yview(tk.MOVETO, 0)
 
 
-class Location(tkwidget.Frame):  # pylint: disable=too-many-ancestors
-    """Widgets to display source file location."""
+class Location(tkwidget.ScrolledText):  # pylint: disable=too-many-ancestors
+    """Widget displaying source file location."""
 
     def __init__(self, parent):
-        super().__init__(parent)
-        self.row = 0
-        self.file = self._add_field("File")
-        self.lineno = self._add_field("Line Number")
-
-    def _add_field(self, title):
-        """Adds a set of widgets to display a single value."""
-        label = tkwidget.Label(self, text=f"{title}:")
-        label.grid(row=self.row, column=0, sticky=tk.E)
-
-        var = tkwidget.StringVar()
-        value = tkwidget.Label(self, textvariable=var)
-        value.grid(row=self.row, column=1, sticky=tk.W)
-
-        self.row += 1
-        return var
+        super().__init__(parent, height=1)
 
     def show(self, test):
         """Displays the source location of a given test."""
-        self.file.set(test.call_frame.filename)
-        self.lineno.set(str(test.call_frame.lineno))
+        self.configure(state=tk.NORMAL)  # Enable text modification.
+        self.delete("1.0", tk.END)  # Clear previous content.
+        for f in test.call_stack:
+            self.insert(tk.END, f"{f.filename}:{f.lineno}\n")
+        self.configure(state=tk.DISABLED)  # Disable to set text read-only.

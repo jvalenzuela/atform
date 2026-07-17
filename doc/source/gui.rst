@@ -160,9 +160,12 @@ It has no controls for user input;
 selecting tests in the :ref:`gui_select_list` or :ref:`gui_build` windows
 will automatically update the :guilabel:`Preview` display.
 
-Along with displaying content, the location of the
-:py:func:`atform.add_test` function call that created the test appears
-at the bottom of the :guilabel:`Preview` window.
+The window below the preview area will list the file and line number of
+the call to :py:func:`atform.add_test` that created the previewed test.
+If this call is contained within user-defined functions, e.g.,
+for templating as descrbied in :ref:`automation`,
+each function will be listed in the order they are called, from top to bottom,
+ending with the location of :py:func:`atform.add_test`.
 
 
 .. _gui_build:

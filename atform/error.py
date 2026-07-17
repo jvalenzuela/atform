@@ -15,22 +15,22 @@ import traceback
 import sys
 
 
-# Container holding information pointing to the location of the most recent API
-# function call. Intended as a pickle-able container for specific
-# traceback.FrameSummary attributes because FrameSummary objects themselves cannot be
-# pickled.
+# A pickle-able container for traceback.FrameSummary attributes because
+# FrameSummary objects themselves cannot be pickled.
 CallFrame = collections.namedtuple("CallFrame", ["filename", "lineno"])
 
 
-# Call frame of the current API being called.
+# Call stack of the current API function call, ordered such that the
+# first item is the top-level call from a module and the last is the API
+# call itself.
 # Pylint invalid-name is disabled because this is not a constant.
-api_call_frame = None  # pylint: disable=invalid-name
+api_call_stack = None  # pylint: disable=invalid-name
 
 
-def set_call_frame(frame):
-    """Updates the current call frame."""
-    global api_call_frame  # pylint: disable=global-statement
-    api_call_frame = CallFrame(frame.filename, frame.lineno)
+def set_call_stack(stack):
+    """Updates the current call stack."""
+    global api_call_stack  # pylint: disable=global-statement
+    api_call_stack = [CallFrame(f.filename, f.lineno) for f in stack]
 
 
 def exit_on_script_error(api):
@@ -44,12 +44,10 @@ def exit_on_script_error(api):
     @functools.wraps(api)
     def wrapper(*args, **kwargs):
         # Capture the location where this API was called from the
-        # user script. The normal exception traceback is not used
-        # because it is difficult to determine which frame represents
-        # the departure from the user script, whereas it is always
-        # in the same location in a traceback relative to this wrapper
-        # function.
-        set_call_frame(traceback.extract_stack(limit=2)[0])
+        # user script.  The last frame summary object is excluded because
+        # is refers to this wrapper, and is irrelevant for all uses of the
+        # captured call stack.
+        set_call_stack(traceback.extract_stack()[:-1])
 
         try:
             result = api(*args, **kwargs)
@@ -58,7 +56,7 @@ def exit_on_script_error(api):
             # Use the frame from this call if the exception does not
             # provide one.
             if not e.call_frame:
-                e.call_frame = api_call_frame
+                e.call_frame = api_call_stack[-1]
                 e.api = api
 
             raise

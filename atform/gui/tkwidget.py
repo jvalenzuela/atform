@@ -74,6 +74,11 @@ class Label(ttk.Label):
 
 
 @add_instance_storage
+class PanedWindow(tk.PanedWindow):
+    pass
+
+
+@add_instance_storage
 class Radiobutton(ttk.Radiobutton):
     pass
 

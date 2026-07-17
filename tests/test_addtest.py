@@ -676,11 +676,40 @@ class TestProjectInfo(unittest.TestCase):
         self.assertEqual({"project": "spam", "system": "eggs"}, t2.project_info)
 
 
-class CallFrame(unittest.TestCase):
-    """Tests for the call frame captured during calls to add_test()."""
+class CallStack(unittest.TestCase):
+    """Tests for the call stack captured during calls to add_test()."""
 
     def setUp(self):
         utils.reset()
+
+    @utils.disable_idlock
+    @utils.no_pdf_output
+    def test_order(self):
+        """Confirm correct call stack ordering."""
+        stack = {}
+
+        def wrapper():
+            stack["add_test_before"] = traceback.extract_stack()[-1]
+            atform.add_test("title")
+            stack["add_test_after"] = traceback.extract_stack()[-1]
+
+        stack["wrapper_before"] = traceback.extract_stack()[-1]
+        wrapper()
+        stack["wrapper_after"] = traceback.extract_stack()[-1]
+
+        t = utils.get_test_content()
+
+        # wrapper() call should be next to last.
+        call = t.call_stack[-2]
+        self.assertGreater(call.lineno, stack["wrapper_before"].lineno)
+        self.assertLess(call.lineno, stack["wrapper_after"].lineno)
+        self.assertEqual(call.filename, stack["wrapper_before"].filename)
+
+        # add_test() call should be last.
+        call = t.call_stack[-1]
+        self.assertGreater(call.lineno, stack["add_test_before"].lineno)
+        self.assertLess(call.lineno, stack["add_test_after"].lineno)
+        self.assertEqual(call.filename, stack["add_test_before"].filename)
 
     @utils.disable_idlock
     def test_post_call_exception(self):

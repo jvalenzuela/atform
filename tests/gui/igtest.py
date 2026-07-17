@@ -188,7 +188,7 @@ class Resize(InteractiveGuiTestCase):
         )
 
     def test_vertical(self):
-        """Stretch the window vertically and ensure the test lists and preview areas expand."""
+        """Stretch the window vertically and ensure the test lists and page preview areas expand."""
         atform.add_test("title")
         self.start_gui()
 
@@ -237,10 +237,23 @@ class Preview(InteractiveGuiTestCase):
         )
 
     def test_location(self):
-        """Confirm location specified in objective."""
+        """Confirm items listed in the procedure."""
         line = traceback.extract_stack(limit=1)[0].lineno + 1
         atform.add_test(
-            "title", objective=f"Confirm preview location is {__file__}, line {line}."
+            "title",
+            procedure=[
+                f"""
+                Confirm last line of preview location is {__file__},
+                line {line}.
+                """,
+                """
+                Verify the vertical scroll bar for the location listing works.
+                """,
+                """
+                Verify the horizontal divider between the page preview and
+                location can be moved.
+                """,
+            ],
         )
         self.start_preview()
 
