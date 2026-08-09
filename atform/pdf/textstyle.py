@@ -125,6 +125,15 @@ stylesheet.add(
 )
 
 
+stylesheet.add(
+    ParagraphStyle(
+        name="SignatureTitle",
+        parent=stylesheet["Heading4"],
+        fontName="Times-Bold",
+    )
+)
+
+
 # textColor is not set here because it is ignored by the canvas methods
 # used to draw the draft mark.
 stylesheet.add(

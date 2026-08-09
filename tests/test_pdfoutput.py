@@ -514,7 +514,7 @@ class Approval(Base, unittest.TestCase):
         the Approval section comes after Notes, so it just creates
         enough signature entries to require a page break.
         """
-        [atform.add_signature(f"Sig{i}") for i in range(25)]
+        [atform.add_signature(f"Sig{i}") for i in range(12)]
         self.make_test()
 
 

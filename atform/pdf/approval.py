@@ -7,7 +7,6 @@ above each field and the lower row is the actual data entry fields.
 import itertools
 
 from reportlab.lib.units import toLength
-from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (
     Paragraph,
     Preformatted,
@@ -31,12 +30,11 @@ DATE_TITLE = f"Date ({DATE_FORMAT})"
 
 
 # Vertical distance between field names and the data entry fields.
-FIELD_TITLE_SEP = toLength("1 pt")
+FIELD_TITLE_SEP = toLength("2 pt")
 
 
 # Column indices.
-TITLE_COL = 0
-NAME_COL = TITLE_COL + 1
+NAME_COL = 0
 SIG_COL = NAME_COL + 1
 INITIAL_COL = SIG_COL + 1
 DATE_COL = INITIAL_COL + 1
@@ -50,35 +48,51 @@ def make_approval(test):
         return None
 
     rows = list(itertools.chain.from_iterable([make_sig_rows(title) for title in sigs]))
+    widths = [
+        name_col_width(),
+        None,  # Signature occupies all remaining width.
+        # The Initials column is sized to hold the header text.
+        layout.max_width(["Initials"], "SignatureFieldTitle"),
+        date_col_width(),
+    ]
+    style = list(
+        itertools.chain.from_iterable(
+            [sig_row_style(i, sigs) for i, sig in enumerate(sigs)]
+        )
+    )
+
     return section.make_section(
         "Approval",
         data=rows,
-        colWidths=widths(sigs),
-        style=style(sigs),
+        colWidths=widths,
+        style=style,
     )
 
 
 def make_sig_rows(title):
-    """Generates a row for a given signature entry."""
-    field_style = stylesheet["SignatureFieldTitle"]
-
+    """Generates a set of table rows for a given signature entry."""
     return [
-        # Top row has the signature and field titles.
-        [
-            Paragraph(title, stylesheet["NormalRight"]),
-            Preformatted("Name", field_style),
-            Preformatted("Signature", field_style),
-            Preformatted("Initials", field_style),
-            Preformatted(DATE_TITLE, field_style),
-        ],
+        [Paragraph(title, stylesheet["SignatureTitle"])],
+        # Middle row has the field titles.
+        header_row(),
         # Lower row contains the text entry fields.
         [
-            None,  # Title column in empty in this row.
             name_entry_field(),
             None,  # Signature column is blank.
             None,  # Initial column is blank.
             date_entry_field(),
         ],
+    ]
+
+
+def header_row():
+    """Generates the table row labeling each field."""
+    sty = stylesheet["SignatureFieldTitle"]
+    return [
+        Preformatted("Name", sty),
+        Preformatted("Signature", sty),
+        Preformatted("Initials", sty),
+        Preformatted(DATE_TITLE, sty),
     ]
 
 
@@ -92,141 +106,63 @@ def date_entry_field():
     return acroform.TextEntry(DATE_FORMAT, DATE_FORMAT)
 
 
-def style(sigs):
-    """Generates style commands for the entire table."""
-    sty = list(
-        itertools.chain.from_iterable(
-            [sig_row_style(i, sigs) for i, sig in enumerate(sigs)]
-        )
-    )
-
-    sty.extend(
-        [
-            # Vertical rules.
-            (
-                "LINEBEFORE",
-                (NAME_COL, 1),
-                (-1, -1),
-                layout.SUBSECTION_RULE_WEIGHT,
-                layout.RULE_COLOR,
-            ),
-            # Remove all vertical padding around title column as it
-            # spans two rows.
-            ("TOPPADDING", (TITLE_COL, 1), (TITLE_COL, -1), 0),
-            ("BOTTOMPADDING", (TITLE_COL, 1), (TITLE_COL, -1), 0),
-            # Vertically center the title column.
-            ("VALIGN", (TITLE_COL, 1), (TITLE_COL, -1), "MIDDLE"),
-        ]
-    )
-
-    return sty
-
-
 def sig_row_style(i, sigs):
-    """Generates style commands for the two rows of a signature entry."""
-    # Calculate the indices for the two rows assigned to this signature.
-    upper = (i * 2) + 1
-    lower = upper + 1
+    """Generates style commands for the rows of a single signature entry."""
+    # Calculate the indices for the rows assigned to this signature.
+    title = (i * 3) + 1
+    header = title + 1
+    field = header + 1
 
     sty = [
-        # Title column spans both upper and lower rows.
-        ("SPAN", (TITLE_COL, upper), (TITLE_COL, lower)),
-        # Remove vertical padding above the upper field name row.
-        ("TOPPADDING", (NAME_COL, upper), (-1, upper), 0),
-        # Set padding between the upper and lower row.
-        ("BOTTOMPADDING", (NAME_COL, upper), (-1, upper), FIELD_TITLE_SEP),
-        # Remove padding above the entire lower row.
-        ("TOPPADDING", (0, lower), (-1, lower), 0),
+        # Title row spans all columns.
+        ("SPAN", (0, title), (-1, title)),
+        # Set padding between the headers and fields.
+        ("BOTTOMPADDING", (0, header), (-1, header), FIELD_TITLE_SEP),
+        ("TOPPADDING", (0, field), (-1, field), 0),
+        # The name field should abut the left table border.
+        (
+            "LEFTPADDING",
+            (NAME_COL, field),
+            (NAME_COL, field),
+            layout.SECTION_RULE_WEIGHT / 2,
+        ),
+        # Remove the left padding from both the date header and field to
+        # keep the cell contents off the right tabel border.
+        ("LEFTPADDING", (DATE_COL, header), (DATE_COL, field), 0),
     ]
 
-    last_row = i + 1 == len(sigs)
-    if not last_row:
-        # Rule below all but the last row are subsection rules.
+    # Add a horizontal rule below each signature except the last, which
+    # is terminated by the enclosing section border.
+    last_sig = len(sigs) - 1
+    if i != last_sig:
         hrule_weight = layout.SUBSECTION_RULE_WEIGHT
-
-        # Horizontal rule beween each signature, except below the last
-        # row because it's closed by a section rule.
         sty.append(
             (
                 "LINEBELOW",
-                (0, lower),
-                (-1, lower),
-                layout.SUBSECTION_RULE_WEIGHT,
+                (0, field),
+                (-1, field),
+                hrule_weight,
                 layout.RULE_COLOR,
             )
         )
     else:
-        # Rule below the last row is a section rule.
         hrule_weight = layout.SECTION_RULE_WEIGHT
 
-    # Adjust padding around the data entry fields(name and date).
-    for col in [NAME_COL, DATE_COL]:
-        # Set left padding so the entry fields abut the subsection rule
-        # to the left.
-        sty.append(
-            (
-                "LEFTPADDING",
-                (col, lower),
-                (col, lower),
-                layout.SUBSECTION_RULE_WEIGHT / 2,
-            )
-        )
-
-        # Set bottom padding so the fields rest on the rule below them.
-        sty.append(("BOTTOMPADDING", (col, lower), (col, lower), hrule_weight / 2))
+    # Adjust the padding below the fields so they sit on the rule below them.
+    sty.append(("BOTTOMPADDING", (0, field), (-1, field), hrule_weight / 2))
 
     return sty
 
 
-def widths(sigs):
-    """Computes the column widths of the entire table."""
-    return [
-        # Width of the first column is set to accommodate the
-        # longest title.
-        layout.max_width(sigs, "Normal"),
-        name_col_width(),
-        None,  # Signature occupies all remaining width.
-        # The Initials column is sized to hold the title.
-        layout.max_width(["Initials"], "SignatureFieldTitle"),
-        date_col_width(),
-    ]
-
-
 def name_col_width():
     """Calculates the width of the name column."""
-    sty = stylesheet["SignatureFieldTitle"]
-    title_width = stringWidth("Name", sty.fontName, sty.fontSize)
-
-    # The title cell includes default left and right padding.
-    title_width += layout.DEFAULT_TABLE_HORIZ_PAD * 2
-
-    widest = max(
-        [
-            title_width,
-            name_entry_field().wrap()[0],
-        ]
-    )
-
-    return widest + layout.SUBSECTION_RULE_WEIGHT
+    return name_entry_field().wrap()[0]
 
 
 def date_col_width():
-    """Calculates the width of the date column."""
-    sty = stylesheet["SignatureFieldTitle"]
-    title_width = stringWidth(DATE_TITLE, sty.fontName, sty.fontSize)
+    """Calculates the width of the date column.
 
-    # The title cell includes default left and right padding.
-    title_width += layout.DEFAULT_TABLE_HORIZ_PAD * 2
-
-    widest = max(
-        [
-            title_width,
-            date_entry_field().wrap()[0],
-        ]
-    )
-
-    return (
-        widest
-        + (layout.SUBSECTION_RULE_WEIGHT / 2)  # Left side rule.
-        + (layout.SECTION_RULE_WEIGHT / 2)  # Right side rule.
-    )
+    Includes half the section rule weight because this column abuts the
+    right table border.
+    """
+    return date_entry_field().wrap()[0] + (layout.SECTION_RULE_WEIGHT / 2)
