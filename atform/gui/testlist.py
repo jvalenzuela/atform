@@ -4,6 +4,7 @@ user to select specific tests.
 """
 
 import tkinter as tk
+import tkinter.font as tkfont
 
 from .. import addtest
 from . import common
@@ -30,6 +31,13 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         """Creates the tree view widget."""
         frame = tkwidget.Frame(self)
         frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.TRUE)
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(0, weight=1)
+
+        # Size propagation is disabled to prevent the frame from being
+        # excessively enlarged to accommodate long titles.
+        frame.grid_propagate(0)
+
         self.tree = TupleTreeview(
             frame,
             columns=["Title"],
@@ -41,9 +49,48 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             stretch=tk.FALSE,
             width=self._id_column_width(),
         )
-        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
+        self.tree.column(
+            "Title",
+            stretch=tk.FALSE,
+            width=self._title_column_width,
+        )
+        self.tree.grid(sticky=tk.NSEW)
         self.tree.tag_bind("preview", "<ButtonRelease-1>", self._preview)
-        common.add_vertical_scrollbar(frame, self.tree)
+        self._add_xscroll(frame)
+        self._add_yscroll(frame)
+
+    @property
+    def _title_column_width(self):
+        """Calculates the column width required to fit the longest title."""
+        titles = [t.title for t in addtest.tests.values()]
+        titles.extend(id_.section_titles.values())
+
+        # Include the column title itself to ensure the column is wide enough
+        # to show the header.
+        titles.append("Title")
+
+        font = tkfont.nametofont("TkDefaultFont")
+        widths = [font.measure(s) for s in titles]
+
+        # Added to the resulting width to account for the horizontal padding
+        # supplied by the Treeview widget; actual value is empirically chosen.
+        pad = 10
+
+        return max(widths) + pad
+
+    def _add_xscroll(self, parent):
+        """Creates the horizontal scrollbar."""
+        scroll = tkwidget.Scrollbar(parent, orient=tk.HORIZONTAL)
+        scroll["command"] = self.tree.xview
+        self.tree["xscrollcommand"] = scroll.set
+        scroll.grid(row=1, sticky=tk.EW)
+
+    def _add_yscroll(self, parent):
+        """Creates the vertical scrollbar."""
+        scroll = tkwidget.Scrollbar(parent, orient=tk.VERTICAL)
+        scroll["command"] = self.tree.yview
+        self.tree["yscrollcommand"] = scroll.set
+        scroll.grid(row=0, column=1, sticky=tk.NS)
 
     def _id_column_width(self):
         """Computes the initial width of the ID column."""

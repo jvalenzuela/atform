@@ -80,10 +80,23 @@ class InteractiveGuiTestCase(unittest.TestCase):
 class TestList(InteractiveGuiTestCase):
     """Tests for the TestList widget."""
 
+    # A title long enough relative to the spacer label added in
+    # create_testlist() to require using the horizontal scroll bar to view
+    # the entire title.
+    LONG_TITLE = "A really long title" + " " * 20 + "X"
+
     def create_testlist(self):
         """Creates the TestList widget and root window."""
         root = tk.Tk()
         tl = atform.gui.testlist.TestList(root)
+        tl.pack()
+
+        # Add a wide widget below the test list to force the parent window
+        # to have sufficient width as the frame holding the Treeview isn't
+        # sized according to its content. This must be short enough to require
+        # use of the horizontal scroll bar in tests using LONG_TITLE.
+        tk.Label(root, text=" " * 100).pack()
+
         return root, tl
 
     def test_id_column_width(self):
@@ -100,6 +113,37 @@ class TestList(InteractiveGuiTestCase):
         tl.add_test((1, 1))
         tl.add_test((42, 99, 999))
         self.start_gui(root=root)
+
+    def test_title_column_width_test_title(self):
+        """Confirm the title column accommodates the widest test title."""
+        atform.add_test(self.LONG_TITLE)
+        root, tl = self.create_testlist()
+        tl.add_test((1,))
+        self.start_gui(
+            root=root,
+            instruction="Verify ending 'X' in the test title is visible when using the horizontal scroll bar.",
+        )
+
+    def test_title_column_width_section_title(self):
+        """Confirm the title column accommodates the widest section title."""
+        atform.section(1, title=self.LONG_TITLE)
+        atform.add_test("test")
+        root, tl = self.create_testlist()
+        tl.add_test((1, 1))
+        self.start_gui(
+            root=root,
+            instruction="Verify ending 'X' in the test title is visible when using the horizontal scroll bar.",
+        )
+
+    def test_title_column_width_header_title(self):
+        """Confirm the title column accommodates the header."""
+        atform.add_test("t")  # Test title shorter than the column header.
+        root, tl = self.create_testlist()
+        tl.add_test((1,))
+        self.start_gui(
+            root=root,
+            instruction="Verify header row 'Title' is fully visible.",
+        )
 
     def test_total_count(self):
         """Confirm correct total count display."""
@@ -140,7 +184,7 @@ class Resize(InteractiveGuiTestCase):
         """Confirm correct horizontal resizing."""
         atform.add_test("title")
         self.start_gui(
-            instruction="Stretch the window horizontally and ensure the test list title columns and Build path entry expand.",
+            instruction="Stretch the window horizontally and ensure the test lists and Build path entry expand.",
         )
 
     def test_vertical(self):
