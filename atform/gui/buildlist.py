@@ -62,10 +62,12 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
             padx=common.SMALL_PAD,
         )
 
+        btn_txt = "..."
         btn = tkwidget.Button(
             frame,
-            text="...",
+            text=btn_txt,
             command=self._on_path_click,
+            width=len(btn_txt),
         )
         btn.pack(side=tk.RIGHT)
 
