@@ -19,6 +19,8 @@ from . import (
 )
 from .textstyle import stylesheet
 
+from .. import state
+
 
 # Largest allowable procedure step image size, in inches. The width is
 # selected to fit within the allowable horizontal space allotted to the
@@ -135,11 +137,16 @@ def header():
 def step_rows(steps):
     """Creates rows for all steps."""
     step_style = stylesheet["ProcedureTableHeading"]
+    checkbox_cls = (
+        acroform.PlainCheckbox()
+        if state.checkbox_style == "plain"
+        else acroform.Checkbox()
+    )
     return [
         [
             Paragraph(str(i), step_style),
             step_body(step),
-            acroform.Checkbox(),
+            checkbox_cls,
         ]
         for i, step in enumerate(steps, start=1)
     ]

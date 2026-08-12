@@ -19,6 +19,8 @@ from . import (
 )
 from .textstyle import stylesheet
 
+from .. import state
+
 
 # Number of characters the name text entry fields should be sized to
 # accommodate.
@@ -71,16 +73,35 @@ def make_approval(test):
 
 def make_sig_rows(title):
     """Generates a set of table rows for a given signature entry."""
+
+    name_field_cls = (
+        #name field is blank field if plain formatting selected
+        """
+                            
+        """
+        if state.signature_style == "plain"
+        else name_entry_field()
+    )
+
+    date_field_cls = (
+        #date field is blank field if plain formatting selected
+        """
+                                    
+        """
+        if state.signature_style == "plain"
+        else date_entry_field()
+    )
+
     return [
         [Paragraph(title, stylesheet["SignatureTitle"])],
         # Middle row has the field titles.
         header_row(),
         # Lower row contains the text entry fields.
         [
-            name_entry_field(),
+            name_field_cls,
             None,  # Signature column is blank.
             None,  # Initial column is blank.
-            date_entry_field(),
+            date_field_cls,
         ],
     ]
 

@@ -22,6 +22,8 @@ Setup
    atform.add_term
    atform.require_version
    atform.set_project_info
+   atform.set_checkbox_style
+   atform.set_signature_style
 
 
 Content
