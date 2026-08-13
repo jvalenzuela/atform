@@ -95,11 +95,10 @@ def generate(*, path="pdf", folder_depth=0):
             relative to the location where the top-level script resides.
         folder_depth (int, optional): The number of test ID levels used to
             create section folders. For example, if ``folder_depth`` is 2,
-            all PDFs will be output into section subfolders two deep,
+            PDFs will be output into subfolders up to two levels deep,
             such as :file:`1/2/1.2.3.4 Test.pdf`.
 
-            Must be greater than or equal to 0, and less than the ID
-            depth set with :py:func:`atform.set_id_depth`.
+            Must be greater than or equal to 0.
     """
     if not isinstance(path, str):
         raise error.UserScriptError(

@@ -27,9 +27,9 @@ desired test identifiers in the command line after the script name.
 
 Specifying test identifers in the command line uses the same format they
 appear in the output PDFs: one or more integers separated by periods.
-If :py:func:`atform.set_id_depth` has been used to create sections, an entire
+If :py:func:`atform.section` has been used to create sections, an entire
 section can be selected by abbreviating the identifier to include only
-the desired section. For example, if the ID depth is 3, listing ``5.9``
+the desired section. For example, listing ``5.9``
 on the command line will include all section 5.9 content, i.e., tests
 5.9.1, ..., 5.9.\ *x*.
 
@@ -44,8 +44,7 @@ punctuation between each ID or range.
 
 Below are some examples demonstrating various ways to select sets
 of tests to generate. All examples assume the top-level script is
-named :file:`main.py` and :py:func:`atform.set_id_depth` has been used to
-set the identifier depth to 3.
+named :file:`main.py` and sections created with :py:func:`atform.section`.
 
 .. code-block:: doscon
 

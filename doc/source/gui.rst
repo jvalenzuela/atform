@@ -42,7 +42,7 @@ List
 
 The :guilabel:`List` tab presents all defined tests sorted according to
 their numeric identifier, and organized into a heirarchy if sections have
-been enabled with :py:func:`atform.set_id_depth`.
+been created with :py:func:`atform.section`.
 
 Tests can be selected via mouse click; multiple selections can be made
 using the typical :kbd:`Control` and :kbd:`Shift` mouse click combinations.
