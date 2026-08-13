@@ -307,20 +307,20 @@ class ControlPanel(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         super().__init__(testlist)
         self.testlist = testlist
 
-        self._add_button("Expand All", tk.TOP)
-        self._add_button("Collapse All", tk.TOP)
+        self._add_button("Expand\nAll", tk.TOP)
+        self._add_button("Collapse\nAll", tk.TOP)
 
         self.counts = Counts(self, testlist)
         self.counts.pack(side=tk.BOTTOM)
 
-        self._add_button("Invert Selection", tk.BOTTOM)
-        self._add_button("Unselect All", tk.BOTTOM)
-        self._add_button("Select All", tk.BOTTOM)
+        self._add_button("Invert\nSelection", tk.BOTTOM)
+        self._add_button("Unselect\nAll", tk.BOTTOM)
+        self._add_button("Select\nAll", tk.BOTTOM)
 
     def _add_button(self, text, side):
         """Creates a single button."""
         # Convert the button text to snake case to match a method name.
-        snake = text.lower().replace(" ", "_")
+        snake = text.lower().replace("\n", "_")
         func = getattr(self, f"_on_{snake}")
 
         btn = tkwidget.Button(

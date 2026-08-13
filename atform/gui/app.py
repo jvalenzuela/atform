@@ -1,6 +1,7 @@
 """This module contains the entry point for the GUI and top-level window."""
 
 import tkinter as tk
+from tkinter import ttk
 
 from . import buildlist
 from . import common
@@ -17,7 +18,16 @@ from . import tkwidget
 def run(path, folder_depth):
     """Launches the GUI."""
     app = Application(path, folder_depth)
+    config_style()
     app.mainloop()
+
+
+def config_style():
+    """Applies ttk style modifications."""
+    style = ttk.Style()
+
+    # For buttons with multi-line text.
+    style.configure("TButton", justify=tk.CENTER)
 
 
 class Application(tkwidget.Tk):
