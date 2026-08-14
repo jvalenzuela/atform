@@ -8,6 +8,7 @@ import contextlib
 import copy
 import importlib
 import io
+import re
 from PIL import Image
 import tkinter as tk
 import unittest
@@ -192,10 +193,14 @@ def find_widget_by_text(parent, text):
     """Locates a Tk widget by its statically assigned text."""
     config = parent.config()
     try:
-        if config["text"][-1] == text:
-            return parent
+        # Reduce consecutive whitespace to a single space to normalize widgets
+        # with multi-line text.
+        widget_text = re.sub(r"\s+", " ", config["text"][-1])
     except KeyError:
         pass
+    else:
+        if widget_text == text:
+            return parent
 
     for child in parent.winfo_children():
         widget = find_widget_by_text(child, text)
