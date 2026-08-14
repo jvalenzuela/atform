@@ -34,6 +34,7 @@ class Checkbox(Flowable):
             relative=True,
         )
 
+
 class PlainCheckbox(Flowable):
     """A non-interactive box for manual marking (not a fillable form field)."""
 
@@ -48,10 +49,11 @@ class PlainCheckbox(Flowable):
 
     def draw(self):
         """Places the flowable onto the canvas.
-        
+
         Callback method required for Flowables; called by Platypus.
         """
         self.canv.rect(0, 0, self.SIZE, self.SIZE)
+
 
 class TextEntry(Flowable):
     """Creates an Acroform for entering a single line of text."""

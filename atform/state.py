@@ -22,7 +22,6 @@ causing unit test failure.
 
 import collections
 
-
 # Names identifying which fields will be applied to the next test.
 active_fields: set[str] = set()
 
@@ -62,9 +61,9 @@ signatures: list[str] = []
 # Checkbox style in the procedure table: "form" for a form
 # fillable AcroForm field, or"plain" for a # non-interactive
 # rectangle used for placing a physical checkbox
-checkbox_style = "form" # pylint: disable=invalid-name
+checkbox_style = "form"  # pylint: disable=invalid-name
 
 # Signature style in the procedure table: "form" for a form
 # fillable AcroForm field, or"plain" for a # non-interactive
 # rectangle used for placing a physical checkbox
-signature_style = "form" # pylint: disable=invalid-name
+signature_style = "form"  # pylint: disable=invalid-name

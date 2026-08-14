@@ -21,7 +21,6 @@ from .textstyle import stylesheet
 
 from .. import state
 
-
 # Largest allowable procedure step image size, in inches. The width is
 # selected to fit within the allowable horizontal space allotted to the
 # procedure table's Description column; the height chosen arbitrarily.
