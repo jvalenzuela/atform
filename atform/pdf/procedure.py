@@ -136,19 +136,22 @@ def header():
 def step_rows(steps):
     """Creates rows for all steps."""
     step_style = stylesheet["ProcedureTableHeading"]
-    checkbox_cls = (
-        acroform.PlainCheckbox()
-        if state.checkbox_style == "plain"
-        else acroform.Checkbox()
-    )
     return [
         [
             Paragraph(str(i), step_style),
             step_body(step),
-            checkbox_cls,
+            checkbox(),
         ]
         for i, step in enumerate(steps, start=1)
     ]
+
+
+def checkbox():
+    """Creates a checkbox based on the selected formatting style."""
+    if state.checkbox_style_plain:
+        return acroform.PlainCheckbox()
+    else:
+        return acroform.Checkbox()
 
 
 def step_body(step):

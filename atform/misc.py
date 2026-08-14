@@ -114,51 +114,26 @@ def set_project_info(*, project=None, system=None):
         if params[arg] is not None:
             state.project_info[arg] = nonempty_string(arg, params[arg])
 
-# Valid values accepted by set_checkbox_style().
-CHECKBOX_STYLES = ("form", "plain")
 
 @error.exit_on_script_error
 @setup_only
-def set_checkbox_style(style):
-    """Selects the appearance of the procedure "Pass" checkbox.
+def set_checkbox_style_plain():
+    """Selects the appearance of the procedure "Pass" checkbox
+    from form fillable acroform checkbox
+    to a plain, non-interactive box.
 
     May only be called once in the setup area.
-
-    Args:
-        style (str): ``"form"`` (default) creates an interactive,
-            fillable PDF form field for each step. ``"plain"`` draws a
-            plain, non-interactive box intended for manual marking.
     """
-    if style not in CHECKBOX_STYLES:
-        raise error.UserScriptError(
-            f"Invalid checkbox style: {style!r}",
-            f"""
-            Checkbox style must be one of: {", ".join(CHECKBOX_STYLES)}.
-            """,
-        )
-    state.checkbox_style = style
+    state.checkbox_style_plain = True
 
-# Valid values accepted by set_signature_style().
-SIGNATURE_STYLES = ("form", "plain")
 
 @error.exit_on_script_error
 @setup_only
-def set_signature_style(style):
-    """Selects the appearance of the signature field.
+def set_signature_style_plain():
+    """Selects the appearance of the signature area
+    from form fillable acroform fields
+    to plain, non-interactive fields.
 
     May only be called once in the setup area.
-
-    Args:
-        style (str): ``"form"`` (default) creates an interactive,
-            fillable PDF form field for the "name" and "date"  
-            elements for each signature. 
-            ``"plain"`` draws blank fields for manual entry.
     """
-    if style not in SIGNATURE_STYLES:
-        raise error.UserScriptError(
-            f"Invalid signature style: {style!r}",
-            f"""
-            Signature style must be one of: {", ".join(SIGNATURE_STYLES)}.
-            """,
-        )
-    state.signature_style = style
+    state.signature_style_plain = True

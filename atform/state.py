@@ -58,12 +58,12 @@ ref_titles: dict[str, str] = collections.OrderedDict()
 # Signature titles, in the order they were defined.
 signatures: list[str] = []
 
-# Checkbox style in the procedure table: "form" for a form
-# fillable AcroForm field, or"plain" for a # non-interactive
+# Checkbox style in the procedure table: "False" for a form
+# fillable AcroForm field, or "True" for a # non-interactive
 # rectangle used for placing a physical checkbox
-checkbox_style = "form"  # pylint: disable=invalid-name
+checkbox_style_plain: bool = False  # pylint: disable=invalid-name
 
-# Signature style in the procedure table: "form" for a form
-# fillable AcroForm field, or"plain" for a # non-interactive
-# rectangle used for placing a physical checkbox
-signature_style = "form"  # pylint: disable=invalid-name
+# Signature style in the procedure table: "False" for a form
+# fillable AcroForm signature field, or "True" for a 
+# non-interactive signature field
+signature_style_plain: bool = False  # pylint: disable=invalid-name

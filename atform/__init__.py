@@ -40,8 +40,8 @@ from atform.meta import (
 from atform.misc import (
     add_copyright,
     set_project_info,
-    set_checkbox_style,
-    set_signature_style,
+    set_checkbox_style_plain,
+    set_signature_style_plain,
 )
 
 from atform.ref import (
