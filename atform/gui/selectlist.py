@@ -5,7 +5,6 @@ from a list of all tests.
 
 import tkinter as tk
 
-from .. import addtest
 from . import buildlist
 from . import common
 from . import testlist
@@ -17,16 +16,8 @@ class SelectList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
 
     def __init__(self, parent):
         super().__init__(parent)
-        self._add_listing()
-        self._add_buttons()
-
-    def _add_listing(self):
-        """Creates the test listing widget."""
         self.testlist = testlist.TestList(self)
-
-        # Populate the list with all defined tests.
-        for tid in addtest.tests:
-            self.testlist.add_test(tid)
+        self._add_buttons()
 
     def _add_buttons(self):
         """Creates additional buttons."""

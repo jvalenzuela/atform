@@ -23,6 +23,7 @@ class BuildList(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
     def __init__(self, parent, path, folder_depth):
         super().__init__(parent, text="Build")
         self.testlist = testlist.TestList(self)
+        self.testlist.clear()
         self._add_remove_button()
         self.path = self._add_path(path)
         self.folder_depth = self._add_folder_depth(folder_depth)

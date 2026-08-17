@@ -4,21 +4,17 @@ user to select specific tests.
 """
 
 import tkinter as tk
-import tkinter.font as tkfont
 
 from .. import addtest
 from . import common
 from . import preview
 from .. import id as id_
+from . import scrolltree
 from . import tkwidget
 
 
 class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     """Top-level widget housing the entire list and associated buttons."""
-
-    # Number of pixels per ID field allocated to the ID column width;
-    # empirically derived to fit an ID with the format xx.yy.zzz.
-    ID_COLUMN_FACTOR = 40
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -27,16 +23,16 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.controls.pack(side=tk.LEFT, fill=tk.Y)
         self.pack(fill=tk.BOTH, expand=tk.TRUE)
 
+        # Populate with all defined tests.
+        for tid in addtest.tests:
+            self.add_test(tid)
+
+        self.tree.fit_columns()
+
     def _add_tree(self):
         """Creates the tree view widget."""
         frame = tkwidget.Frame(self)
         frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.TRUE)
-        frame.columnconfigure(0, weight=1)
-        frame.rowconfigure(0, weight=1)
-
-        # Size propagation is disabled to prevent the frame from being
-        # excessively enlarged to accommodate long titles.
-        frame.grid_propagate(0)
 
         self.tree = TupleTreeview(
             frame,
@@ -44,64 +40,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         )
         self.tree.heading("#0", text="ID", anchor=tk.W)
         self.tree.heading("Title", text="Title", anchor=tk.W)
-        self.tree.column(
-            "#0",
-            stretch=tk.FALSE,
-            width=self._id_column_width(),
-        )
-        self.tree.column(
-            "Title",
-            stretch=tk.FALSE,
-            width=self._title_column_width,
-        )
-        self.tree.grid(sticky=tk.NSEW)
         self.tree.tag_bind("preview", "<ButtonRelease-1>", self._preview)
-        self._add_xscroll(frame)
-        self._add_yscroll(frame)
-
-    @property
-    def _title_column_width(self):
-        """Calculates the column width required to fit the longest title."""
-        titles = [t.title for t in addtest.tests.values()]
-        titles.extend(id_.section_titles.values())
-
-        # Include the column title itself to ensure the column is wide enough
-        # to show the header.
-        titles.append("Title")
-
-        font = tkfont.nametofont("TkDefaultFont")
-        widths = [font.measure(s) for s in titles]
-
-        # Added to the resulting width to account for the horizontal padding
-        # supplied by the Treeview widget; actual value is empirically chosen.
-        pad = 10
-
-        return max(widths) + pad
-
-    def _add_xscroll(self, parent):
-        """Creates the horizontal scrollbar."""
-        scroll = tkwidget.Scrollbar(parent, orient=tk.HORIZONTAL)
-        scroll["command"] = self.tree.xview
-        self.tree["xscrollcommand"] = scroll.set
-        scroll.grid(row=1, sticky=tk.EW)
-
-    def _add_yscroll(self, parent):
-        """Creates the vertical scrollbar."""
-        scroll = tkwidget.Scrollbar(parent, orient=tk.VERTICAL)
-        scroll["command"] = self.tree.yview
-        self.tree["yscrollcommand"] = scroll.set
-        scroll.grid(row=0, column=1, sticky=tk.NS)
-
-    def _id_column_width(self):
-        """Computes the initial width of the ID column."""
-        try:
-            max_depth = max(len(id_) for id_ in addtest.tests)
-
-        # Corner case if no tests exist.
-        except ValueError:
-            max_depth = 1
-
-        return max_depth * self.ID_COLUMN_FACTOR
 
     def add_test(self, tid):
         """Adds a test to the listing."""
@@ -219,7 +158,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         return children
 
 
-class TupleTreeview(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
+class TupleTreeview(scrolltree.ScrollTree):  # pylint: disable=too-many-ancestors
     """
     Treeview subclass that adds a set of ttv_<method> wrappers translating
     integer ID tuples to strings for use as item IDs(iid). These wrappers
