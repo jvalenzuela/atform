@@ -398,7 +398,7 @@ class Refs(InteractiveGuiTestCase):
     def test_resize_horizontal(self):
         """Confirm proper horizontal resizing."""
         self.start_gui(
-            instruction="Enlarge the window horizontally and ensure the Refs tab Category/Item column and add button fill the horizontal space.",
+            instruction="Enlarge the window horizontally and ensure the Refs tab listing area and add button fill the horizontal space.",
         )
 
     def test_resize_vertical(self):
@@ -408,16 +408,25 @@ class Refs(InteractiveGuiTestCase):
         )
 
     def test_scroll(self):
-        """Verify operation of the reference listing vertical scroll bar."""
-        atform.add_reference_category("Refs", "refs")
+        """Verify operation of the reference listing scroll bars."""
+        # Create a title long enough to require horizontal scrolling.
+        atform.add_reference_category("Refs" + "." * 100 + "X", "refs")
         atform.add_test(
             "title",
             references={"refs": [str(x) for x in range(50)]},
         )
-        root = tk.Tk()
-        ref = atform.gui.selectref.SelectRef(root)
-        ref.pack()
-        self.start_gui(root=root)
+        self.start_gui()
+
+    def test_column_width(self):
+        """Verify reference list columns are wide enough to fit the headers."""
+        # The reference category title and items must be shorter than the
+        # column header to ensure the columns are sized to fit the headers.
+        atform.add_reference_category("Refs", "refs")
+        atform.add_test(
+            "title",
+            references={"refs": ["a"]},
+        )
+        self.start_gui()
 
     def test_select(self):
         """Confirm correct item selection mode."""
@@ -426,11 +435,7 @@ class Refs(InteractiveGuiTestCase):
             "title",
             references={"refs": [str(x) for x in range(10)]},
         )
-        root = tk.Tk()
-        ref = atform.gui.selectref.SelectRef(root)
-        ref.pack()
         self.start_gui(
-            root=root,
             instruction="Confirm multiple items can be selected simultaneously.",
         )
 

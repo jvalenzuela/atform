@@ -8,6 +8,7 @@ import tkinter as tk
 from .. import addtest
 from . import buildlist
 from . import common
+from . import scrolltree
 from .. import state
 from . import tkwidget
 
@@ -24,12 +25,6 @@ class SelectRef(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         """Creates the reference list."""
         frame = tkwidget.Frame(self)
         tree = RefList(frame)
-        tree.pack(
-            side=tk.LEFT,
-            fill=tk.BOTH,
-            expand=tk.TRUE,
-        )
-        common.add_vertical_scrollbar(frame, tree)
         frame.pack(
             fill=tk.BOTH,
             expand=tk.TRUE,
@@ -52,7 +47,7 @@ class SelectRef(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         )
 
 
-class RefList(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
+class RefList(scrolltree.ScrollTree):  # pylint: disable=too-many-ancestors
     """
     Treeview listing all defined reference categories and their child
     reference items.
@@ -72,6 +67,7 @@ class RefList(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
         self.tests = {}
 
         self._populate()
+        self.fit_columns()
 
     def _populate(self):
         """Adds all reference categories and items to the tree."""
