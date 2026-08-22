@@ -42,6 +42,7 @@ from atform.misc import (
     set_project_info,
     set_checkbox_style_plain,
     set_signature_style_plain,
+    exclude_initials_in_signature,
 )
 
 from atform.ref import (

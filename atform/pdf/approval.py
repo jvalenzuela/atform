@@ -35,10 +35,16 @@ FIELD_TITLE_SEP = toLength("2 pt")
 
 
 # Column indices.
-NAME_COL = 0
-SIG_COL = NAME_COL + 1
-INITIAL_COL = SIG_COL + 1
-DATE_COL = INITIAL_COL + 1
+col_num = 0
+
+NAME_COL = col_num
+col_num += 1
+SIG_COL = col_num
+col_num += 1
+if state.include_initial_field_in_signature:
+    INITIAL_COL = col_num
+    col_num += 1
+DATE_COL = col_num
 
 
 def make_approval(test):
@@ -53,7 +59,11 @@ def make_approval(test):
         name_col_width(),
         None,  # Signature occupies all remaining width.
         # The Initials column is sized to hold the header text.
-        layout.max_width(["Initials"], "SignatureFieldTitle"),
+        *(
+            (layout.max_width(["Initials"], "SignatureFieldTitle"),)
+            if state.include_initial_field_in_signature
+            else ()
+        ),
         date_col_width(),
     ]
     style = list(
@@ -72,22 +82,29 @@ def make_approval(test):
 
 def make_sig_rows(title):
     """Generates a set of table rows for a given signature entry.
-    
+
     Returns form fillable fields or plain fields depending on signature style.
     """
     if state.signature_style_plain:
+        plain_blank_field = """
+       
+                    
+        """  # this generates space for physical signature
         return [
             [Paragraph(title, stylesheet["SignatureTitle"])],
             # Middle row has the field titles.
             header_row(),
             # Lower row contains the text entry fields.
             [
-                """
-
-                """,  # Name column is blank, but leaves enough space for manual entry
-                None,  # Signature column is blank.
-                None,  # Initial column is blank.
-                None,  # Date column is blank.
+                plain_blank_field,  # Name column is blank
+                plain_blank_field,  # Signature column is blank.
+                # Optional initial field is blank
+                *(
+                    (plain_blank_field,)
+                    if state.include_initial_field_in_signature
+                    else ()
+                ),
+                plain_blank_field,  # Date column is blank.
             ],
         ]
     else:
@@ -99,7 +116,8 @@ def make_sig_rows(title):
             [
                 name_entry_field(),
                 None,  # Signature column is blank.
-                None,  # Initial column is blank.
+                # Optional initial field is blank
+                *((None,) if state.include_initial_field_in_signature else ()),
                 date_entry_field(),
             ],
         ]
@@ -111,7 +129,11 @@ def header_row():
     return [
         Preformatted("Name", sty),
         Preformatted("Signature", sty),
-        Preformatted("Initials", sty),
+        *(
+            (Preformatted("Initials", sty),)
+            if state.include_initial_field_in_signature
+            else ()
+        ),
         Preformatted(DATE_TITLE, sty),
     ]
 

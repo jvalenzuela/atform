@@ -64,6 +64,10 @@ signatures: list[str] = []
 checkbox_style_plain: bool = False  # pylint: disable=invalid-name
 
 # Signature style in the procedure table: "False" for a form
-# fillable AcroForm signature field, or "True" for a 
+# fillable AcroForm signature field, or "True" for a
 # non-interactive signature field
 signature_style_plain: bool = False  # pylint: disable=invalid-name
+
+# Include field for logging initials in the signature section of
+# the procedure table: True/False
+include_initial_field_in_signature: bool = False  # pylint: disable=invalid-name
