@@ -7,7 +7,6 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 
 from .textstyle import stylesheet
 
-
 PAGE_SIZE = LETTER
 LEFT_MARGIN = toLength("0.75 in")
 RIGHT_MARGIN = LEFT_MARGIN

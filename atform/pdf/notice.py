@@ -9,7 +9,6 @@ import svglib
 from .. import iso7010
 from . import paragraph
 
-
 # Horizontal size of the ISO 7010 pictogram. Vertical size is computed
 # automatically to maintain the aspect ratio.
 IMAGE_WIDTH = toLength("0.5 in")

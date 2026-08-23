@@ -7,7 +7,6 @@ import PIL
 from reportlab.lib.units import inch
 import reportlab.platypus
 
-
 # Raw image data keyed by hash. This is the same content as the image.images
 # dict, but populated by doc.init() to accommodate running in a worker process.
 IMAGES = {}

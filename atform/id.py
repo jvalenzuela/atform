@@ -12,7 +12,6 @@ import tempfile
 from . import error
 from . import state
 
-
 # Type alias for the internal representation of numeric test and section IDs.
 IdType = tuple[int, ...]
 

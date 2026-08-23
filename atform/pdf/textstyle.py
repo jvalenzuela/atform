@@ -21,7 +21,6 @@ from reportlab.lib.styles import (
 )
 from reportlab.lib.units import toLength
 
-
 stylesheet = getSampleStyleSheet()
 
 

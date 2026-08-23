@@ -16,7 +16,6 @@ from . import addtest
 from . import vcs
 from . import version
 
-
 # Cache file name.
 FILENAME = "atform.cache"
 

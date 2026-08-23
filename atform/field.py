@@ -10,7 +10,6 @@ from . import error
 from . import misc
 from . import state
 
-
 # Object used to store the definition of each field.
 Field = collections.namedtuple(
     "Field",

@@ -16,7 +16,6 @@ from . import addtest
 from . import id as id_
 from . import version
 
-
 # True if the lock file matches the current test content; set by verify()
 # after comparing the existing test content to the lock file.
 lockfile_current = False  # pylint: disable=invalid-name
@@ -40,22 +39,18 @@ class ChangedTestError(Exception):
 
     def __str__(self):
         lines = [
-            wrap(
-                f"""\
+            wrap(f"""\
                 Possible unintentional change to {len(self.diffs)} test(s);
                 no PDFs were generated. The first difference is:
-                """
-            ),
+                """),
             "",
             str(self.diffs[0]),
             "",
-            wrap(
-                f"""\
+            wrap(f"""\
                 If this is intentional delete {FILENAME} run the script again,
                 otherwise the changes must be reverted before PDFs can
                 be generated.
-                """
-            ),
+                """),
         ]
         return "\n".join(lines)
 
@@ -111,14 +106,12 @@ def load():
                 # Verify matching module version in the first row.
                 if check_version:
                     if row[1] != version.VERSION:
-                        raise LockFileWarning(
-                            f"""\
+                        raise LockFileWarning(f"""\
                             The ID lock file version does not match the
                             current atform version. Delete {FILENAME} and run
                             the script again to regenerate the ID lock file
                             with the currently installed version.
-                            """
-                        )
+                            """)
                     check_version = False
 
                 else:
@@ -134,12 +127,10 @@ def load():
         raise LockFileWarning(f"Error reading ID lock file: {e}") from e
 
     except (csv.Error, IndexError, ValueError) as e:
-        raise LockFileWarning(
-            f"""\
+        raise LockFileWarning(f"""\
             The ID lock file is corrupt. Delete {FILENAME} and run the
             script again to regenerate the ID lock file.
-            """
-        ) from e
+            """) from e
 
     return tests
 
@@ -208,13 +199,11 @@ def save(current_tests, old_tests):
     # existing file.
     if os.path.exists(FILENAME):
         if current_tests != old_tests:
-            raise LockFileWarning(
-                f"""\
+            raise LockFileWarning(f"""\
                 The ID lock file needs to be updated to reflect the current
                 set of tests. Delete {FILENAME} and run the script again to
                 update the ID lock file with the current test information.
-                """
-            )
+                """)
         return
 
     try:

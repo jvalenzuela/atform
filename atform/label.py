@@ -11,7 +11,6 @@ import string
 from . import error
 from . import state
 
-
 # Regular expression pattern to match a valid label, which is based on
 # allowable identifiers for template strings.
 valid_label_pattern = re.compile(r"(?ai:[_a-z][_a-z0-9]*)$")

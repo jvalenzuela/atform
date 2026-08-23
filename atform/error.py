@@ -14,7 +14,6 @@ import textwrap
 import traceback
 import sys
 
-
 # Container holding information pointing to the location of the most recent API
 # function call. Intended as a pickle-able container for specific
 # traceback.FrameSummary attributes because FrameSummary objects themselves cannot be

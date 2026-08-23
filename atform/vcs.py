@@ -3,7 +3,6 @@
 import shutil
 import subprocess
 
-
 # The current commit SHA1, "draft" if uncommitted changes exist, or None if
 # no version control is present.
 #

@@ -12,7 +12,6 @@ from . import layout
 from . import imgflow
 from .textstyle import stylesheet
 
-
 # Maximum logo image size, in inches.
 MAX_LOGO_SIZE = imgflow.ImageSize(2.0, 1.5)
 

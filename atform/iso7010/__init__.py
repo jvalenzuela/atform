@@ -4,7 +4,6 @@ import functools
 from importlib import resources
 import sys
 
-
 # Available symbols and their associated meaning. The meanings(values) are
 # only used in documentation(Sphinx) and unit tests, residing here as a
 # convenient import for both cases.

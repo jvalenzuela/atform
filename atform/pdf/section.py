@@ -17,7 +17,6 @@ from . import (
 )
 from .textstyle import stylesheet
 
-
 # Table style commands applied to all sections.
 STYLE = [
     # Border surrounding the entire section.

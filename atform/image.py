@@ -15,7 +15,6 @@ from . import error
 from . import misc
 from . import state
 
-
 # Allowable image formats.
 FORMATS = ["JPEG", "PNG"]
 

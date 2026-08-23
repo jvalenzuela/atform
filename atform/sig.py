@@ -4,7 +4,6 @@ from . import error
 from . import misc
 from . import state
 
-
 ################################################################################
 # Public API
 #

@@ -38,7 +38,6 @@ from . import (
 )
 from .textstyle import stylesheet
 
-
 # Common content used across all tests; populated by init() when the
 # build worker process is started.
 init_data = {}

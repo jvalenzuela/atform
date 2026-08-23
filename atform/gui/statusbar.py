@@ -9,7 +9,6 @@ from . import tkwidget
 from .. import vcs
 from .. import version
 
-
 # Indicator background color conveying a condition that may require attention.
 # Ref ANSI safety orange.
 WARNING_BACKGROUND = "#ff7900"

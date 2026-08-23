@@ -8,7 +8,6 @@ from . import format as format_
 from . import label as label_
 from . import misc
 
-
 Term = collections.namedtuple("Term", ["raw", "formatted"])
 
 

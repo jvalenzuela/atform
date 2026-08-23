@@ -10,7 +10,6 @@ from . import id as id_
 from . import misc
 from . import state
 
-
 ################################################################################
 # Public API
 #

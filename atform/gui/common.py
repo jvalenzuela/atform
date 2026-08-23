@@ -4,7 +4,6 @@ import tkinter as tk
 
 from . import tkwidget
 
-
 # Geometry manager padding sizes.
 SMALL_PAD = 5
 LARGE_PAD = 20

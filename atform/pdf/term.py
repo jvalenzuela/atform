@@ -10,7 +10,6 @@ from reportlab.platypus import (
 from . import section
 from .textstyle import stylesheet
 
-
 SECTION_TITLE = "Terms"
 
 

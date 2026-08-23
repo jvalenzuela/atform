@@ -138,6 +138,7 @@ def set_signature_style_plain():
     """
     state.signature_style_plain = True
 
+
 @error.exit_on_script_error
 @setup_only
 def exclude_initials_in_signature():
@@ -147,4 +148,4 @@ def exclude_initials_in_signature():
 
     May only be called once in the setup area.
     """
-    state.include_initial_field_in_signature = False    
+    state.include_initial_field_in_signature = False

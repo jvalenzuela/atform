@@ -18,7 +18,6 @@ user-provided text. The process is as follows:
 import hashlib
 import re
 
-
 objects = {}  # All stored objects keyed by hash.
 
 

@@ -4,7 +4,6 @@ from reportlab.platypus import Paragraph
 
 from .textstyle import stylesheet
 
-
 # Embedded reference resolver; populated by doc.init().
 EREFS = None
 

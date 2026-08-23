@@ -8,7 +8,6 @@ import collections
 from .. import addtest
 from .. import cache
 
-
 CompareResult = collections.namedtuple(
     "CompareResult",
     [
