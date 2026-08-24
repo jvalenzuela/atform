@@ -150,8 +150,7 @@ def checkbox():
     """Creates a checkbox based on the selected formatting style."""
     if state.checkbox_style_plain:
         return acroform.PlainCheckbox()
-    else:
-        return acroform.Checkbox()
+    return acroform.Checkbox()
 
 
 def step_body(step):

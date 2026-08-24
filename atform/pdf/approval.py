@@ -31,7 +31,13 @@ DATE_TITLE = f"Date ({DATE_FORMAT})"
 
 
 # Vertical distance between field names and the data entry fields.
-FIELD_TITLE_SEP = toLength("2 pt")
+HEADER_SECTION_HEIGHT = toLength("2 pt")
+
+# Set minimum height for name/signature fields depending on table style:
+if state.signature_style_plain:
+    FIELD_SECTION_HEIGHT = toLength("14 pt") # Allows space for handwritten field
+else:
+    FIELD_SECTION_HEIGHT = 0 # no specific height when using acroform
 
 
 # Column indices.
@@ -86,41 +92,36 @@ def make_sig_rows(title):
     Returns form fillable fields or plain fields depending on signature style.
     """
     if state.signature_style_plain:
-        plain_blank_field = """
-       
-                    
-        """  # this generates space for physical signature
         return [
             [Paragraph(title, stylesheet["SignatureTitle"])],
             # Middle row has the field titles.
             header_row(),
             # Lower row contains the text entry fields.
             [
-                plain_blank_field,  # Name column is blank
-                plain_blank_field,  # Signature column is blank.
+                None,  # Name column is blank
+                None,  # Signature column is blank.
                 # Optional initial field is blank
                 *(
-                    (plain_blank_field,)
+                    (None,)
                     if state.include_initial_field_in_signature
                     else ()
                 ),
-                plain_blank_field,  # Date column is blank.
+                None,  # Date column is blank.
             ],
         ]
-    else:
-        return [
-            [Paragraph(title, stylesheet["SignatureTitle"])],
-            # Middle row has the field titles.
-            header_row(),
-            # Lower row contains the text entry fields.
-            [
-                name_entry_field(),
-                None,  # Signature column is blank.
-                # Optional initial field is blank
-                *((None,) if state.include_initial_field_in_signature else ()),
-                date_entry_field(),
-            ],
-        ]
+    return [
+        [Paragraph(title, stylesheet["SignatureTitle"])],
+        # Middle row has the field titles.
+        header_row(),
+        # Lower row contains the text entry fields.
+        [
+            name_entry_field(),
+            None,  # Signature column is blank.
+            # Optional initial field is blank
+            *((None,) if state.include_initial_field_in_signature else ()),
+            date_entry_field(),
+        ],
+    ]
 
 
 def header_row():
@@ -159,8 +160,8 @@ def sig_row_style(i, sigs):
         # Title row spans all columns.
         ("SPAN", (0, title), (-1, title)),
         # Set padding between the headers and fields.
-        ("BOTTOMPADDING", (0, header), (-1, header), FIELD_TITLE_SEP),
-        ("TOPPADDING", (0, field), (-1, field), 0),
+        ("BOTTOMPADDING", (0, header), (-1, header), HEADER_SECTION_HEIGHT),
+        ("TOPPADDING", (0, field), (-1, field), FIELD_SECTION_HEIGHT),
         # The name field should abut the left table border.
         (
             "LEFTPADDING",
