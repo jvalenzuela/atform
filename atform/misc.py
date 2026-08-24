@@ -118,9 +118,10 @@ def set_project_info(*, project=None, system=None):
 @error.exit_on_script_error
 @setup_only
 def set_checkbox_style_plain():
-    """Selects the appearance of the procedure "Pass" checkbox
-    from form fillable acroform checkbox
-    to a plain, non-interactive box.
+    """Modifies the appearance of the procedure "Pass" checkbox.
+
+    There are no arguments for this function. Calling this function changes the
+    checkbox style from a form fillable acroform checkbox to a plain, non-interactive box.
 
     May only be called once in the setup area.
     """
@@ -130,9 +131,10 @@ def set_checkbox_style_plain():
 @error.exit_on_script_error
 @setup_only
 def set_signature_style_plain():
-    """Selects the appearance of the signature area
-    from form fillable acroform fields
-    to plain, non-interactive fields.
+    """Modifies the appearance of the signature area.
+
+    There are no arguments for this function. Calling this function changes
+    the signature style form a fillable acroform fields to plain, non-interactive fields.
 
     May only be called once in the setup area.
     """

@@ -35,9 +35,9 @@ HEADER_SECTION_HEIGHT = toLength("2 pt")
 
 # Set minimum height for name/signature fields depending on table style:
 if state.signature_style_plain:
-    FIELD_SECTION_HEIGHT = toLength("14 pt") # Allows space for handwritten field
+    FIELD_SECTION_HEIGHT = toLength("14 pt")  # Allows space for handwritten field
 else:
-    FIELD_SECTION_HEIGHT = 0 # no specific height when using acroform
+    FIELD_SECTION_HEIGHT = 0  # no specific height when using acroform
 
 
 # Column indices.
