@@ -137,15 +137,3 @@ def set_signature_style_plain():
     May only be called once in the setup area.
     """
     state.signature_style_plain = True
-
-
-@error.exit_on_script_error
-@setup_only
-def exclude_initials_in_signature():
-    """Selects the appearance of the signature area
-    from form fillable acroform fields
-    to plain, non-interactive fields.
-
-    May only be called once in the setup area.
-    """
-    state.include_initial_field_in_signature = False

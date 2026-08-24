@@ -47,9 +47,8 @@ NAME_COL = col_num
 col_num += 1
 SIG_COL = col_num
 col_num += 1
-if state.include_initial_field_in_signature:
-    INITIAL_COL = col_num
-    col_num += 1
+INITIAL_COL = col_num
+col_num += 1
 DATE_COL = col_num
 
 
@@ -65,11 +64,7 @@ def make_approval(test):
         name_col_width(),
         None,  # Signature occupies all remaining width.
         # The Initials column is sized to hold the header text.
-        *(
-            (layout.max_width(["Initials"], "SignatureFieldTitle"),)
-            if state.include_initial_field_in_signature
-            else ()
-        ),
+        layout.max_width(["Initials"], "SignatureFieldTitle"),
         date_col_width(),
     ]
     style = list(
@@ -100,12 +95,7 @@ def make_sig_rows(title):
             [
                 None,  # Name column is blank
                 None,  # Signature column is blank.
-                # Optional initial field is blank
-                *(
-                    (None,)
-                    if state.include_initial_field_in_signature
-                    else ()
-                ),
+                None,  # Initial field is blank
                 None,  # Date column is blank.
             ],
         ]
@@ -117,8 +107,7 @@ def make_sig_rows(title):
         [
             name_entry_field(),
             None,  # Signature column is blank.
-            # Optional initial field is blank
-            *((None,) if state.include_initial_field_in_signature else ()),
+            None,  # Initial field is blank
             date_entry_field(),
         ],
     ]
@@ -130,11 +119,7 @@ def header_row():
     return [
         Preformatted("Name", sty),
         Preformatted("Signature", sty),
-        *(
-            (Preformatted("Initials", sty),)
-            if state.include_initial_field_in_signature
-            else ()
-        ),
+        Preformatted("Initials", sty),
         Preformatted(DATE_TITLE, sty),
     ]
 

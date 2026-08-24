@@ -24,7 +24,6 @@ Setup
    atform.set_project_info
    atform.set_checkbox_style_plain
    atform.set_signature_style_plain
-   atform.exclude_initials_in_signature
 
 
 Content
