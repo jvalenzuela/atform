@@ -149,8 +149,8 @@ def step_rows(steps):
 def checkbox():
     """Creates a checkbox based on the selected formatting style."""
     if state.checkbox_style_plain:
-        return acroform.PlainCheckbox()
-    return acroform.Checkbox()
+        return acroform.Checkbox(form=False)
+    return acroform.Checkbox(form=True)
 
 
 def step_body(step):

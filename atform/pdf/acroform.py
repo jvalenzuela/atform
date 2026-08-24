@@ -17,28 +17,11 @@ class Checkbox(Flowable):
     # Height and width of the box.
     SIZE = toLength("0.25 in")
 
-    def wrap(self, *_args):
-        """Returns the size of the flowable.
+    def __init__(self, form: bool = True):
+        super().__init__()
 
-        Callback method required for Flowables; called by Platypus.
-        """
-        return (self.SIZE, self.SIZE)
-
-    def draw(self):
-        """Places the flowable onto the canvas.
-
-        Callback method required for Flowables; called by Platypus.
-        """
-        self.canv.acroForm.checkbox(
-            size=self.SIZE,
-            relative=True,
-        )
-
-
-class PlainCheckbox(Flowable):
-    """A non-interactive box for manual marking (not a fillable form field)."""
-
-    SIZE = toLength("0.25 in")
+        # Set the form style as an acroform or static box
+        self.as_form = form
 
     def wrap(self, *_args):
         """Returns the size of the flowable.
@@ -52,7 +35,13 @@ class PlainCheckbox(Flowable):
 
         Callback method required for Flowables; called by Platypus.
         """
-        self.canv.rect(0, 0, self.SIZE, self.SIZE)
+        if self.as_form:  # draw acroform as checkbox
+            self.canv.acroForm.checkbox(
+                size=self.SIZE,
+                relative=True,
+            )
+        else:  # draw static rectangle as checkbox
+            self.canv.rect(0, 0, self.SIZE, self.SIZE)
 
 
 class TextEntry(Flowable):
