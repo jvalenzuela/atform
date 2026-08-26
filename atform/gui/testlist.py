@@ -1,5 +1,5 @@
 """
-This module implements a widget displaying a heirarchial tree allowing the
+This module implements a widget displaying a hierarchical tree allowing the
 user to select specific tests.
 """
 
@@ -91,7 +91,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         return siblings.index(tid)
 
     def remove_test(self, tid):
-        """Revoves a test from the listing."""
+        """Removes a test from the listing."""
         if not self.tree.ttv_exists(tid):
             return
 

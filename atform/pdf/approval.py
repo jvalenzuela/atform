@@ -127,7 +127,7 @@ def sig_row_style(i, sigs):
             layout.SECTION_RULE_WEIGHT / 2,
         ),
         # Remove the left padding from both the date header and field to
-        # keep the cell contents off the right tabel border.
+        # keep the cell contents off the right table border.
         ("LEFTPADDING", (DATE_COL, header), (DATE_COL, field), 0),
     ]
 

@@ -46,7 +46,7 @@ def calculate_size(buf, max_size):
 
     # PNG formats require calling load() to ensure EXIF data is available
     # in the info attribute. The call is unconditional for simplicity as
-    # there's no downside to callling it regardless of format.
+    # there's no downside to calling it regardless of format.
     img.load()
 
     try:

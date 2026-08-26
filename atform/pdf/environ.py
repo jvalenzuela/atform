@@ -18,7 +18,7 @@ def make_environment(fields):
     rows = [create_row(f) for f in fields]
 
     style = [
-        # Horiziontal rule between each item.
+        # Horizontal rule between each item.
         (
             "LINEABOVE",
             (0, 2),

@@ -192,7 +192,7 @@ def calc_widths(steps):
         acroform.Checkbox().wrap()[0] + (layout.DEFAULT_TABLE_HORIZ_PAD * 2),
     ]
 
-    # Add a miniscule amount of width to the pass column to avoid
+    # Add a minuscule amount of width to the pass column to avoid
     # wrapping the first header row. It is unknown why this is required
     # and only affects the initial header row while repeated header rows
     # on additional pages do not wrap.

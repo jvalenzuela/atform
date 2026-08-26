@@ -1,7 +1,7 @@
 """External reference management.
 
 This module implements handling for external references, i.e., setup for
-content passed to the Test.__init__() references parameter.
+content passed to the add_test() references parameter.
 """
 
 from . import addtest

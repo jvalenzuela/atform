@@ -1,4 +1,4 @@
-"""This module contains the add_test() API and ancilliary validation functions."""
+"""This module contains the add_test() API and ancillary validation functions."""
 
 import collections
 import dataclasses
@@ -140,8 +140,7 @@ class TestContent:
     def __eq__(self, other):
         """Equality implementation for detecting content differences.
 
-        This is used for the --diff option, and specifically excludes the
-        following fields:
+        The following fields are specifically excluded:
 
         id: The test's ID is used to identify like tests for comparison,
             i.e., only tests with the same ID as the cache are subject

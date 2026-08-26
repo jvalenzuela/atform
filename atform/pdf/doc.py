@@ -75,7 +75,7 @@ def build_init_data():
 
 
 def init(data):
-    """Initalizes the build process with common content used by all tests.
+    """Initializes the build process with common content used by all tests.
 
     This is the initializer function given to ProcessPoolExecutor when
     building via multiprocessing.
@@ -100,7 +100,7 @@ def build(test, cached_page_count, path):
 
 
 class TestDocument:
-    """This class creates a PDF for a single Test instance."""
+    """This class creates a PDF for a single test."""
 
     def __init__(self, test, cached_page_count, path):
         self.test = test
@@ -299,7 +299,7 @@ class PageCount(IndexingFlowable):
     """Total page count accumulator.
 
     This object captures the total number of pages. It is implemented as an
-    IndexingFlowable so document template multiBuild() can handle runnning
+    IndexingFlowable so document template multiBuild() can handle running
     multiple build passes to determine the total number of pages.
     """
 

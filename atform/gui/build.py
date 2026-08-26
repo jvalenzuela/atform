@@ -125,7 +125,7 @@ class Dialog(simpledialog.Dialog):  # pylint: disable=too-many-instance-attribut
 
 
 class Progress(tk.Frame):
-    """Container holding widgets displaying the number of completd tests."""
+    """Container holding widgets displaying the number of completed tests."""
 
     def __init__(self, parent, total):
         super().__init__(parent)

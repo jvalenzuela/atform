@@ -40,7 +40,7 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         Preview.instance = self
 
     def show(self, tid):
-        """Diplays test content for a given ID."""
+        """Displays test content for a given ID."""
         test = addtest.tests[tid]
         self.pages.show(tid)
         self.src_location.show(test)
