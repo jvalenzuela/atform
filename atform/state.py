@@ -58,3 +58,7 @@ ref_titles: dict[str, str] = collections.OrderedDict()
 
 # Signature titles, in the order they were defined.
 signatures: list[str] = []
+
+
+# True to disable AcroForm procedure checkboxes.
+procedure_checkbox_plain = False  # pylint: disable=invalid-name

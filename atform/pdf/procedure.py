@@ -67,14 +67,14 @@ FIELD_TABLE_STYLE = [
 ]
 
 
-def make_procedure(steps):
+def make_procedure(steps, plain_checkbox):
     """Generates the procedure section."""
     if not steps:
         return None
 
     rows = []
     rows.append(header())
-    rows.extend(step_rows(steps))
+    rows.extend(step_rows(steps, plain_checkbox))
     rows.append(last_row())
 
     style = [
@@ -132,14 +132,14 @@ def header():
     return [Paragraph(s, style) for s in HEADER_FIELDS]
 
 
-def step_rows(steps):
+def step_rows(steps, plain_checkbox):
     """Creates rows for all steps."""
     step_style = stylesheet["ProcedureTableHeading"]
     return [
         [
             Paragraph(str(i), step_style),
             step_body(step),
-            acroform.Checkbox(),
+            acroform.Checkbox(plain_checkbox),
         ]
         for i, step in enumerate(steps, start=1)
     ]

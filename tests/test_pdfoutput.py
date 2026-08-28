@@ -376,12 +376,23 @@ class Procedure(Base, unittest.TestCase):
                     ("A Long Title", 3, "Bar"),
                 ],
             },
+            "Ensure the checkboxes for all steps are interactive AcroForms.",
         ]
 
         # Add enough steps to force the table to span muliple pages.
         [procedure.append("Dummy step") for i in range(10)]
 
         self.make_test(procedure=procedure)
+
+    def test_static_checkbox(self):
+        """Verify non-interactive checkboxes."""
+        atform.set_procedure_checkbox_plain()
+        self.make_test(
+            procedure=[
+                "Verify all checkboxes are static, not interactive AcroForms.",
+                "Another step.",
+            ]
+        )
 
     def test_nosplit_first_step(self):
         """Verify Procedure section starts at the top of the second page.

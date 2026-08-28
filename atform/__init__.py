@@ -39,6 +39,7 @@ from atform.meta import (
 
 from atform.misc import (
     add_copyright,
+    set_procedure_checkbox_plain,
     set_project_info,
 )
 

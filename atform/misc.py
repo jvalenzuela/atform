@@ -113,3 +113,22 @@ def set_project_info(*, project=None, system=None):
     for arg in params:
         if params[arg] is not None:
             state.project_info[arg] = nonempty_string(arg, params[arg])
+
+
+@error.exit_on_script_error
+@setup_only
+def set_procedure_checkbox_plain():
+    """Globally disables interactive form checkboxes in procedure steps.
+
+    Checkboxes will instead be rendered as a static box. May only be called
+    once in the setup area.
+    """
+    if state.procedure_checkbox_plain:
+        raise error.UserScriptError(
+            "Duplicate function call.",
+            """
+            This function can only be called once to disable form checkboxes;
+            remove one of the calls to this function.
+            """,
+        )
+    state.procedure_checkbox_plain = True

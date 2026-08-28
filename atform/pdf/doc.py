@@ -18,6 +18,7 @@ from reportlab.platypus import (
 from .. import embed
 from .. import id as id_
 from .. import image
+from .. import state
 from .. import vcs
 from .. import version
 from . import (
@@ -60,6 +61,7 @@ def build_init_data():
         "timestamp": datetime.datetime.today(),
         "version": vcs.version,
         "erefs": embed.Resolver(),
+        "procedure checkbox plain": state.procedure_checkbox_plain,
     }
 
     try:
@@ -268,7 +270,9 @@ class TestDocument:
             environ.make_environment(test.fields),
             equip.make_equipment(test.equipment),
             precondition.make_preconditions(test.preconditions),
-            procedure.make_procedure(test.procedure),
+            procedure.make_procedure(
+                test.procedure, init_data["procedure checkbox plain"]
+            ),
             notes.make_notes(),
             approval.make_approval(test),
         ]

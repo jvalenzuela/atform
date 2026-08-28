@@ -21,6 +21,7 @@ Setup
    atform.add_signature
    atform.add_term
    atform.require_version
+   atform.set_procedure_checkbox_plain
    atform.set_project_info
 
 

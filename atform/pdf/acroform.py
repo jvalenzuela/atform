@@ -12,10 +12,18 @@ from .textstyle import stylesheet
 
 
 class Checkbox(Flowable):
-    """A custom flowable that generates a form checkbox."""
+    """A custom flowable that generates a form checkbox.
+
+    This can optionally be created as a plain, static graphic shape instead
+    of an interactive AcroForm field.
+    """
 
     # Height and width of the box.
     SIZE = toLength("0.25 in")
+
+    def __init__(self, plain=False):
+        super().__init__()
+        self.plain = plain
 
     def wrap(self, *_args):
         """Returns the size of the flowable.
@@ -29,10 +37,13 @@ class Checkbox(Flowable):
 
         Callback method required for Flowables; called by Platypus.
         """
-        self.canv.acroForm.checkbox(
-            size=self.SIZE,
-            relative=True,
-        )
+        if self.plain:
+            self.canv.rect(0, 0, self.SIZE, self.SIZE)
+        else:
+            self.canv.acroForm.checkbox(
+                size=self.SIZE,
+                relative=True,
+            )
 
 
 class TextEntry(Flowable):
