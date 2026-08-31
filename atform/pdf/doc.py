@@ -62,6 +62,7 @@ def build_init_data():
         "version": vcs.version,
         "erefs": embed.Resolver(),
         "procedure checkbox plain": state.procedure_checkbox_plain,
+        "sig name plain": state.sig_name_plain,
     }
 
     try:
@@ -274,7 +275,7 @@ class TestDocument:
                 test.procedure, init_data["procedure checkbox plain"]
             ),
             notes.make_notes(),
-            approval.make_approval(test),
+            approval.make_approval(test, init_data["sig name plain"]),
         ]
 
         self.no_title_block = flowables[0] is None

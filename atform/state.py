@@ -62,3 +62,7 @@ signatures: list[str] = []
 
 # True to disable AcroForm procedure checkboxes.
 procedure_checkbox_plain = False  # pylint: disable=invalid-name
+
+
+# True to disable AcroForm text entry in the Approval name field.
+sig_name_plain = False  # pylint: disable=invalid-name

@@ -23,6 +23,7 @@ Setup
    atform.require_version
    atform.set_procedure_checkbox_plain
    atform.set_project_info
+   atform.set_signature_name_plain
 
 
 Content

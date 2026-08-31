@@ -40,16 +40,20 @@ INITIAL_COL = SIG_COL + 1
 DATE_COL = INITIAL_COL + 1
 
 
-def make_approval(test):
+def make_approval(test, plain_name):
     """Generates the approval section."""
     sigs = test.signatures
 
     if not sigs:
         return None
 
-    rows = list(itertools.chain.from_iterable([make_sig_rows(title) for title in sigs]))
+    rows = list(
+        itertools.chain.from_iterable(
+            [make_sig_rows(title, plain_name) for title in sigs]
+        )
+    )
     widths = [
-        name_col_width(),
+        name_col_width(plain_name),
         None,  # Signature occupies all remaining width.
         # The Initials column is sized to hold the header text.
         layout.max_width(["Initials"], "SignatureFieldTitle"),
@@ -69,7 +73,7 @@ def make_approval(test):
     )
 
 
-def make_sig_rows(title):
+def make_sig_rows(title, plain_name):
     """Generates a set of table rows for a given signature entry."""
     return [
         [Paragraph(title, stylesheet["SignatureTitle"])],
@@ -77,7 +81,7 @@ def make_sig_rows(title):
         header_row(),
         # Lower row contains the text entry fields.
         [
-            name_entry_field(),
+            name_entry_field(plain_name),
             None,  # Signature column is blank.
             None,  # Initial column is blank.
             date_entry_field(),
@@ -96,9 +100,9 @@ def header_row():
     ]
 
 
-def name_entry_field():
+def name_entry_field(plain):
     """Creates a name entry field."""
-    return acroform.TextEntry(NAME_WIDTH)
+    return acroform.TextEntry(NAME_WIDTH, plain=plain)
 
 
 def date_entry_field():
@@ -154,9 +158,9 @@ def sig_row_style(i, sigs):
     return sty
 
 
-def name_col_width():
+def name_col_width(plain):
     """Calculates the width of the name column."""
-    return name_entry_field().wrap()[0]
+    return name_entry_field(plain).wrap()[0]
 
 
 def date_col_width():

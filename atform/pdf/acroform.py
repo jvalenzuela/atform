@@ -47,7 +47,12 @@ class Checkbox(Flowable):
 
 
 class TextEntry(Flowable):
-    """Creates an Acroform for entering a single line of text."""
+    """Creates an Acroform for entering a single line of text.
+
+    Can optionally be created as a plain, non-interactive field,
+    implemented as an empty rectangle the same size as the equivalent
+    AcroForm field.
+    """
 
     # Coefficient applied to the font size to calculate box height; set
     # to accommodate descenders.
@@ -57,10 +62,11 @@ class TextEntry(Flowable):
     # integral to the field.
     EXTRA_WIDTH = toLength("4 pt")
 
-    def __init__(self, width, tooltip=None):
+    def __init__(self, width, tooltip=None, plain=False):
         super().__init__()
         self.style = stylesheet["TextField"]
         self.tooltip = tooltip
+        self.plain = plain
         self.width = self._calc_width(width)
         self.height = self.style.fontSize * self.HEIGHT_FACTOR
 
@@ -98,12 +104,15 @@ class TextEntry(Flowable):
 
         Callback method required for Flowables; called by Platypus.
         """
-        self.canv.acroForm.textfield(
-            width=self.width,
-            height=self.height,
-            fontName=self.style.fontName,
-            fontSize=self.style.fontSize,
-            borderWidth=0,
-            relative=True,
-            tooltip=self.tooltip,
-        )
+        if self.plain:
+            self.canv.rect(0, 0, self.width, self.height, stroke=0)
+        else:
+            self.canv.acroForm.textfield(
+                width=self.width,
+                height=self.height,
+                fontName=self.style.fontName,
+                fontSize=self.style.fontSize,
+                borderWidth=0,
+                relative=True,
+                tooltip=self.tooltip,
+            )

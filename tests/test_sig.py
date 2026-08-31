@@ -49,3 +49,27 @@ class AddSignatureContentArea(utils.ContentAreaException):
     @staticmethod
     def call():
         atform.add_signature("foo")
+
+
+class SetSignatureNamePlain(unittest.TestCase):
+    """Tests for the set_signature_name_plain() function."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_duplicate_call(self):
+        """Confirm exception when called more than once."""
+        atform.set_signature_name_plain()
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.set_signature_name_plain()
+
+
+class SetSignatureNamePlainContentArea(utils.ContentAreaException):
+    """
+    Tests to confirm exceptions when calling set_signature_name_plain()
+    outside of the setup area.
+    """
+
+    @staticmethod
+    def call():
+        atform.set_signature_name_plain()

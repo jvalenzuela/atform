@@ -516,7 +516,19 @@ class Approval(Base, unittest.TestCase):
         atform.add_signature("First Signature")
         atform.add_signature("Second Signature")
         atform.add_signature("Third Signature")
-        self.make_test()
+        self.make_test(
+            procedure=["Verify all name fields are interactive AcroForms."],
+        )
+
+    def test_plain_name(self):
+        """Verify layout with plain name fields."""
+        atform.set_signature_name_plain()
+        atform.add_signature("First Signature")
+        atform.add_signature("Second Signature")
+        atform.add_signature("Third Signature")
+        self.make_test(
+            procedure=["Verify all name fields are non-interactive fields."],
+        )
 
     def test_nosplit(self):
         """Verify approval section is on the top of the second page.
