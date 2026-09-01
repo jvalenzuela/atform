@@ -402,7 +402,6 @@ class Procedure(Base, unittest.TestCase):
         Reportlab to split the procedure table between the the header row
         and first step.
         """
-        pass
 
     @nosplit
     def test_nosplit_last_row(self):
