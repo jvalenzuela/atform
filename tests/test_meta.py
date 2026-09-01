@@ -1,6 +1,5 @@
 """Unit tests for functions in the metadata output module."""
 
-import sys
 import unittest
 from unittest.mock import patch
 

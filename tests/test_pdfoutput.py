@@ -5,7 +5,6 @@
 from tests import utils
 import atform
 import functools
-import getpass
 import os
 import string
 import unittest

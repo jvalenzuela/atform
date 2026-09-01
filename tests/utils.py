@@ -2,8 +2,6 @@
 
 
 import atform
-from atform import label
-import collections
 import contextlib
 import copy
 import importlib

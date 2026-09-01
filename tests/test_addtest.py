@@ -4,7 +4,6 @@ import copy
 import string
 import traceback
 import unittest
-from unittest.mock import patch
 
 import atform
 from tests import utils

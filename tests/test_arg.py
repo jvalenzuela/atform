@@ -1,8 +1,6 @@
 """Unit tests for command line argument parsing."""
 
-import functools
 from itertools import chain, permutations
-import sys
 import unittest
 from unittest.mock import patch
 
