@@ -7,7 +7,7 @@ import atform
 import unittest
 
 
-class ParameterBase(object):
+class ParameterBase:
     """Base class for testing values for a single parameter."""
 
     def setUp(self):

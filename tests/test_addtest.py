@@ -42,7 +42,7 @@ class Title(unittest.TestCase):
             atform.add_test("title", "foo")
 
 
-class FieldBase(object):
+class FieldBase:
     """Base class for field arguments of Test."""
 
     def setUp(self):
@@ -338,7 +338,7 @@ class References(unittest.TestCase):
         self.assertEqual(arg, cpy)
 
 
-class StringList(object):
+class StringList:
     """Base class for testing a parameter that accepts a list of strings."""
 
     def setUp(self):
@@ -469,7 +469,7 @@ class ProcedureList(unittest.TestCase):
         self.assertEqual(arg, cpy)
 
 
-class ProcedureStepBase(object):
+class ProcedureStepBase:
     """Base class for procedure step tests."""
 
     def setUp(self):

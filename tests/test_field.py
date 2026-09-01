@@ -147,7 +147,7 @@ class AddFieldActive(unittest.TestCase):
         self.assertEqual([], t.fields)
 
 
-class SetActiveFieldsBase(object):
+class SetActiveFieldsBase:
     """Base class for testing set_active_fields()."""
 
     def setUp(self):

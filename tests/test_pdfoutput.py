@@ -11,7 +11,7 @@ import unittest
 from unittest.mock import patch
 
 
-class Base(object):
+class Base:
     """Base class for tests which generate PDFs."""
 
     def setUp(self):

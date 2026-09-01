@@ -70,7 +70,7 @@ class Example(unittest.TestCase):
             runner.run()
 
 
-class ExampleRunner(object):
+class ExampleRunner:
     """Context manager for running a single example script."""
 
     def __init__(self, script):
