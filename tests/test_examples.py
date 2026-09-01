@@ -88,10 +88,8 @@ class ExampleRunner(object):
         # All files are copied, not just the target script, because
         # some examples need additional files in addition to the
         # target script itself.
-        [
+        for f in SRC_FILES:
             shutil.copyfile(os.path.join(INPUT_PATH, f), os.path.join(target_dir, f))
-            for f in SRC_FILES
-        ]
 
         return self
 
@@ -120,4 +118,5 @@ class ExampleRunner(object):
         source files copied from INPUT_PATH when the directory was initalized,
         leaving only the output from the target script.
         """
-        [os.remove(os.path.join(OUTPUT_PATH, self.script, f)) for f in SRC_FILES]
+        for f in SRC_FILES:
+            os.remove(os.path.join(OUTPUT_PATH, self.script, f))

@@ -36,7 +36,8 @@ class AddSignature(unittest.TestCase):
     def test_title_order(self):
         """Confirm titles are added in the order defined."""
         expected = ["foo", "bar", "spam", "eggs"]
-        [atform.add_signature(s) for s in expected]
+        for s in expected:
+            atform.add_signature(s)
         self.assertEqual(expected, atform.state.signatures)
 
 

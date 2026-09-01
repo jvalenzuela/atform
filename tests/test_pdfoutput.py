@@ -135,7 +135,8 @@ class References(Base, unittest.TestCase):
     def test_nosplit(self):
         """Verify references section is on the top of the second page."""
         num_refs = 10
-        [atform.add_reference_category(f"r{i}", f"r{i}") for i in range(num_refs)]
+        for i in range(num_refs):
+            atform.add_reference_category(f"r{i}", f"r{i}")
 
         self.make_test(references=dict([(f"r{i}", ["spam"]) for i in range(num_refs)]))
 
@@ -242,7 +243,8 @@ class Fields(Base, unittest.TestCase):
     @nosplit
     def test_nosplit(self):
         """Verify Environment section starts at the top of the second page."""
-        [atform.add_field(f"f{i}", 5, f"f{i}") for i in range(10)]
+        for i in range(10):
+            atform.add_field(f"f{i}", 5, f"f{i}")
         self.make_test()
 
 
@@ -379,7 +381,7 @@ class Procedure(Base, unittest.TestCase):
         ]
 
         # Add enough steps to force the table to span muliple pages.
-        [procedure.append("Dummy step") for i in range(10)]
+        procedure.extend(["Dummy step"] * 10)
 
         self.make_test(procedure=procedure)
 
@@ -536,7 +538,8 @@ class Approval(Base, unittest.TestCase):
         the Approval section comes after Notes, so it just creates
         enough signature entries to require a page break.
         """
-        [atform.add_signature(f"Sig{i}") for i in range(12)]
+        for i in range(12):
+            atform.add_signature(f"Sig{i}")
         self.make_test()
 
 
