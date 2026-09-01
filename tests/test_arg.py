@@ -173,7 +173,7 @@ class FilterId(unittest.TestCase):
     @utils.no_pdf_output
     @utils.disable_idlock
     @patch("atform.cache.load")
-    def gen(self, args, expected, mock_load):
+    def gen(self, args, expected, _mock_load):
         """Verifies generated tests match the expected tests."""
         with patch("sys.argv", utils.mock_argv(args)):
             atform.cache.data = {}

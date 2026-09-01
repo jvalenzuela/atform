@@ -33,7 +33,7 @@ def setUpModule():
     shutil.rmtree(OUTPUT_PATH, ignore_errors=True)
 
 
-def load_tests(loader, tests, pattern):
+def load_tests(_loader, tests, _pattern):
     """
     Overrides the default test discovery to create a separate TestCase
     for each example script.

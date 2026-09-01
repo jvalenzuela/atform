@@ -42,7 +42,7 @@ class Version(unittest.TestCase):
     def test_uncommitted_changes(self, mock):
         """Confirm draft if uncommitted changes exist."""
 
-        def mock_run(path, *args):
+        def mock_run(_path, *args):
             if args[0] == "status":
                 return " M foo\0?? bar\0"
             return "sha1"
@@ -56,7 +56,7 @@ class Version(unittest.TestCase):
     def test_no_uncommitted_changes(self, mock):
         """Confirm non-draft no uncommitted changes exist."""
 
-        def mock_run(path, *args):
+        def mock_run(_path, *args):
             if args[0] == "log":
                 return "sha1"
             return ""
@@ -74,7 +74,7 @@ class Version(unittest.TestCase):
         unaffected.
         """
 
-        def mock_run(path, *args):
+        def mock_run(_path, *args):
             if args[0] == "log":
                 raise subprocess.CalledProcessError(-1, "git")
             return ""

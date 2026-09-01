@@ -65,7 +65,7 @@ def get_test_content():
     return atform.addtest.tests[ids[-1]]
 
 
-def mock_build(test, *args):
+def mock_build(test, *_args):
     """Dummy PDF build function to inhibit generating actual output files."""
     return {test.id: 1}
 

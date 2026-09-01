@@ -57,17 +57,17 @@ class VersionControl(Base, unittest.TestCase):
     """Generate PDFs under various version control conditions."""
 
     @patch.object(atform.vcs, "version", new=None)
-    def test_no_version_control(self, mock_load):
+    def test_no_version_control(self, _mock_load):
         """Verify no draft mark or version in footer."""
         self.make_test()
 
     @patch.object(atform.vcs, "version", new="draft")
-    def test_draft(self, mock_load):
+    def test_draft(self, _mock_load):
         """Verify draft mark and no version in the footer."""
         self.make_test()
 
     @patch.object(atform.vcs, "version", new="spam")
-    def test_clean(self, mock_load):
+    def test_clean(self, _mock_load):
         """Verify version in the footer and no draft mark."""
         self.make_test()
 
@@ -819,22 +819,22 @@ class CachePageCount(Base, unittest.TestCase):
     TEST_ARGS = {"procedure": ["step"] * 60}
 
     @patch("atform.cache.data", new={})
-    def test_no_cache(self, mock):
+    def test_no_cache(self, _mock):
         """Confirm correct page count(3) when no cache is available."""
         self.make_test(**self.TEST_ARGS)
 
     @patch("atform.cache.data", new={"page counts": {(1,): 1}})
-    def test_stale_low(self, mock):
+    def test_stale_low(self, _mock):
         """Confirm correct page count(3) when the cached page count is too low."""
         self.make_test(**self.TEST_ARGS)
 
     @patch("atform.cache.data", new={"page counts": {(1,): 99}})
-    def test_stale_high(self, mock):
+    def test_stale_high(self, _mock):
         """Confirm correct page count(3) when the cached page count is too high."""
         self.make_test(**self.TEST_ARGS)
 
     @patch("atform.cache.data", new={"page counts": {(1,): 3}})
-    def test_correct(self, mock):
+    def test_correct(self, _mock):
         """Confirm correct page count(3) when the cached page count is right."""
         self.make_test(**self.TEST_ARGS)
 

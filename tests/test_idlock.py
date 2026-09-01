@@ -58,7 +58,7 @@ class Save(unittest.TestCase):
         return rows
 
     @patch("atform.idlock.load", return_value={})
-    def test_version(self, *args):
+    def test_version(self, *_args):
         """Confirm the package version is included in the saved data."""
         atform.add_test("t1")
         with patch("atform.idlock.open", mock_open()) as mock:
@@ -67,7 +67,7 @@ class Save(unittest.TestCase):
         self.assertEqual(["VERSION", atform.version.VERSION], rows[0])
 
     @patch("atform.idlock.load", return_value={})
-    def test_id_title(self, *args):
+    def test_id_title(self, *_args):
         """Confirm test IDs and titles are saved in ascending order."""
         for i in range(1, 50):
             atform.add_test(f"t{i}")
@@ -81,7 +81,7 @@ class Save(unittest.TestCase):
 
     @patch("atform.idlock.load", return_value={(1,): "t1"})
     @patch("atform.idlock.open", new_callable=mock_open)
-    def test_no_overwrite_current(self, mock_lock_open, *args):
+    def test_no_overwrite_current(self, mock_lock_open, *_args):
         """Confirm the lock file is not overwritten when the lock file content is current."""
         pathlib.Path(atform.idlock.FILENAME).touch()
         atform.add_test("t1")
@@ -91,7 +91,7 @@ class Save(unittest.TestCase):
 
     @patch("atform.idlock.load", return_value={})
     @patch("atform.idlock.open", new_callable=mock_open)
-    def test_no_overwrite_stale(self, mock_lock_open, *args):
+    def test_no_overwrite_stale(self, mock_lock_open, *_args):
         """Confirm the lock file is not overwritten and an exception if the lock file content is stale."""
         pathlib.Path(atform.idlock.FILENAME).touch()
         atform.add_test("t1")
@@ -103,7 +103,7 @@ class Save(unittest.TestCase):
     @utils.no_pdf_output
     @patch("sys.argv", utils.mock_argv("1"))
     @patch("atform.idlock.load", return_value={})
-    def test_no_filter(self, mock_lock_open, *args):
+    def test_no_filter(self, *_args):
         """Confirm all tests are saved regardless of CLI ID filtering."""
         atform.add_test("t1")
         atform.add_test("t2")  # Excluded by ID filter.
@@ -130,7 +130,7 @@ class ProhibitedChanges(unittest.TestCase):
         self.assertEqual(new_title, diff.new_title)
 
     @patch("atform.idlock.load", return_value={(1,): "t1"})
-    def test_insert(self, *args):
+    def test_insert(self, *_args):
         """Confirm exception if a test is shifted due to inserting a new test."""
         atform.add_test("insert")
         atform.add_test("t1")
@@ -141,7 +141,7 @@ class ProhibitedChanges(unittest.TestCase):
         self.check_changes(cm, (1,), "t1", (1,), "insert")
 
     @patch("atform.idlock.load", return_value={(1,): "t1", (2,): "t2"})
-    def test_remove(self, *args):
+    def test_remove(self, *_args):
         """Confirm exception if a test is shifted due to removing a test."""
         # t1 deleted
         atform.add_test("t2")
@@ -152,7 +152,7 @@ class ProhibitedChanges(unittest.TestCase):
         self.check_changes(cm, (1,), "t1", (1,), "t2")
 
     @patch("atform.idlock.load", return_value={(1,): "t1"})
-    def test_shift_down(self, *args):
+    def test_shift_down(self, *_args):
         """Confirm exception if a test is moved later without adding any tests."""
         atform.skip_test()
         atform.add_test("t1")
@@ -163,7 +163,7 @@ class ProhibitedChanges(unittest.TestCase):
         self.check_changes(cm, (1,), "t1", (2,), "t1")
 
     @patch("atform.idlock.load", return_value={(2,): "t2"})
-    def test_shift_up(self, *args):
+    def test_shift_up(self, *_args):
         """Confirm exception if a test is moved earlier without removing any other tests."""
         atform.add_test("t2")
 
@@ -173,7 +173,7 @@ class ProhibitedChanges(unittest.TestCase):
         self.check_changes(cm, (2,), "t2", (1,), "t2")
 
     @patch("atform.idlock.load", return_value={(1,): "t1"})
-    def test_id_depth(self, *args):
+    def test_id_depth(self, *_args):
         """Confirm exception if the section depth changes."""
         atform.section(1)
         atform.add_test("t1")
@@ -185,7 +185,7 @@ class ProhibitedChanges(unittest.TestCase):
 
     @patch("sys.argv", utils.mock_argv("1"))
     @patch("atform.idlock.load", return_value={(1,): "t1", (2,): "t2"})
-    def test_no_filter(self, *args):
+    def test_no_filter(self, *_args):
         """Confirm prohibited changes are detected for tests excluded by CLI ID filters."""
         atform.add_test("t1")
         atform.add_test("insert")
@@ -204,7 +204,7 @@ class AllowedChanges(unittest.TestCase):
 
     @patch("atform.idlock.open", mock_open())
     @patch("atform.idlock.load", return_value={(1,): "t1"})
-    def test_add(self, *args):
+    def test_add(self, *_args):
         """Confirm adding a test that does not shift previous tests."""
         atform.add_test("t1")
         atform.add_test("new test")
@@ -213,7 +213,7 @@ class AllowedChanges(unittest.TestCase):
 
     @patch("atform.idlock.open", mock_open())
     @patch("atform.idlock.load", return_value={(1,): "t1", (2,): "t2"})
-    def test_remove(self, *args):
+    def test_remove(self, *_args):
         """Confirm removing a test that does not shift previous tests."""
         atform.skip_test()  # t1 removed
         atform.add_test("t2")
@@ -273,7 +273,7 @@ class Integration(unittest.TestCase):
     @utils.no_args
     @patch("atform.idlock.verify", side_effect=atform.idlock.ChangedTestError(["foo"]))
     @patch("atform.cache.save")  # Used to determine if generate() created any PDFs.
-    def test_inhibit_build(self, mock_cache_save, *args):
+    def test_inhibit_build(self, mock_cache_save, *_args):
         """Confirm an exception from verify() inhibits PDF generation."""
         atform.add_test("t1")
         with self.assertRaises(SystemExit):
@@ -286,7 +286,7 @@ class Integration(unittest.TestCase):
     @utils.no_args
     @patch("atform.idlock.verify", side_effect=atform.idlock.LockFileWarning("spam"))
     @patch("atform.cache.save")  # Used to determine if generate() created any PDFs.
-    def test_warning_message(self, mock_cache_save, *args):
+    def test_warning_message(self, mock_cache_save, *_args):
         """Confirm a warning yields a console message and does not inhibit PDF generation."""
         atform.add_test("t1")
         with contextlib.redirect_stdout(io.StringIO()) as stdout:
