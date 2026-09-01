@@ -5,6 +5,7 @@ and applying non-sectional items such as headers and footers.
 """
 
 import datetime
+import functools
 import getpass
 import os
 
@@ -236,7 +237,7 @@ class TestDocument:
             canvas.rotate(90)
             canvas.drawString(x, y, self._slug_text)
 
-    @property
+    @functools.cached_property
     def _slug_text(self):
         """Assembles the slug string."""
         text = [f"Generated with atform v{version.VERSION}"]
