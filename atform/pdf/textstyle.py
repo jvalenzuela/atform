@@ -171,6 +171,7 @@ stylesheet.add(
         name="SlugText",
         fontName="Helvetica",
         fontSize=toLength("6 pt"),
+        leading=toLength("8 pt"),
     )
 )
 

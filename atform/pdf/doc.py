@@ -213,7 +213,7 @@ class TestDocument:
         self._set_canvas_text_style(canvas, "Footer")
 
         # Offset text relative to the font size.
-        baseline -= stylesheet["Footer"].fontSize * 1.2
+        baseline -= stylesheet["Footer"].leading
 
         pages = f"Page {doc.page} of {self.page_count.last_page}"
         canvas.drawCentredString(doc.pagesize[0] / 2, baseline, pages)
@@ -230,7 +230,7 @@ class TestDocument:
         style_name = "SlugText"
         font_size = stylesheet[style_name].fontSize
         x = font_size * 0.5
-        y = font_size * -1.2
+        y = -stylesheet[style_name].leading
         with CanvasState(canvas):
             self._set_canvas_text_style(canvas, style_name)
             canvas.rotate(90)
