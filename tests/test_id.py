@@ -19,9 +19,9 @@ class SkipTest(unittest.TestCase):
 
     def test_invalid_id(self):
         """Confirm exception for invalid id values."""
-        for id in [-1, 0]:
-            with self.subTest(id=id), self.assertRaises(atform.error.UserScriptError):
-                atform.skip_test(id)
+        for id_ in [-1, 0]:
+            with self.subTest(id_=id_), self.assertRaises(atform.error.UserScriptError):
+                atform.skip_test(id_)
 
     def test_zero_distance_first(self):
         """Confirm exception when skipping to the first test in a section."""
