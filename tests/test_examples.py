@@ -38,7 +38,7 @@ def load_tests(_loader, tests, _pattern):
     Overrides the default test discovery to create a separate TestCase
     for each example script.
     """
-    scripts = set([f for f in SRC_FILES if f.endswith(".py")])
+    scripts = {f for f in SRC_FILES if f.endswith(".py")}
     scripts.difference_update(EXCLUDE)
 
     suite = unittest.TestSuite()
