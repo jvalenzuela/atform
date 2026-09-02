@@ -783,17 +783,16 @@ class Logo(Base, unittest.TestCase):
 class Copyright(Base, unittest.TestCase):
     """Tests for copyright notices."""
 
+    # Dummy steps to fill the first page so the bottom margin can be verified.
+    PROCEDURE = ["foo"] * 30
+
     def setUp(self):
         utils.reset()
-
-    def make_test(self):
-        """Fills the first page so the bottom margin can be verified."""
-        super().make_test(procedure=["foo"] * 30)
 
     def test_single_line(self):
         """Verify appearance of a single-line copyright notice."""
         atform.add_copyright("\u00a9 Spam Eggs")
-        self.make_test()
+        self.make_test(procedure=self.PROCEDURE)
 
     def test_multi_line(self):
         """Verify appearance of a multi-line copyright notice."""
@@ -808,7 +807,7 @@ class Copyright(Base, unittest.TestCase):
             hac proin quis bibendum sapien ultrices erat.
             """
         )
-        self.make_test()
+        self.make_test(procedure=self.PROCEDURE)
 
 
 @patch("atform.cache.load")
