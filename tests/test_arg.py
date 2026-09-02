@@ -187,7 +187,7 @@ class FilterId(unittest.TestCase):
     @utils.no_args
     def test_none(self):
         """Confirm all tests are built if no IDs are provided."""
-        for sec in range(3):
+        for _sec in range(3):
             atform.section(1)
             for test in range(3):
                 atform.add_test(f"{test}")
