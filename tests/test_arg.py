@@ -130,11 +130,11 @@ class ValidRange(unittest.TestCase):
             "1-2.1": ((1,), (2, 1)),
             "1.1-2": ((1, 1), (2,)),
         }
-        for s in cases:
-            with self.subTest(s=s):
-                with patch("sys.argv", utils.mock_argv(s)):
+        for rng, expected in cases.items():
+            with self.subTest(rng=rng):
+                with patch("sys.argv", utils.mock_argv(rng)):
                     ids = arg.parse().id
-                self.assertEqual(ids, [cases[s]])
+                self.assertEqual(ids, [expected])
 
 
 class Misc(unittest.TestCase):
