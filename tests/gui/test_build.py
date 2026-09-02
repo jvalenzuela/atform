@@ -16,8 +16,9 @@ class Build(unittest.TestCase):
         ids = range(3)
         path = "foo"
         folder_depth = 42
-        atform.gui.build.build(ids, path, folder_depth)
-        submit_calls = mock_builder().__enter__().submit_test.call_args_list
+        with mock_builder() as b:
+            atform.gui.build.build(ids, path, folder_depth)
+            submit_calls = b.submit_test.call_args_list
         self.assertEqual(len(ids), len(submit_calls))
         for i in ids:
             args, _kwargs = submit_calls[i]
@@ -28,15 +29,14 @@ class Build(unittest.TestCase):
     def test_callback(self, mock_builder, mock_dialog):
         """Confirm future callbacks queue the correct test ID."""
         ids = range(3)
-        atform.gui.build.build(ids, "foo", 0)
+        with mock_builder() as b:
+            atform.gui.build.build(ids, "foo", 0)
+
+            # Extract the lambda callbacks assigned to each future.
+            add_done_callbacks = b.submit_test().add_done_callback.call_args_list
+
         q = mock_dialog.call_args[0][2]
-
-        # Extract the lambda callbacks assigned to each future.
-        add_done_callbacks = (
-            mock_builder().__enter__().submit_test().add_done_callback.call_args_list
-        )
         cb = [args[0] for args, kwargs in add_done_callbacks]
-
         self.assertEqual(len(ids), len(cb))
         for i in ids:
             self.assertTrue(q.empty())  # Queue is intially empty.
