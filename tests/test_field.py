@@ -160,7 +160,7 @@ class SetActiveFieldsBase:
         """Confirms fields assigned to the next test."""
         atform.add_test("title")
         t = utils.get_test_content()
-        self.assertEqual(args, tuple([f.title for f in t.fields]))
+        self.assertEqual(args, tuple(f.title for f in t.fields))
 
     def test_type(self):
         """Verify exception if the argument is not a list."""
