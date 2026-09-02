@@ -630,7 +630,7 @@ class Format(Base, unittest.TestCase):
         cases = [
             "Leading text. "
             + atform.format_text(
-                "This is {0} {1}.".format(typeface, font),
+                f"This is {typeface} {font}.",
                 typeface=typeface,
                 font=font,
             )
