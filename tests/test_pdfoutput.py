@@ -14,7 +14,7 @@ from unittest.mock import patch
 class Base:
     """Base class for tests which generate PDFs."""
 
-    def setUp(self):
+    def setUp(self):  # pylint: disable=invalid-name
         utils.reset()
 
     @utils.disable_idlock

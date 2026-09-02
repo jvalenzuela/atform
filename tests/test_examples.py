@@ -28,7 +28,7 @@ EXCLUDE = {
 OUTPUT_PATH = "example_output"
 
 
-def setUpModule():
+def setUpModule():  # pylint: disable=invalid-name
     # Remove output from previous runs.
     shutil.rmtree(OUTPUT_PATH, ignore_errors=True)
 

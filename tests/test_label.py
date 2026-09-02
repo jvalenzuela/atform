@@ -12,7 +12,7 @@ import unittest
 class LabelString:
     """Base class for testing various label strings."""
 
-    def setUp(self):
+    def setUp(self):  # pylint: disable=invalid-name
         utils.reset()
 
     def test_type(self):

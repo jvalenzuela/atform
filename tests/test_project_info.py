@@ -10,7 +10,7 @@ import unittest
 class ParameterBase:
     """Base class for testing values for a single parameter."""
 
-    def setUp(self):
+    def setUp(self):  # pylint: disable=invalid-name
         utils.reset()
 
     def test_type(self):

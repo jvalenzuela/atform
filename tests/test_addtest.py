@@ -45,7 +45,7 @@ class Title(unittest.TestCase):
 class FieldBase:
     """Base class for field arguments of Test."""
 
-    def setUp(self):
+    def setUp(self):  # pylint: disable=invalid-name
         utils.reset()
         atform.add_field("f1", 42, "f1")
         atform.add_field("f2", 99, "f2", active=False)
@@ -341,7 +341,7 @@ class References(unittest.TestCase):
 class StringList:
     """Base class for testing a parameter that accepts a list of strings."""
 
-    def setUp(self):
+    def setUp(self):  # pylint: disable=invalid-name
         utils.reset()
 
     def test_type(self):
@@ -472,7 +472,7 @@ class ProcedureList(unittest.TestCase):
 class ProcedureStepBase:
     """Base class for procedure step tests."""
 
-    def setUp(self):
+    def setUp(self):  # pylint: disable=invalid-name
         utils.reset()
 
     def make_step(self, step):
