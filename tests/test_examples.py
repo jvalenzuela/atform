@@ -110,7 +110,7 @@ class ExampleRunner:
         # path.
         cwd = os.path.join(os.getcwd(), OUTPUT_PATH, self.script)
 
-        subprocess.run(args, env=env, cwd=cwd).check_returncode()
+        subprocess.run(args, env=env, cwd=cwd, check=True)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
