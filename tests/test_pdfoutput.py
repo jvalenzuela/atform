@@ -138,7 +138,7 @@ class References(Base, unittest.TestCase):
         for i in range(num_refs):
             atform.add_reference_category(f"r{i}", f"r{i}")
 
-        self.make_test(references=dict([(f"r{i}", ["spam"]) for i in range(num_refs)]))
+        self.make_test(references={f"r{i}": ["spam"] for i in range(num_refs)})
 
 
 class Terms(Base, unittest.TestCase):
