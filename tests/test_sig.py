@@ -1,5 +1,4 @@
-# Unit tests for the sig module.
-
+"""Unit tests for the sig module."""
 
 from tests import utils
 import atform

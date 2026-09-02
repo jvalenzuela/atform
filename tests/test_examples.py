@@ -1,5 +1,4 @@
-# This module executes examples from the documentation.
-
+"""This module executes examples from the documentation."""
 
 from tests import utils
 import os

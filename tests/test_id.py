@@ -1,5 +1,4 @@
-# Unit tests for the id module.
-
+"""Unit tests for the id module."""
 
 from tests import utils
 import atform

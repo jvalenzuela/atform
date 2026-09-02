@@ -1,5 +1,4 @@
-# Miscellaneous unit test utilities.
-
+"""Miscellaneous unit test utilities."""
 
 import atform
 import contextlib

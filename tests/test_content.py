@@ -1,5 +1,4 @@
-# Unit tests for the content module.
-
+"""Unit tests for the content module."""
 
 from tests import utils
 import atform

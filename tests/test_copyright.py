@@ -1,5 +1,4 @@
-# Unit tests for the add_copyright() function.
-
+"""Unit tests for the add_copyright() function."""
 
 from tests import utils
 import atform

@@ -1,4 +1,4 @@
-# Unit tests for the format module.
+"""Unit tests for the format module."""
 
 import string
 

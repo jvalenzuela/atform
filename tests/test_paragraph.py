@@ -1,5 +1,4 @@
-# Unit tests for the paragraph module.
-
+"""Unit tests for the paragraph module."""
 
 import unittest
 

@@ -1,5 +1,4 @@
-# Unit tests for the set_project_info() function.
-
+"""Unit tests for the set_project_info() function."""
 
 from tests import utils
 import string

@@ -1,5 +1,4 @@
-# Unit tests for the version module
-
+"""Unit tests for the version module."""
 
 import atform
 import unittest

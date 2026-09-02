@@ -1,5 +1,4 @@
-# Unit tests for the setup_only() decorator.
-
+"""Unit tests for the setup_only() decorator."""
 
 from tests import utils
 import atform

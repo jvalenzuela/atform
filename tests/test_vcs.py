@@ -1,5 +1,4 @@
-# Unit tests for the version control interface module.
-
+"""Unit tests for the version control interface module."""
 
 import atform
 import subprocess

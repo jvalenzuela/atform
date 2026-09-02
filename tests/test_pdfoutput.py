@@ -1,6 +1,8 @@
-# This module contains PDF layout tests that cannot be validated
-# programmatically with traditional assertion methods. These tests generate
-# actual PDF files which must be visually verified.
+"""
+This module contains PDF layout tests that cannot be validated
+programmatically with traditional assertion methods. These tests generate
+actual PDF files which must be visually verified.
+"""
 
 from tests import utils
 import atform

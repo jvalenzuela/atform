@@ -1,5 +1,4 @@
-# Unit tests for the image module.
-
+"""Unit tests for the image module."""
 
 from tests import utils
 import atform

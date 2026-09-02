@@ -1,5 +1,4 @@
-# Unit tests for the label module.
-
+"""Unit tests for the label module."""
 
 from tests import utils
 import atform

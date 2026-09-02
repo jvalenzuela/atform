@@ -1,5 +1,4 @@
-# Units tests for the PDF module.
-
+"""Units tests for the PDF module."""
 
 from tests import utils
 import atform

@@ -1,5 +1,4 @@
-# Unit tests for the field module.
-
+"""Unit tests for the field module."""
 
 from tests import utils
 import atform

@@ -1,5 +1,4 @@
-# Unit tests for the error module.
-
+"""Unit tests for the error module."""
 
 import atform
 from atform.error import UserScriptError
