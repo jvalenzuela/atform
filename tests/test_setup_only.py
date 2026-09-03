@@ -17,7 +17,7 @@ class SetupOnly(unittest.TestCase):
         utils.reset()
 
     def test_call_before(self):
-        """Confirm a decorated function succeeds when called before section() or Test()."""
+        """Confirm a decorated function succeeds when called before section() or add_test()."""
         func(0)
 
     def test_call_after_section(self):
@@ -27,7 +27,7 @@ class SetupOnly(unittest.TestCase):
             func(0)
 
     def test_call_after_test(self):
-        """Confirm exception when calling a decorated function after Test()."""
+        """Confirm exception when calling a decorated function after add_test()."""
         atform.add_test("title")
         with self.assertRaises(atform.error.UserScriptError):
             func(0)

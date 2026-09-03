@@ -378,7 +378,7 @@ class StringList:
         self.assertEqual(arg, cpy)
 
     def call(self, value):
-        """Calls Test() with a given parameter value."""
+        """Calls add_test() with a given parameter value."""
         args = {self.parameter_name: value}
         atform.add_test("title", **args)
 
