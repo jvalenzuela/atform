@@ -149,7 +149,7 @@ class AddFieldActive(unittest.TestCase):
 class SetActiveFieldsBase:
     """Base class for testing set_active_fields()."""
 
-    def setUp(self):  # pylint: disable=invalid-name
+    def setUp(self):  # pylint: disable=invalid-name, missing-function-docstring
         utils.reset()
         atform.add_field("f1", 1, "f1")
         atform.add_field("f2", 1, "f2", active=False)

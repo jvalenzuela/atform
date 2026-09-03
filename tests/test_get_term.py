@@ -25,7 +25,7 @@ class InvalidWhich(unittest.TestCase):
 class WhichBase:
     """Base class for the which argument test cases."""
 
-    def setUp(self):  # pylint: disable=invalid-name
+    def setUp(self):  # pylint: disable=invalid-name, missing-function-docstring
         utils.reset()
 
     @utils.no_pdf_output

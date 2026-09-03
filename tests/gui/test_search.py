@@ -217,7 +217,7 @@ class CaseMatchingBase:
     # Target search text; must include upper-case letters.
     TEXT = "Foo"
 
-    def setUp(self):  # pylint: disable=invalid-name
+    def setUp(self):  # pylint: disable=invalid-name, missing-function-docstring
         utils.reset()
 
     def test_title(self):
