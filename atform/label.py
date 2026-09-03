@@ -31,8 +31,13 @@ def add(label, id_, mapping=None):
             "Label must be a string.",
         )
 
+    # Strip any label identifiers at the beginning of the string to allow
+    # inclusion of the label identifier ($) at the
+    # beginning of the string.
+    label = label.lstrip('$')
+
     # The strip() inequality catches trailing newlines permitted by the
-    # pattern's "$" suffix.
+    # pattern's "$" prefix.
     if not valid_label_pattern.match(label) or (label != label.strip()):
         raise error.UserScriptError(
             f"Invalid label: {label}",
