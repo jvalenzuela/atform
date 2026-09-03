@@ -143,3 +143,5 @@ class Save(unittest.TestCase):
         for call in mock.mock_calls:
             if call[0].endswith("write"):
                 return pickle.loads(call[1][0])
+
+        return None
