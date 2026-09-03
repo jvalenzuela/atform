@@ -158,6 +158,14 @@ class ContentAreaException(unittest.TestCase):
         with self.assertRaises(atform.error.UserScriptError):
             self.call()
 
+    @staticmethod
+    def call():
+        """Calls the function under test.
+
+        Must be implemented by the subclass to call the intended function.
+        """
+        raise NotImplementedError
+
 
 def click_button(parent, text):
     """Simulates clicking a Tk button.
