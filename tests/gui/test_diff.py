@@ -63,10 +63,16 @@ class DiffBase(unittest.TestCase):
         """Wrapper for the second call to generate()."""
         atform.generate()
 
-    def assert_diff(self, changed=set(), new=set(), same=set()):
+    def assert_diff(self, changed=None, new=None, same=None):
         """Confirms the diff result."""
         atform.cache.data = self.cache_data
         result = diff.load()
+        if not changed:
+            changed = set()
+        if not new:
+            new = set()
+        if not same:
+            same = set()
         self.assertEqual(changed, result.changed)
         self.assertEqual(new, result.new)
         self.assertEqual(same, result.same)
