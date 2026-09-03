@@ -7,6 +7,7 @@ import unittest
 
 
 class AddCopyright(unittest.TestCase):
+    """add_copyright() unit tests."""
 
     def setUp(self):
         utils.reset()

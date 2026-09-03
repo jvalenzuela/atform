@@ -12,6 +12,7 @@ def func(a, b=0):
 
 
 class SetupOnly(unittest.TestCase):
+    """setup_only decorator unit tests."""
 
     def setUp(self):
         utils.reset()
