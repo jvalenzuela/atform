@@ -147,6 +147,6 @@ class ScrollTree(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
         """Wrapper for column() to define the width.
 
         Stretch is disabled because the width is always set to accommodate
-        the widest item, making horizontal resizing is unnecessary.
+        the widest item, making horizontal resizing unnecessary.
         """
         self.column(cid, width=width, stretch=tk.FALSE)
