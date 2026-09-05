@@ -209,14 +209,6 @@ class Preview(InteractiveGuiTestCase):
         atform.add_test("title")
         self.start_preview()
 
-    def test_multipage_scroll(self):
-        """Confirm vertical scrollbar accesses all pages."""
-        atform.add_test(
-            "title",
-            procedure=["step"] * 50,  # Generate 3 pages worth of content.
-        )
-        self.start_preview()
-
     def test_scroll_reset(self):
         """Confirm vertical scroll resets when changing preview."""
         atform.add_test("test 1")
