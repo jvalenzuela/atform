@@ -19,15 +19,7 @@ dynamic = ["version"]
 # doc/source/intro.rst, .github/workflow/release.yaml, and the classifiers list
 # below need to match this.
 # Range of versions is equivalent to those supported by Reportlab.
-#
-# 3.14 is limited at 3.14.4 due to TclError exceptions when calling
-# tkfont.nametofont("TkDefaultFont") during unit tests. These exceptions
-# were unique to macOS Github runners using Python 3.14.5 or later,
-# likely due Tcl/Tk 9.0.3 update for macOS in that Python version.
-# It is unknown if this problem applies only to the headless environment
-# of the Github runners, but the 3.14.4 limit was applied globally, i.e.,
-# both in the Github action script and here, just to be safe.
-requires-python = ">= 3.10, <= 3.14.4"
+requires-python = ">= 3.10, < 3.15"
 
 dependencies = [
     "reportlab>=4.2.0",
