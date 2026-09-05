@@ -135,7 +135,12 @@ class ScrollTree(tkwidget.Treeview):  # pylint: disable=too-many-ancestors
         path = "Treeview"
         if element:
             path += f".{element}"
-        name = style.lookup(path, "font")
+
+        # The str() conversion is a workaround for Python versions using
+        # Tcl/Tk 9, which changed style.lookup() to return a Tcl_Obj, and
+        # where nametofont() requires a string.
+        name = str(style.lookup(path, "font"))
+
         return tkfont.nametofont(name)
 
     def set_column_width(self, cid, width):
