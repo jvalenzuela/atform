@@ -8,8 +8,8 @@ import tkinter as tk
 from .. import addtest
 from . import buildlist
 from . import common
+from .. import ref
 from . import scrolltree
-from .. import state
 from . import tkwidget
 
 
@@ -72,12 +72,12 @@ class RefList(scrolltree.ScrollTree):  # pylint: disable=too-many-ancestors
     def _populate(self):
         """Adds all reference categories and items to the tree."""
         refs = get_refs()
-        for lbl in state.ref_titles:
+        for lbl in ref.categories:
             # Add the parent category.
             cat_iid = self.insert(
                 "",
                 tk.END,
-                text=state.ref_titles[lbl],
+                text=ref.categories[lbl].title,
             )
             self.tests[cat_iid] = set()
 
@@ -112,12 +112,12 @@ def get_refs():
     Returns a nested dictionary:
     dict[<ref category label>][<ref item>] = set(<test IDs>)
     """
-    refs = {lbl: {} for lbl in state.ref_titles}
+    refs = {lbl: {} for lbl in ref.categories}
 
     for test in addtest.tests.values():
-        for ref in test.references:
-            cat = refs[ref.label]
-            for item in ref.items:
+        for tref in test.references:
+            cat = refs[tref.label]
+            for item in tref.items:
                 try:
                     cat[item].add(test.id)
                 except KeyError:

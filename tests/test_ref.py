@@ -32,7 +32,7 @@ class TestAddReferenceCategory(unittest.TestCase):
         atform.add_reference_category(
             string.whitespace + "foo" + string.whitespace, "label"
         )
-        self.assertIn("foo", atform.state.ref_titles.values())
+        self.assertEqual("foo", atform.ref.categories["label"].title)
 
     def test_label_type(self):
         """Confirm exception for a label that is not a string."""
@@ -60,12 +60,12 @@ class TestAddReferenceCategory(unittest.TestCase):
         atform.add_reference_category(
             "foo", string.whitespace + "label" + string.whitespace
         )
-        self.assertIn("label", atform.state.ref_titles)
+        self.assertIn("label", atform.ref.categories)
 
-    def test_storage(self):
-        """Confirm title is properly stored keyed by label."""
-        atform.add_reference_category("foo", "bar")
-        self.assertEqual({"bar": "foo"}, atform.state.ref_titles)
+    def test_persist_tyoe(self):
+        """Confirm exception for non-bool persist values."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_reference_category("foo", "bar", persist=0)
 
 
 class AddReferenceCategoryContentAreaException(utils.ContentAreaException):

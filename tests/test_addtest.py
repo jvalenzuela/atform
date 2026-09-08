@@ -338,6 +338,43 @@ class References(unittest.TestCase):
         self.assertEqual(arg, cpy)
 
 
+class EmptyReferences(unittest.TestCase):
+    """Unit tests for references with no items."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_unlisted(self):
+        """Confirm an unlisted category is excluded."""
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("title")
+        t = utils.get_test_content()
+        self.assertEqual([], t.references)
+
+    def test_empty(self):
+        """Confirm a category with no items is excluded."""
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("title", references={"ref": []})
+        t = utils.get_test_content()
+        self.assertEqual([], t.references)
+
+    def test_unlisted_persist(self):
+        """Confirm an unlisted category configured as persist is included."""
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("title")
+        t = utils.get_test_content()
+        self.assertEqual(1, len(t.references))
+        self.assertEqual([], t.references[0].items)
+
+    def test_empty_persist(self):
+        """Confirm a category configured as persist with no items is included."""
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("title", references={"ref": []})
+        t = utils.get_test_content()
+        self.assertEqual(1, len(t.references))
+        self.assertEqual([], t.references[0].items)
+
+
 class StringList:
     """Base class for testing a parameter that accepts a list of strings."""
 

@@ -9,6 +9,7 @@ from . import id as id_
 from . import label as label_
 from . import misc
 from . import procedure as procedure_
+from . import ref
 from . import state
 from . import term
 
@@ -230,52 +231,79 @@ def validate_refs(refs):
             "References must be a dictionary.",
         )
 
-    valid = [validate_ref_category(*ref) for ref in refs.items()]
+    refs = validate_ref_labels(refs)
+    insert_unlisted_refs(refs)
+    valid = [
+        Reference(lbl, ref.categories[lbl].title, validate_ref_items(lbl, itm))
+        for lbl, itm in refs.items()
+    ]
 
     # Once all categories and items have been validated, sort them
     # them according to the order the categories were defined.
-    categories = list(state.ref_titles.keys())
+    categories = list(ref.categories.keys())
     valid.sort(key=lambda r: categories.index(r.label))
+
+    # Remove empty categories not configured as persist.
+    filtered = filter(lambda r: ref.categories[r.label].persist or r.items, valid)
+
+    return list(filtered)
+
+
+def validate_ref_labels(refs):
+    """Validates all reference category labels."""
+    valid = {}
+
+    for label, items in refs.items():
+        stripped_label = misc.nonempty_string("Reference label", label)
+
+        # Ensure the label has been defined by add_reference_category().
+        try:
+            ref.categories[stripped_label]
+        except KeyError as e:
+            raise error.UserScriptError(
+                f"Invalid reference label: {label}",
+                """Use a reference label that has been previously defined
+                with atform.add_reference_category.""",
+            ) from e
+
+        valid[stripped_label] = items
 
     return valid
 
 
-def validate_ref_category(label, refs):
-    """Validates a single reference category and associated references."""
-    label = misc.nonempty_string("Reference label", label)
+def insert_unlisted_refs(refs):
+    """Adds missing reference categories configured to persist."""
+    for label, cat in ref.categories.items():
+        try:
+            refs[label]
+        except KeyError:
+            if cat.persist:
+                refs[label] = []
 
-    # Ensure the label has been defined by add_reference_category().
-    try:
-        title = state.ref_titles[label]
-    except KeyError as e:
+
+def validate_ref_items(label, raw):
+    """Validate items in a single reference category."""
+    items = []
+
+    if not isinstance(raw, list):
         raise error.UserScriptError(
-            f"Invalid reference label: {label}",
-            """Use a reference label that has been previously defined
-            with atform.add_reference_category.""",
-        ) from e
-
-    # Check the list of references for this category.
-    validated_refs = []
-
-    if not isinstance(refs, list):
-        raise error.UserScriptError(
-            f'Invalid type for "{label}" references: {type(refs).__name__}',
+            f'Invalid type for "{label}" references: {type(raw).__name__}',
             "References for a given category must be contained in a list.",
         )
 
-    for reference in refs:
+    for item in raw:
         try:
-            if not isinstance(reference, str):
+            if not isinstance(item, str):
                 raise error.UserScriptError(
-                    f"Invalid reference list item data type: {type(reference).__name__}",
+                    f"Invalid reference list item data type: {type(item).__name__}",
                     "Items in the list for a reference category must be strings.",
                 )
-            reference = reference.strip()
+            item = item.strip()
 
             # Reject duplicate references.
-            if reference in validated_refs:
+            if item in items:
                 raise error.UserScriptError(
-                    f"Duplicate reference: {reference}",
+                    f"Duplicate reference: {item}",
                     "Ensure all references within a category are unique.",
                 )
 
@@ -284,10 +312,10 @@ def validate_ref_category(label, refs):
             raise
 
         # Ignore blank/empty references.
-        if reference:
-            validated_refs.append(reference)
+        if item:
+            items.append(item)
 
-    return Reference(label, title, validated_refs)
+    return items
 
 
 def validate_string_list(name, lst):

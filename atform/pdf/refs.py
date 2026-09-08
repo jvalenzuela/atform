@@ -41,9 +41,13 @@ def make_references(refs):
 
 def make_row(ref):
     """Creates the table for a single reference category."""
+    if ref.items:
+        items = Paragraph(", ".join(ref.items), stylesheet["Normal"])
+    else:
+        items = Paragraph("No items in this category.", stylesheet["NormalCentered"])
     return [
         Paragraph(ref.title, stylesheet["NormalRight"]),
-        Paragraph(", ".join(ref.items), stylesheet["Normal"]),
+        items,
     ]
 
 

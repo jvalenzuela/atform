@@ -20,9 +20,6 @@ in the local namespace, which does not get reinitialized during a reload,
 causing unit test failure.
 """
 
-import collections
-
-
 # Names identifying which fields will be applied to the next test.
 active_fields: set[str] = set()
 
@@ -48,12 +45,6 @@ logo_hash = None  # pylint: disable=invalid-name
 # The current project information set by the most recent call to
 # set_project_info().
 project_info: dict[str, str] = {}
-
-
-# Reference category titles, keyed by label. Stored as an ordered
-# dictionary because the order the categories are created defines
-# the order they are listed in the output documents.
-ref_titles: dict[str, str] = collections.OrderedDict()
 
 
 # Signature titles, in the order they were defined.

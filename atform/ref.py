@@ -4,11 +4,28 @@ This module implements handling for external references, i.e., setup for
 content passed to the add_test() references parameter.
 """
 
+import collections
+
 from . import addtest
 from . import error
 from . import id as id_
 from . import misc
-from . import state
+
+
+# Stores a single category as defined by add_reference_category().
+Category = collections.namedtuple(
+    "Category",
+    ["title", "persist"],
+)
+
+
+# Defined reference categories, keyed by label. Stored as an ordered
+# dictionary because the order the categories are created defines
+# the order they are listed in the output documents.
+#
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+categories: dict[str, Category] = collections.OrderedDict()
 
 
 ################################################################################
@@ -20,7 +37,7 @@ from . import state
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_reference_category(title, label):
+def add_reference_category(title, label, *, persist=False):
     """Creates a topic for listing external references.
 
     This function does not create any actual references; they must be
@@ -36,19 +53,30 @@ def add_reference_category(title, label):
         label (str): A shorthand abbreviation to identify this category
             when adding references to individual tests. Must be unique across
             all reference categories, and may not be blank.
+        persist (bool, optional): If False this category will only be
+            shown on tests which provide one or more reference items.
+            If True it will be listed on every test regardless of the number
+            of items.
     """
     # Validate title.
     title_stripped = misc.nonempty_string("reference category title", title)
 
     # Validate label.
     label_stripped = misc.nonempty_string("reference category label", label)
-    if label_stripped in state.ref_titles:
+    if label_stripped in categories:
         raise error.UserScriptError(
             f"Duplicate reference label: {label_stripped}",
             f"Create a unique label for {title} references.",
         )
 
-    state.ref_titles[label_stripped] = title_stripped
+    # Validate persist.
+    if not isinstance(persist, bool):
+        raise error.UserScriptError(
+            f"Invalid persist type: {type(persist).__name__}",
+            "persist may only be True or False.",
+        )
+
+    categories[label_stripped] = Category(title_stripped, persist)
 
 
 def get_xref():
@@ -71,7 +99,7 @@ def get_xref():
         ``"sf"`` category would be ``["sf"]["SF42"]``.
     """
     # Initialize all categories with empty dictionaries, i.e., no references.
-    xref = {label: {} for label in state.ref_titles}
+    xref = {label: {} for label in categories}
 
     # Iterate through all Test instances to populate second-level
     # reference dictionaries and test lists.

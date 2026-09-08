@@ -123,6 +123,7 @@ class References(Base, unittest.TestCase):
         """Verify table layout with multiple reference categories."""
         atform.add_reference_category("Single Reference", "single")
         atform.add_reference_category("Multiple References", "multi")
+        atform.add_reference_category("Empty", "empty", persist=True)
         atform.add_reference_category("Long List", "long")
         self.make_test(
             references={
@@ -130,7 +131,17 @@ class References(Base, unittest.TestCase):
                 "multi": ["foo", "bar"],
                 # Long enough to require breaking across multiple lines.
                 "long": [str(x) for x in range(50)],
-            }
+            },
+            procedure=[
+                "Verify reference categories are ordered as follows:"
+                + atform.bullet_list(
+                    "Single Reference",
+                    "Multiple Reference",
+                    "Empty",
+                    "Long List",
+                ),
+                "Verify format of Empty reference category.",
+            ],
         )
 
     @nosplit

@@ -27,6 +27,7 @@ INIT_ATTRS = [
     (atform.field, "fields"),
     (atform.id, "section_titles"),
     (atform.image, "images"),
+    (atform.ref, "categories"),
     (atform.term, "terms"),
     (atform.term, "supporting_tests"),
     (atform.term, "used_terms"),

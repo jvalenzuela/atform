@@ -715,6 +715,17 @@ class References(DiffBase):
         self.generate_diff()
         self.assert_diff(same={(1,)})
 
+    def test_add_empty_category(self):
+        """Confirm adding an empty category is detected as a difference."""
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("title")
+        self.generate_old()
+
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("title")
+        self.generate_diff()
+        self.assert_diff(changed={(1,)})
+
     def test_remove_one_category(self):
         """Confirm removing one of many reference categories is detected."""
         atform.add_reference_category("ref1", "ref1")
@@ -751,6 +762,17 @@ class References(DiffBase):
         self.generate_diff()
         self.assert_diff(same={(1,)})
 
+    def test_remove_empty_category(self):
+        """Confirm removing an empty category is detected as a difference."""
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("title")
+        self.generate_old()
+
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("title")
+        self.generate_diff()
+        self.assert_diff(changed={(1,)})
+
     def test_change_title(self):
         """Confirm a change to a category's title is detected."""
         atform.add_reference_category("old title", "ref")
@@ -777,6 +799,32 @@ class References(DiffBase):
         self.generate_diff()
         self.assert_diff(changed={(2,)}, same={(1,)})
 
+    def test_add_first_item_to_unused_category(self):
+        """Confirm adding an item to a previouly unused category is detected."""
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("unchanged")
+        atform.add_test("foo")
+        self.generate_old()
+
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("unchanged")
+        atform.add_test("foo", references={"ref": ["a"]})
+        self.generate_diff()
+        self.assert_diff(changed={(2,)}, same={(1,)})
+
+    def test_add_first_item_to_empty_category(self):
+        """Confirm adding an item to a previously empty category is detected."""
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("unchanged")
+        atform.add_test("foo")
+        self.generate_old()
+
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("unchanged")
+        atform.add_test("foo", references={"ref": ["a"]})
+        self.generate_diff()
+        self.assert_diff(changed={(2,)}, same={(1,)})
+
     def test_remove_item(self):
         """Confirm removing a reference item from an existing category is detected."""
         atform.add_reference_category("ref", "ref")
@@ -787,6 +835,32 @@ class References(DiffBase):
         atform.add_reference_category("ref", "ref")
         atform.add_test("unchanged")
         atform.add_test("foo", references={"ref": ["a"]})
+        self.generate_diff()
+        self.assert_diff(changed={(2,)}, same={(1,)})
+
+    def test_remove_last_item_leaving_unused_category(self):
+        """Confirm removing the last item from a now unused category is detected."""
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("unchanged")
+        atform.add_test("foo", references={"ref": ["a"]})
+        self.generate_old()
+
+        atform.add_reference_category("ref", "ref")
+        atform.add_test("unchanged")
+        atform.add_test("foo")
+        self.generate_diff()
+        self.assert_diff(changed={(2,)}, same={(1,)})
+
+    def test_remove_last_item_leaving_empty_category(self):
+        """Confirm removing the last item from a now empty category is detected."""
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("unchanged")
+        atform.add_test("foo", references={"ref": ["a"]})
+        self.generate_old()
+
+        atform.add_reference_category("ref", "ref", persist=True)
+        atform.add_test("unchanged")
+        atform.add_test("foo")
         self.generate_diff()
         self.assert_diff(changed={(2,)}, same={(1,)})
 
