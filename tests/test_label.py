@@ -142,6 +142,10 @@ class Duplicate(unittest.TestCase):
         atform.add_test("t1", label="foo")
         with self.assertRaises(UserScriptError):
             atform.add_test("t2", label="foo")
+        with self.assertRaises(UserScriptError):
+            # Verify $ substituation prefix also raises exception
+            # for an existing label without $ prefix
+            atform.add_test("t2", label="$foo")
 
     def test_procedure_step(self):
         """Confirm exception for duplicate procedure step labels."""

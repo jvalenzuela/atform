@@ -298,8 +298,9 @@ def validate_string_list(name, lst):
         raise error.UserScriptError(
             f"{name} must be a list of strings.",
         )
+    lst_clean = [s.lstrip('$') for s in lst]
     items = []
-    for i, s in enumerate(lst, start=1):
+    for i, s in enumerate(lst_clean, start=1):
         try:
             items.append(misc.nonempty_string(f"{name} list item", s))
         except error.UserScriptError as e:
