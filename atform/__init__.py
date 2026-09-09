@@ -34,6 +34,7 @@ from atform.image import (
 
 from atform.meta import (
     get_terms,
+    get_xref,
     list_tests,
 )
 
@@ -45,7 +46,6 @@ from atform.misc import (
 
 from atform.ref import (
     add_reference_category,
-    get_xref,
 )
 
 from atform.sig import (

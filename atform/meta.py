@@ -5,6 +5,7 @@ import collections
 from . import addtest
 from . import error
 from . import id as id_
+from . import ref
 from . import term
 
 
@@ -100,3 +101,36 @@ def get_terms(which="both"):
         ) from e
 
     return format_term_xref(terms)
+
+
+def get_xref():
+    """Builds a cross-reference of tests assigned to each reference.
+
+    For use in the output section of a script, after all tests have
+    been defined.
+
+    .. seealso:: :ref:`xref`
+
+    Returns:
+        dict: A cross-reference between tests and references represented as a
+        nested dictionary. The top-level dictionary is keyed by category labels
+        defined with :py:func:`atform.add_reference_category`; second-level
+        dictionaries are keyed by references in that category, i.e., items
+        passed to the ``references`` argument of :py:func:`atform.add_test`.
+        Final values of the inner dictionary are lists of test identifiers,
+        formatted as strings, assigned to that reference. As an example,
+        the keys yielding a list of all tests assigned ``"SF42"`` in the
+        ``"sf"`` category would be ``["sf"]["SF42"]``.
+    """
+    # Initialize all categories with empty dictionaries, i.e., no references.
+    xref = {label: {} for label in ref.categories}
+
+    # Iterate through all Test instances to populate second-level
+    # reference dictionaries and test lists.
+    for tid in sorted(addtest.tests.keys()):
+        test_id = id_.to_string(tid)
+        for tref in addtest.tests[tid].references:
+            for item in tref.items:
+                xref[tref.label].setdefault(item, []).append(test_id)
+
+    return xref
