@@ -160,7 +160,7 @@ class ContentAreaException(unittest.TestCase):
             self.call()
 
     @staticmethod
-    def call():
+    def call():  # pragma: no cover
         """Calls the function under test.
 
         Must be implemented by the subclass to call the intended function.
