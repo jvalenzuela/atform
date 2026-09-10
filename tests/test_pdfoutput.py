@@ -166,7 +166,7 @@ class Terms(Base, unittest.TestCase):
 
         # Create terms for each format variant.
         formats = []
-        for typeface, font in atform.format.FONTS.keys():
+        for typeface, font in atform.format.FONTS:
             name = f"{typeface}_{font}"
             atform.add_term(name, name, typeface=typeface, font=font)
             formats.append(name)
@@ -655,7 +655,7 @@ class Format(Base, unittest.TestCase):
                 typeface=typeface,
                 font=font,
             )
-            for typeface, font in atform.format.FONTS.keys()
+            for typeface, font in atform.format.FONTS
         ]
 
         self.make_test(
