@@ -1,8 +1,10 @@
 """Unit tests for the id module."""
 
-from tests import utils
-import atform
 import unittest
+
+from tests import utils
+
+import atform
 
 
 class SkipTest(unittest.TestCase):

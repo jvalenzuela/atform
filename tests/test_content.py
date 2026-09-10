@@ -1,11 +1,13 @@
 """Unit tests for the content module."""
 
-from tests import utils
-import atform
 import contextlib
 import io
 import unittest
 from unittest.mock import patch
+
+from tests import utils
+
+import atform
 
 
 class Generate(unittest.TestCase):

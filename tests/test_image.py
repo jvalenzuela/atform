@@ -1,11 +1,13 @@
 """Unit tests for the image module."""
 
-from tests import utils
-import atform
 import io
 import os
 import unittest
 from unittest.mock import patch
+
+from tests import utils
+
+import atform
 
 
 class ErrorBase:

@@ -1,11 +1,13 @@
 """Units tests for the PDF module."""
 
-from tests import utils
-import atform
 import os
 import tempfile
 import unittest
 from unittest.mock import patch
+
+from tests import utils
+
+import atform
 
 
 class SectionTitles(unittest.TestCase):

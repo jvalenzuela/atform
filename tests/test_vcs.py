@@ -1,11 +1,12 @@
 """Unit tests for the version control interface module."""
 
-import atform
 import subprocess
 import unittest
 from unittest.mock import patch
 
 from tests import utils
+
+import atform
 
 
 class NoVersionControl(unittest.TestCase):

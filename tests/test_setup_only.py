@@ -1,8 +1,10 @@
 """Unit tests for the setup_only() decorator."""
 
-from tests import utils
-import atform
 import unittest
+
+from tests import utils
+
+import atform
 
 
 @atform.misc.setup_only

@@ -1,16 +1,17 @@
 """Miscellaneous unit test utilities."""
 
-import atform
 import contextlib
 import copy
 import importlib
 import io
 import re
-from PIL import Image
 import tkinter as tk
 import unittest
 from unittest.mock import patch
 
+from PIL import Image
+
+import atform
 
 # Limit the number of worker processes spawned during unit tests.
 # This patch remains throughout all unit tests; see comment on patched

@@ -4,13 +4,15 @@ programmatically with traditional assertion methods. These tests generate
 actual PDF files which must be visually verified.
 """
 
-from tests import utils
-import atform
 import functools
 import os
 import string
 import unittest
 from unittest.mock import patch
+
+from tests import utils
+
+import atform
 
 
 class Base:

@@ -1,11 +1,13 @@
 """Unit tests for the label module."""
 
+import string
+import unittest
+
 from tests import utils
+
 import atform
 from atform import label
 from atform.error import UserScriptError
-import string
-import unittest
 
 
 class LabelString:

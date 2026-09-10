@@ -1,9 +1,11 @@
 """Unit tests for the add_copyright() function."""
 
-from tests import utils
-import atform
 import string
 import unittest
+
+from tests import utils
+
+import atform
 
 
 class AddCopyright(unittest.TestCase):

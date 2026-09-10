@@ -1,9 +1,11 @@
 """Unit tests for the field module."""
 
-from tests import utils
-import atform
 import string
 import unittest
+
+from tests import utils
+
+import atform
 
 
 class AddField(unittest.TestCase):

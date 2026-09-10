@@ -1,10 +1,10 @@
 """Unit tests for the format module."""
 
 import string
-
-import atform
 import unittest
 import xml.etree.ElementTree as ElementTree
+
+import atform
 
 
 class BulletList(unittest.TestCase):

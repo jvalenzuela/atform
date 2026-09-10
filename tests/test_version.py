@@ -1,8 +1,9 @@
 """Unit tests for the version module."""
 
-import atform
 import unittest
 from unittest.mock import patch
+
+import atform
 
 
 class RequireVersion(unittest.TestCase):

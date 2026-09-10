@@ -1,10 +1,11 @@
 """Unit tests for the error module."""
 
-import atform
-from atform.error import UserScriptError
 import sys
 import traceback
 import unittest
+
+import atform
+from atform.error import UserScriptError
 
 
 class ExitOnScriptError(unittest.TestCase):

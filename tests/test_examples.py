@@ -1,11 +1,12 @@
 """This module executes examples from the documentation."""
 
-from tests import utils
 import os
 import shutil
 import subprocess
 import sys
 import unittest
+
+from tests import utils
 
 
 # Path to the example scripts, relative to the repository root.

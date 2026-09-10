@@ -1,9 +1,11 @@
 """Unit tests for the set_project_info() function."""
 
-from tests import utils
 import string
-import atform
 import unittest
+
+from tests import utils
+
+import atform
 
 
 class ParameterBase:

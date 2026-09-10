@@ -1,9 +1,11 @@
 """Unit tests for the sig module."""
 
-from tests import utils
-import atform
 import string
 import unittest
+
+from tests import utils
+
+import atform
 
 
 class AddSignature(unittest.TestCase):
