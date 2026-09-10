@@ -66,6 +66,7 @@ class Example(unittest.TestCase):
         utils.reset()
 
     def test_example(self):
+        """Executes the target example script."""
         with ExampleRunner(self.script) as runner:
             runner.run()
 

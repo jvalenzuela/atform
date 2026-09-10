@@ -87,6 +87,7 @@ class TestId(LabelString, unittest.TestCase):
     """Tests for labels assigned to a test."""
 
     def create_label(self, lbl):
+        """Creates a test with the given label."""
         atform.add_test("title", label=lbl)
 
 
@@ -94,6 +95,7 @@ class ProcedureStep(LabelString, unittest.TestCase):
     """Tests for labels assigned to a procedure step."""
 
     def create_label(self, lbl):
+        """Creates a procedure step with the given label."""
         atform.add_test("title", procedure=[{"text": "step", "label": lbl}])
 
 
