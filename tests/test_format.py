@@ -2,7 +2,7 @@
 
 import string
 import unittest
-import xml.etree.ElementTree as ElementTree
+from xml.etree import ElementTree
 
 import atform
 
