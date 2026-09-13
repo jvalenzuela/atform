@@ -1,11 +1,14 @@
 """Unit tests for the error module."""
 
+import inspect
 import sys
 import traceback
 import unittest
 
 import atform
 from atform.error import UserScriptError
+
+from . import utils
 
 
 class ExitOnScriptError(unittest.TestCase):
@@ -56,3 +59,39 @@ class Excepthook(unittest.TestCase):
         """Confirm exceptions other than UserScriptError pass unaffected."""
         with self.assertRaises(KeyError):
             sys.excepthook(KeyError, KeyError(), None)
+
+
+class UserScriptErrorText(unittest.TestCase):
+    """Tests verifying fields included in UserScriptError text."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_api_name(self):
+        """Ensure the text contains the API function name."""
+        with self.assertRaises(UserScriptError) as cm:
+            atform.add_test(0)
+        txt = str(cm.exception)
+        self.assertIn(atform.add_test.__name__, txt)
+
+    def test_line_number(self):
+        """Ensure the text contains the source file line number."""
+        with self.assertRaises(UserScriptError) as cm:
+            line = inspect.currentframe().f_lineno
+            atform.add_test(0)
+        txt = str(cm.exception)
+        self.assertIn(str(line), txt)
+
+    def test_file_name(self):
+        """Ensure the text contains the source file name."""
+        with self.assertRaises(UserScriptError) as cm:
+            atform.add_test(0)
+        txt = str(cm.exception)
+        self.assertIn(__file__, txt)
+
+    def test_doc(self):
+        """Ensure the text contains the API docstring."""
+        with self.assertRaises(UserScriptError) as cm:
+            atform.add_test(0)
+        txt = str(cm.exception)
+        self.assertIn(atform.add_test.__doc__, txt)
