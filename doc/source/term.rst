@@ -68,6 +68,9 @@ support them. An exception is the supporting test itself, which will
 typically use the term it supports, however, it will not reference itself
 as supporting the term.
 
+Tests can be identified and built based on their relation to terms in the
+:ref:`gui_terms` panel of the :ref:`gui`.
+
 A cross-reference of terms and tests that support or use them can be
 generated with :py:func:`atform.get_terms` as shown below.
 

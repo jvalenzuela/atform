@@ -147,6 +147,25 @@ the :ref:`gui_build` list. Multiple items may be selected with the usual
 is equivalent to selecting all items within that category.
 
 
+.. _gui_terms:
+
+Terms
+^^^^^
+
+.. image:: images/gui/terms.png
+   :align: center
+
+Terms created with :py:func:`atform.add_term` are listed in the
+:guilabel:`Terms` tab along with the number of tests associated with
+each. A set of :guilabel:`Support` and :guilabel:`Use` items
+accompany each term as further refinements to how tests are associated.
+Any combination of terms, :guilabel:`Support`, or :guilabel:`Use` items
+can be selected, and the resulting set of tests added to the :ref:`gui_build`
+list by clicking the :guilabel:`Add Selected Terms To Build` button.
+
+.. seealso:: :ref:`term`
+
+
 .. _gui_preview:
 
 Preview

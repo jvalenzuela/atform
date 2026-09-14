@@ -8,6 +8,7 @@ from . import common
 from . import diffwidget
 from . import selectlist
 from . import selectref
+from . import selectterm
 from . import preview
 from . import searchwidget
 from . import statusbar
@@ -77,5 +78,6 @@ class Application(tkwidget.Tk):
         tabs.add(searchwidget.Search(tabs), text="Search")
         tabs.add(diffwidget.Diff(tabs), text="Diff")
         tabs.add(selectref.SelectRef(tabs), text="Refs")
+        tabs.add(selectterm.SelectTerm(tabs), text="Terms")
 
         return frame

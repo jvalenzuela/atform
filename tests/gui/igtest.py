@@ -408,6 +408,39 @@ class Refs(InteractiveGuiTestCase):
         self.start_gui()
 
 
+class Terms(InteractiveGuiTestCase):
+    """Tests for the Terms selection tab."""
+
+    def test_no_terms(self):
+        """Confirm columns are sized correctly when no terms are defined."""
+        self.start_gui(
+            instruction="Confirm Terms tab columns fit the column headers.",
+        )
+
+    def test_column_width(self):
+        """Confirm columns are sized to accommodate terms."""
+        # Create enough terms to require vertical scrolling.
+        for i in range(50):
+            # Create term names long enough to require horizontal scrolling.
+            atform.add_term(f"Term{i}" + "." * 100 + "X", f"t{i}")
+
+        self.start_gui(
+            instruction="""
+            1. Confirm operation of horizontal and vertical scrollbars.
+            2. Confirm ending "X" is visible in every term.
+            """,
+        )
+
+    def test_resize(self):
+        """Confirm correct operation when the window is resized."""
+        self.start_gui(
+            instruction="""
+            1. Confirm Terms treeview expands when the window is resized.
+            2. Confirm the Terms add button expands horizontally when the window is resized.
+            """,
+        )
+
+
 def nonmodal_dialog(method):
     """
     Test method decorator to prevent the build dialog from being set modal,
