@@ -1,6 +1,7 @@
 """Tests for the reference select panel."""
 
 import unittest
+import tkinter as tk
 from unittest.mock import patch
 
 import atform
@@ -10,6 +11,20 @@ from .. import utils
 def get_treeview(parent):
     """Finds the treeview widget."""
     return utils.find_widget_by_class(parent, "Treeview")
+
+
+class TreeConfig(unittest.TestCase):
+    """Tests to ensure correct treeview configuration."""
+
+    def setUp(self):
+        utils.reset()
+
+    def test_multiple_select(self):
+        """Confirm multiple items can be simultaneously selected."""
+        panel = atform.gui.selectref.SelectRef(None)
+        tree = get_treeview(panel)
+        select_mode = str(tree.config("selectmode")[-1])
+        self.assertEqual(tk.EXTENDED, select_mode)
 
 
 @patch("atform.gui.buildlist.add")

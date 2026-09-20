@@ -84,6 +84,15 @@ class Base(unittest.TestCase):
         self.assertEqual(self.tl.tree.ttv_item(id_, option="open"), open_)
 
 
+class TreeConfig(Base):
+    """Tests to ensure correct treeview configuration."""
+
+    def test_multiple_select(self):
+        """Confirm multiple items can be simultaneously selected."""
+        select_mode = str(self.tl.tree.config("selectmode")[-1])
+        self.assertEqual(tk.EXTENDED, select_mode)
+
+
 class AddTest(Base):
     """Tests for the add_test() method."""
 

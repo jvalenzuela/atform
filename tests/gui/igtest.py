@@ -163,19 +163,6 @@ class TestList(InteractiveGuiTestCase):
             instruction="Verify selected count is equal to 42.",
         )
 
-    @patch("atform.gui.preview.show")
-    def test_multiple_select(self, *_mocks):
-        """Confirm multiple items can be simultaneously selected."""
-        for i in range(1, 11):
-            atform.add_test(f"test {i}")
-        root, tl = self.create_testlist()
-        for i in range(1, 11):
-            tl.add_test((i,))
-        self.start_gui(
-            root=root,
-            instruction="Ensure multiple items can be selected using Shift & Control.",
-        )
-
 
 class Resize(InteractiveGuiTestCase):
     """Window resizing tests."""
@@ -419,17 +406,6 @@ class Refs(InteractiveGuiTestCase):
             references={"refs": ["a"]},
         )
         self.start_gui()
-
-    def test_select(self):
-        """Confirm correct item selection mode."""
-        atform.add_reference_category("Refs", "refs")
-        atform.add_test(
-            "title",
-            references={"refs": [str(x) for x in range(10)]},
-        )
-        self.start_gui(
-            instruction="Confirm multiple items can be selected simultaneously.",
-        )
 
 
 def nonmodal_dialog(method):
