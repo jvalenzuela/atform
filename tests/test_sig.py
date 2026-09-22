@@ -32,14 +32,19 @@ class AddSignature(unittest.TestCase):
     def test_title_strip(self):
         """Confirm surrounding whitespace is removed from the title."""
         atform.add_signature(string.whitespace + "spam" + string.whitespace)
-        self.assertEqual(["spam"], atform.state.signatures)
+        self.assertEqual("spam", atform.sig.signatures[0].title)
 
     def test_title_order(self):
         """Confirm titles are added in the order defined."""
         expected = ["foo", "bar", "spam", "eggs"]
         for s in expected:
             atform.add_signature(s)
-        self.assertEqual(expected, atform.state.signatures)
+        self.assertEqual(expected, [s.title for s in atform.sig.signatures])
+
+    def test_initials_type(self):
+        """Confirm exception for a non-boolean initials value."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_signature("Foo", 0)
 
 
 class AddSignatureContentArea(utils.ContentAreaException):

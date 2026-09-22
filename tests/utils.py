@@ -29,6 +29,7 @@ INIT_ATTRS = [
     (atform.id, "section_titles"),
     (atform.image, "images"),
     (atform.ref, "categories"),
+    (atform.sig, "signatures"),
     (atform.term, "terms"),
     (atform.term, "supporting_tests"),
     (atform.term, "used_terms"),

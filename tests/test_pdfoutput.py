@@ -529,10 +529,14 @@ class Approval(Base, unittest.TestCase):
     def test_multiple(self):
         """Verify layout with multiple signature entries."""
         atform.add_signature("First Signature")
-        atform.add_signature("Second Signature")
+        atform.add_signature("Second Signature", initials=False)
         atform.add_signature("Third Signature")
         self.make_test(
-            procedure=["Verify all name fields are interactive AcroForms."],
+            procedure=[
+                "Verify all name fields are interactive AcroForms.",
+                "Verify the first and third signatures have initials fields.",
+                "Verify the second signature has no initials field.",
+            ],
         )
 
     def test_plain_name(self):

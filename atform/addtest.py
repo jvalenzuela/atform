@@ -10,6 +10,7 @@ from . import label as label_
 from . import misc
 from . import procedure as procedure_
 from . import ref
+from . import sig
 from . import state
 from . import term
 
@@ -434,7 +435,7 @@ def add_test(
     """
     content = {}
     content["copyright"] = state.copyright_
-    content["signatures"] = state.signatures
+    content["signatures"] = sig.signatures
     content["logo_hash"] = state.logo_hash
 
     # Capture the current API call stack so the location where this test was

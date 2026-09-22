@@ -1,8 +1,24 @@
 """Approval signature API."""
 
+import collections
+
 from . import error
 from . import misc
 from . import state
+
+
+# Storage object for each defined signature.
+Signature = collections.namedtuple(
+    "Signature",
+    ["title", "initials"],
+)
+
+
+# Signature entries in the order they were defined.
+#
+# This attribute must only be accessed externally by importing the entire
+# module; see the state module for details.
+signatures: list[Signature] = []
 
 
 ################################################################################
@@ -14,20 +30,28 @@ from . import state
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_signature(title):
+def add_signature(title, initials=True):
     """Adds an approval signature line.
 
-    The signature entry contains title, name, signature, and date
-    fields that will appear at the conclusion of every test. Signatures
-    will be presented in the order they are defined.
+    The signature entry contains title, name, signature, optional initials,
+    and date fields that will appear at the conclusion of every test.
+    Signatures will be presented in the order they are defined.
 
     .. seealso:: :ref:`setup`
 
     Args:
         title (str): A short description of the person signing; may not
             be blank.
+        initials (bool, optional): If True the signature entry will include
+            a field for initials, otherwise the initials field will be omitted.
     """
-    state.signatures.append(misc.nonempty_string("signature title", title))
+    if not isinstance(initials, bool):
+        raise error.UserScriptError(
+            f"Invalid initials data type: {type(initials).__name__}",
+            "The initials option may only be True or False.",
+        )
+    sig = Signature(misc.nonempty_string("signature title", title), initials)
+    signatures.append(sig)
 
 
 @error.exit_on_script_error

@@ -48,9 +48,7 @@ def make_approval(test, plain_name):
         return None
 
     rows = list(
-        itertools.chain.from_iterable(
-            [make_sig_rows(title, plain_name) for title in sigs]
-        )
+        itertools.chain.from_iterable([make_sig_rows(sig, plain_name) for sig in sigs])
     )
     widths = [
         name_col_width(plain_name),
@@ -73,12 +71,12 @@ def make_approval(test, plain_name):
     )
 
 
-def make_sig_rows(title, plain_name):
+def make_sig_rows(sig, plain_name):
     """Generates a set of table rows for a given signature entry."""
     return [
-        [Paragraph(title, stylesheet["SignatureTitle"])],
+        [Paragraph(sig.title, stylesheet["SignatureTitle"])],
         # Middle row has the field titles.
-        header_row(),
+        header_row(sig),
         # Lower row contains the text entry fields.
         [
             name_entry_field(plain_name),
@@ -89,13 +87,23 @@ def make_sig_rows(title, plain_name):
     ]
 
 
-def header_row():
+def header_row(sig):
     """Generates the table row labeling each field."""
     sty = stylesheet["SignatureFieldTitle"]
+
+    # The initials column is always present, even if the initials field
+    # is to be omitted. Simply excluding the column header effectively
+    # removes the field as there is no other visible content in that
+    # column.
+    if sig.initials:
+        initials = Preformatted("Initials", sty)
+    else:
+        initials = None
+
     return [
         Preformatted("Name", sty),
         Preformatted("Signature", sty),
-        Preformatted("Initials", sty),
+        initials,
         Preformatted(DATE_TITLE, sty),
     ]
 

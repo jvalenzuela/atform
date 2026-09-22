@@ -19,9 +19,10 @@ atform.add_copyright(
     """
 )
 
-# Add signatures for executor and approver.
+# Add signatures for executor and approver; the approver will not
+# have an initials field.
 atform.add_signature("Executed By")
-atform.add_signature("Approved By")
+atform.add_signature("Approved By", initials=False)
 # end-listing <<< Marker comment for documentation code listing.
 
 
