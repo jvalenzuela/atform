@@ -38,6 +38,17 @@ atform.add_test(
         "Verify behavior resulting from the state of $myTerm",
     ],
 )
+
+
+atform.add_test(
+    "A supporting test that includes '$' prefix in [supports_terms]",
+    supports_terms=["$myTerm"],
+    objective="This test supports $myTerm.",
+    procedure=[
+        "Verify the state of $myTerm.",
+        "Verify behavior resulting from the state of $myTerm",
+    ],
+)
 # end-support-term <<< Marker comment for documentation code listing.
 
 

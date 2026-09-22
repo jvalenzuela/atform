@@ -44,6 +44,23 @@ atform.add_test(
         },
     ],
 )
+
+
+# Test labels may also use the $prefix in the label definition.
+atform.add_test(
+    "Validate X",
+    label="doX",  # Assign a label.
+    # The same procedure step label from the previous test,
+    # ps_label, is reused here, even with the '$' prefix
+    # which is normally used for text substitution.
+    procedure=[
+        "Refer to step $ps_label.",
+        {
+            "label": "$ps_label",
+            "text": "The labeled step.",
+        },
+    ],
+)
 # end-listing <<< Marker comment for documentation code listing.
 
 
