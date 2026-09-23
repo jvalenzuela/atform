@@ -263,6 +263,28 @@ class Signature(DiffBase):
         self.generate_diff()
         self.assert_diff(changed={(1,)})
 
+    def test_add_initials(self):
+        """Confirm adding an initials field is detected."""
+        atform.add_signature("sig", initials=False)
+        atform.add_test("test")
+        self.generate_old()
+
+        atform.add_signature("sig")
+        atform.add_test("test")
+        self.generate_diff()
+        self.assert_diff(changed={(1,)})
+
+    def test_remove_initials(self):
+        """Confirm removing an initials field is detected."""
+        atform.add_signature("sig")
+        atform.add_test("test")
+        self.generate_old()
+
+        atform.add_signature("sig", initials=False)
+        atform.add_test("test")
+        self.generate_diff()
+        self.assert_diff(changed={(1,)})
+
 
 class ProjectInfo(DiffBase):
     """Tests for detecting changes to project information."""
