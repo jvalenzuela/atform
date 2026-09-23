@@ -557,7 +557,11 @@ class StatusBar(InteractiveGuiTestCase):
     def test_size(self):
         """Verify status bar sizing."""
         self.start_gui(
-            instruction="Ensure the status bar occupies the entire width and stretches horizontally.",
+            instruction=f"""
+            Ensure the status bar occupies the entire width and
+            stretches horizontally with v{atform.version.VERSION} in the
+            right corner.
+            """,
         )
 
     @patch("atform.gui.statusbar.vcs.version", new=None)
@@ -613,14 +617,4 @@ class StatusBar(InteractiveGuiTestCase):
         self.start_gui(
             root=root,
             instruction="Confirm ID Lock indicator shows ok with a normal background.",
-        )
-
-    def test_package_version(self):
-        """Verify the status bar displays the correct package version.
-
-        This is done with a complete application window to ensure the
-        version is located at the far right edge.
-        """
-        self.start_gui(
-            instruction=f"Confirm v{atform.version.VERSION} at the right edge.",
         )
