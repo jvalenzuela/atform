@@ -206,13 +206,21 @@ class Preview(InteractiveGuiTestCase):
 
     def test_scroll_range(self):
         """Confirm vertical scroll is constrained to all pages."""
-        atform.add_test("test 1")  # Single-page test.
         atform.add_test(
-            "test 2",
-            procedure=["step"] * 50,  # Generate 3 pages worth of content.
+            "Single Page Test",
+            procedure=["Verify footer page count of 1."],
+        )
+        atform.add_test(
+            "Multi-Page Test",
+            procedure=["Verify footer page count of 3."]
+            + ["step"] * 50,  # Generate 3 pages worth of content.
         )
         self.start_gui(
-            instruction="Select each test and ensure the vertical scroll range is limited to all pages in the test.",
+            instruction="""
+            Select each test and ensure the vertical scroll range is
+            limited to all pages in the test, and verify page count
+            stated in each procedure.
+            """,
         )
 
     def test_location(self):

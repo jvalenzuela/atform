@@ -696,18 +696,6 @@ class Format(Base, unittest.TestCase):
         )
 
 
-class PageCount(Base, unittest.TestCase):
-    """Tests for the page count in the footer."""
-
-    def test_page_count_single(self):
-        """Verify correct footer page count for a single-page document."""
-        self.make_test()
-
-    def test_page_count_multi(self):
-        """Verify correct footer page count for a multi-page document."""
-        self.make_test(procedure=["Lots of steps"] * 60)
-
-
 class Logo(Base, unittest.TestCase):
     """Tests for the logo image."""
 
