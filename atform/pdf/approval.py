@@ -4,6 +4,7 @@ Each signature is built with two rows; the upper row carries the titles
 above each field and the lower row is the actual data entry fields.
 """
 
+import enum
 import itertools
 
 from reportlab.lib.units import toLength
@@ -33,11 +34,14 @@ DATE_TITLE = f"Date ({DATE_FORMAT})"
 FIELD_TITLE_SEP = toLength("2 pt")
 
 
-# Column indices.
-NAME_COL = 0
-SIG_COL = NAME_COL + 1
-INITIAL_COL = SIG_COL + 1
-DATE_COL = INITIAL_COL + 1
+@enum.unique
+class ColumnIndex(enum.IntEnum):
+    """Table column indices."""
+
+    NAME = 0
+    SIGNATURE = 1
+    INITIALS = 2
+    DATE = 3
 
 
 def make_approval(test, plain_name):
@@ -134,13 +138,18 @@ def sig_row_style(i, sigs):
         # The name field should abut the left table border.
         (
             "LEFTPADDING",
-            (NAME_COL, field),
-            (NAME_COL, field),
+            (ColumnIndex.NAME, field),
+            (ColumnIndex.NAME, field),
             layout.SECTION_RULE_WEIGHT / 2,
         ),
         # Remove the left padding from both the date header and field to
         # keep the cell contents off the right table border.
-        ("LEFTPADDING", (DATE_COL, header), (DATE_COL, field), 0),
+        (
+            "LEFTPADDING",
+            (ColumnIndex.DATE, header),
+            (ColumnIndex.DATE, field),
+            0,
+        ),
     ]
 
     # Add a horizontal rule below each signature except the last, which

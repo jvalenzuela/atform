@@ -3,6 +3,8 @@
 The procedure list is built as a table, with one row per step.
 """
 
+import enum
+
 from reportlab.lib.units import toLength
 from reportlab.platypus import (
     Paragraph,
@@ -30,10 +32,13 @@ MAX_IMAGE_SIZE = imgflow.ImageSize(5, 3)
 HEADER_FIELDS = ["Step #", "Description", "Pass"]
 
 
-# Column indices.
-STEP_COL = 0
-DESC_COL = 1
-PASS_COL = 2
+@enum.unique
+class ColumnIndex(enum.IntEnum):
+    """Table column indices for the overall procedure section."""
+
+    STEP_NUM = 0
+    DESCRIPTION = 1
+    PASS = 2
 
 
 # Vertical space inserted between step text and the image; inserted only
@@ -46,10 +51,13 @@ IMAGE_SEP = toLength("12 pt")
 FIELD_TABLE_SEP = toLength("12 pt")
 
 
-# Table column indices.
-FIELD_TITLE_COL = 0
-FIELD_ENTRY_COL = 1
-FIELD_SUFFIX_COL = 2
+@enum.unique
+class FieldColumnIndex(enum.IntEnum):
+    """Table column indices for optional data entry fields in a step."""
+
+    TITLE = 0
+    ENTRY = 1
+    SUFFIX = 2
 
 
 # Style applied to a single-row table containing a single data entry field.
@@ -58,12 +66,27 @@ FIELD_TABLE_STYLE = [
     # set of fields left-aligned with the parent procedure step.
     # Right padding remains to separate the title from the text
     # entry field.
-    ("LEFTPADDING", (FIELD_TITLE_COL, 0), (FIELD_TITLE_COL, -1), 0),
+    (
+        "LEFTPADDING",
+        (FieldColumnIndex.TITLE, 0),
+        (FieldColumnIndex.TITLE, -1),
+        0,
+    ),
     # Remove all horizontal padding surrounding the text entry field.
     # Separation from adjacent columns is provided by padding in
     # those other columns.
-    ("LEFTPADDING", (FIELD_ENTRY_COL, 0), (FIELD_ENTRY_COL, -1), 0),
-    ("RIGHTPADDING", (FIELD_ENTRY_COL, 0), (FIELD_ENTRY_COL, -1), 0),
+    (
+        "LEFTPADDING",
+        (FieldColumnIndex.ENTRY, 0),
+        (FieldColumnIndex.ENTRY, -1),
+        0,
+    ),
+    (
+        "RIGHTPADDING",
+        (FieldColumnIndex.ENTRY, 0),
+        (FieldColumnIndex.ENTRY, -1),
+        0,
+    ),
 ]
 
 
@@ -98,10 +121,15 @@ def make_procedure(steps, plain_checkbox):
             layout.RULE_COLOR,
         ),
         # Step number column
-        ("VALIGN", (STEP_COL, 2), (STEP_COL, -2), "MIDDLE"),
+        (
+            "VALIGN",
+            (ColumnIndex.STEP_NUM, 2),
+            (ColumnIndex.STEP_NUM, -2),
+            "MIDDLE",
+        ),
         # Checkbox column
-        ("ALIGN", (PASS_COL, 2), (PASS_COL, -2), "CENTER"),
-        ("VALIGN", (PASS_COL, 2), (PASS_COL, -2), "MIDDLE"),
+        ("ALIGN", (ColumnIndex.PASS, 2), (ColumnIndex.PASS, -2), "CENTER"),
+        ("VALIGN", (ColumnIndex.PASS, 2), (ColumnIndex.PASS, -2), "MIDDLE"),
         # Last row shading.
         ("BACKGROUND", (0, -1), (-1, -1), layout.SUBSECTION_BACKGROUND),
         # Last row spans all columns.
@@ -176,7 +204,7 @@ def calc_widths(steps):
     # Width of the step column is set to accommodate the larger of
     # the column header text and the last step number.
     step_col_items = [
-        HEADER_FIELDS[STEP_COL],
+        HEADER_FIELDS[ColumnIndex.STEP_NUM],
         str(len(steps)),
     ]
     widths.append(layout.max_width(step_col_items, style))
@@ -188,7 +216,7 @@ def calc_widths(steps):
     # Pass column width is set to accommodate the larger of the
     # column header and checkboxes.
     pass_col_items = [
-        layout.max_width([HEADER_FIELDS[PASS_COL]], style),
+        layout.max_width([HEADER_FIELDS[ColumnIndex.PASS]], style),
         acroform.Checkbox().wrap()[0] + (layout.DEFAULT_TABLE_HORIZ_PAD * 2),
     ]
 
