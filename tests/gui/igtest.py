@@ -469,15 +469,6 @@ class BuildDialog(InteractiveGuiTestCase):
         self.done_q = queue.SimpleQueue()
 
     @nonmodal_dialog
-    def test_total_count(self):
-        """Confirm correct total count."""
-        self.start_gui(
-            run=False,
-            instruction="Confirm progress total count is 42.",
-        )
-        atform.gui.build.Dialog(self.builder, mock_futures(42), self.done_q)
-
-    @nonmodal_dialog
     def test_build_message(self):
         """Confirm correct message during build process."""
         self.start_gui(
@@ -528,7 +519,7 @@ class BuildDialog(InteractiveGuiTestCase):
         """Confirm correct progress bar operation."""
         self.start_gui(
             run=False,
-            instruction="Verify progress bar operates normally and completes at 50.",
+            instruction="Verify progress bar operates normally and completes at 50/50.",
         )
         futures = mock_futures(50)
         i = 0
