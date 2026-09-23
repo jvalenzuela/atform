@@ -39,6 +39,9 @@ class Title(unittest.TestCase):
     def test_keyword_only(self):
         """Confirm any argument after title must be via keyword."""
         with self.assertRaises(TypeError):
+            # Pylint message disabled as this test is intentionally
+            # providing too many arguments.
+            # pylint: disable-next=too-many-function-args
             atform.add_test("title", "foo")
 
 
