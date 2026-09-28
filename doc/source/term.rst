@@ -57,8 +57,10 @@ supporting test.
    :start-after: # begin-support-term
    :end-before: # end-support-term
 
-Labels listed in the ``supports_terms`` argument are *not* prefixed with ``$``;
-enter them exactly as defined with :py:func:`atform.add_term`.
+Labels listed in the ``supports_terms`` argument can be prefixed with
+``$`` if desired, but is not necessary as the above example shows.
+There must be exactly one match to each term defined 
+with :py:func:`atform.add_term`.
 A test may support any number of terms, likewise a term may be
 supported by multiple tests.
 
