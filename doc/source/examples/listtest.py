@@ -22,4 +22,5 @@ if __name__ == "__main__":
     # Export IDs and titles of all tests to a CSV file.
     with open("tests.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerows(atform.list_tests())
+        for test in atform.list_tests():
+            writer.writerow([test.id, test.title])

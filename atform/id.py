@@ -8,6 +8,7 @@ of integers.
 
 import pathlib
 import tempfile
+from typing import Optional
 
 from . import error
 from . import state
@@ -19,7 +20,7 @@ IdType = tuple[int, ...]
 
 # This attribute must only be accessed externally by importing the entire
 # module; see the state module for details.
-section_titles: dict[IdType, str] = {}
+section_titles: dict[IdType, Optional[str]] = {}
 
 
 def get_id():
@@ -197,6 +198,22 @@ def validate_section_title(title):
             ) from e
 
 
+def add_implicit_sections(section_id):
+    """Creates empty titles for any nonexistent sections.
+
+    Given the section ID x.y.z for example, empty titles for the following
+    sections need to be added if they do not already contain a title:
+
+    x
+    x.y
+    x.y.z
+    """
+    id_ = tuple(section_id)
+    while id_:
+        section_titles.setdefault(id_)
+        id_ = id_[:-1]
+
+
 ################################################################################
 # Public API
 #
@@ -266,6 +283,8 @@ def section(level, *, id=None, title=None, resume=False):
         stripped = title.strip()
         if stripped:
             section_titles[tuple(section_id)] = stripped
+
+    add_implicit_sections(section_id)
 
     # Combine the section and test IDs as the new current ID.
     state.current_id = section_id

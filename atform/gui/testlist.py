@@ -70,9 +70,8 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             if not self.tree.ttv_exists(current_tid):
                 parent = current_tid[:-1]
                 index = self._calc_index(current_tid)
-                try:
-                    title = id_.section_titles[current_tid]
-                except KeyError:
+                title = id_.section_titles[current_tid]
+                if title is None:
                     title = ""
                 self.tree.ttv_insert(
                     parent,

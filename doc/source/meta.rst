@@ -10,8 +10,8 @@ any type of file, but rather present information as simple Python
 structures to be evaluated or exported to suit a project's specific requirements.
 
 The :py:func:`atform.list_tests` function lists the numeric identifier and title
-of every defined test. :numref:`listtest.py` demonstrates exporting this
-data to a CSV file.
+of every defined section and test. :numref:`listtest.py` demonstrates
+exporting this data to a CSV file.
 
 .. literalinclude:: examples/listtest.py
    :caption: Excerpt of listtest.py.

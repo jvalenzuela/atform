@@ -74,15 +74,10 @@ def build_path(tid, root, max_depth):
     # Append a folder for each section level.
     for i, section_id in enumerate(tid[:depth]):
 
-        # Include the section number and title if the section has a title.
-        try:
-            section = id_.section_titles[tid[: i + 1]]
-            section_folder = f"{section_id} {section}"
-
-        # Use only the section number if the section has no title.
-        except KeyError:
-            section_folder = str(section_id)
-
+        title = id_.section_titles[tid[: i + 1]]
+        section_folder = str(section_id)
+        if title is not None:
+            section_folder += f" {title}"
         folders.append(section_folder)
 
     return os.path.join(*folders)

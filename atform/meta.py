@@ -9,6 +9,10 @@ from . import ref
 from . import term
 
 
+# Storage object for each test or section returned by list_tests().
+ListTestItem = collections.namedtuple("ListTestItem", ["id", "title", "type"])
+
+
 def format_term_xref(xref):
     """
     Converts a cross-reference of internal term data into a formatted
@@ -41,7 +45,7 @@ def format_term_xref(xref):
 
 
 def list_tests():
-    """Lists all defined tests.
+    """Lists all tests and sections.
 
     Intended to be called in the Output section, after all calls to
     :py:func:`atform.add_test`, and before or after :py:func:`atform.generate`.
@@ -49,10 +53,16 @@ def list_tests():
     generated PDF files.
 
     Returns:
-        list[tuple]: A list of ``(id, title)`` tuples in ascending order.
+        list[tuple]: A list of ``(id, title, type)`` named tuples in
+        ascending order. The ``type`` member differentiates sections and tests,
+        and will be set to ``"section"`` or ``"test"`` respectively.
+        Sections lacking a title will have the ``title`` member set to
+        ``None``, e.g., ``("4.2", None, "section")``.
     """
-    ids = sorted(addtest.tests.keys())
-    return [(id_.to_string(tid), addtest.tests[tid].title) for tid in ids]
+    items = {tid: (test.title, "test") for tid, test in addtest.tests.items()}
+    for sid, title in id_.section_titles.items():
+        items[sid] = (title, "section")
+    return [ListTestItem(id_.to_string(iid), *items[iid]) for iid in sorted(items)]
 
 
 @error.exit_on_script_error
