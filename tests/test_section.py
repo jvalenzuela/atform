@@ -326,7 +326,7 @@ class Title(unittest.TestCase):
     def test_no_title(self):
         """Confirm no title is saved if title is omitted."""
         atform.section(1)
-        self.assertEqual({}, atform.id.section_titles)
+        self.assertEqual({(1,): None}, atform.id.section_titles)
 
     def test_invalid(self):
         """Confirm exception for a title that is not a valid folder name.

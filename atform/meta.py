@@ -40,7 +40,8 @@ def format_term_xref(xref):
 ################################################################################
 
 
-def list_tests():
+@error.exit_on_script_error
+def list_tests(*, sections=False):
     """Lists all defined tests.
 
     Intended to be called in the Output section, after all calls to
@@ -48,11 +49,26 @@ def list_tests():
     The returned list is unaffected by command line options limiting
     generated PDF files.
 
+    Args:
+        sections (bool, optional): If ``True`` the returned list will include
+            both tests and sections, otherwise it will contain only tests.
+
     Returns:
         list[tuple]: A list of ``(id, title)`` tuples in ascending order.
+        Sections lacking a title will have ``None`` as the title, e.g.,
+        ``("4.2", None)``.
     """
-    ids = sorted(addtest.tests.keys())
-    return [(id_.to_string(tid), addtest.tests[tid].title) for tid in ids]
+    if not isinstance(sections, bool):
+        raise error.UserScriptError(
+            f"Invalid sections type: {type(sections).__name__}",
+            "The sections parameter must be either True or False.",
+        )
+    items = {tid: test.title for tid, test in addtest.tests.items()}
+
+    if sections:
+        items.update(id_.section_titles)
+
+    return [(id_.to_string(iid), items[iid]) for iid in sorted(items)]
 
 
 @error.exit_on_script_error
