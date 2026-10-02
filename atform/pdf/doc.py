@@ -142,9 +142,8 @@ class TestDocument:
     def _get_doc(self, path):
         """Creates the document template."""
         if isinstance(path, str):
-            pdfname = self.test.full_name + ".pdf"
             os.makedirs(path, exist_ok=True)
-            filename = os.path.join(path, pdfname)
+            filename = os.path.join(path, self.test.filename)
 
         # Output to an in-memory buffer.
         else:

@@ -409,13 +409,16 @@ class Phrase(unittest.TestCase):
         utils.reset()
 
     def test_whitespace_separator(self):
-        """Confirm matches with terms separated by various whitespace."""
+        """Confirm matches with terms separated by various whitespace.
+
+        Mock content is placed in the objective as the title does not
+        permit some types of whitespace.
+        """
         for sep in string.whitespace:
             utils.reset()
             with self.subTest(sep=sep):
-                title = sep.join(["foo", "bar"])
-                atform.add_test(title)
-                self.assert_match('"foo bar"', {(1,)})
+                atform.add_test("title", objective=sep.join(["foo", "bar"]))
+                self.assert_match('"foo bar"', {(1,)}, "Objective")
 
     def test_partial(self):
         """Confirm no match for only part of the phrase."""
@@ -433,10 +436,10 @@ class Phrase(unittest.TestCase):
         atform.add_test("foo spam bar")
         self.assert_match('"foo bar"', set())
 
-    def assert_match(self, text, expected):
+    def assert_match(self, text, expected, section="Title"):
         """Confirms text was matched in the correct tests."""
         tcs = search.TestContentSearch()
-        matches = tcs.search(text, ["Title"], search.Grouping.ANY, False)
+        matches = tcs.search(text, [section], search.Grouping.ANY, False)
         self.assertEqual(expected, matches)
 
 

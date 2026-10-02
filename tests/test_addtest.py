@@ -36,6 +36,19 @@ class Title(unittest.TestCase):
         t = utils.get_test_content()
         self.assertEqual("Spam", t.title)
 
+    def test_invalid_character(self):
+        """Confirm exception for characters not allowed in a file name."""
+        with self.assertRaises(atform.error.UserScriptError):
+            atform.add_test("foo\\bar")
+
+    def test_too_long(self):
+        """Confirm exception for a title yielding an excessively long file name."""
+        with self.assertRaises(atform.error.UserScriptError):
+            # There doesn't appear to be a portable way to determine the
+            # maximum file name length across multiple platforms, so
+            # a hardcoded length is used.
+            atform.add_test("X" * 255)
+
     def test_keyword_only(self):
         """Confirm any argument after title must be via keyword."""
         with self.assertRaises(TypeError):

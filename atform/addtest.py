@@ -3,6 +3,8 @@
 import collections
 import dataclasses
 
+import pathvalidate
+
 from . import error
 from . import field
 from . import id as id_
@@ -41,8 +43,42 @@ class TestContent:
         # String containing the combination of ID and title.
         self.full_name = " ".join((id_.to_string(self.id), self.title))
 
+        self.filename = self._create_filename()
+
         # Populated during pregenerate().
         self.supported_terms = collections.OrderedDict()
+
+    def _create_filename(self):
+        """Generates and validates the PDF file name."""
+        filename = f"{self.full_name}.pdf"
+        try:
+            pathvalidate.validate_filename(filename)
+        except pathvalidate.ValidationError as e:
+            match e.reason:
+                case pathvalidate.error.ErrorReason.INVALID_CHARACTER:
+                    raise error.UserScriptError(
+                        """
+                        Title contains characters impermissible in a
+                        file name.
+                        """,
+                        "Remove invalid characters from the title.",
+                    )
+                case pathvalidate.error.ErrorReason.INVALID_LENGTH:
+                    raise error.UserScriptError(
+                        "PDF file name is too long.",
+                        "Shorten the title.",
+                    )
+
+                # No other reasons should occur, specifically RESERVED_NAME
+                # because inclusion of the test ID and PDF extension should
+                # never result in a reserved file name.
+                #
+                # Excluded from code coverage as this case should never occur
+                # and is therefore intentionally not unit tested.
+                case _:
+                    raise AssertionError from e  # pragma: no cover
+
+        return filename
 
     def pregenerate(self):
         """
@@ -143,6 +179,9 @@ class TestContent:
         """Equality implementation for detecting content differences.
 
         The following fields are specifically excluded:
+
+        filename: The PDF file name is not strictly content, and therefore
+                  is not compared as such.
 
         id: The test's ID is used to identify like tests for comparison,
             i.e., only tests with the same ID as the cache are subject
@@ -398,7 +437,10 @@ def add_test(
     Args:
         title (str): A short phrase describing the test procedure, that is
             combined with the automatically-assigned numeric ID to identify
-            this specific test. Must not be blank.
+            this specific test. Must not be blank. The test's PDF
+            file name will include the title, therefore the title may only
+            contain characters legal for use in a file name and not
+            exceed the maximum allowable file name length.
         label (str, optional): An identifier for use in content strings to
             refer back to this test; may not be blank. See :ref:`labels`.
         include_fields (list[str], optional): Names of fields to add to
@@ -464,6 +506,7 @@ def add_test(
         content["preconditions"] = validate_string_list("Preconditions", preconditions)
         content["procedure"] = procedure_.validate(procedure, content["labels"])
         content["project_info"] = project_info
+        tests[content["id"]] = TestContent(**content)
         add_supported_terms(supports_terms, content["id"])
 
         if label is not None:
@@ -476,5 +519,3 @@ def add_test(
         except KeyError:
             title = None
         add_exception_context(e, content["id"], title)
-
-    tests[content["id"]] = TestContent(**content)
