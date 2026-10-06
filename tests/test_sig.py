@@ -44,7 +44,15 @@ class AddSignature(unittest.TestCase):
     def test_initials_type(self):
         """Confirm exception for a non-boolean initials value."""
         with self.assertRaises(atform.error.UserScriptError):
-            atform.add_signature("Foo", 0)
+            atform.add_signature("Foo", initials=0)
+
+    def test_initials_keyword(self):
+        """Confirm initials argument is keyword-only."""
+        with self.assertRaises(TypeError):
+            # Pylint message disabled as this test is intentionally
+            # providing too many arguments.
+            # pylint: disable-next=too-many-function-args
+            atform.add_signature("Foo", False)
 
 
 class AddSignatureContentArea(utils.ContentAreaException):

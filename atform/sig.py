@@ -30,7 +30,7 @@ signatures: list[Signature] = []
 
 @error.exit_on_script_error
 @misc.setup_only
-def add_signature(title, initials=True):
+def add_signature(title, *, initials=True):
     """Adds an approval signature line.
 
     The signature entry contains title, name, signature, optional initials,
