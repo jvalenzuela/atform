@@ -22,11 +22,7 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.controls = ControlPanel(self)
         self.controls.pack(side=tk.LEFT, fill=tk.Y)
         self.pack(fill=tk.BOTH, expand=tk.TRUE)
-
-        # Populate with all defined tests.
-        for tid in addtest.tests:
-            self.add_test(tid)
-
+        self.populate()
         self.tree.fit_columns()
 
     def _add_tree(self):
@@ -41,6 +37,22 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
         self.tree.heading("#0", text="ID", anchor=tk.W)
         self.tree.heading("Title", text="Title", anchor=tk.W)
         self.tree.tag_bind("preview", "<ButtonRelease-1>", self._preview)
+
+    def populate(self):
+        """Adds all sections and tests to the list."""
+        for tid in addtest.tests:
+            self.add_test(tid)
+
+        # Explicitly add sections to capture any sections without tests.
+        for sid in id_.section_titles:
+            # A dummy test ID is created under the current section ID
+            # because _add_parents() requires a full test ID. The final
+            # None is just a placeholder, and not actually evaluated by
+            # _add_parents().
+            dummy_tid = list(sid)
+            dummy_tid.append(None)
+            self._add_parents(tuple(dummy_tid))
+            self.tree.ttv_see(sid)
 
     def add_test(self, tid):
         """Adds a test to the listing."""
@@ -144,9 +156,8 @@ class TestList(tkwidget.Frame):  # pylint: disable=too-many-ancestors
             tids.add(tid)
             tids.update(self.get_descendants(tid))
 
-        # Filter only test IDs, which are are leaf nodes, i.e., without
-        # children.
-        return {tid for tid in tids if not self.tree.ttv_get_children(tid)}
+        # Filter only test IDs.
+        return tids.intersection(addtest.tests)
 
     def get_descendants(self, tid=()):
         """Gets all items under a given item."""

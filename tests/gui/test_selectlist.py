@@ -12,14 +12,28 @@ class Initialize(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
+
+    def test_tests(self):
+        """Confirm all tests are initially added to the list."""
         atform.add_test("foo")
         atform.add_test("bar")
         atform.add_test("baz")
-
-    def test_initialize(self):
-        """Confirm all tests are initially added to the list."""
         sl = atform.gui.selectlist.SelectList(None)
         self.assertEqual({(1,), (2,), (3,)}, sl.testlist.all_tests)
+
+    def test_empty_section(self):
+        """Confirm a section with no tests is initially added to the list."""
+        atform.section(1)
+        sl = atform.gui.selectlist.SelectList(None)
+        tree = sl.testlist.tree
+        self.assertEqual([(1,)], tree.ttv_get_children())
+
+    def test_empty_section_visible(self):
+        """Confirm empty sections are fully expanded."""
+        atform.section(2)
+        sl = atform.gui.selectlist.SelectList(None)
+        tree = sl.testlist.tree
+        self.assertEqual(1, tree.ttv_item((1,), option="open"))
 
 
 @patch("atform.gui.buildlist.add")

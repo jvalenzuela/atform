@@ -358,6 +358,13 @@ class SelectedTests(Base):
         self.tl.tree.ttv_selection_set((2,))
         self.assertEqual({(2, 1), (2, 2), (2, 3, 1)}, self.tl.selected_tests)
 
+    def test_empty_section(self):
+        """Confirm selecting an emtpy section returns no IDs."""
+        atform.section(1)
+        self.tl.populate()
+        self.tl.tree.ttv_selection_set((1,))
+        self.assertEqual(set(), self.tl.selected_tests)
+
 
 class ExpandAll(Base):
     """Tests for the expand all button."""
