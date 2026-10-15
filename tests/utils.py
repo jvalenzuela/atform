@@ -72,22 +72,22 @@ def mock_build(test, *_args):
     return {test.id: 1}
 
 
-def no_pdf_output(method):
-    """Test case decorator to prevent generating unnecessary output files."""
+def no_pdf_output(func):
+    """Decorator to prevent generating unnecessary output files."""
 
     @patch("atform.gen.pdf.build", new=mock_build)
-    def wrapper(self, *args, **kwargs):
-        method(self, *args, **kwargs)
+    def wrapper(*args, **kwargs):
+        func(*args, **kwargs)
 
     return wrapper
 
 
-def disable_idlock(method):
-    """Test case decorator to disable all ID lock file operations."""
+def disable_idlock(func):
+    """Decorator to disable all ID lock file operations."""
 
-    def wrapper(self, *args, **kwargs):
+    def wrapper(*args, **kwargs):
         with patch("atform.idlock.verify", return_value=None):
-            method(self, *args, **kwargs)
+            func(*args, **kwargs)
 
     return wrapper
 
@@ -105,17 +105,17 @@ def mock_argv(args):
     return argv
 
 
-def no_args(method):
-    """Test case decorator to simulate no command line arguments.
+def no_args(func):
+    """Decorator to simulate no command line arguments.
 
     This needs to be used for tests that call generate() and are not otherwise
     patching sys.argv with an explicit set of mock arguments because the
     original sys.argv will not contain valid arguments during unit testing.
     """
 
-    def wrapper(self, *args, **kwargs):
+    def wrapper(*args, **kwargs):
         with patch("sys.argv", mock_argv("")):
-            method(self, *args, **kwargs)
+            func(*args, **kwargs)
 
     return wrapper
 
