@@ -191,10 +191,12 @@ class SupportListingOrder(unittest.TestCase):
         atform.add_test("support spam", supports_terms=["term"])
         atform.add_test("support eggs", supports_terms=["term"])
         atform.add_test("support foo", supports_terms=["term"])
+        # Check that label identifier is also allowed in supports_terms
+        atform.add_test("support sauce", supports_terms=["$term"])
         atform.add_test("title", objective="$term")
         t = utils.get_test_content()
         t.pregenerate()
         self.assertEqual(
-            ["1 support spam", "2 support eggs", "3 support foo"],
+            ["1 support spam", "2 support eggs", "3 support foo", "4 support sauce"],
             t.supported_terms["term"],
         )
