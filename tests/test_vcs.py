@@ -18,8 +18,7 @@ class NoVersionControl(unittest.TestCase):
     @patch.object(atform.vcs, "GIT_CMD", new="this_is_not_git")
     def test_no_git(self):
         """Confirm no version if git is not installed."""
-        atform.vcs.load()
-        self.assertIsNone(atform.vcs.version)
+        self.assertIsNone(atform.vcs.get_status())
 
     @patch("atform.vcs.run_git")
     def test_no_repository(self, mock):
@@ -28,12 +27,11 @@ class NoVersionControl(unittest.TestCase):
         # exit code, and then a CalledProcessError exception.
         mock.side_effect = subprocess.CalledProcessError(-1, "git")
 
-        atform.vcs.load()
-        self.assertIsNone(atform.vcs.version)
+        self.assertIsNone(atform.vcs.get_status())
 
 
-class Version(unittest.TestCase):
-    """Tests for the current version resulting from various git states."""
+class Status(unittest.TestCase):
+    """Status result tests resulting from various git states."""
 
     def setUp(self):
         utils.reset()
@@ -49,8 +47,7 @@ class Version(unittest.TestCase):
 
         mock.side_effect = mock_run
 
-        atform.vcs.load()
-        self.assertEqual("draft", atform.vcs.version)
+        self.assertEqual("draft", atform.vcs.get_status())
 
     @patch("atform.vcs.run_git")
     def test_no_uncommitted_changes(self, mock):
@@ -63,8 +60,7 @@ class Version(unittest.TestCase):
 
         mock.side_effect = mock_run
 
-        atform.vcs.load()
-        self.assertEqual("sha1", atform.vcs.version)
+        self.assertEqual("sha1", atform.vcs.get_status())
 
     @patch("atform.vcs.run_git")
     def test_no_commits(self, mock):
@@ -81,25 +77,16 @@ class Version(unittest.TestCase):
 
         mock.side_effect = mock_run
 
-        atform.vcs.load()
-        self.assertIsNone(atform.vcs.version)
+        self.assertIsNone(atform.vcs.get_status())
 
-
-class Integration(unittest.TestCase):
-    """Module integration tests"""
-
-    def setUp(self):
-        utils.reset()
-
-    @utils.no_args
-    @utils.no_pdf_output
-    @utils.disable_idlock
-    @patch("atform.vcs.load")
-    def test_load_call(self, mock_load):
-        """Confirm version is loaded upon generate()."""
-        atform.add_test("foo")
-        atform.generate()
-        mock_load.assert_called_once()
+    def test_memoized(self):
+        """Confirm the result is memoized across multiple calls."""
+        result1 = atform.vcs.get_status()
+        with patch("atform.vcs.find_git") as mock:
+            mock.configure_mock(side_effect=atform.vcs.NoVersionControlError)
+            result2 = atform.vcs.get_status()
+        mock.assert_not_called()
+        self.assertEqual(result1, result2)
 
 
 class Commands(unittest.TestCase):

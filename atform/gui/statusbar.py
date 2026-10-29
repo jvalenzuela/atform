@@ -64,12 +64,13 @@ class Vcs(tkwidget.Label):  # pylint: disable=too-many-ancestors
     """Version control status display item."""
 
     def __init__(self, parent):
-        if vcs.version is None:
+        status = vcs.get_status()
+        if status is None:
             text = "No VCS"
         else:
-            text = f"VCS: {vcs.version}"
+            text = f"VCS: {status}"
         super().__init__(parent, text=text, anchor=tk.CENTER)
-        if vcs.version == "draft":
+        if status == "draft":
             self.configure(style="Warning.TLabel")
 
 

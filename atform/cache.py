@@ -52,7 +52,7 @@ def load():
 def save():
     """Writes the data from this run to the cache file."""
     data["version"] = version.VERSION
-    data["vcs"] = vcs.version
+    data["vcs"] = vcs.get_status()
     data["tests"] = addtest.tests
 
     try:

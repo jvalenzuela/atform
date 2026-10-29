@@ -10,7 +10,6 @@ from . import idlock
 from . import error
 from . import parallelbuild
 from . import pdf
-from . import vcs
 from . import gui
 
 
@@ -120,7 +119,6 @@ def generate(*, path="pdf", folder_depth=0):
         )
 
     args = arg.parse()
-    vcs.load()
 
     try:
         idlock.verify()

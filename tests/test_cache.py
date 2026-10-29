@@ -66,8 +66,8 @@ class Save(unittest.TestCase):
         saved = self.get_saved_data(mock)
         self.assertEqual(saved["version"], atform.version.VERSION)
 
-    @patch("atform.vcs.version", new="foo")
-    def test_vcs(self):
+    @patch("atform.vcs.get_status", return_value="foo")
+    def test_vcs(self, *_mocks):
         """Confirm saved data includes the VCS version."""
         atform.cache.data = {}
         with patch("atform.cache.open", new_callable=mock_open) as mock:

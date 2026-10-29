@@ -1,31 +1,25 @@
 """Version control system interface."""
 
+import functools
 import shutil
 import subprocess
-
-
-# The current commit SHA1, "draft" if uncommitted changes exist, or None if
-# no version control is present.
-#
-# Pylint message disabled because this is not a constant.
-version = None  # pylint: disable=invalid-name
 
 
 # CLI command name.
 GIT_CMD = "git"
 
 
-def load():
+@functools.cache
+def get_status():
     """Gets the current state from the version control system."""
-    global version  # pylint: disable=global-statement
     try:
         path = find_git()
         clean = is_clean(path)
         sha1 = get_sha1(path)
     except NoVersionControlError:
-        pass
-    else:
-        version = sha1 if clean else "draft"
+        return None
+
+    return sha1 if clean else "draft"
 
 
 class NoVersionControlError(Exception):

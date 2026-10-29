@@ -572,8 +572,8 @@ class StatusBar(InteractiveGuiTestCase):
             """,
         )
 
-    @patch("atform.gui.statusbar.vcs.version", new=None)
-    def test_no_vcs(self):
+    @patch("atform.gui.statusbar.vcs.get_status", return_value=None)
+    def test_no_vcs(self, *_mocks):
         """Verify VCS indicator when no version control is present."""
         root = tk.Tk()
         sb = atform.gui.statusbar.StatusBar(root)
@@ -583,8 +583,8 @@ class StatusBar(InteractiveGuiTestCase):
             instruction="Verify VCS status indicates no version control.",
         )
 
-    @patch("atform.gui.statusbar.vcs.version", new="draft")
-    def test_vcs_draft(self):
+    @patch("atform.gui.statusbar.vcs.get_status", return_value="draft")
+    def test_vcs_draft(self, *_mocks):
         """Verify VCS indicator when uncommitted changes are present."""
         root = tk.Tk()
         sb = atform.gui.statusbar.StatusBar(root)
@@ -594,8 +594,8 @@ class StatusBar(InteractiveGuiTestCase):
             instruction="Verify VCS status indicates draft with an orange background.",
         )
 
-    @patch("atform.gui.statusbar.vcs.version", new="0123456")
-    def test_vcs_clean(self):
+    @patch("atform.gui.statusbar.vcs.get_status", return_value="0123456")
+    def test_vcs_clean(self, *_mocks):
         """Verify VCS indicator when working directory is clean."""
         root = tk.Tk()
         sb = atform.gui.statusbar.StatusBar(root)

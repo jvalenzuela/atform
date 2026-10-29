@@ -60,7 +60,7 @@ def build_init_data():
     data = {
         "images": image.images,
         "timestamp": datetime.datetime.today(),
-        "version": vcs.version,
+        "version": vcs.get_status(),
         "erefs": embed.Resolver(),
         "procedure checkbox plain": state.procedure_checkbox_plain,
         "sig name plain": state.sig_name_plain,

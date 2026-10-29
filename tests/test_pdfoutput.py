@@ -54,23 +54,20 @@ def nosplit(method):
     return wrapper
 
 
-# Disable the normal VCS load() function to prevent it from overwriting
-# the version attribute patched in each method.
-@patch("atform.vcs.load")
 class VersionControl(Base, unittest.TestCase):
     """Generate PDFs under various version control conditions."""
 
-    @patch.object(atform.vcs, "version", new=None)
+    @patch.object(atform.vcs, "get_status", return_value=None)
     def test_no_version_control(self, _mock_load):
         """Verify no draft mark or version in footer."""
         self.make_test()
 
-    @patch.object(atform.vcs, "version", new="draft")
+    @patch.object(atform.vcs, "get_status", return_value="draft")
     def test_draft(self, _mock_load):
         """Verify draft mark and no version in the footer."""
         self.make_test()
 
-    @patch.object(atform.vcs, "version", new="spam")
+    @patch.object(atform.vcs, "get_status", return_value="spam")
     def test_clean(self, _mock_load):
         """Verify version in the footer and no draft mark."""
         self.make_test()

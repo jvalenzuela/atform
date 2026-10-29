@@ -33,7 +33,6 @@ INIT_ATTRS = [
     (atform.term, "terms"),
     (atform.term, "supporting_tests"),
     (atform.term, "used_terms"),
-    (atform.vcs, "version"),
 ]
 
 
@@ -56,9 +55,10 @@ def reset():
     for i, attr in enumerate(INIT_ATTRS):
         setattr(*attr, copy.copy(INIT_VALUES[i]))
 
-    # The image cache needs to be reset separately as it is not stored
-    # as a traditional attribute.
+    # Memoized functions need to be reset separately as they are not
+    # traditional attributes.
     atform.image.load.cache_clear()
+    atform.vcs.get_status.cache_clear()
 
 
 def get_test_content():
