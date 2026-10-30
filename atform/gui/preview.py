@@ -31,10 +31,10 @@ class Preview(tkwidget.LabelFrame):  # pylint: disable=too-many-ancestors
         panes.pack(fill=tk.Y, expand=tk.TRUE)
 
         self.pages = PageDisplay(panes)
-        panes.add(self.pages, stretch="always")
+        panes.add(self.pages, weight=1)
 
         self.src_location = Location(panes)
-        panes.add(self.src_location, stretch="never")
+        panes.add(self.src_location, weight=0)
 
         # Store this instance so the previewer is accessible at module level.
         Preview.instance = self
