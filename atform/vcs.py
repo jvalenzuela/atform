@@ -15,10 +15,10 @@ def get_status():
     try:
         path = find_git()
         clean = is_clean(path)
-        sha1 = get_sha1(path)
     except NoVersionControlError:
         return None
 
+    sha1 = get_sha1(path)
     return sha1 if clean else "draft"
 
 
