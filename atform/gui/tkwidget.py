@@ -74,7 +74,7 @@ class Label(ttk.Label):
 
 
 @add_instance_storage
-class PanedWindow(tk.PanedWindow):
+class PanedWindow(ttk.PanedWindow):
     pass
 
 
