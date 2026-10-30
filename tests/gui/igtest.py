@@ -171,13 +171,24 @@ class Resize(InteractiveGuiTestCase):
         """Confirm correct horizontal resizing."""
         atform.add_test("title")
         self.start_gui(
-            instruction="Stretch the window horizontally and ensure the test lists and Build path entry expand.",
+            instruction="""
+            Stretch the window horizontally and ensure the test lists and
+            Build path entry expand, and the Preview pane does not expand.
+            """,
         )
 
     def test_vertical(self):
         """Stretch the window vertically and ensure the test lists and page preview areas expand."""
         atform.add_test("title")
         self.start_gui()
+
+    def test_panes(self):
+        self.start_gui(
+            instruction="""
+            Ensure the select, preview, and build panes can be horizontally
+            resized individually.
+            """
+        )
 
 
 class Preview(InteractiveGuiTestCase):

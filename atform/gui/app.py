@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import ttk
 
 from . import buildlist
-from . import common
 from . import diffwidget
 from . import selectlist
 from . import selectref
@@ -55,18 +54,23 @@ class Application(tkwidget.Tk):
         self.title(title)
 
     def _create_panels(self, path, folder_depth):
-        """Creates the top-level panels."""
-        frame = tkwidget.Frame(self)
-        frame.pack(fill=tk.BOTH, expand=tk.TRUE)
+        """Creates the top-level panels.
 
-        select = self._create_select_tabs(frame)
-        select.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
+        PanedWindow weights are assigned to allocate horizontal space
+        equally among the select and build panels; the preview window
+        remains unaffected as it is fixed to the page width.
+        """
+        panes = tkwidget.PanedWindow(self, orient=tk.HORIZONTAL)
+        panes.pack(fill=tk.BOTH, expand=tk.TRUE)
 
-        pview = preview.Preview(frame)
-        pview.pack(side=tk.LEFT, fill=tk.Y, padx=common.LARGE_PAD)
+        select = self._create_select_tabs(panes)
+        panes.add(select, weight=1)
 
-        build = buildlist.BuildList(frame, path, folder_depth)
-        build.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
+        pview = preview.Preview(panes)
+        panes.add(pview, weight=0)
+
+        build = buildlist.BuildList(panes, path, folder_depth)
+        panes.add(build, weight=1)
 
     def _create_select_tabs(self, parent):
         """Creates the Select panel and child tabs."""

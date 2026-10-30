@@ -28,6 +28,7 @@ class Title(unittest.TestCase):
 
 @patch("sys.argv", new=utils.mock_argv("--gui"))
 @patch("atform.gui.app.Application.mainloop")
+@patch("atform.gui.tkwidget.PanedWindow.add")
 @patch("atform.gui.buildlist.BuildList")
 class BuildListParameters(unittest.TestCase):
     """Tests for parameters passed to the build list."""
