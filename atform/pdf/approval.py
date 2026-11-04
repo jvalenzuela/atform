@@ -1,7 +1,8 @@
 """Creates table content for the approval section.
 
-Each signature is built with two rows; the upper row carries the titles
-above each field and the lower row is the actual data entry fields.
+Each signature is built with three rows; the upper row carries the
+signature title, the middle row has the headers above each field, and the
+the lower row is the fields to be filled out by the signatory.
 """
 
 import enum
