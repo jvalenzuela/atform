@@ -15,7 +15,8 @@ class Preview(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        self.tl = atform.gui.testlist.TestList(None)
+        root = tk.Tk()
+        self.tl = atform.gui.testlist.TestList(root)
 
         # Create tests at varying section depths.
         atform.section(1)
@@ -73,7 +74,8 @@ class Base(unittest.TestCase):
 
     def setUp(self):
         utils.reset()
-        self.tl = atform.gui.testlist.TestList(None)
+        root = tk.Tk()
+        self.tl = atform.gui.testlist.TestList(root)
 
     def set_open(self, id_, open_):
         """Opens or closes a given section."""
@@ -758,6 +760,8 @@ class SelectedCount(Base):
 
     def assert_count(self, expected):
         """Confirms an expected count value."""
+        self.tl.tree.update()
+
         # A selection event is required to trigger the count update.
         self.tl.tree.event_generate("<<TreeviewSelect>>")
 
