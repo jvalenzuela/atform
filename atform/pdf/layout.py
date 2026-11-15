@@ -59,6 +59,17 @@ NOTES_AREA_SIZE = toLength("2 in")
 DRAFTMARK_COLOR = colors.Color(0, 0, 0, 0.3)
 
 
+# Table formatting command to draw a horizontal rule when a section table
+# is split across pages.
+PAGE_BREAK_RULE = (
+    "LINEBELOW",
+    (0, "splitlast"),
+    (-1, "splitlast"),
+    SECTION_RULE_WEIGHT,
+    RULE_COLOR,
+)
+
+
 def max_width(
     items,
     style_name,

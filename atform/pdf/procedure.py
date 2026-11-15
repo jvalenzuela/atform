@@ -101,6 +101,7 @@ def make_procedure(steps, plain_checkbox):
     rows.append(last_row())
 
     style = [
+        layout.PAGE_BREAK_RULE,
         # Header row shading.
         ("BACKGROUND", (0, 1), (-1, 1), layout.SUBSECTION_BACKGROUND),
         # Add a section rule above the header row. This is unnecessary
@@ -134,14 +135,6 @@ def make_procedure(steps, plain_checkbox):
         ("BACKGROUND", (0, -1), (-1, -1), layout.SUBSECTION_BACKGROUND),
         # Last row spans all columns.
         ("SPAN", (0, -1), (-1, -1)),
-        # Add a section rule at the bottom of every page break.
-        (
-            "LINEBELOW",
-            (0, "splitlast"),
-            (-1, "splitlast"),
-            layout.SECTION_RULE_WEIGHT,
-            layout.RULE_COLOR,
-        ),
     ]
 
     return section.make_section(

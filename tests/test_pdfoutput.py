@@ -156,10 +156,19 @@ class References(Base, unittest.TestCase):
 class Terms(Base, unittest.TestCase):
     """Tests for the Terms section."""
 
+    # Number of dummy terms to define ensuring the Terms section spans multiple
+    # pages.
+    NUM_TERMS = 20
+
     def test_terms(self):
         """Verify term formatting and supporting terms layout."""
-        atform.add_term("one_support", "s1", typeface="sansserif", font="bold")
-        atform.add_term("two_support", "s2", typeface="sansserif", font="bold")
+        for i in range(self.NUM_TERMS):
+            atform.add_term(
+                f"Term{i}",
+                f"t{i}",
+                typeface="sansserif",
+                font="bold",
+            )
 
         # Create terms for each format variant.
         formats = []
@@ -169,20 +178,22 @@ class Terms(Base, unittest.TestCase):
             formats.append(name)
 
         procedure = [
-            "Verify layout of $s1 supporting tests with 1 supporting test.",
-            "Verify layout of $s2 supporting tests with 2 supporting tests.",
+            "Verify layout of $t0 supporting tests with 1 supporting test.",
+            "Verify layout of $t1 supporting tests with 2 supporting tests.",
+            "Verify Terms section format across multiple pages.",
         ]
 
         procedure.extend(f"Verify format of ${t}" for t in formats)
+        procedure.extend([f"$t{i} dummy step." for i in range(self.NUM_TERMS)])
 
         self.make_test(
             objective="Dummy supporting term test; nothing to verify",
-            supports_terms=["s1", "s2"],
+            supports_terms=["t1"],
             generate=False,
         )
         self.make_test(
             objective="Dummy supporting term test; nothing to verify",
-            supports_terms=["s2"],
+            supports_terms=[f"t{i}" for i in range(self.NUM_TERMS)],
             generate=False,
         )
 
