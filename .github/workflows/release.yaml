@@ -14,7 +14,10 @@ jobs:
 
           - windows-latest
 
-          - macos-latest
+          # This is used instead of macos-latest due to Github capacity
+          # constraints on macOS arm64 runners, causing some workflow jobs
+          # to intermittently fail due to runner availability.
+          - macos-26-intel
 
         # Python versions to run on; must match the requires-python in
         # pyproject.toml.
