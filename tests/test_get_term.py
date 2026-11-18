@@ -50,6 +50,12 @@ class WhichBoth(unittest.TestCase):
 
     def test_default(self):
         """Confirm this is the default argument."""
+        atform.add_term("foo", "term")
+        atform.add_test("t1", supports_terms=["term"])
+        atform.add_test("t2", objective="$term")
+        both = self.result
+        default = atform.get_terms()
+        self.assertEqual(default, both)
 
     def test_no_terms(self):
         """Confirm result when no terms are defined."""
