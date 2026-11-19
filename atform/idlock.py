@@ -51,7 +51,7 @@ class ChangedTestError(Exception):
             "",
             wrap(
                 f"""\
-                If this is intentional delete {FILENAME} run the script again,
+                If this is intentional delete {FILENAME} and rerun the script,
                 otherwise the changes must be reverted before PDFs can
                 be generated.
                 """
