@@ -77,9 +77,26 @@ class PageDisplay(tkwidget.Frame):  # pylint: disable=too-many-ancestors
     def show(self, tid):
         """Displays pages of the given test."""
         self._clear()
-        for i, page in enumerate(self._page_images(tid)):
-            y = i * (page.height() + self.PAGE_SEP)
-            self.canvas.create_image((0, y), anchor=tk.NW, image=page)
+
+        try:
+            images = self._page_images(tid)
+
+        # Display exception text if the build fails.
+        except pdf.BuildError as e:
+            self.canvas.create_text(
+                0,
+                0,
+                text=str(e),
+                anchor=tk.NW,
+                width=self._canvas_width,
+            )
+
+        # Display pages if the build succeeds.
+        else:
+            for i, page in enumerate(images):
+                y = i * (page.height() + self.PAGE_SEP)
+                self.canvas.create_image((0, y), anchor=tk.NW, image=page)
+
         self._reset_scroll()
 
     def _clear(self):

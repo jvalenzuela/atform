@@ -269,6 +269,21 @@ class Preview(InteractiveGuiTestCase):
             instruction="Preview the test, add it to the build list, and ensure it builds normally."
         )
 
+    def test_build_fail(self):
+        """Confirm a build failure is displayed correctly."""
+        atform.add_test("test ok")
+
+        # Simulate a build failure with an objective that does not fit
+        # onto a single page.
+        atform.add_test("test fail", objective="foo bar\n\n" * 50)
+
+        self.start_gui(
+            instruction="""
+            Alternately select tests 1 and 2 and ensure the preview switches
+            between a test document and a build failure notice.
+            """,
+        )
+
 
 class SearchQueryEntry(InteractiveGuiTestCase):
     """Tests for the search tab query entry field."""
