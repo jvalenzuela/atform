@@ -183,6 +183,7 @@ class Resize(InteractiveGuiTestCase):
         self.start_gui()
 
     def test_panes(self):
+        """Confirm pane sash operation."""
         self.start_gui(
             instruction="""
             Ensure the select, preview, and build panes can be horizontally
