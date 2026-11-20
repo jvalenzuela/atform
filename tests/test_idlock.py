@@ -92,12 +92,23 @@ class Save(unittest.TestCase):
     @patch("atform.idlock.load", return_value={})
     @patch("atform.idlock.open", new_callable=mock_open)
     def test_no_overwrite_stale(self, mock_lock_open, *_args):
-        """Confirm the lock file is not overwritten and an exception if the lock file content is stale."""
+        """Confirm the lock file is not overwritten if the lock file is stale."""
+        pathlib.Path(atform.idlock.FILENAME).touch()
+        atform.add_test("t1")
+        try:
+            atform.idlock.verify()
+        except atform.idlock.LockFileWarning:
+            pass
+        mock_lock_open.assert_not_called()
+        rm_lock_file()
+
+    @patch("atform.idlock.load", return_value={})
+    def test_stale_exception(self, *_args):
+        """Confirm exception if the lock file is stale."""
         pathlib.Path(atform.idlock.FILENAME).touch()
         atform.add_test("t1")
         with self.assertRaises(atform.idlock.LockFileWarning):
             atform.idlock.verify()
-        mock_lock_open.assert_not_called()
         rm_lock_file()
 
     @utils.no_pdf_output
