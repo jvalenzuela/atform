@@ -15,10 +15,10 @@ from tests import utils
 import atform
 
 
-class Base:
+class Base(unittest.TestCase):
     """Base class for tests which generate PDFs."""
 
-    def setUp(self):  # pylint: disable=invalid-name, missing-function-docstring
+    def setUp(self):
         utils.reset()
 
     @utils.disable_idlock
@@ -54,7 +54,7 @@ def nosplit(method):
     return wrapper
 
 
-class VersionControl(Base, unittest.TestCase):
+class VersionControl(Base):
     """Generate PDFs under various version control conditions."""
 
     @patch.object(atform.vcs, "get_status", return_value=None)
@@ -73,7 +73,7 @@ class VersionControl(Base, unittest.TestCase):
         self.make_test()
 
 
-class Objective(Base, unittest.TestCase):
+class Objective(Base):
     """Tests for the Objective section."""
 
     def test_single_paragraph(self):
@@ -110,7 +110,7 @@ class Objective(Base, unittest.TestCase):
         )
 
 
-class References(Base, unittest.TestCase):
+class References(Base):
     """Tests for the References section."""
 
     def test_single(self):
@@ -153,7 +153,7 @@ class References(Base, unittest.TestCase):
         self.make_test(references={f"r{i}": ["spam"] for i in range(num_refs)})
 
 
-class Terms(Base, unittest.TestCase):
+class Terms(Base):
     """Tests for the Terms section."""
 
     # Number of dummy terms to define ensuring the Terms section spans multiple
@@ -202,7 +202,7 @@ class Terms(Base, unittest.TestCase):
         )
 
 
-class Equipment(Base, unittest.TestCase):
+class Equipment(Base):
     """Tests for the Equipment section."""
 
     def test_single(self):
@@ -245,7 +245,7 @@ class Equipment(Base, unittest.TestCase):
         self.make_test(equipment=[str(i) for i in range(10)])
 
 
-class Fields(Base, unittest.TestCase):
+class Fields(Base):
     """Tests for Environment section fields."""
 
     def test_single(self):
@@ -271,7 +271,7 @@ class Fields(Base, unittest.TestCase):
         self.make_test()
 
 
-class Preconditions(Base, unittest.TestCase):
+class Preconditions(Base):
     """Tests for the Preconditions section."""
 
     def test_single(self):
@@ -314,7 +314,7 @@ class Preconditions(Base, unittest.TestCase):
         self.make_test(preconditions=[str(i) for i in range(10)])
 
 
-class Procedure(Base, unittest.TestCase):
+class Procedure(Base):
     """Tests for the Procedure section."""
 
     def test_steps(self):
@@ -432,7 +432,7 @@ class Procedure(Base, unittest.TestCase):
         self.make_test(procedure=["step"] * 2)
 
 
-class ProcedureImage(Base, unittest.TestCase):
+class ProcedureImage(Base):
     """Tests for images within a procedure step."""
 
     def test_scaling(self):
@@ -517,7 +517,7 @@ class ProcedureImage(Base, unittest.TestCase):
         return step
 
 
-class Notes(Base, unittest.TestCase):
+class Notes(Base):
     """Tests for the Notes section."""
 
     @nosplit
@@ -526,7 +526,7 @@ class Notes(Base, unittest.TestCase):
         self.make_test()
 
 
-class Approval(Base, unittest.TestCase):
+class Approval(Base):
     """Tests for the Approval section."""
 
     def test_single(self):
@@ -569,7 +569,7 @@ class Approval(Base, unittest.TestCase):
         self.make_test()
 
 
-class TitleBlock(Base, unittest.TestCase):
+class TitleBlock(Base):
     """Tests for title block on the first page."""
 
     def test_none(self):
@@ -648,7 +648,7 @@ class TitleBlock(Base, unittest.TestCase):
         )
 
 
-class Format(Base, unittest.TestCase):
+class Format(Base):
     """Tests for text formatting."""
 
     def test_formats(self):
@@ -704,7 +704,7 @@ class Format(Base, unittest.TestCase):
         )
 
 
-class Logo(Base, unittest.TestCase):
+class Logo(Base):
     """Tests for the logo image."""
 
     def setUp(self):
@@ -795,7 +795,7 @@ class Logo(Base, unittest.TestCase):
         return steps
 
 
-class Copyright(Base, unittest.TestCase):
+class Copyright(Base):
     """Tests for copyright notices."""
 
     # Dummy steps to fill the first page so the bottom margin can be verified.
@@ -826,7 +826,7 @@ class Copyright(Base, unittest.TestCase):
 
 
 @patch("atform.cache.load")
-class CachePageCount(Base, unittest.TestCase):
+class CachePageCount(Base):
     """Tests for the cached page count."""
 
     # add_test() arguments to produce a three-page document.
@@ -854,7 +854,7 @@ class CachePageCount(Base, unittest.TestCase):
 
 
 @patch("getpass.getuser")
-class Slug(Base, unittest.TestCase):
+class Slug(Base):
     """Tests for the slug text."""
 
     def test_with_user(self, mock_getuser):
@@ -877,7 +877,7 @@ class Slug(Base, unittest.TestCase):
         self.make_test()
 
 
-class Notice(Base, unittest.TestCase):
+class Notice(Base):
     """Tests for embedded notices."""
 
     def test_notice(self):
